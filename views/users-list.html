@@ -1,0 +1,26 @@
+<div id="page-heading">
+    <ol class="breadcrumb">
+        <li><a href="#/">Dashboard</a></li>
+        <li>Customer Management</li>
+        <li class="active">Users List</li>
+    </ol>
+</div>
+
+<div class="container-fluid" ng-controller="TablesAdvancedController">
+    <div class="row">
+      <div class="col-md-12">
+            <panel panel-class="panel-primary" data-heading="Table With Pagination and Async Data">
+                <panel-controls>
+                    <panel-control-collapse></panel-control-collapse>
+                    <button class="button-icon"><i class="glyphicon glyphicon-cog"></i></button>
+                    <button class="button-icon"><i class="glyphicon glyphicon-wrench"></i></button> 
+                </panel-controls>
+                <div class="input-icon right mb10">
+                    <i class="fa fa-search"></i>
+                    <input type="text" ng-model="filterOptions.filterText" class="form-control" placeholder="Search Filter">
+                </div>
+                <div style="height: 500px;" ng-grid="gridOptions"></div>
+            </panel>
+        </div>
+    </div>
+</div> <!-- container-fluid -->

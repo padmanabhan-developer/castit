@@ -1,0 +1,330 @@
+<div id="page-heading">
+	<ol class="breadcrumb">
+		<li><a href="#/index">Dashboard</a></li>
+		<li><a href="#/customer-management">Customer Management</a></li>
+		<li class="active">View customer detials</li>
+	</ol>
+</div>
+
+<div class="container-fluid" ng-controller="ViewCustomerController">
+	<div class="row">
+		<div class="col-md-12">
+			
+			<div class="panel panel-orange">
+				<div class="panel-heading">
+					<h2>View customer</h2>
+					<h2 class='pull-right' ><button class="btn-primary btn " ng-click="PrintPDf()" value="save" >Print</button></h2>
+				</div>
+				<form id="cus_user_form_view" name="cus_user_form_view" class="form-horizontal row-border">
+				<div class="panel-body">
+					<div class="row">
+						<div class="col-md-12">
+							<div class="col-md-4">
+					            <div class="form-group">
+					                <label class="col-sm-5 control-label">Shirt Size (circle appropriate size):</label>
+					                <div class="col-sm-7">
+										<label class="control-label">{{shirt_size}}</label>
+					                </div>
+					            </div>
+								<h3 class="m0">Player Information</h3>
+								<div class="form-group">
+					                <label class="col-sm-5 control-label">First Name:</label>
+					                <div class="col-sm-7">
+										<label class="control-label">{{firstname}}</label>
+					                </div>
+					            </div>
+								<div class="form-group">
+					                <label class="col-sm-5 control-label">Last Name:</label>
+					                <div class="col-sm-7">
+										<label class="control-label">{{lastname}}</label>
+					                </div>
+					            </div>
+					            <div class="form-group">
+					                <label class="col-sm-5 control-label">Gender:</label>
+									<div class="col-sm-7">
+										<label class="control-label">{{gender}}</label>
+					                </div>
+					            </div>
+					            <div class="form-group">
+					                <label class="col-sm-5 control-label">Date of Birth:</label>
+					                <div class="col-sm-7">
+										<label class="control-label">{{dob}}</label>
+					                </div>
+					            </div>
+					            <div class="form-group">
+					                <label class="col-sm-5 control-label">Nationality:</label>
+					                <div class="col-sm-7">
+										<label class="control-label">{{nationality}}</label>
+					                </div>
+					            </div>
+								<div class="form-group">
+					                <label class="col-sm-5 control-label">Street Address:</label>
+					                <div class="col-sm-7">
+										<label class="control-label">{{street_address}}</label>
+					                </div>
+					            </div>
+					            <div class="form-group">
+					                <label class="col-sm-5 control-label">School Attending:</label>
+					                <div class="col-sm-7">
+										<label class="control-label">{{school_attending}}</label>
+					                </div>
+					            </div>
+					            <div class="form-group">
+					                <label class="col-sm-5 control-label">Home Phone:</label>
+					                <div class="col-sm-7">
+										<label class="control-label">{{home_phone}}</label>
+					                </div>
+					            </div>
+					            <div class="form-group">
+					                <label class="col-sm-5 control-label">Email:</label>
+					                <div class="col-sm-7">
+										<label class="control-label">{{email}}</label>
+					                </div>
+					            </div>
+								<div class="form-group">
+					                <label class="col-sm-5 control-label">Civil ID:</label>
+					                <div class="col-sm-7">
+										<label class="control-label">{{civil_id}}</label>
+					                </div>
+					            </div>
+								<h3 class="m0">Try-Out Date schedules</h3>
+								<div class="form-group">
+					                <label class="col-sm-5 control-label">Name:</label>
+					                <div class="col-sm-7">
+										<label class="control-label">{{tryout_name}}</label>
+					                </div>
+					            </div>
+								<div class="form-group">
+					                <label class="col-sm-5 control-label">Division:</label>
+					                <div class="col-sm-7">
+										<label class="control-label">{{tryout_division}}</label>
+					                </div>
+					            </div>
+								<div class="form-group">
+					                <label class="col-sm-5 control-label">Date:</label>
+					                <div class="col-sm-7">
+										<label class="control-label">{{tryout_date}}</label>
+					                </div>
+					            </div>
+								<div class="form-group">
+					                <label class="col-sm-5 control-label">Day:</label>
+					                <div class="col-sm-7">
+										<label class="control-label">{{tryout_day}}</label>
+					                </div>
+					            </div>
+								<div class="form-group">
+					                <label class="col-sm-5 control-label">Time:</label>
+					                <div class="col-sm-7">
+										<label class="control-label">{{tryout_time}}</label>
+					                </div>
+					            </div>
+							</div>	
+							<div class="col-md-4">
+								<h3 class="m0">Parent’s Information</h3>
+					            <div class="form-group">
+					                <label class="col-sm-5 control-label">Father’s Name:</label>
+					                <div class="col-sm-7">
+										<label class="control-label">{{fathername}}</label>
+					                </div>
+					            </div>
+					            <div class="form-group">
+					                <label class="col-sm-5 control-label">Work Phone:</label>
+					                <div class="col-sm-7">
+										<label class="control-label">{{father_workphone}}</label>
+					                </div>
+					            </div>
+					            <div class="form-group">
+					                <label class="col-sm-5 control-label">Mobile Phone:</label>
+					                <div class="col-sm-7">
+										<label class="control-label">{{father_mobile}}</label>
+					                </div>
+					            </div>
+					            <div class="form-group">
+					                <label class="col-sm-5 control-label">Employer:</label>
+					                <div class="col-sm-7">
+										<label class="control-label">{{father_employer}}</label>
+					                </div>
+					            </div>
+					            <div class="form-group">
+					                <label class="col-sm-5 control-label">Occupation:</label>
+					                <div class="col-sm-7">
+										<label class="control-label">{{father_occupation}}</label>
+					                </div>
+					            </div>
+					            <div class="form-group">
+					                <label class="col-sm-5 control-label">Email:</label>
+					                <div class="col-sm-7">
+										<label class="control-label">{{father_email}}</label>
+					                </div>
+					            </div>
+					            <div class="form-group">
+			                        <label class="col-sm-5 control-label">Father Volunteer as:</label>
+			                        <div class="col-sm-7">
+										<label class="control-label">{{father_volunteer}}</label>
+			                        </div>
+            					</div>
+ 								<div class="form-group">
+			                        <label class="col-sm-5 control-label">Mother’s Name:</label>
+			                        <div class="col-sm-7">
+										<label class="control-label">{{mothername}}</label>
+			                        </div>
+            					</div> 
+								<div class="form-group">
+			                        <label class="col-sm-5 control-label">Work Phone:</label>
+			                        <div class="col-sm-7">
+										<label class="control-label">{{mother_workphone}}</label>
+			                        </div>
+            					</div> 
+								<div class="form-group">
+			                        <label class="col-sm-5 control-label">Mobile Phone:</label>
+			                        <div class="col-sm-7">
+										<label class="control-label">{{mother_mobile}}</label>
+			                        </div>
+            					</div> 
+								<div class="form-group">
+			                        <label class="col-sm-5 control-label">Employer:</label>
+			                        <div class="col-sm-7">
+										<label class="control-label">{{mother_employer}}</label>
+			                        </div>
+            					</div> 
+								<div class="form-group">
+			                        <label class="col-sm-5 control-label">Occupation:</label>
+			                        <div class="col-sm-7">
+										<label class="control-label">{{mother_occupation}}</label>
+			                        </div>
+            					</div> 
+								<div class="form-group">
+			                        <label class="col-sm-5 control-label">Email:</label>
+			                        <div class="col-sm-7">
+										<label class="control-label">{{mother_email}}</label>
+			                        </div>
+            					</div> 
+								<div class="form-group">
+			                        <label class="col-sm-5 control-label">Mother Volunteer as:</label>
+			                        <div class="col-sm-7">
+										<label class="control-label">{{mother_volunteer}}</label>
+			                        </div>
+            					</div> 
+							</div>	
+							
+							<div class="col-md-4">
+								<h3 class="m0">Medical Information</h3>
+					            <div class="form-group">
+					                <label class="col-sm-5 control-label">Player’s Existing Medical Conditions:</label>
+					                <div class="col-sm-7">	
+										<label class="control-label">{{player_mediconditions}}</label>
+					                </div>
+					            </div>
+					            <div class="form-group">
+					                <label class="col-sm-5 control-label">Name of Emergency Contact:</label>
+					                <div class="col-sm-7">	
+										<label class="control-label">{{emergency_contact}}</label>
+					                </div>
+					            </div>
+					            <div class="form-group">
+					                <label class="col-sm-5 control-label">Relationship:</label>
+					                <div class="col-sm-7">
+										<label class="control-label">{{relationship}}</label>
+					                </div>
+					            </div>
+					            <div class="form-group">
+					                <label class="col-sm-5 control-label">Contact Number:</label>
+					                <div class="col-sm-7">
+									   <label class="control-label">{{contact_number}}</label>
+					                </div>
+					            </div>
+					            <div class="form-group">
+					                <label class="col-sm-5 control-label">Insurance Carrier:</label>
+					                <div class="col-sm-7">
+										<label class="control-label">{{insurance_carrier}}</label>
+					                </div>
+					            </div>
+					            <div class="form-group">
+			                        <label class="col-sm-5 control-label">Policy Number:</label>
+			                        <div class="col-sm-7">
+										<label class="control-label">{{policy_number}}</label>
+			                        </div>
+            					</div>
+								<h3 class="m0">Player Profile</h3>
+ 								<div class="form-group">
+			                        <label class="col-sm-5 control-label">Number of Years Played:</label>
+			                        <div class="col-sm-7">
+										<label class="control-label">{{numyrs_played}}</label>
+			                        </div>
+            					</div>
+								<div class="form-group">
+			                        <label class="col-sm-5 control-label">Division:</label>
+			                        <div class="col-sm-7">
+										<label class="control-label">{{division}}</label>
+			                        </div>
+            					</div>	
+								<div class="form-group">
+			                        <label class="col-sm-5 control-label">Number of Years in Tournament Team:</label>
+			                        <div class="col-sm-7">
+										<label class="control-label">{{numyrs_tournteam}}</label>
+			                        </div>
+            					</div>
+								<div class="form-group">
+			                        <label class="col-sm-5 control-label">Last Division Played:</label>
+			                        <div class="col-sm-7">
+										<label class="control-label">{{lastdiv_played}}</label>
+			                        </div>
+            					</div>
+								<div class="form-group">
+			                        <label class="col-sm-5 control-label">Played previously in another league? :</label>
+			                        <div class="col-sm-7">
+										<label class="control-label">{{playedprevious_league}}</label>
+			                        </div>
+            					</div>
+								<div class="form-group">
+			                        <label class="col-sm-5 control-label">If yes, where & how many years:</label>
+			                        <div class="col-sm-7">
+										<label class="control-label">{{played_howmanyyrs}}</label>
+			                        </div>
+            					</div>	
+								<div class="form-group">
+			                        <label class="col-sm-5 control-label">Special Request:</label>
+			                        <div class="col-sm-7">
+										<label class="control-label">{{special_request}}</label>
+			                        </div>
+            					</div>
+								<div class="form-group">
+			                        <label class="col-sm-5 control-label">League Comments:</label>
+			                        <div class="col-sm-7">
+										<label class="control-label">{{league_comments}}</label>
+			                        </div>
+            					</div>		
+						</div>
+					</div>
+				</div>
+				<hr>
+                
+		      	<div class="row">
+					<div class="col-sm-6 col-sm-offset-4">
+						<div class="col-md-4">
+							<div class="form-group">
+								<label class="col-sm-4 control-label">Amount:</label>
+								<div class="col-sm-7">
+									<label class="control-label">{{amount}}</label>
+								</div>
+							</div>
+						</div>
+						<div class="col-md-4">
+							<div class="form-group">
+								<label class="col-sm-3 control-label">Paid:</label>
+								<div class="col-sm-6">
+									<label class="control-label">{{payment_status}}</label>
+								</div>
+							</div>
+						</div>
+					</div>	
+		      	</div>
+				</br>
+				</form>
+			</div>
+		</div>
+	</div>
+
+</div> <!-- container-fluid -->
+
+</form>

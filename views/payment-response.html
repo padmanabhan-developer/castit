@@ -1,0 +1,21 @@
+    <div class="page" ng-controller="PaymentResponseController">
+    
+         <div id="privacy_section">
+         	  <div class="container">
+              	   <div class="bluebox3">
+                   	    <div class="blue_inner3">
+                        	 <h3>{{ title }}</h3>
+                        </div>
+                   </div>
+              </div><!--close container-->
+         </div><!--close privacy_section-->
+         
+         <div class="privacy">	
+         	  <div class="container">
+         	  <p>{{ message }}</p>
+			  <p>Payment Id: {{ paymentid }}</p>
+			  <p ng-show="error">Error: {{ error }}</p> 	
+         </div><!--close container-->
+         
+         </div><!--close privacy-->
+    </div><!--close page-->

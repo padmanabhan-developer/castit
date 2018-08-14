@@ -1,0 +1,155 @@
+    <div class="page" ng-controller="EditUserController">
+    
+         <div id="privacy_section">
+         	  <div class="container">
+              	   <div class="bluebox3">
+                   	    <div class="blue_inner3">
+                        	 <h3>MY PROFILE</h3>
+                        </div>
+                   </div>
+              </div><!--close container-->
+         </div><!--close privacy_section-->
+         
+         <div class="found_dog">
+         	  <div class="container">
+              	   <h2>Edit Profile </h2>
+ 
+
+              	   <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+                   
+                   <form name="user_update_form" id="user_update_form" class="form-horizontal row-border"  ng-submit="customerUpdate()" novalidate> 
+                   <div class="found_dog_section">
+                     <div ng-class="{ 'alert': flash, 'alert-success': flash.type === 'success', 'alert-danger': flash.type === 'error' }" ng-if="flash" ng-bind="flash.message"></div>
+                  	   <h4>OWNER Details</h4>
+                       <div class="found_dog_box">
+                       		<div class="form_row">
+                                <div class="form_div">
+                                     <div class="contat_form"><label>First Name *</label><input ng-model="fname" name="fname" id="fname" required pattern=".{2,}"  type="text" class="contact_input">
+                                     <span class="error-message" ng-show="user_update_form.fname.$invalid && !user_update_form.fname.$pristine">
+                                               First name is required.</span>
+                                        </div>
+                                     </div>
+                                 <div class="form_div">
+                                     <div class="contat_form"><label>Email Address *</label><input ng-model="email" id="email" disabled="disabled" name="email" type="email" class="contact_input">
+                                     </div>
+                                </div>
+                               <div class="form_div">
+                                 <div class="contat_form"><label>Address *</label><input type="text" class="contact_input" id="address_1" name="address_1" ng-model="address_1" required pattern=".{2,}">
+                                 <span class="error-message" ng-show="user_update_form.address_1.$invalid && !user_update_form.address_1.$pristine"> Address is required. </span>
+                                 </div>
+                                </div>
+                                <div class="form_div">
+                                 <div class="contat_form"><label>City *</label><input type="text" class="contact_input" id="city" name="city" ng-model="city" required pattern=".{2,}">
+                                  <span class="error-message" ng-show="user_update_form.city.$invalid && !user_update_form.city.$pristine"> City Name is required. </span>
+                                 </div>
+                                </div>
+                                <div class="form_div">
+                                 <div class="contat_form"><label>State *</label><select name="region" id="region" class="contact_select" ng-model="region" required>
+                                                <option value="">Select</option>
+                                                <option value="35"> Tamil Nadu</option>
+                                                <option value="1">Andaman and Nicobar Islands</option>
+                                                <option value="2">Andhra Pradesh</option>
+                                                <option value="3">Arunachal Pradesh</option>
+                                                <option value="4">Assam</option>
+                                                <option value="5">Bihar</option>
+                                                <option value="6">Chandigarh</option>
+                                                <option value="7">Chhattisgarh</option>
+                                                <option value="8">Dadra and Nagar Haveli</option>
+                                                <option value="9">Daman and Diu</option>
+                                                <option value="10">Delhi</option>
+                                                <option value="11">Goa</option>
+                                                <option value="12">Gujarat</option>
+                                                <option value="13">Haryana</option>
+                                                <option value="14">Himachal Pradesh</option>
+                                                <option value="15">Jammu and Kashmir</option>
+                                                <option value="16">Jharkhand</option>
+                                                <option value="17">Karnataka</option>
+                                                <option value="18">Kenmore</option>
+                                                <option value="19">Kerala</option>
+                                                <option value="20">Lakshadweep</option>
+                                                <option value="21">Madhya Pradesh</option>
+                                                <option value="22">Maharashtra</option>
+                                                <option value="23">Manipur</option>
+                                                <option value="24">Meghalaya</option>
+                                                <option value="25">Mizoram</option>
+                                                <option value="26">Nagaland</option>
+                                                <option value="27">Narora</option>
+                                                <option value="28">Natwar</option>
+                                                <option value="29">Odisha</option>
+                                                <option value="30">Paschim Medinipur</option>
+                                                <option value="31">Pondicherry</option>
+                                                <option value="32">Punjab</option>
+                                                <option value="33">Rajasthan</option>
+                                                <option value="34">Sikkim</option>
+                                                <option value="36">Telangana</option>
+                                                <option value="37">Tripura</option>
+                                                <option value="38">Uttar Pradesh</option>
+                                                <option value="39">Uttarakhand</option>
+                                                <option value="40">Vaishali</option>
+                                                <option value="41">West Bengal</option>
+                                            </select>
+                                            <span class="error-message" ng-show="user_update_form.region.$invalid && !user_update_form.region.$pristine">
+                                             Select State.</span>
+                                            </div>
+                                </div>
+                            </div>
+                            <div class="form_row">
+                                 <div class="form_div">
+                                     <div class="contat_form"><label>Last Name *</label><input ng-model="lname" name="lname" id="lname" required pattern=".{2,}" type="text" class="contact_input">
+                                     <span class="error-message" ng-show="user_update_form.lname.$invalid && !user_update_form.lname.$pristine">
+                                              Last name is required.</span>
+                                     </div>
+                                </div>
+                                <div class="form_div">
+                                     <div class="contat_form"><label>Mobile Number *</label><input name="phone_1" id="phone_1" type="text" class="contact_input mobile_number" ng-model="phone_1" required pattern=".{10,}" ng-minlength="10" maxlength="10" only-digits ><span class="country_code">+91</span>
+                                     <span class="error-message" ng-show="user_update_form.phone_1.$invalid && !user_update_form.phone_1.$pristine"> Phone number is required. </span>
+                                     </div>
+                                </div>
+                                <div class="form_div">
+                                 <div class="contat_form"><label>Address 2</label><input type="text" class="contact_input" id="address_2" name="address_2" ng-model="address_2"></div>
+                                </div>
+                                
+                                <div class="form_div">
+                                 <div class="contat_form"><label>Zip *</label><input type="text" class="contact_input" id="post" name="post"  ng-model="post" required pattern=".{2,}" >
+                                 <span class="error-message" ng-show="user_update_form.post.$invalid && !user_update_form.post.$pristine"> Postcode is required. </span>
+                                 </div>
+                                </div>
+                                <div class="form_div">
+                                 <div class="contat_form"><label>Country *</label><select name="country" id="country" class="contact_select" ng-model="country" required>
+                                        <option value="">Select</option>
+                                        <option value="101">India</option>
+                                        </select>
+                                        <span class="error-message" ng-show="user_update_form.country.$invalid && !user_update_form.country.$pristine">
+                                             Select.</span>
+                                        </div>
+                                </div>
+                           </div>
+                           	
+                            <div class="form_row">
+								<div class="form_div">
+                                     <div class="contat_form"><label>New Password *</label><input ng-model="npassword" name="npassword" id="npassword" pattern=".{6,}" type="password" class="contact_input">
+                                     <span class="error-message" ng-show="user_update_form.npassword.$invalid && !user_update_form.npassword.$pristine">
+                                               Password must be at least 6 chars.</span>
+                                        </div>
+                                     </div>
+                            </div>
+                           	<div class="form_row">
+								<div class="form_div">
+                                     <div class="contat_form"><label>Confirm new password *</label><input ng-model="cnpassword" name="cnpassword" id="cnpassword" pattern=".{6,}" type="password" class="contact_input">
+                                     <span class="error-message" ng-show="user_update_form.cnpassword.$invalid && !user_update_form.cnpassword.$pristine">
+                                               Password does not match.</span>
+                                               <span class="error-message"  ng-show="npassword !== cnpassword">Password mismatch</span>
+                                        </div>
+                                     </div>
+                            </div>
+                            <div class="contat_form"><input name="" type="button" value="Back" ng-click="go_to_profile()" class="contact_submit button1">
+                            <button class="contact_submit button2" ng-disabled="user_update_form.$invalid" >Update</button>
+                       </div>
+                       </div>
+                       </div>
+                   </form>
+              </div><!--close container-->
+         </div><!--close found_dog-->
+         
+              
+    </div><!--close page-->

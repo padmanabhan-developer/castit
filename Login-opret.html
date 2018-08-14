@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0' name='viewport' />
+    <title>Castit</title>
+
+    <link href="style.css" rel="stylesheet">
+     <link href="responsive.css" rel="stylesheet">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.0/jquery.min.js"></script>
+
+
+</head>
+<body class="black">
+
+
+
+
+
+ 
+<div id="wrapper" class="black-wrap">
+
+	 <div id="header">
+     	  <div class="logo"><a href="http://134.213.29.220/landing page.html"><img src="images/logo2.png" alt="" /></a></div>
+          <div class="header_right">
+          	   <div class="menu">
+               		<ul>
+                    	<li class="active"><a href="http://134.213.29.220/Login-opret.html">Login</a></li>
+                        <li><a href="http://134.213.29.220/Ansogning step1.html">Ansøg</a></li>
+                        <li><a href=" http://134.213.29.220/informations side.html">Om Castit</a></li>
+                        <li ><a href="http://134.213.29.220/informations side 2.html">Castingkursus</a></li>
+                        <li class="kontakt"><a href="#">Kontakt</a>
+                        <ul class="kon-dropdown">
+                            	<li>
+                                Rosenvængets Allè 11 st. th<br>
+                                2100 Copenhagen Ø<br>
+                                M: 0045 21 28 58 25<br>
+                                E: info@Castit.dk</li>
+                            </ul>	
+                        </li>
+                    </ul>
+               </div>
+               
+               
+          </div>
+     </div><!--close header-->
+     
+     
+     
+     
+     <div id="content">
+     	  
+          <div class="page-black login-page">
+          	   <div class="section-top">
+               		<h2>Login</h2>
+                    <div class="black-right">
+                         <a href="http://134.213.29.220/landing page.html" class="black-close">luk</a>
+                    </div>
+               </div><!--close section-top-->
+               
+               
+               <div class="section-login">
+               		<div class="login-row">
+                    	 <div class="login-call3">
+                         	  <div class="login_inner">
+                              	   <div class="login_box"><label>PROFIL LOGIN</label><input name="" type="text" placeholder="Email" class="login_input"></div>
+                                   <div class="login_box"><label>INDTAST KODE</label><input name="" type="text" placeholder="**********" class="login_input"></div>
+                                   <div class="login_box"><a href="#" class="login_link">Glemt adgangskode</a></div>
+                                   <div class="login_box2"><input name="" type="button" class="login_button1" value="Login"></div>
+                              </div>
+                         </div><!--close login-call3-->
+                         
+                         <div class="login-call3">
+                         	  <div class="login_inner">
+                              	   <div class="login_box"><label>KUNDE LOGIN</label><input name="" type="text"  placeholder="Email" class="login_input"></div>
+                                   <div class="login_box"><label>INDTAST KODE</label><input name="" type="text" placeholder="**********" class="login_input"></div>
+                                   <div class="login_box"><a href="#" class="login_link">Glemt adgangskode</a></div>
+                                   <div class="login_box2"><input name="" type="button" class="login_button1" value="Login"></div>
+                              </div>
+                         </div><!--close login-call3-->
+                         
+                                             </div><!--close login-row-->
+               </div><!--close section-login-->
+               
+          </div><!--close page-black-->
+          
+     </div><!--close content-->
+     
+     
+     
+     
+     
+     
+     
+     
+</div><!--close wrapper-->
+
+<script type="text/javascript" src="js/jquery-1.7.2.min.js"></script>
+<script type="text/javascript" src="js/jquery.selectbox-0.2.js"></script>
+<script type="text/javascript">
+		var myJQ = jQuery.noConflict();
+		myJQ(function () {
+			myJQ("select").selectbox();
+		});
+</script>
+  <script type="text/javascript">
+	 $("#sidebar1").hide();
+	 $(".popup").hide(); 
+	  $(".grupper").hide();
+	  $(".addbox").hide();
+	  $(".title1").addClass("active");
+	  		$("#thumb1").show(); 
+			$("#thumb2").hide();
+			$(".kon-dropdown").hide("slow"); 
+			$(".add-grupper").hide();
+			$(".res_menu ul li").hide("slow"); 
+
+ 
+  $(document).ready(function(){
+	  $(".sidebar1-close").click(function(){
+		$("#sidebar1").hide("slow"); 
+		 });
+		 $(".side-top").click(function(){
+		$("#sidebar1").show("slow"); 
+	  });
+	   $(".thumb").click(function(){
+		$(".popup").fadeIn("slow"); 
+	  });
+	  $(".poup-close").click(function(){
+		$(".popup").fadeOut(); 
+	  });
+	  
+	  $("#event1").click(function(){
+	    $(".title1").addClass("active");
+		$(".title1_1").removeClass("active");
+		 $("tab1").addClass(".side-tabs ul li.active");
+		$(".add-grupper").hide();
+		$(".lightbox").fadeIn(); 
+		$(".grupper").fadeOut();
+		
+		 });
+	  
+	  	  $("#event2").click(function(){
+	    $(".title1_1").addClass("active");
+		$(".add-grupper").show();
+        $("tab2").addClass(".side-tabs ul li.active");
+		$(".title1").removeClass("active");
+		$(".grupper").fadeIn(); 
+		$(".lightbox").fadeOut();
+		 });
+		 
+		 $(".add-grupper").click(function(){
+			$(".addbox").show(); 
+			 
+		 });
+			   $(".img_layer").click(function(){
+		$(".videobig_thumb").show(); 
+	  });
+	     $(".video_call3").click(function(){
+		$("#thumb1").show();
+		$("#thumb2").hide(); 
+	  });
+	  
+	   $(".video_call6").click(function(){
+		$("#thumb2").show();
+		$("#thumb1").hide(); 
+	  });
+	   
+	   $(".video_upload").click(function(){
+		$("#profilebox").show();
+	  });
+	  
+	 $(".kontakt").click(function(){
+		$(".kon-dropdown").toggle("slow"); 
+		 });
+		 
+		 	 $(".res-menu").click(function(){
+		$(".res_menu ul li").toggle("slow"); 
+		 });
+
+		  $(".information-inside .poup-close2").click(function(){
+		$(".res_menu ul li").fadeOut("slow"); 
+		 });
+		 
+		 
+		 
+			 
+  });
+  </script>
+
+</body>
+</html>

@@ -1,0 +1,6 @@
+changes
+
+C:\xampp\htdocs\castit\views\index.html
+
+background-size: 100%;
+background-position: center;

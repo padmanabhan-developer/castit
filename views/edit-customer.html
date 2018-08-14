@@ -1,0 +1,206 @@
+<div id="page-heading">
+	<ol class="breadcrumb">
+		<li><a href="#/index">Dashboard</a></li>
+		<li><a href="#/customer-management">Customer Management</a></li>
+		<li class="active">Update customer detials</li>
+	</ol>
+</div>
+
+<div class="container-fluid" ng-controller="EditCustomerController">
+	<div class="row">
+		<div class="col-md-12">
+			<div ng-class="{ 'alert': flash, 'alert-success': flash.type === 'success', 'alert-danger': flash.type === 'error' }" ng-if="flash" ng-bind="flash.message"></div>
+			
+			<div class="panel panel-orange">
+				<div class="panel-heading">
+					<h2>Update customer</h2>
+					<!--<h2 class='pull-right' ><button class="btn-primary btn " ng-click="ViewCustomer()" >View & Print</button></h2>-->
+				</div>
+				<form name="cus_user_form" class="form-horizontal row-border" ng-submit="customerUpdate()">
+				<div class="panel-body">
+                <div id="printfield"> 
+					<div class="row">
+						<div class="col-md-12">
+							<div class="col-md-6">
+								<h3 class="m0">Customer Information</h3>
+					            	<div class="form-group" >
+                                        <label class="col-sm-3 control-label">First Name</label>
+                                        <div class="col-sm-6">
+                                            <input type="text" class="form-control" ng-model="fname" name="fname" id="fname"  ng-model-options="{ updateOn: 'blur' }" required pattern=".{2,}" >
+                                            <span class="error-message" ng-show="cus_create_form.fname.$invalid && !cus_create_form.fname.$pristine">
+                                               First name is required.</span>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="col-sm-3 control-label">Last Name</label>
+                                        <div class="col-sm-6">
+                                            <input type="text" class="form-control" ng-model="lname" name="lname" id="lname" ng-model-options="{ updateOn: 'blur' }" required pattern=".{2,}">
+                                            <span class="error-message" ng-show="cus_create_form.lname.$invalid && !cus_create_form.lname.$pristine">
+                                              Last name is required.</span>
+                                        </div>
+                                        </div>
+                                    <div class="form-group">
+                                        <label class="col-sm-3 control-label">Email Address(Username)</label>
+                                        <div class="col-sm-6">
+                                            <input type="email" class="form-control" ng-model="email" name="email" disabled="disabled" >
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="col-sm-3 control-label">Gender</label>
+                                        <div class="col-sm-6">
+                                            <div class="radio-inline">
+                                              <label>
+                                                <input icheck type="radio" name="gender" id="gender_1" ng-model="gender" value="Male" checked="checked">
+                                                Male
+                                              </label>
+                                            </div>
+                                            <div class="radio-inline">
+                                              <label>
+                                                <input icheck type="radio" name="gender" id="gender_2" ng-model="gender" value="Female">
+                                                Female
+                                              </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="col-sm-3 control-label">Address</label>
+                                        <div class="col-sm-6">
+                                            <input type="text" class="form-control" id="address_1" name="address_1" ng-model="address_1" ng-model-options="{ updateOn: 'blur' }" required pattern=".{2,}">
+                                            <span class="error-message" ng-show="cus_create_form.address_1.$invalid && !cus_create_form.address_1.$pristine"> Address is required. </span>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="col-sm-3 control-label">Address 2</label>
+                                        <div class="col-sm-6">
+                                            <input type="text" class="form-control" id="address_2" name="address_2" ng-model="address_2">
+                                        </div>
+                                    </div>
+							</div>	
+							<div class="col-md-6">
+                                    <div class="form-group">
+                                        <label class="col-sm-3 control-label">City</label>
+                                        <div class="col-sm-6">
+                                            <input type="text" class="form-control" id="city" name="city" ng-model="city" ng-model-options="{ updateOn: 'blur' }" required pattern=".{2,}">
+                                            <span class="error-message" ng-show="cus_create_form.city.$invalid && !cus_create_form.city.$pristine"> City Name is required. </span>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="col-sm-3 control-label">Zip</label>
+                                        <div class="col-sm-6">
+                                            <input type="text" class="form-control" id="post" name="post"  ng-model="post" ng-model-options="{ updateOn: 'blur' }" required pattern=".{2,}" >
+                                            <span class="error-message" ng-show="cus_create_form.post.$invalid && !cus_create_form.post.$pristine"> Postcode is required. </span>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="col-sm-3 control-label">State</label>
+                                        <div class="col-sm-6">
+                                           <select name="region" id="region" class="form-control" ng-model="region" >
+                                                <option value="">Select Ragion</option>
+                                                <option value="35"> Tamil Nadu</option>
+                                                <option value="1">Andaman and Nicobar Islands</option>
+                                                <option value="2">Andhra Pradesh</option>
+                                                <option value="3">Arunachal Pradesh</option>
+                                                <option value="4">Assam</option>
+                                                <option value="5">Bihar</option>
+                                                <option value="6">Chandigarh</option>
+                                                <option value="7">Chhattisgarh</option>
+                                                <option value="8">Dadra and Nagar Haveli</option>
+                                                <option value="9">Daman and Diu</option>
+                                                <option value="10">Delhi</option>
+                                                <option value="11">Goa</option>
+                                                <option value="12">Gujarat</option>
+                                                <option value="13">Haryana</option>
+                                                <option value="14">Himachal Pradesh</option>
+                                                <option value="15">Jammu and Kashmir</option>
+                                                <option value="16">Jharkhand</option>
+                                                <option value="17">Karnataka</option>
+                                                <option value="18">Kenmore</option>
+                                                <option value="19">Kerala</option>
+                                                <option value="20">Lakshadweep</option>
+                                                <option value="21">Madhya Pradesh</option>
+                                                <option value="22">Maharashtra</option>
+                                                <option value="23">Manipur</option>
+                                                <option value="24">Meghalaya</option>
+                                                <option value="25">Mizoram</option>
+                                                <option value="26">Nagaland</option>
+                                                <option value="27">Narora</option>
+                                                <option value="28">Natwar</option>
+                                                <option value="29">Odisha</option>
+                                                <option value="30">Paschim Medinipur</option>
+                                                <option value="31">Pondicherry</option>
+                                                <option value="32">Punjab</option>
+                                                <option value="33">Rajasthan</option>
+                                                <option value="34">Sikkim</option>
+                                                <option value="36">Telangana</option>
+                                                <option value="37">Tripura</option>
+                                                <option value="38">Uttar Pradesh</option>
+                                                <option value="39">Uttarakhand</option>
+                                                <option value="40">Vaishali</option>
+                                                <option value="41">West Bengal</option>
+                                            </select>
+                                            
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="col-sm-3 control-label">Country</label>
+                                        <div class="col-sm-6">
+                                        <select name="country" id="country" class="form-control" ng-model="country" >
+                                        <option value="">Select Country</option>
+                                        <option value="101" selected="selected" >India</option>
+                                        </select>
+                                            
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="col-sm-3 control-label">Phone</label>
+                                        <div class="col-sm-6">
+                                            <input type="text" name="phone_1" id="phone_1" class="form-control mask" ng-model="phone_1" ng-model-options="{ updateOn: 'blur' }" required pattern=".{2,}">
+                                        </div>
+                                         <span class="error-message" ng-show="cus_create_form.phone_1.$invalid && !cus_create_form.phone_1.$pristine"> Phone number is required. </span>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="col-sm-3 control-label">Phone 2</label>
+                                        <div class="col-sm-6">
+                                            <input type="text" class="form-control mask" name="phone_2" id="phone_2" ng-model="phone_2">
+                                        </div>
+                                        <!--<div class="col-sm-3"><p class="help-block">(999) 999-9999</p></div>-->
+                                    </div>           					
+<div class="form-group">
+                                        <label class="col-sm-3 control-label">Status</label>
+                                        <div class="col-sm-6">
+                                            <div class="radio-inline">
+                                              <label>
+                                                <input icheck type="radio" name="status" id="status_1" ng-model="status" value="0">
+                                                Inactive
+                                              </label>
+                                            </div>
+                                            <div class="radio-inline">
+                                              <label>
+                                                <input icheck type="radio" name="status" id="status_2" ng-model="status" value="1">
+                                                Active
+                                              </label>
+                                            </div>
+                                        </div>
+                                    </div>
+							</div>	
+					</div>
+				</div>
+				<hr>
+                </div>
+				</br>
+				<input type="hidden" class="form-control" name="user_id" id="user_id" ng-model="user_id">
+				<div class="row">
+		      		<div class="col-sm-6 col-sm-offset-5">
+		      			<div class="btn-toolbar">
+			      			<button class="btn-primary btn" ng-click="Button('save')" value="save" >Save</button>
+			      			<button class="btn-success btn" ng-click="Button('send')" value="send">Send to Shirt Size</button>
+		      			</div>
+		      		</div>
+		      	</div>
+                </div>
+				</form>
+			</div>
+		</div>
+	</div>
+
+</div> <!-- container-fluid

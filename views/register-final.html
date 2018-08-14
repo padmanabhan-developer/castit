@@ -1,0 +1,26 @@
+    <div class="page" ng-controller="PaymentRegisterController">
+    
+         <div id="privacy_section">
+         	  <div class="container">
+              	   <div class="bluebox3">
+                   	    <div class="blue_inner3">
+                        	 <h3>Registration completed</h3>
+                        </div>
+                   </div>
+              </div><!--close container-->
+         </div><!--close privacy_section-->
+         
+         <div class="privacy">	
+         	  <div class="container">
+         	  <p>
+				Success!
+                You have completed your registration. Please pay and activate your pet.
+</p>
+			<p>Amount: Rs. {{ amount }}</p>
+			<p><input name="" value="Pay" ng-click="click_pay()" class="contact_submit" type="button"></p>
+         </div><!--close container-->
+		 <div class="container">
+		 	<p>{{ paymentfailed }}</p>
+		 </div>
+         </div><!--close privacy-->
+    </div><!--close page-->

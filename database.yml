@@ -1,0 +1,16 @@
+mysql: &MYSQL
+  adapter: mysql2
+  username: castit
+  database: castit
+  host: localhost
+  password: j3pw8=E49AYDC6N$fZ7R
+  pool: 40
+  encoding: utf8
+  collation: utf8_general_ci
+  socket: /var/run/mysqld/mysqld.sock
+
+acceptance:
+  <<: *MYSQL
+
+production:
+  <<: *MYSQL

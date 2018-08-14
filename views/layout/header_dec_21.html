@@ -1,0 +1,55 @@
+
+<div id="header" class="page-header" ng-controller="MainController">
+    <div class="logo"><a href="#/index"><img ng-src="{{interface == 'ansog' && 'images/logo2.png' || 'images/logo.png'}}" alt="" /></a></div>
+          <div class="header_right">
+               <div class="menu">
+                  <ul>
+                      <li ng-class="{ 'active': interface=='login'}"><a href="#/login">Login</a></li>
+                        <li ng-class="{ 'active': interface=='ansog'}"><a href="#/ansog-trin1">Ansøg</a></li>
+                        <li ng-class="{ 'active': interface=='aboutus'}"><a href="javascript:;" ng-click='show_about()'>Om Castit</a></li>
+                        <li ng-class="{ 'active': interface=='course'}"><a  href="javascript:;" ng-click='show_course()'>Castingkursus</a></li>
+                        <li class="kontakt"><a href="javascript:;"  ng-click='show_contact()'>Kontakt</a>
+                        <ul class="kon-dropdown">
+                              <li>
+                                Rosenvængets Allè 11 st. th<br>
+                                2100 Copenhagen Ø<br>
+                                M: 0045 21 28 58 25<br>
+                                E: info@Castit.dk</li>
+                            </ul> 
+                        </li>
+                    </ul>
+               </div>
+                              <div class="res-menu"><img src="images/menu.png" alt="responsivemenu"/></div>
+                              
+                                        </div>
+
+
+               <div class="res_menu">
+               <ul>
+                      <li><div class="information-inside"><h2>MENU</h2><a href="#" class="poup-close2">LUK</a></div></li>
+                       
+                        <li><a href="#/login">Login</a></li>
+                        <li><a href="#/ansog-trin1">Ansøg</a></li>
+                        <li><a href="#/om-castit">Om Castit</a></li>
+                        <li><a href="#/castingkursus">Castingkursus</a></li>
+                        <li  class="kontakt"><a href="#">Kontakt</a>
+                          <ul class="kon-dropdown">
+                              <li>
+                                Rosenvængets Allè 11 st. th<br>
+                                2100 Copenhagen Ø<br>
+                                M: 0045 21 28 58 25<br>
+                                E: info@Castit.dk</li>
+                            </ul>
+                        </li>
+                    </ul>
+               
+               </div>
+               	
+        
+    </div><!-- close header -->
+   <!-- <div class="social_new">
+        	 <a href="#" class="facebook"></a>
+             <a href="#" class="twitter"></a>
+             <a href="#" class="google_plus"></a>
+             <a href="#" class="instagram"></a>
+        </div>-->

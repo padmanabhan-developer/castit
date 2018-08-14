@@ -1,0 +1,13 @@
+<!DOCTYPE>
+<html>
+<head>
+  <title>player</title>
+  <link href="http://vjs.zencdn.net/c/video-js.css" rel="stylesheet">
+  <script src="http://vjs.zencdn.net/c/video.js"></script>
+</head>
+<body style="padding:0;margin:0;">
+<video id="my_video_1" class="video-js vjs-default-skin" controls  width="640" height="264" poster="<%= @thumbnail_url %>" autoplay preload="auto" data-setup="()">
+<source src="<%=URI.escape(@video_url) %>" type='video/mp4'>
+</video>
+</body>
+</html>

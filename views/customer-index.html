@@ -1,0 +1,211 @@
+<div id="page-heading">
+    <ol class="breadcrumb">
+        <li><a href="#/">Home</a></li>
+        <li class="active">Dashboard</li>
+    </ol>
+
+    <h1>Dashboard</h1>
+</div>
+
+<div class="container-fluid" ng-controller="FrontendController">
+	<div class="row" ng-if="usertype">
+	
+    <div class="row" >
+        <div class="col-md-12 animated-content">
+            <div class="row">
+                <div class="col-xs-3">
+						<a class="info-tiles tiles-success" href="#/customer-management">
+							<div class="tiles-heading">
+								<div class="text-center ng-binding">Users</div>
+							</div>
+							<div class="tiles-body">
+								<div class="text-center">{{ usertotal }}</div>
+							</div>
+						</a>
+					</div>
+                <div class="col-xs-3">
+					<a class="info-tiles tiles-indigo" href="#/pets-management">
+						<div class="tiles-heading">
+							<div class="text-center ng-binding">Pets</div>
+						</div>
+						<div class="tiles-body">
+							<div class="text-center">{{ petscount }}</div>
+						</div>
+					</a>
+                </div>
+				<div class="col-xs-3">
+					<a class="info-tiles tiles-orange" href="#/foundpets-management">
+						<div class="tiles-heading">
+							<div class="text-center ng-binding">Found Pets</div>
+						</div>
+						<div class="tiles-body">
+							<div class="text-center">{{ foundpetscount }}</div>
+						</div>
+					</a>
+                </div>
+ 				<div class="col-xs-3">
+					<a class="info-tiles tiles-sky" href="#/lostpets-management">
+						<div class="tiles-heading">
+							<div class="text-center ng-binding">Lost Pets</div>
+						</div>
+						<div class="tiles-body">
+							<div class="text-center">{{ lostpetscount }}</div>
+						</div>
+					</a>
+                </div>
+           </div>
+        </div>
+    </div>
+
+
+    <div class="row">
+        <div class="col-md-3 animated-content" ng-drop="true">
+            <panel panel-class="panel-default no-padding" heading="Customer List">
+                <panel-controls>
+                    <panel-control-collapse></panel-control-collapse>
+                </panel-controls>
+
+                <div class="table-responsive">
+                    <table class="table" id='tableID' style="margin-bottom: 0px;">
+                        <tbody class="selects">
+                            <tr ng-repeat="ua in customerList()">
+                                <td class="col-xs-3">{{ua.name}} </td>
+								<td class="col-xs-4">{{ua.email}}</td>
+								<td class="col-xs-3"><span class="{{ua.status_short}}"></span></td>
+                                <td class="col-xs-4 text-right">
+                                    <div class="btn-group">
+										<a href="#/edit-customer/{{ua.id}}" class="btn btn-sm btn-default"><i class="glyphicon glyphicon-ok"></i></a>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                        <tfoot>
+                            <tr class="active">
+                                <td colspan="4" class="text-left" style="background: none;">
+                                    <div class="clearfix">
+                                        <div class="pull-right">
+											<a class="btn btn-primary btn-sm mr10" href="#/customer-management">See more</a>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+            </panel>
+             </div>
+			<div class="col-md-3 animated-content" ng-drop="true">
+            <panel panel-class="panel-default no-padding" heading="Available Pets">
+                <panel-controls>
+                    <panel-control-collapse></panel-control-collapse>
+                </panel-controls>
+
+                <div class="table-responsive">
+                    <table class="table" style="margin-bottom: 0px;">
+                        <tbody class="selects">
+                            <tr ng-repeat="ua in petsList()">
+                                <td class="col-xs-3">{{ua.pet_name}}</td>
+								<td class="col-xs-4">{{ua.owner_name}}</td>
+								<td class="col-xs-3"><span class="{{ua.status_short}}"></span></td>
+                                <td class="col-xs-4 text-right">
+                                    <div class="btn-group">
+                                        <a href="#/edit-pet/{{ua.id}}" class="btn btn-sm btn-default"><i class="glyphicon glyphicon-ok"></i></a>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                        <tfoot>
+                            <tr class="active">
+                                <td colspan="4" class="text-left" style="background: none;">
+                                    <div class="clearfix">
+                                        <div class="pull-right">
+											<a class="btn btn-primary btn-sm mr10" href="#/pets-management">See more</a>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+            </panel>
+             </div>
+
+			<div class="col-md-3 animated-content" ng-drop="true">
+            <panel panel-class="panel-default no-padding" heading="Found Pets List">
+                <panel-controls>
+                    <panel-control-collapse></panel-control-collapse>
+                </panel-controls>
+
+                <div class="table-responsive">
+                    <table class="table" style="margin-bottom: 0px;">
+                        <tbody class="selects">
+                            <tr ng-repeat="ua in foundpetsList()">
+                                <td class="col-xs-3">{{ua.species}}</td>
+								<td class="col-xs-4">{{ua.found_on}}</td>
+								<td class="col-xs-3"><span class="{{ua.status}}"></span></td>
+                                <td class="col-xs-4 text-right">
+                                    <div class="btn-group">
+                                        <a href="#/edit-foundpet/{{ua.id}}" class="btn btn-sm btn-default"><i class="glyphicon glyphicon-ok"></i></a
+                                    ></div>
+                                </td>
+                            </tr>
+                        </tbody>
+                        <tfoot>
+                            <tr class="active">
+                                <td colspan="4" class="text-left" style="background: none;">
+                                    <div class="clearfix">
+                                        <div class="pull-right">
+											<a class="btn btn-primary btn-sm mr10" href="#/foundpets-management">See more</a>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+            </panel>
+             </div>
+             
+             <div class="col-md-3 animated-content" ng-drop="true">
+            <panel panel-class="panel-default no-padding" heading="Found Pets list">
+                <panel-controls>
+                    <panel-control-collapse></panel-control-collapse>
+                </panel-controls>
+
+                <div class="table-responsive">
+                    <table class="table" style="margin-bottom: 0px;">
+                        <tbody class="selects">
+                            <tr ng-repeat="ua in lostpetsList()">
+                                <td class="col-xs-3">{{ua.species}}</td>
+								<td class="col-xs-4">{{ua.lost_on}}</td>
+								<td class="col-xs-3"><span class="{{ua.status}}"></span></td>
+                                <td class="col-xs-4 text-right">
+                                    <div class="btn-group">
+                                        <a href="#/edit-lostpet/{{ua.id}}" class="btn btn-sm btn-default"><i class="glyphicon glyphicon-ok"></i></a
+                                    ></div>
+                                </td>
+                            </tr>
+                        </tbody>
+                        <tfoot>
+                            <tr class="active">
+                                <td colspan="4" class="text-left" style="background: none;">
+                                    <div class="clearfix">
+                                        <div class="pull-right">
+											<a class="btn btn-primary btn-sm mr10" href="#/lostpets-management">See more</a>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+            </panel>
+             </div>
+             	
+			</div> 
+          </div>
+	
+	<div class="row" ng-if="!usertype">
+		<p>You are not authorized to perform this page !</p>
+	</div>
+</div> <!-- container-fluid -->

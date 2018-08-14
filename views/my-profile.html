@@ -1,0 +1,73 @@
+<div class="page" ng-controller="MyProfileController">
+    
+         <div id="privacy_section">
+         	  <div class="container">
+              	   <div class="bluebox3">
+                   	    <div class="blue_inner3">
+                        	 <h3>My Profile </h3>
+                        </div>
+                   </div>
+              </div><!--close container-->
+         </div><!--close privacy_section-->
+         
+         <div class="found_dog">
+         	  <div class="container">
+              	   <h2>My Profile <a href="#/edit-profile" class="report_button">EDIT PROFILE</a></h2>
+              	   <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+                   <div ng-class="{ 'alert': flash, 'alert-success': flash.type === 'success', 'alert-danger': flash.type === 'error' }" ng-if="flash" ng-bind="flash.message"></div>
+                   
+                   <div class="found_dog_section found_dog_section2 my-profile-page">
+                   	   <h4>OWNER Details</h4>
+                       <div class="found_dog_box">
+                       		<div class="form_row">
+                                <div class="form_div profile_div">
+                                	 
+                                	 <div class="contat_form"><label>Owner Name :</label>{{fname}} {{lname}}</div>
+                                     
+                                     <div class="contat_form"><label>Address :</label>{{address_1}},
+                                     <span ng-show="address_2"><br />{{address_2}},</span>
+                                     <span ><br />{{city}}, {{state}} - {{post}},</span>
+                                     <span ><br />{{countryname}}.</span>
+                                     </div>
+                                </div>
+                                
+                                <div class="form_div profile_div">
+                                	 <div class="contat_form"><label>Mobile :</label>{{phone_1}}</div>
+                                     <div class="contat_form" ng-show="phone_2"><label>Phone :</label>{{phone_2}}</div>
+                                     <div class="contat_form"><label>Email :</label> {{email}}</div>
+                                     <!--<div class="contat_form"><label>Events Nearing </label></div>-->
+                                </div>
+                            </div>
+                       </div>
+                       
+                       
+                       <div class="myprofile2">
+                       		<h4>
+                                <span class="title_span">Pet Details</span> 
+                                <span class="plus">
+                                    <a href="#/add-new-pet" title="Register new pet">
+                                        <img src="images/plus.png" alt="" />
+                                    </a>
+                                </span>
+                            </h4>
+                            <div class="profile2_row">
+                            	 <div class="profile2_box profile2_box1" ng-repeat="pet in pets">
+                                 	  <span class="profile2_thumb">
+                                      	<img ng-src="{{ pet.image || 'images/thumb3.png' }}" alt=""/>
+                                      </span>
+                                      <p>Pet Name: {{pet.pet_name}}</p>
+                                      <p>Type : {{pet.species}}</p>
+                                      <p>Breed : {{pet.breed}}</p>
+                                      <p>Date of Birth :{{pet.dob}}</p>
+                                      <p>ARV Date :{{pet.arv_date}}</p>
+                                      <a href="#edit-pet/{{pet.pet_id}}" class="edit_submit">Edit</a>
+                                   
+                                 </div>
+                            </div><!--close profile2_row-->
+                       </div><!--close myprofile2-->
+                   </div>
+              </div><!--close container-->
+         </div><!--close found_dog-->
+         
+              
+    </div><!--close page-->
