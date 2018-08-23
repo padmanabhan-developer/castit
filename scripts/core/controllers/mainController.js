@@ -288,11 +288,11 @@ main.controller('RegisterStep2Controller', ['$scope', '$filter', '$http', '$wind
 	}; 
 	$http.get('api/v1/getstep2data', {params: {limit: limit}}).success(function(response) {
 		$scope.gender=response.gender;
-		//console.log($scope.gender);
 	});
 	$scope.step2Create = step2Create;
 	function step2Create() {  
-		var formData = {email: $scope.email,
+		var formData = {
+            email: $scope.email,
 						phone: $scope.phone,
 						phone_at_work: $scope.phone_at_work,
 						gender_id: $scope.gender_id,
@@ -332,7 +332,6 @@ main.controller('RegisterStep3Controller', ['$scope', '$filter', '$http', '$wind
 		$scope.gender=response.genders;
 		$scope.eye_colors=response.eye_colors;
 		$scope.hair_colors=response.hair_colors;
-		console.log(response);
 	});
 
 	$scope.shirt_size_from	= '';	$scope.shirt_size_to= ''; 	$scope.pants_size_from	= ''; 	$scope.pants_size_to='';
@@ -366,7 +365,8 @@ main.controller('RegisterStep3Controller', ['$scope', '$filter', '$http', '$wind
 	$scope.step3Create = step3Create;
 	
 	function step3Create() {  
-		var formData = {shirt_size_from: $scope.shirt_size_from,
+		var formData = {
+            shirt_size_from: $scope.shirt_size_from,
 						shirt_size_to: $scope.shirt_size_to,
 						pants_size_from: $scope.pants_size_from,
 						pants_size_to: $scope.pants_size_to,
@@ -522,7 +522,8 @@ main.controller('RegisterStep4Controller', ['$scope', '$filter', '$http', '$wind
 	
 	$scope.step4Create = step4Create;
 	function step4Create() {  
-		var formData = {notes: $scope.notes,
+		var formData = {
+            notes: $scope.notes,
 						job: $scope.job,
 						selectedcategories: $scope.selectedcategories,
 						selectedskills: $scope.selectedskills,
@@ -617,7 +618,8 @@ main.controller('RegisterStep5Controller', ['$scope', '$filter', '$http', '$wind
 	function step5Create() {  
 			
 
-		var formData = {lang1: $scope.lang1,
+		var formData = {
+            lang1: $scope.lang1,
 						lang2: $scope.lang2,
 						lang3: $scope.lang3,
 						lang4: $scope.lang4,
@@ -640,7 +642,12 @@ main.controller('RegisterStep5Controller', ['$scope', '$filter', '$http', '$wind
 }]);
 
 // Regsiter Step 6
-main.controller('RegisterStep6Controller', ['$scope', '$filter', '$http', '$window', '$rootScope', '$routeParams', 'FlashService', function($scope, $filter, $http, $window, $rootScope, $routeParams, FlashService) {  
+main.controller('RegisterStep6Controller', ['$scope', '$filter', '$http', '$window', '$rootScope', '$routeParams', 'FlashService', function($scope, $filter, $http, $window, $rootScope, $routeParams, FlashService) {
+  var operation = '';
+  if($(".operation") != undefined){
+    operation = $(".operation").val();
+  }
+
 	$rootScope.bodylayout = 'black';
 	$rootScope.interface = 'ansog';	
 	var limit='';	 
@@ -655,7 +662,6 @@ main.controller('RegisterStep6Controller', ['$scope', '$filter', '$http', '$wind
 		}
 	});
 		
-	
 	$http.get('api/v1/countries').success(function(countriesdropdown) {
 		$scope.countriesdropdown = countriesdropdown
 	});
@@ -679,6 +685,7 @@ main.controller('RegisterStep6Controller', ['$scope', '$filter', '$http', '$wind
 		$http.post('api/v1/step6Create',  fd, 
 					{
 						transformRequest: angular.identity,
+            operation: operation,
 						headers: {'Content-Type': undefined,'Process-Data': false}
 					}
 					).success(function(response) {
@@ -1261,7 +1268,7 @@ main.controller('UserPasswordResetController', ['$scope', '$filter', '$http', '$
 	  }
 }]);
 
-main.controller('AngularLoginController', ['$scope', '$filter', '$http', '$window', '$rootScope', 'FlashService', function($scope, $filter, $http, $window, $rootScope, FlashService) { 
+main.controller('AngularLoginController', ['$scope', '$filter', '$http', '$window', '$rootScope', 'FlashService', '$cookies', function($scope, $filter, $http, $window, $rootScope, FlashService, $cookies) { 
 	this.loginForm = function() {
 
 	var user_data='user_email=' +this.inputData.email+'&user_password='+this.inputData.password;
@@ -1273,9 +1280,11 @@ main.controller('AngularLoginController', ['$scope', '$filter', '$http', '$windo
 		headers: {'Content-Type': 'application/x-www-form-urlencoded'}
 	})
 	.success(function(data) {
-	  console.log(data);
-		if ( data.trim() === 'correct') {
-			window.location.href = 'check.php';
+		console.log(data);
+		if (data !== 'wrong') {
+			document.cookie = "email="+data.email; 
+			$rootScope.globals.currentUser = data;
+			window.location.href = '#/my-profile_1';
 		} else {
 			$scope.errorMsg = "Invalid Email and Password";
 		}
@@ -1283,3 +1292,356 @@ main.controller('AngularLoginController', ['$scope', '$filter', '$http', '$windo
 
 	}
 }]);
+
+main.controller('MyProfileController1',['$scope','$http', function($scope, $http, $cookies){
+	var cookies_current = document.cookie;
+  // $http.post('api/v1/getprofileinfo.php', { cookies_current: cookies_current})
+	$http.get('api/v1/countries').success(function(countriesdropdown) {
+		$scope.countriesdropdown = countriesdropdown;
+	});
+	$http({
+		method: 'POST',
+		url: 'api/v1/getprofileinfo.php',
+		data: cookies_current,
+		headers: {'Content-Type': 'application/x-www-form-urlencoded'}
+	})
+	.success(function (response) {
+     $scope.profileinfo = response;
+     $scope.selectedCountry_id = $scope.profileinfo.country_id;
+     sessionStorage.setItem('profileinfo', JSON.stringify(response));
+   });
+ 	$scope.step1Update = step1Update;
+	function step1Update() {  
+		var formData = {first_name: $scope.profileinfo.first_name,
+						last_name: $scope.profileinfo.last_name,
+						zipcode: $scope.profileinfo.zipcode,
+						address: $scope.profileinfo.address,
+						city: $scope.profileinfo.city,
+						country_id: $scope.profileinfo.country_id,
+            password: $scope.profileinfo.password,
+            hashed_password: $scope.profileinfo.hashed_password
+						}
+						if(typeof $scope.profileinfo.password == 'string' ){
+							formData.password = $scope.profileinfo.password;
+						}
+		$http.post('api/v1/step1Create', formData).success(function(response) {
+			if(response.success){
+				window.location = '#/my-profile_2';
+			}
+		});				
+  }
+}]);
+
+main.controller('MyProfileController2',['$scope','$http', function($scope, $http, $cookies){
+  $scope.profileinfo = JSON.parse(sessionStorage.getItem('profileinfo'));
+  var birth_array = $scope.profileinfo.birthday.split('-');
+  $scope.profileinfo.birth_day    = birth_array[2];
+  $scope.profileinfo.birth_month  = +birth_array[1];
+  $scope.profileinfo.birth_year   = birth_array[0];
+  $http.get('api/v1/years').success(function(yearsdropdown) {
+    $scope.yearsdropdown = yearsdropdown
+  });
+  var limit='';
+  $http.get('api/v1/getstep2data', {params: {limit: limit}}).success(function(response) {
+    $scope.gender=response.gender;
+  });
+  var birth_month = ("0" + $scope.profileinfo.birth_month).slice(-2);
+  $("#birth_day option[value="+$scope.profileinfo.birth_day+"]").attr("selected","selected");
+  $("#birth_month option[value="+$scope.profileinfo.birth_month+"]").attr("selected","selected");
+  $("#birth_year option[value="+$scope.profileinfo.birth_year+"]").attr("selected","selected");
+  $("#gender_id option[value='"+$scope.profileinfo.gender_id+"']").attr("selected","selected");
+  
+  $scope.step2Update = step2Update;
+  function step2Update() {
+    if($scope.profileinfo.ethinic_origin == undefined){
+      $scope.profileinfo.ethinic_origin = '';
+    }
+    var formData = {
+          email: $scope.profileinfo.email,
+          phone: $scope.profileinfo.phone,
+          phone_at_work: $scope.profileinfo.phone_at_work,
+          gender_id: $scope.profileinfo.gender_id,
+          birth_day: $scope.profileinfo.birth_day,
+          birth_month: $scope.profileinfo.birth_month,
+          birth_year: $scope.profileinfo.birth_year,
+          ethinic_origin: $scope.profileinfo.ethinic_origin
+        }
+    $http.post('api/v1/step2Create', formData).success(function(response) {
+      if(response.success){
+        window.location = '#/my-profile_3';
+      }
+    });       
+  }
+}]);
+
+main.controller('MyProfileController3',['$scope','$http', function($scope, $http, $cookies){
+  $scope.profileinfo = JSON.parse(sessionStorage.getItem('profileinfo'));
+  $scope.gender_id = $scope.profileinfo.gender_id;
+  
+  var birthday = +new Date($scope.profileinfo.birthday);
+  $scope.age = ~~((Date.now() - birthday) / (31557600000));   
+  var limit = '';
+  $http.get('api/v1/getstep3data', {params: {limit: limit}}).success(function(response) {
+    $scope.gender=response.genders;
+    $scope.eye_colors=response.eye_colors;
+    $scope.hair_colors=response.hair_colors;
+  });
+
+  $("#hair_color_id option[value='"+$scope.profileinfo.hair_color_id+"']").attr("selected","selected");
+  $("#eye_color_id option[value='"+$scope.profileinfo.eye_color_id+"']").attr("selected","selected");  
+
+  $("#shirt_size_from option[value='"+$scope.profileinfo.shirt_size_from+"']").attr("selected","selected");
+  $("#shirt_size_to option[value='"+$scope.profileinfo.shirt_size_to+"']").attr("selected","selected");
+
+  $("#pants_size_from option[value='"+$scope.profileinfo.pants_size_from+"']").attr("selected","selected");
+  $("#pants_size_to option[value='"+$scope.profileinfo.pants_size_to+"']").attr("selected","selected");
+  
+  $("#shoe_size_from option[value='"+$scope.profileinfo.shoe_size_from+"']").attr("selected","selected");
+  $("#shoe_size_to option[value='"+$scope.profileinfo.shoe_size_to+"']").attr("selected","selected");
+
+  $("#suite_size_from option[value='"+$scope.profileinfo.suite_size_from+"']").attr("selected","selected");
+  $("#suite_size_to option[value='"+$scope.profileinfo.suite_size_to+"']").attr("selected","selected");
+  
+  $("#bra_size option[value='"+$scope.profileinfo.bra_size+"']").attr("selected","selected");
+  
+  $scope.step3Update = step3Update;
+  function step3Update() {
+    var formData = {
+            shirt_size_from: $scope.profileinfo.shirt_size_from,
+            shirt_size_to: $scope.profileinfo.shirt_size_to,
+            pants_size_from: $scope.profileinfo.pants_size_from,
+            pants_size_to: $scope.profileinfo.pants_size_to,
+            shoe_size_from: $scope.profileinfo.shoe_size_from,
+            shoe_size_to: $scope.profileinfo.shoe_size_to,
+            suite_size_from: $scope.profileinfo.suite_size_from,
+            suite_size_to: $scope.profileinfo.suite_size_to,
+            children_sizes: $scope.profileinfo.children_sizes,
+            eye_color_id: $scope.profileinfo.eye_color_id,
+            hair_color_id: $scope.profileinfo.hair_color_id,
+            bra_size: $scope.profileinfo.bra_size,
+            height: $scope.profileinfo.height,
+            weight: $scope.profileinfo.weight,
+        }
+    $http.post('api/v1/step3Create', formData).success(function(response) {
+      if(response.success){
+        window.location = '#/my-profile_4';
+      }
+    });       
+  }
+}]);
+
+
+main.controller('MyProfileController4',['$scope','$http', function($scope, $http, $cookies){
+  $scope.profileinfo = JSON.parse(sessionStorage.getItem('profileinfo'));
+  var limit='';  
+
+  $http.get('api/v1/getcategories').success(function(categoriesdropdown) {
+    $scope.categoriesdropdown = categoriesdropdown
+  });
+  $http.get('api/v1/getskills').success(function(skillsdropdown) {
+    $scope.skillsdropdown = skillsdropdown
+  });
+  $http.get('api/v1/getlicences').success(function(licencesdropdown) {
+    $scope.licencesdropdown = licencesdropdown
+  });
+  $scope.selectedcategories = $scope.profileinfo.categories.toString();
+  $scope.selectedskills = $scope.profileinfo.skills.toString();
+  $scope.selectedlicences = $scope.profileinfo.licenses.toString();
+
+  $scope.$on('ngRepeatFinished', function(ngRepeatFinishedEvent) {
+    for (var c of $scope.profileinfo.categories) {
+      $(".form_box span#catbut"+c).removeClass('button1');
+      $(".form_box span#catbut"+c).addClass('button2');
+      $(".form_box span#catspan"+c).removeClass('plus-icon');
+      $(".form_box span#catspan"+c).addClass('close-icon');
+    };
+    for (var s of $scope.profileinfo.skills) {
+      $(".form_box span#skillbut"+c).removeClass('button1');
+      $(".form_box span#skillbut"+c).addClass('button2');
+      $(".form_box span#skillspan"+c).removeClass('plus-icon');
+      $(".form_box span#skillspan"+c).addClass('close-icon');
+    };
+    for (var s of $scope.profileinfo.licenses) {
+      $(".form_box span#licbut"+c).removeClass('button1');
+      $(".form_box span#licbut"+c).addClass('button2');
+      $(".form_box span#licspan"+c).removeClass('plus-icon');
+      $(".form_box span#licspan"+c).addClass('close-icon');
+    };
+  });
+
+  $scope.checkuncheckcategory = checkuncheckcategory;
+  function checkuncheckcategory(catid) {  
+    var myElBut = angular.element( document.querySelector( '#catbut'+catid ) );
+    var myElSpan = angular.element( document.querySelector( '#catspan'+catid ) );
+    myElBut.toggleClass('button1').toggleClass('button2');
+    myElSpan.toggleClass('plus-icon').toggleClass('close-icon');
+    var selcats = new Array();
+    if($scope.selectedcategories){
+       selcats = $scope.selectedcategories.split(',');
+       var selindex = selcats.indexOf(catid);
+      if( selindex !== -1) {
+          selcats.splice(selindex, 1); 
+      }else{
+          selcats.push(catid);
+      }
+    }else{
+      
+      if(myElBut.hasClass('button2'))
+         selcats.push(catid);
+    }
+    $scope.selectedcategories = selcats.toString();
+  };
+  
+  $scope.checkuncheckskill = checkuncheckskill;
+  function checkuncheckskill(skillid) {  
+    var myElBut = angular.element( document.querySelector( '#skillbut'+skillid ) );
+    var myElSpan = angular.element( document.querySelector( '#skillspan'+skillid ) );
+    myElBut.toggleClass('button1').toggleClass('button2');
+    myElSpan.toggleClass('plus-icon').toggleClass('close-icon');
+    var selskills = new Array();
+    if($scope.selectedskills){
+       selskills = $scope.selectedskills.split(',');
+       var selindex = selskills.indexOf(skillid);
+      if(selindex !== -1) {
+        selskills.splice(selindex, 1); 
+      }else{
+        selskills.push(skillid);
+      }
+    }else{
+      if(myElBut.hasClass('button2'))
+         selskills.push(skillid);
+    }
+    $scope.selectedskills = selskills.toString();
+    
+  };
+  
+  $scope.checkunchecklicence = checkunchecklicence;
+  function checkunchecklicence(licid) {  
+    var myElBut = angular.element( document.querySelector( '#licbut'+licid ) );
+    var myElSpan = angular.element( document.querySelector( '#licspan'+licid ) );
+    myElBut.toggleClass('button1').toggleClass('button2');
+    myElSpan.toggleClass('plus-icon').toggleClass('close-icon');
+    var sellics = new Array();
+    if($scope.selectedlicences){
+       sellics = $scope.selectedlicences.split(',');
+       var selindex = sellics.indexOf(licid);
+      if( selindex !== -1) {
+        sellics.splice(selindex, 1); 
+      }else{
+        sellics.push(licid);
+      }
+    }else{
+      if(myElBut.hasClass('button2'))
+         sellics.push(licid);
+    }
+    $scope.selectedlicences = sellics.toString();
+  };
+  
+  $scope.step4Update = step4Update;
+  function step4Update() {
+    var formData = {
+          notes: $scope.profileinfo.notes,
+          job: $scope.profileinfo.job,
+          selectedcategories: $scope.profileinfo.categories,
+          selectedskills: $scope.profileinfo.skills,
+          selectedlicences: $scope.profileinfo.licenses
+        }
+    $http.post('api/v1/step4Create', formData).success(function(response) {
+      if(response.success){
+        window.location = '#/my-profile_5';
+      }
+    });       
+  }
+}]);
+
+main.controller('MyProfileController5',['$scope','$http', function($scope, $http, $cookies){
+  $scope.profileinfo = JSON.parse(sessionStorage.getItem('profileinfo'));
+
+  $http.get('api/v1/getlanguages').success(function(languagesdropdown) {
+    $scope.languagesdropdown = languagesdropdown
+  });
+
+  $scope.languagesListDropdown = function() {
+    return this.languagesdropdown;
+  }; 
+  
+  $http.get('api/v1/getlanguageratings').success(function(languageratings) {
+    $scope.languageratings = languageratings
+  });
+
+  $scope.setlangraing = setlangraing;
+  function setlangraing(langrowid,langrateid) {
+    if($('#lang'+langrowid).val()) {
+      for (i = 1; i <= 4; i++) {
+        if(i <= langrateid)
+          $('#start_'+langrowid+'_'+i).attr('src','images/star-white.png');
+        else
+          $('#start_'+langrowid+'_'+i).attr('src','images/star-black.png');
+      }
+      $('#langrateval'+langrowid).val(langrateid);
+    }
+  };
+
+  $scope.lang1 = ($scope.profileinfo.languages[0] != undefined) ? $scope.profileinfo.languages[0].lang_id : "";
+  $scope.lang2 = ($scope.profileinfo.languages[1] != undefined) ? $scope.profileinfo.languages[1].lang_id : "";
+  $scope.lang3 = ($scope.profileinfo.languages[2] != undefined) ? $scope.profileinfo.languages[2].lang_id : "";
+  $scope.lang4 = ($scope.profileinfo.languages[3] != undefined) ? $scope.profileinfo.languages[3].lang_id : "";
+
+  $("#lang1 option[value='"+ $scope.lang1 +"']").attr("selected","selected");
+  $("#lang2 option[value='"+ $scope.lang2 +"']").attr("selected","selected");
+  $("#lang3 option[value='"+ $scope.lang3 +"']").attr("selected","selected");
+  $("#lang4 option[value='"+ $scope.lang4 +"']").attr("selected","selected");
+  
+  $scope.langrateval1 = ($scope.profileinfo.languages[0] != undefined) ? $scope.profileinfo.languages[0].rating : "";
+  $scope.langrateval2 = ($scope.profileinfo.languages[1] != undefined) ? $scope.profileinfo.languages[1].rating : "";
+  $scope.langrateval3 = ($scope.profileinfo.languages[2] != undefined) ? $scope.profileinfo.languages[2].rating : "";
+  $scope.langrateval4 = ($scope.profileinfo.languages[3] != undefined) ? $scope.profileinfo.languages[3].rating : "";
+  
+  $scope.$on('ngRepeatFinished', function(ngRepeatFinishedEvent) {
+    ($scope.langrateval1 != "") ? setlangraing(1, $scope.langrateval1) : $scope.langrateval1 = "";
+    ($scope.langrateval2 != "") ? setlangraing(2, $scope.langrateval2) : $scope.langrateval2 = "";
+    ($scope.langrateval3 != "") ? setlangraing(3, $scope.langrateval3) : $scope.langrateval3 = "";
+    ($scope.langrateval4 != "") ? setlangraing(4, $scope.langrateval4) : $scope.langrateval4 = "";
+  });
+
+  $scope.step5Update = step5Update;
+  function step5Update() {
+    var formData = {
+          lang1: $scope.lang1,
+          lang2: $scope.lang2,
+          lang3: $scope.lang3,
+          lang4: $scope.lang4,
+          langrateval1: $('#langrateval1').val(),
+          langrateval2: $('#langrateval2').val(),
+          langrateval3: $('#langrateval3').val(),
+          langrateval4: $('#langrateval4').val(),
+          dealekter1: $scope.dealekter1,
+          dealekter2: $scope.dealekter2,
+          dealekter3: $scope.dealekter3,
+          user_profile_id: $scope.profileinfo.id,
+          operation: 'update',
+          lng_pro_id1: ($scope.profileinfo.languages[0] != undefined) ? $scope.profileinfo.languages[0].lng_pro_id : "",
+          lng_pro_id2: ($scope.profileinfo.languages[1] != undefined) ? $scope.profileinfo.languages[1].lng_pro_id : "",
+          lng_pro_id3: ($scope.profileinfo.languages[2] != undefined) ? $scope.profileinfo.languages[2].lng_pro_id : "",
+          lng_pro_id4: ($scope.profileinfo.languages[3] != undefined) ? $scope.profileinfo.languages[3].lng_pro_id : "",
+        }
+        console.log(formData);
+    $http.post('api/v1/step5Create', formData).success(function(response) {
+      if(response.success){
+        window.location = '#/my-profile_6';
+      }
+    });       
+  }
+}])
+.directive('onFinishRender', function ($timeout) {
+    return {
+        restrict: 'A',
+        link: function (scope, element, attr) {
+            if (scope.$last === true) {
+                $timeout(function () {
+                    scope.$emit(attr.onFinishRender);
+                });
+            }
+        }
+    }
+});
