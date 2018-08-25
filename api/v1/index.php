@@ -162,7 +162,7 @@ $app->get('/getfilterprofiles',function () use ($app) {
 	}
 
 	if($search_text){
-		$search_qry .= " AND (p.first_name LIKE '%".$search_text."%' OR p.last_name LIKE '%".$search_text."%' OR m.profile_number LIKe '%".$search_text."%')";		
+		$search_qry .= " AND (p.first_name = '".$search_text."' OR p.last_name = '".$search_text."' OR m.profile_number = '".$search_text."')";		
 	}
 	$qry = "SELECT p.*, m.profile_group_id, m.profile_number, m.profile_number_first_name_last_name, m.version, m.current, g.name as gender_name, hc.name as hair_color_name, ec.name as eye_color_name FROM profiles p INNER JOIN memberships m ON m.profile_id = p.id INNER JOIN genders g ON g.id = p.gender_id INNER JOIN hair_colors hc ON hc.id = p.hair_color_id INNER JOIN eye_colors ec ON ec.id = p.eye_color_id  WHERE (p.profile_status_id = '1' OR  p.profile_status_id = '2') AND m.current ='1' AND p.id IN (SELECT profile_id from photos WHERE published ='1' GROUP by profile_id) ".$search_qry."  ORDER by case WHEN m.profile_number LIKE 'CF%' THEN 1 WHEN m.profile_number LIKE 'CM%' THEN 2 WHEN m.profile_number LIKE 'A%' THEN 3 WHEN m.profile_number LIKE 'J%' THEN 4  WHEN m.profile_number LIKE 'YF%' THEN 5 WHEN m.profile_number LIKE 'YM%' THEN 6 ELSE 7 END ";
 	$query = $db->prepare($qry); 
@@ -772,8 +772,9 @@ $app->get('/getgroupingprofiles', function () use ($app) {
 	$reponse = array();
 	$rowcount = 0;
 	$grouping_profile = array();
+	$grouptoken =  $app->request->get('grouptoken');
 
-	$query_check_gb = $db->prepare("SELECT *, date_format(added_on , '%d.%m.%Y') as addedon  FROM grouping where status = '1' order by group_name asc"); 
+	$query_check_gb = $db->prepare("SELECT *, date_format(added_on , '%d.%m.%Y') as addedon  FROM grouping where token_id= '".$grouptoken."' AND status = '1' order by group_name asc"); 
 	$query_check_gb->execute();
 	$rows_gb = $query_check_gb->fetchAll(PDO::FETCH_ASSOC);
 	if(count($rows_gb)>0) {
@@ -856,9 +857,10 @@ Type : GET
 $app->get('/removegroupfromgrouping', function () use ($app) { 
     global $db;
 	$groupid =  $app->request->get('groupid');
+	$grouptoken =  $app->request->get('grouptoken');
 
 	if($groupid){
-		$query_check_gb = $db->prepare("SELECT * FROM grouping where group_id = '".$groupid."'"); 
+		$query_check_gb = $db->prepare("SELECT * FROM grouping where group_id = '".$groupid."' AND token_id = '".$grouptoken."'"); 
 		$query_check_gb->execute();
 		$rows_gb = $query_check_gb->fetchAll(PDO::FETCH_ASSOC);
 		if(count($rows_gb)>0) {
@@ -879,7 +881,7 @@ $app->get('/removegroupfromgrouping', function () use ($app) {
 	$rowcount = 0;
 	$grouping_profile = array();
 
-	$query_check_gb = $db->prepare("SELECT *, date_format(added_on , '%d.%m.%Y') as addedon  FROM grouping where status = '1' order by group_name asc"); 
+	$query_check_gb = $db->prepare("SELECT *, date_format(added_on , '%d.%m.%Y') as addedon  FROM grouping where status = '1' AND token_id = '".$grouptoken."' order by group_name asc"); 
 	$query_check_gb->execute();
 	$rows_gb = $query_check_gb->fetchAll(PDO::FETCH_ASSOC);
 	if(count($rows_gb)>0) {
@@ -966,9 +968,10 @@ $app->get('/addgroupintogrouping', function () use ($app) {
 	$reponse = array();
 	$rowcount = 0;
 
-	$grouping_token = generate_uuid();
+	//$grouping_token = generate_uuid();
+	$grouping_token = $app->request->get('grouptoken');
 	
-	$query_check_gp = $db->prepare("SELECT * FROM `grouping` where `group_name` LIKE '%".$groupname."%'"); 
+	$query_check_gp = $db->prepare("SELECT * FROM `grouping` where `group_name` LIKE '%".$groupname."%' AND token_id = '".$grouping_token."'"); 
 	$query_check_gp->execute();
 	$rows_gp = $query_check_gp->fetchAll(PDO::FETCH_ASSOC);
 	if(count($rows_gp)>0) {
@@ -984,7 +987,7 @@ $app->get('/addgroupintogrouping', function () use ($app) {
 	$rowcount = 0;
 	$grouping_profile = array();
 
-	$query_check_gb = $db->prepare("SELECT *, date_format(added_on , '%d.%m.%Y') as addedon  FROM grouping where status = '1' order by group_name asc"); 
+	$query_check_gb = $db->prepare("SELECT *, date_format(added_on , '%d.%m.%Y') as addedon  FROM grouping where status = '1' AND token_id = '".$grouping_token."' order by group_name asc"); 
 	$query_check_gb->execute();
 	$rows_gb = $query_check_gb->fetchAll(PDO::FETCH_ASSOC);
 	if(count($rows_gb)>0) {
@@ -1092,13 +1095,16 @@ Type : POST
 $app->post('/step1Create',function () use ($app) { 
     global $db;
 	$data =  json_decode($app->request->getBody(), true);
+  // echo '<pre>';print_r($_SESSION["step1"]);exit;
 	$response = array();
 	global $imageClass;
 
 	$_SESSION["step1"]["status"] =1;
 	$_SESSION["step1"]["first_name"]= $data['first_name'];
 	$_SESSION["step1"]["last_name"]= $data['last_name'];
-	$_SESSION["step1"]["password"]= $data['password'];
+	if (isset($data['password'])) {
+		$_SESSION["step1"]["password"]= $data['password'];
+	}
 	$_SESSION["step1"]["address"]= $data['address'];
 	$_SESSION["step1"]["zipcode"]= $data['zipcode'];
 	$_SESSION["step1"]["city"]= $data['city'];
@@ -1624,8 +1630,11 @@ $app->post('/step5Create',function () use ($app) {
 	$data =  json_decode($app->request->getBody(), true);
 	$response = array();
 	global $imageClass;
+	$_SESSION['operation'] = $data['operation'];
+	$_SESSION['user_profile_id'] = $data['user_profile_id'];
 
 	$_SESSION["step5"]["status"] 			=1;
+
 	if(isset($data['lang1']))
 		$_SESSION["step5"]["lang1"]	= $data['lang1'];
 	if(isset($data['lang2']))
@@ -1634,6 +1643,7 @@ $app->post('/step5Create',function () use ($app) {
 		$_SESSION["step5"]["lang3"]	= $data['lang3'];
 	if(isset($data['lang4']))
 		$_SESSION["step5"]["lang4"]	= $data['lang4'];
+
 	if(isset($data['langrateval1']))
 		$_SESSION["step5"]["langrateval1"]	= $data['langrateval1'];
 	if(isset($data['langrateval2']))
@@ -1642,6 +1652,16 @@ $app->post('/step5Create',function () use ($app) {
 		$_SESSION["step5"]["langrateval3"]	= $data['langrateval3'];
 	if(isset($data['langrateval4']))
 		$_SESSION["step5"]["langrateval4"]	= $data['langrateval4'];
+
+	if(isset($data['lng_pro_id1']))
+		$_SESSION["step5"]["lng_pro_id1"]	= $data['lng_pro_id1'];
+	if(isset($data['lng_pro_id2']))
+		$_SESSION["step5"]["lng_pro_id2"]	= $data['lng_pro_id2'];
+	if(isset($data['lng_pro_id3']))
+		$_SESSION["step5"]["lng_pro_id3"]	= $data['lng_pro_id3'];
+	if(isset($data['lng_pro_id4']))
+		$_SESSION["step5"]["lng_pro_id4"]	= $data['lng_pro_id4'];
+
 	if(isset($data['dealekter1']))
 		$_SESSION["step5"]["dealekter1"]	= $data['dealekter1'];
 	if(isset($data['dealekter2']))
@@ -1756,6 +1776,8 @@ Parameter : Form post parameters
 Type : POST
 ******************************************/
 $app->post('/step6Create',function () use ($app) { 
+	$operation = (isset($_SESSION['operation'])) ? $_SESSION['operation'] : 'insert';
+	$user_profile_id = (isset($_SESSION['user_profile_id'])) ? $_SESSION['user_profile_id'] : '';
 
 	global $db;
 	$first_name=$_SESSION["step1"]["first_name"];
@@ -1807,6 +1829,7 @@ $app->post('/step6Create',function () use ($app) {
 		$languages[2]['language_id']=$_SESSION["step5"]["lang3"];
 	if(isset($_SESSION["step5"]["lang4"])&& $_SESSION["step5"]["lang4"]!='')
 		$languages[3]['language_id']=$_SESSION["step5"]["lang4"];
+
 	if(isset($_SESSION["step5"]["langrateval1"]) && $_SESSION["step5"]["langrateval1"]!='')
 		$languages[0]['rating_id']=$_SESSION["step5"]["langrateval1"];
 	if(isset($_SESSION["step5"]["langrateval2"]) && $_SESSION["step5"]["langrateval2"]!='')
@@ -1815,6 +1838,16 @@ $app->post('/step6Create',function () use ($app) {
 		$languages[2]['rating_id']=$_SESSION["step5"]["langrateval3"];
 	if(isset($_SESSION["step5"]["langrateval4"]) && $_SESSION["step5"]["langrateval4"]!='')
 		$languages[3]['rating_id']=$_SESSION["step5"]["langrateval4"];
+
+	if(isset($_SESSION["step5"]["lng_pro_id1"]) && $_SESSION["step5"]["lng_pro_id1"]!='')
+		$languages[0]['lng_pro_id']=$_SESSION["step5"]["lng_pro_id1"];
+	if(isset($_SESSION["step5"]["lng_pro_id2"]) && $_SESSION["step5"]["lng_pro_id2"]!='')
+		$languages[1]['lng_pro_id']=$_SESSION["step5"]["lng_pro_id2"];
+	if(isset($_SESSION["step5"]["lng_pro_id3"]) && $_SESSION["step5"]["lng_pro_id3"]!='')
+		$languages[2]['lng_pro_id']=$_SESSION["step5"]["lng_pro_id3"];
+	if(isset($_SESSION["step5"]["lng_pro_id4"]) && $_SESSION["step5"]["lng_pro_id4"]!='')
+		$languages[3]['lng_pro_id']=$_SESSION["step5"]["lng_pro_id4"];
+
 	if(isset($_SESSION["step5"]["dealekter1"]) && $_SESSION["step5"]["dealekter1"]!='')
 		$dealekter1=$_SESSION["step5"]["dealekter1"];
 	if(isset($_SESSION["step5"]["dealekter2"]) && $_SESSION["step5"]["dealekter2"]!='')
@@ -1823,74 +1856,284 @@ $app->post('/step6Create',function () use ($app) {
 		$dealekter3=$_SESSION["step5"]["dealekter3"];
 
 		$agreed_to_these_terms=1;
-		$q_chip = "INSERT INTO `profiles` ( `first_name`, `last_name`, `gender_id`, `hair_color_id`,`eye_color_id`, `birthday`, `height`, `weight`, `shoe_size_from`, `shoe_size_to`, 	`shirt_size_from`,`shirt_size_to`,`pants_size_from`,`pants_size_to`,`bra_size`,`children_sizes`,`address`,`zipcode`,`city`,`country_id`,`phone`,`phone_at_work`,`email`,`job`,`notes`,`agreed_to_these_terms`,`password`,`hashed_password`,`created_at`,`updated_at`,`suite_size_from`,`suite_size_to`) VALUES ('".$first_name."', '".$last_name."','".$gender_id."',".$hair_color_id.",".$eye_color_id.",'".$birthday."',".$height.",".$weight.",".$shoe_size_from.",".$shoe_size_to.",".$shirt_size_from.",".$shirt_size_to.",".$pants_size_from.",".$pants_size_from.",".$bra_size.",".$children_sizes.",'".$address."','".$zipcode."','".$city."','".$country_id."','".$phone."','".$phone_at_work."','".$email."','".$job."','".$notes."','".$agreed_to_these_terms."','".$password."','".$hashed_password."',now(),now(),".$suite_size_from.",".$suite_size_to.")";
-				$profile_id = $db->exec($q_chip);
 
-				if($profile_id){
-					if($selectedcategories!=''){
-						$cat_arr= explode(",",$selectedcategories);
-						foreach($cat_arr as $cat){
-							$query = "INSERT INTO `categories_profiles` (`profile_id`,`category_id`) VALUES ('".$profile_id."','".$cat."')";
-							$db->exec($query);
-						}
+		if($operation == 'insert'){
+			$q_chip = "INSERT INTO `profiles` ( `first_name`, `last_name`, `gender_id`, `hair_color_id`,`eye_color_id`, `birthday`, `height`, `weight`, `shoe_size_from`, `shoe_size_to`, 	`shirt_size_from`,`shirt_size_to`,`pants_size_from`,`pants_size_to`,`bra_size`,`children_sizes`,`address`,`zipcode`,`city`,`country_id`,`phone`,`phone_at_work`,`email`,`job`,`notes`,`agreed_to_these_terms`,`password`,`hashed_password`,`created_at`,`updated_at`,`suite_size_from`,`suite_size_to`) VALUES ('".$first_name."', '".$last_name."','".$gender_id."',".$hair_color_id.",".$eye_color_id.",'".$birthday."',".$height.",".$weight.",".$shoe_size_from.",".$shoe_size_to.",".$shirt_size_from.",".$shirt_size_to.",".$pants_size_from.",".$pants_size_from.",".$bra_size.",".$children_sizes.",'".$address."','".$zipcode."','".$city."','".$country_id."','".$phone."','".$phone_at_work."','".$email."','".$job."','".$notes."','".$agreed_to_these_terms."','".$password."','".$hashed_password."',now(),now(),".$suite_size_from.",".$suite_size_to.")";
+
+			$profile_id = $db->exec($q_chip);
+
+			if($profile_id){
+				if($selectedcategories!=''){
+					$cat_arr= explode(",",$selectedcategories);
+					foreach($cat_arr as $cat){
+						$query = "INSERT INTO `categories_profiles` (`profile_id`,`category_id`) VALUES ('".$profile_id."','".$cat."')";
+						$db->exec($query);
 					}
-					if($selectedskills!=''){
-						$skill_arr= explode(",",$selectedskills);
-						foreach($skill_arr as $skill){
-							$query = "INSERT INTO `profiles_skills` (`profile_id`,`skill_id`) VALUES ('".$profile_id."','".$skill."')";
-							$db->exec($query);
-						}
+				}
+
+				if($selectedskills!=''){
+					$skill_arr= explode(",",$selectedskills);
+					foreach($skill_arr as $skill){
+						$query = "INSERT INTO `profiles_skills` (`profile_id`,`skill_id`) VALUES ('".$profile_id."','".$skill."')";
+						$db->exec($query);
 					}
-					if($selectedlicences){
-						$license_arr= explode(",",$selectedlicences);
-						foreach($license_arr as $license){
-							$query = "INSERT INTO `drivers_licenses_profiles` (`profile_id`,`drivers_license_id`) VALUES ('".$profile_id."','".$license."')";
-							$db->exec($query);
-						}
+				}
+
+				if($selectedlicences){
+					$license_arr= explode(",",$selectedlicences);
+					foreach($license_arr as $license){
+					$query = "INSERT INTO `drivers_licenses_profiles` (`profile_id`,`drivers_license_id`) VALUES ('".$profile_id."','".$license."')";
+					$db->exec($query);
 					}
-					if(!empty($selectedlicences)){
-						foreach($languages as $language){
-							$query = "INSERT INTO `language_proficiencies` (`language_proficiency_language_id`,`profile_id`,`language_proficiency_rating_id`,`created_at`,`updated_at`) VALUES ('".$language['language_id']."','".$profile_id."','".$language['rating_id']."',now(),now())";
-							//echo $query;
-							$db->exec($query);
-						}
+				}
+
+				if(!empty($languages)){
+					foreach($languages as $language){
+						$query = "INSERT INTO `language_proficiencies` (`language_proficiency_language_id`,`profile_id`,`language_proficiency_rating_id`,`created_at`,`updated_at`) VALUES ('".$language['language_id']."','".$profile_id."','".$language['rating_id']."',now(),now())";
+						//echo $query;
+						$db->exec($query);
 					}
-						if(isset($_FILES['Image_file']['name'][0])){
-							foreach($_FILES['Image_file']['name'] as $key=>$value){
-								$filename = $_FILES['Image_file']['name'][$key];
-								$location = $_SERVER['DOCUMENT_ROOT'].'/images/uploads/';
-								move_uploaded_file($_FILES['Image_file']['tmp_name'][$key],$location.$filename);
-								$query = "INSERT INTO `photos` (`path`,`original_path`,`profile_id`,`filename`,`published`,`position`,`phototype_id`,`image`,`created_at`,`updated_at`,`image_tmp`,`image_processing`,`image_token`) VALUES ('".$location."','".$location."','".$profile_id."','".$filename."','1','".$key."','1','".$filename."',now(),now(),'".$filename."','1','".$filename."')";
-								$db->exec($query);
-							}	
-						}
-					
-					if(isset($_FILES['Video_file']['name'][0])){
-						//echo "ok";die;
-						foreach($_FILES['Video_file']['name'] as $key=>$value){
-							$filename = $_FILES['Video_file']['name'][$key];
-							$location = $_SERVER['DOCUMENT_ROOT'].'/images/uploads/';
-							move_uploaded_file($_FILES['Video_file']['tmp_name'][$key],$location.$filename);
-							$query = "INSERT INTO `videos` (`profile_id`,`path`,`uploaded_as_filename`,`filename`,`video_original_path`,`video_original_filename`,`video_original_file_basename`,`thumbnail_original_photo_path`,`thumbnail_photo_path`,`thumbnail_photo_filename`,`thumbnail_at_time`,`published`,`position`) VALUES ('".$profile_id."','".$location."','".$location."','".$filename."','".$filename."','".$filename."','".$filename."','".$filename."','".$filename."','".$filename."','3','1','".$key."')";
-							//echo $query;die;
-							$db->exec($query);
-						}	
-					
-					}
+				}
+
+				if(isset($_FILES['Image_file']['name'][0])){
+					foreach($_FILES['Image_file']['name'] as $key=>$value){
+						$filename = $_FILES['Image_file']['name'][$key];
+						$location = $_SERVER['DOCUMENT_ROOT'].'/images/uploads/';
+						move_uploaded_file($_FILES['Image_file']['tmp_name'][$key],$location.$filename);
+						$query = "INSERT INTO `photos` (`path`,`original_path`,`profile_id`,`filename`,`published`,`position`,`phototype_id`,`image`,`created_at`,`updated_at`,`image_tmp`,`image_processing`,`image_token`) VALUES ('".$location."','".$location."','".$profile_id."','".$filename."','1','".$key."','1','".$filename."',now(),now(),'".$filename."','1','".$filename."')";
+						$db->exec($query);
+					}	
+				}
+
+				if(isset($_FILES['Video_file']['name'][0])){
+					//echo "ok";die;
+					foreach($_FILES['Video_file']['name'] as $key=>$value){
+						$filename = $_FILES['Video_file']['name'][$key];
+						$location = $_SERVER['DOCUMENT_ROOT'].'/images/uploads/';
+						move_uploaded_file($_FILES['Video_file']['tmp_name'][$key],$location.$filename);
+						$query = "INSERT INTO `videos` (`profile_id`,`path`,`uploaded_as_filename`,`filename`,`video_original_path`,`video_original_filename`,`video_original_file_basename`,`thumbnail_original_photo_path`,`thumbnail_photo_path`,`thumbnail_photo_filename`,`thumbnail_at_time`,`published`,`position`) VALUES ('".$profile_id."','".$location."','".$location."','".$filename."','".$filename."','".$filename."','".$filename."','".$filename."','".$filename."','".$filename."','3','1','".$key."')";
+						//echo $query;die;
+						$db->exec($query);
+					}	
+				}
 				session_destroy();
 				echoResponse(200,array('status'=>true,'msg'=>'Registered Sucessfully'));
 
-				}
-				else{
-					echoResponse(200,array('status'=>false,'msg'=>'Couldn\'t Register, Please try again later'));
-				}
-			
-				
-		
-	
+			}
+			else{
+				echoResponse(200,array('status'=>false,'msg'=>'Couldn\'t Register, Please try again later'));
+			}
+		}
+		if($operation == "update"){
+			if($user_profile_id != ""){
+				$q_chip =  "UPDATE profiles 
+								 		SET
+								 		first_name = '$first_name', 
+										last_name = '$last_name', 
+										gender_id = $gender_id, 
+										hair_color_id = $hair_color_id,
+										eye_color_id = $eye_color_id, 
+										birthday = $birthday,
+										height = $height, 
+										weight = $weight, 
+										shoe_size_from = $shoe_size_from, 
+										shoe_size_to = $shoe_size_to,
+										shirt_size_from = $shirt_size_from,
+										shirt_size_to = $shirt_size_to,
+										pants_size_from = $pants_size_from,
+										pants_size_to = $pants_size_to,
+										bra_size = '$bra_size',
+										children_sizes = $children_sizes,
+										address = '$address',
+										zipcode = '$zipcode',
+										city = '$city',
+										country_id = $country_id,
+										phone = '$phone',
+										phone_at_work = '$phone_at_work',
+										email = '$email',
+										job = '$job',
+										notes = '$notes',
+										agreed_to_these_terms = $agreed_to_these_terms,
+										password = '$password',
+										hashed_password = '$hashed_password',
+										updated_at = now(),
+										suite_size_from = $suite_size_from,
+										suite_size_to = $suite_size_to
 
-	
+									WHERE id = $user_profile_id";
+						$query_prepared = $db->prepare($q_chip);
+						$query_prepared->execute();
+				}
+
+				if($selectedcategories!=''){
+					if(!(is_array($selectedcategories))){
+						$cat_arr= explode(",",$selectedcategories);
+					}
+					else{
+						$cat_arr= $selectedcategories;
+					}
+					
+					foreach($cat_arr as $cat){
+						$query = "UPDATE categories_profiles SET category_id = $cat WHERE profile_id = $user_profile_id";
+						$query_prepared = $db->prepare($query);
+						$query_prepared->execute();
+					}
+				}
+
+				if($selectedskills!=''){
+					if(!(is_array($selectedskills))){
+						$skill_arr= explode(",",$selectedskills);
+					}
+					else{
+						$skill_arr= $selectedskills;
+					}
+					foreach($skill_arr as $skill){
+						$query = "UPDATE profiles_skills SET skill_id = $skill WHERE profile_id = $user_profile_id";
+						$query_prepared = $db->prepare($query);
+						$query_prepared->execute();
+					}
+				}
+
+				if($selectedlicences){
+					if(!(is_array($selectedlicences))){
+						$license_arr= explode(",",$selectedlicences);
+					}
+					else{
+						$license_arr= $selectedlicences;
+					}
+					foreach($license_arr as $license){
+						$query = "UPDATE drivers_licenses_profiles SET drivers_license_id = $license WHERE profile_id = $user_profile_id";
+						$query_prepared = $db->prepare($query);
+						$query_prepared->execute();
+					}
+				}
+
+				if(!empty($languages)){
+					foreach($languages as $language){
+						$language_id = $language['language_id'];
+						$rating_id = $language['rating_id'];
+						
+						if(isset($language['lng_pro_id'])){
+							$query = "INSERT INTO `language_proficiencies` (`language_proficiency_language_id`,`profile_id`,`language_proficiency_rating_id`,`created_at`,`updated_at`) VALUES ('".$language['language_id']."','".$user_profile_id."','".$language['rating_id']."',now(),now())";
+						}else{
+							$lng_pro_id = $language['lng_pro_id'];
+							$query = "UPDATE language_proficiencies SET language_proficiency_language_id = $language_id, language_proficiency_rating_id = $rating_id, updated_at = now() WHERE id = $lng_pro_id";
+						}
+						$query_prepared = $db->prepare($query);
+						$query_prepared->execute();
+					}
+				}
+
+				if(isset($_FILES['Image_file']['name'][0])){
+					foreach($_FILES['Image_file']['name'] as $key=>$value){
+						$filename = $_FILES['Image_file']['name'][$key];
+						$location = $_SERVER['DOCUMENT_ROOT'].'/images/uploads/';
+						move_uploaded_file($_FILES['Image_file']['tmp_name'][$key],$location.$filename);
+						$query = "UPDATE photos 
+											SET
+											path = $location,
+											original_path = $location,
+											filename = $filename,
+											published = 1,
+											position = $key,
+											phototype_id = 1,
+											image = $filename,
+											updated_at = now(),
+											image_tmp = $filename,
+											image_processing = 1,
+											image_token = $filename
+											WHERE
+											profile_id = $user_profile_id";
+						$query_prepared = $db->prepare($query);
+						$query_prepared->execute();
+					}	
+				}
+
+				if(isset($_FILES['Video_file']['name'][0])){
+					foreach($_FILES['Video_file']['name'] as $key=>$value){
+						$filename = $_FILES['Video_file']['name'][$key];
+						$location = $_SERVER['DOCUMENT_ROOT'].'/images/uploads/';
+						move_uploaded_file($_FILES['Video_file']['tmp_name'][$key],$location.$filename);
+						$query = "UPDATE videos 
+											SET
+											path=$location,
+											uploaded_as_filename=$location,
+											filename=$filename,
+											video_original_path=$filename,
+											video_original_filename=$filename,
+											video_original_file_basename=$filename,
+											thumbnail_original_photo_path=$filename,
+											thumbnail_photo_path=$filename,
+											thumbnail_photo_filename=$filename,
+											thumbnail_at_time=3,
+											published=1,
+											position=$key
+											WHERE profile_id=$user_profile_id";
+						$query_prepared = $db->prepare($query);
+						$query_prepared->execute();
+					}	
+				}
+				echoResponse(200,array('status'=>true,'msg'=>'Updated Sucessfully'));
+		}
 });
+
+
+/******************************************
+Purpose: Send to email id
+Parameter : form field
+Type : POST
+******************************************/
+
+$app->post('/sendemail', function () use ($app) { 
+  global $db;
+  $data = json_decode($app->request->getBody(), true);
+  $response = array();
+  $to_email = $data['to_email'];
+  $from_email = $data['form_email'];
+  $mail_body ='';$to_cc ='';
+  if(isset($data['mail_body'])){
+    $mail_body = $data['mail_body'];
+  }
+  if(isset($data['to_cc'])){
+    $to_cc = $data['to_cc'];
+  }
+
+  $html = '<table style="text-align:left" cellspacing="0" cellpadding="0" width="556" border="0">
+    <tbody>
+    <tr>
+    <td>
+    <table style="width:100%" border="0">
+    <tbody>
+    <tr>
+    <td align="left"><img alt="Mailtoplogo" src="http://134.213.29.220/assets/mailTopLogo.png" ></td>
+    <td style="width:270px;padding-top:18px" align="left" valign="top"><b style="color:#696969">Castit <span class="il">Lightbox</span>:</b><br>'.$mail_body.'</td>
+    </tr>
+    <tr>
+    <td colspan="2"><img alt="Mailtopborder" src="http://134.213.29.220/assets/mailTopBorder.jpg"></td>
+    </tr>
+    </tbody>
+    </table>
+    </td>
+    </tr>
+    <tr>';
+
+  $subject = "Castit Workshop enquiry";
+  $headers = "MIME-Version: 1.0" . "\r\n";
+  $headers .= "Content-type:text/html;charset=UTF-8" . "\r\n";
+  $headers .= 'From: Castit <info@ldsstage.in>' . "\r\n";
+  //$headers .= 'Reply-To: <'.$from_email.'>' . "\r\n";
+  if($to_cc){
+    $headers .= 'CC: <'.$to_cc.'>' ."\r\n";
+  }
+  //$html .= 'testemail';
+  mail( $to_email, $subject, $html, $headers ); // Accountant
+  $response['success'] = true;
+  $response['message'] = 'Email er sendt!';
+
+  echoResponse(200, $response);
+});
+
+
 /******************************************
 Purpose: Send Lighbox profiles to email id
 Parameter : form field
@@ -2268,7 +2511,9 @@ $app->get('/getgroupinglist', function () use ($app) {
     global $db;
 	$grouping = array();
 	$reponse =  array();
-	$query_grouping = $db->prepare("SELECT * FROM grouping WHERE status ='1' order by group_name"); 
+	$grouptoken =  $app->request->get('grouptoken');
+
+	$query_grouping = $db->prepare("SELECT * FROM grouping WHERE token_id='".$grouptoken."' AND status ='1' order by group_name"); 
 	$query_grouping->execute();
 	$rows_grouping = $query_grouping->fetchAll(PDO::FETCH_ASSOC);
 	$rowcount = count($rows_grouping);
@@ -2293,9 +2538,9 @@ $app->get('/addnewgrouping', function () use ($app) {
 	$reponse = array();
 	$rowcount = 0;
 
-	$grouping_token = generate_uuid();
+	$grouping_token = $app->request->get('grouptoken');
 	
-	$query_check_gp = $db->prepare("SELECT * FROM `grouping` where `group_name` LIKE '%".$groupname."%'"); 
+	$query_check_gp = $db->prepare("SELECT * FROM `grouping` where `group_name` LIKE '%".$groupname."%' AND token_id ='".$grouping_token."'"); 
 	$query_check_gp->execute();
 	$rows_gp = $query_check_gp->fetchAll(PDO::FETCH_ASSOC);
 	if(count($rows_gp)>0) {
@@ -2306,7 +2551,7 @@ $app->get('/addnewgrouping', function () use ($app) {
 			$gpid = $db->exec($q_gruping);
 	}
 	
-	$query_grouping = $db->prepare("SELECT * FROM grouping WHERE status ='1' order by group_name"); 
+	$query_grouping = $db->prepare("SELECT * FROM grouping WHERE status ='1' AND token_id ='".$grouping_token."' order by group_name"); 
 	$query_grouping->execute();
 	$rows_grouping = $query_grouping->fetchAll(PDO::FETCH_ASSOC);
 	$rowcount = count($rows_grouping);
@@ -2660,6 +2905,20 @@ $app->post('/resetpassword',function () use ($app) {
 		}
 	echoResponse(200, $response);
 });
+
+/******************************************
+Purpose: Create and get Group Token
+Parameter : null
+Type : GET
+******************************************/
+$app->get('/getgrouptoken',function () use ($app) { 
+    global $db;
+	$group_token = generate_uuid();
+	$response = array( 'success' => true, 'grouptoken' => $group_token);
+	echoResponse(200, $response);
+});
+
+
 //JSON coneverion
 function echoResponse($status_code, $response) {
     global $app;

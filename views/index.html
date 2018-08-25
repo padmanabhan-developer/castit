@@ -58,8 +58,11 @@
                </div><!--close rightbar-row-->
 
                <div class="slider-controller">  
-                  <a href="javascript:void(0);" ng-disabled="currentPage <= 0" ng-click="((currentPage <= 0) ? return : (currentPage=currentPage-1))" class="prev" ng-class="{disabled: currentPage <= 0}"></a>
-                    <a href="javascript:void(0);"  ng-disabled="currentPage >= getDataProfile().length/pageSize - 1" ng-click="currentPage=currentPage+1" class="next"  ng-class="{disabled: (currentPage >= getDataProfile().length/pageSize - 1)}"></a>
+                  
+                  <a href="javascript:void(0);" ng-disabled="currentPage*pageSize < pageSize" ng-click="((currentPage*pageSize < pageSize) ? return : (currentPage=currentPage-1))" class="prev" ng-class="{disabled: currentPage*pageSize < pageSize}"></a>
+                  
+                  <a href="javascript:void(0);"  ng-disabled="currentPage*pageSize > profiles.length - pageSize" ng-click="((currentPage*pageSize > (profiles.length-pageSize)) ? return : (currentPage=currentPage+1))" class="next"  ng-class="{disabled: (currentPage*pageSize > profiles.length - pageSize)}"></a>
+
                </div><!--close slider-controller-->
               
     
@@ -119,11 +122,11 @@ It has survived not only five centuries, but also the leap into electronic types
 It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum</p>
 <p><strong>Mellemrubrik</strong><br>
 It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum</p>
-               <p class="login_box5"><input name="" class="login_button5" value="Spørgsmål" type="button"></p>
-               <p class="login_box5"><input name="" class="login_button3" value="Tilmeld" type="button"></p>
+               <!-- <p class="login_box5"><input name="" class="login_button5" value="Spørgsmål" type="button"></p> -->
+               <!-- <p class="login_box5"><input name="" class="login_button3" value="Tilmeld" type="button"></p> -->
                
                 </div>
-                <button style="background-color:transparent;border:2px solid #17181b;color:#17181b;border-radius:50px; padding:10px; margin-top:20px;font-weight:bold;">Spørgsmål</button>
+                <button ng-click="showEmailPopup()" style="background-color:transparent;border:2px solid #17181b;color:#17181b;border-radius:50px; padding:10px; margin-top:20px;font-weight:bold;">Tilmeld/Spørgsmål</button>
               </div><!--close information-inside-left-->
             
             <div class="information-inside-right">
@@ -313,7 +316,7 @@ It has survived not only five centuries, but also the leap into electronic types
                       
                     <div class="change-video" >
                     
-                    <div id="videodiv" class="videodiv video_call4 ">
+                    <div id="videodiv" class="videodiv video_call4">
                     
                       <h3 class="res-name">{{singleprofile.name}}. <strong>{{singleprofile.profile_number}}</strong></h3>
                     
@@ -333,14 +336,14 @@ It has survived not only five centuries, but also the leap into electronic types
                           <div id="photo_nav"  ng-show="IsProfileImage">
                             <div class="video_controller">
                              <a href="javascript:void(0);" ng-click="prev()" class="vide_prev"></a>
-                             <a javascript:void(0);  ng-click="next()" class="vide_next"></a>
+                             <a href="javascript:void(0);"  ng-click="next()" class="vide_next"></a>
                             </div>
                             <span class="span3"><em>{{currentIndex+1}}</em>/{{profile_images.length}}</span>
                        </div>
                        <div id="video_nav"  style="display:none;" ng-show="profile_videos.length > 1 && IsProfileVideo">
                             <div class="video_controller">
-                             <a javascript:void(0); ng-click="prev_video()" class="vide_prev"></a>
-                             <a javascript:void(0);  ng-click="next_video()" class="vide_next"></a>
+                             <a href="javascript:void(0);"  ng-click="prev_video()" class="vide_prev"></a>
+                             <a href="javascript:void(0);"  ng-click="next_video()" class="vide_next"></a>
                             </div>
                              <span class="span3"><em>{{currentIndexVideo+1}}</em>/{{profile_videos.length}}</span>
                        </div>
@@ -351,9 +354,9 @@ It has survived not only five centuries, but also the leap into electronic types
                                <h3>{{singleprofile.name}}. <strong>{{singleprofile.profile_number}}</strong> <span class="user-icon"><img src="images/icon11.png" alt=""></span></h3>
                                <h4>{{categories}}</h4>
                                <ul class="list">
-                                    <li><span class="list_span1">Alder</span><span class="list_span2">{{singleprofile.age}} År</span></li>
-                                    <li><span class="list_span1">Højde</span><span class="list_span2">{{singleprofile.height}} cm</span></li>
-                                    <li><span class="list_span1">Vægt</span><span class="list_span2">{{singleprofile.weight}} kg</span></li>
+                                    <li><span class="list_span1">Alder</span><span class="list_span2">{{singleprofile.age}}<span class="list_san3"> År</span></span></li>
+                                    <li><span class="list_span1">Højde</span><span class="list_span2">{{singleprofile.height}}<span class="list_san3"> cm</span></span></li>
+                                    <li><span class="list_span1">Vægt</span><span class="list_span2">{{singleprofile.weight}}<span class="list_san3"> kg</span></span></li>
                                     <li><span class="list_span1">Øjenfarve</span><span class="list_span2">{{singleprofile.eye_color_name}}</span></li>
                                     <li><span class="list_span1">Hårfarve</span><span class="list_span2">{{singleprofile.hair_color_name}}</span></li>
                                     <li><span class="list_span1">Bluse</span><span class="list_span2">{{singleprofile.shirt}}</span></li>
@@ -362,10 +365,10 @@ It has survived not only five centuries, but also the leap into electronic types
                                </ul>
                                
                                <h5>FRITID</h5>
-                               <p>{{skills}}</p>
+                               <p>{{singleprofile.experience}}</p>
                                
                                <h5>Erfaring</h5>
-                               <p>{{singleprofile.experience}}</p>
+                               <p>{{skills}}</p>
                                
                                <h5>sprog</h5>
                                <ul class="list2" ng-show="lang.length>0">
@@ -379,7 +382,7 @@ It has survived not only five centuries, but also the leap into electronic types
                                     </li>
                                </ul>
                                <p ng-show="lang.length==0">-</p>
-                               <h5>Driving License</h5>
+                               <h5>Kørekort</h5>
                                <p>{{licenses}}</p>
                                
                           </div><!--close video_text-->
@@ -496,8 +499,8 @@ It has survived not only five centuries, but also the leap into electronic types
                  <form name="remove_form_lightbox" id="remove_form_lightbox" ng-submit="removeFromLightbox()">
                   <div class="sendlightbox_form_inner">
                         <div class="send_inner">
-                             <h2>FJERN FRA LIGHTBOX</h2>
-                                       <span class="popup-icon_31"></span> 
+                             <h2>FJERN FRA GRUPPE</h2>
+                                       <span class="popup-icon_11"></span> 
                                        <span class="popup-icon_21"></span>
                                        <span class="popup-icon_31_1"></span>
                               
@@ -578,6 +581,43 @@ It has survived not only five centuries, but also the leap into electronic types
                           <div class="sendlightbox_form_col2">
                                <input  ng-disabled="profile_ansog_form4.$invalid" name="Send" type="submit" class="send" value="Send" >
                                <input name="Annullere" type="button" class="cancel" value="Annullere" ng-click="cancelLigtbox()" >
+                          </div>
+                    </div>
+               </form><!--close profile_form-->
+               </div><!--close profile_form-->
+               <div ng-show="ifLightboxFormSuccess" class="popup-title" style="color: green;">Lightbox er sendt!</div>
+          </div>
+     </div>
+</div><!--close popup-->
+
+<div id="lightbox_popup" class="email popup popup-video" style="display: none;">
+   
+     <a href="javascript:void(0);" id="close_lightbox" class="poup-close" ng-click="cancelEmailPopup()">luk</a>
+     
+   <div class="popup-table">
+        <div class="popup-td">
+               <div ng-show="ifLightboxForm" class="sendlightbox_form">
+               <form name="form_send_lightbox" id="form_send_lightbox" ng-submit="sendEmailForm()">
+                  <div class="sendlightbox_form_inner">
+                     <h2>Send Email</h2>
+                            
+                          <div class="sendlightbox_form_col">
+                               <input name="to_email" id="to_email" ng-model="to_email" type="text" placeholder="Til email" class="profile_form_input" required value="tony.grahn@themethodlab.com">
+                          </div>
+                          <div class="sendlightbox_form_col">
+                               <input name="to_cc" id="to_cc" ng-model="to_cc" type="text" placeholder="CC" class="profile_form_input" >
+                          </div>
+                          <div class="sendlightbox_form_col">
+                               <input name="from_email" id="from_email" ng-model="from_email" type="text" placeholder="Din email" class="profile_form_input" required >
+                          </div>
+                          <div class="sendlightbox_form_col">
+                               <textarea required name="mail_body" id="mail_body" ng-model="mail_body" cols="" rows="" placeholder="Skriv kommentar..." class="profile_form_textarea" ></textarea>
+                               <a href="javascript:void(0);" class="edit2"></a>
+                          </div>
+                                  
+                          <div class="sendlightbox_form_col2">
+                               <input  ng-disabled="profile_ansog_form4.$invalid" name="Send" type="submit" class="send" value="Send" >
+                               <input name="Annullere" type="button" class="cancel" value="Annullere" ng-click="cancelEmailPopup()" >
                           </div>
                     </div>
                </form><!--close profile_form-->
@@ -672,7 +712,20 @@ It has survived not only five centuries, but also the leap into electronic types
    <div class="popup-table">
         <div class="popup-td">
                
-               <div class="popup-title">PROFIL TILFØJET LIGHTBOX!</div>
+               <div class="popup-title">Profil tilføjet gruppe</div>
+               
+          </div>
+     </div>
+</div><!--close popup-->
+
+<div class="popup" id="profileboxsubmit" style="display:none;">
+   
+     <a javascript:void(0); class="poup-close">luk</a>
+     
+   <div class="popup-table">
+        <div class="popup-td">
+               
+               <div class="popup-title">Profil tilføjet gruppe1</div>
                
           </div>
      </div>
@@ -687,7 +740,7 @@ It has survived not only five centuries, but also the leap into electronic types
           </div>
           
           <div ng-show="isMaincontent" class="footer_center">
-               <span class="span3" style="margin-top: -10px;">{{currentPage+1}}<em>/{{numberOfPages()}}</em></span>
+               <span class="span3" style="margin-top: -10px;">{{ (currentPage*pageSize < profiles.length-pageSize)? currentPage*pageSize: profiles.length}}<em>/{{ ((profiles.length - currentPage*pageSize) >= pageSize) ? profiles.length - currentPage*pageSize : 0}}</em></span>
           </div>
           
           <div class="footer_right"><span class="footer-line"></span>

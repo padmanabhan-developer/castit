@@ -6,7 +6,19 @@ var frontend = angular.module('theme.demos.dashboard', [
     'use strict';
 	//$('#headerlogo').hide();
 	//alert('ddd');
-	
+	$scope.groupToken = localStorage.getItem('grouptoken') || '';
+	if($scope.groupToken ==''){
+		$http.get('api/v1/getgrouptoken', {params: {view: 'home'}}).success(function(groupdata) {
+			if(groupdata.success){
+				$scope.groupToken = groupdata.grouptoken;
+				localStorage.setItem('grouptoken', $scope.groupToken);
+				
+			}else{
+				$scope.groupToken ='';
+			}
+		 });
+	}
+
 	$rootScope.bodylayout = '';	
 	
 	$rootScope.interface = 'home';
@@ -240,7 +252,7 @@ var frontend = angular.module('theme.demos.dashboard', [
 		}
 	 });
 
-	$http.get('api/v1/getgroupingprofiles', {params: {view: 'home'}}).success(function(groupingdata) {
+	$http.get('api/v1/getgroupingprofiles', {params: {view: 'home', grouptoken : $scope.groupToken}}).success(function(groupingdata) {
 		$scope.gpprofilecount =groupingdata.count;
 		
 		if(groupingdata.count){
@@ -311,7 +323,7 @@ var frontend = angular.module('theme.demos.dashboard', [
 		$scope.pbox_singleimage = '';
 		$scope.profile_notes = '';
 		$scope.pbox_profileid = profileid
-		$http.get('api/v1/getgroupinglist').success(function(groupingdata) {
+		$http.get('api/v1/getgroupinglist', {params: {view: 'home', grouptoken : $scope.groupToken}}).success(function(groupingdata) {
 			$scope.groupingcount =groupingdata.count;
 			if(groupingdata.count){
 				$scope.groupings = groupingdata.grouping;
@@ -359,7 +371,8 @@ var frontend = angular.module('theme.demos.dashboard', [
 	$scope.add_new_group = add_new_group;
 	function add_new_group() {  
 		if($scope.new_group_name){
-			var formData = {groupname: $scope.new_group_name, };
+
+			var formData = {groupname: $scope.new_group_name, grouptoken : $scope.groupToken};
 	
 			$http.get('api/v1/addnewgrouping', {params:formData}).success(function(groupingdata) {
 				$scope.groupingcount =groupingdata.count;
@@ -384,7 +397,7 @@ var frontend = angular.module('theme.demos.dashboard', [
 			if(lightboxdata.count){
 				$scope.lbprofiles = lightboxdata.lbprofiles;
 				
-					$http.get('api/v1/getgroupingprofiles', {params: {view: 'home'}}).success(function(groupingdata) {
+					$http.get('api/v1/getgroupingprofiles', {params: {view: 'home', grouptoken : $scope.groupToken}}).success(function(groupingdata) {
 						$scope.gpprofilecount =groupingdata.count;
 						
 						if(groupingdata.count){
@@ -464,7 +477,7 @@ var frontend = angular.module('theme.demos.dashboard', [
 	$scope.removeFromGrouplist = removeFromGrouplist;
 	function removeFromGrouplist() {
 		if($scope.removegroupid){
-			var formData = {groupid: $scope.removegroupid}
+			var formData = {groupid: $scope.removegroupid, grouptoken : $scope.groupToken}
 			$http.get('api/v1/removegroupfromgrouping', {params:formData}).success(function(groupingdata) {
 				$scope.gpprofilecount =groupingdata.count;
 		
@@ -485,7 +498,7 @@ var frontend = angular.module('theme.demos.dashboard', [
 	$scope.addgroupintoGrouplist = addgroupintoGrouplist;
 	function addgroupintoGrouplist() {
 		if($scope.new_group_name1){
-			var formData = {groupname: $scope.new_group_name1}
+			var formData = {groupname: $scope.new_group_name1, grouptoken : $scope.groupToken}
 			$http.get('api/v1/addgroupintogrouping', {params:formData}).success(function(groupingdata) {
 				$scope.gpprofilecount =groupingdata.count;
 		
@@ -719,6 +732,35 @@ var frontend = angular.module('theme.demos.dashboard', [
 		});	
 		$("#profile_popup").fadeIn("slow"); 
 	}
+
+  $scope.showEmailPopup = function (){
+    $("#lightbox_popup.email").fadeIn('slow');
+    $("#lightbox_popup.email #to_email").val("tony.grahn@themethodlab.com");
+  };
+  $scope.cancelEmailPopup = function (){
+    $("#lightbox_popup.email").fadeOut('slow'); 
+  };
+  $scope.sendEmailForm = function (){
+    $scope.to_email = "tony.grahn@themethodlab.com";
+    var formData = {
+            from_email: $scope.from_email,
+            to_email: $scope.to_email,
+            to_cc: $scope.to_cc,
+            mail_body: $scope.mail_body,
+            }
+    $http.post('api/v1/sendemail', formData).success(function(response) {
+      if(response.success){
+        $scope.from_email ='';
+        $scope.to_email ='';
+        $scope.to_cc ='';
+        $scope.mail_body ='';
+        $scope.response_text =response.message;
+        $scope.apply;
+      }
+    }); 
+    $("#profile_popup").fadeIn("slow"); 
+  }
+
 $scope.sendGroupForm = sendGroupForm;
 
 function sendGroupForm(groupid) {
