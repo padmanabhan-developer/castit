@@ -638,6 +638,13 @@ main.controller('RegisterStep5Controller', ['$scope', '$filter', '$http', '$wind
 		});				
 	  }
 
+  $("select[id^=lang]").on("change",function(){
+    if($(this).val() == ""){
+      var row_id = this.id.slice(-1);
+      $("input[id=langrateval"+row_id+"]").val("");
+      $("span.ratings img[id^=start_"+row_id+"]").attr("src","images/star-black.png");
+    }
+  });
 	  
 }]);
 
@@ -669,6 +676,60 @@ main.controller('RegisterStep6Controller', ['$scope', '$filter', '$http', '$wind
 		return this.countriesdropdown;
 	}; 
 	
+  $scope.progress = {
+    min: 0,
+    max: 100
+  };
+
+  $scope.uploadFile = function(event){
+    var files = event.target.files;
+    var file = files[0];
+    // var file = _("file1").files[0];
+    alert(file.name+" | "+file.size+" | "+file.type);
+    var formdata = new FormData();
+    formdata.append("Image_file[]", file);
+    var ajax = new XMLHttpRequest();
+    ajax.upload.addEventListener("progress", progressHandler, false);
+    ajax.addEventListener("load", completeHandler, false);
+    ajax.addEventListener("error", errorHandler, false);
+    ajax.addEventListener("abort", abortHandler, false);
+    ajax.open("POST", "api/v1/fileuploadparser"); // http://www.developphp.com/video/JavaScript/File-Upload-Progress-Bar-Meter-Tutorial-Ajax-PHP
+    //use file_upload_parser.php from above url
+    ajax.send(formdata);
+    };
+
+  function _(el) {
+    return document.getElementById(el);
+  }
+
+  function uploadFile() {
+
+  }
+
+  function progressHandler(event) {
+    _("loaded_n_total").innerHTML = "Uploaded " + event.loaded + " bytes of " + event.total;
+    var percent = (event.loaded / event.total) * 100;
+    _("progress").value = Math.round(percent);
+    $("#progressBar .progress-bar").css("width",percent+"%");
+    _("status").innerHTML = Math.round(percent) + "% uploaded... please wait";
+  }
+
+  function completeHandler(event) {
+    _("status").innerHTML = event.target.responseText;
+    _("progress").value = 100; //wil clear progress bar after successful upload
+    $("#progressBar .progress-bar").css("width","100%");
+  }
+
+  function errorHandler(event) {
+    _("status").innerHTML = "Upload Failed";
+  }
+
+  function abortHandler(event) {
+    _("status").innerHTML = "Upload Aborted";
+  }
+
+
+
 	$scope.step6Create = step6Create;
 	function step6Create() {  
 		$scope.ifRegistring=true;
@@ -692,7 +753,7 @@ main.controller('RegisterStep6Controller', ['$scope', '$filter', '$http', '$wind
 						
 					if(response.status){
 						$scope.ifRegistring=false;
-						alert("Registered Successfully");
+						alert(response.msg);
 						window.location = '#/index';
 					}
 					else{
@@ -706,6 +767,8 @@ main.controller('RegisterStep6Controller', ['$scope', '$filter', '$http', '$wind
 				window.location = '#/index';
 			});				
 	  }
+
+    // file uploader
 
 	  
 }]);
@@ -1326,7 +1389,7 @@ main.controller('MyProfileController1',['$scope','$http', function($scope, $http
 						}
 		$http.post('api/v1/step1Create', formData).success(function(response) {
 			if(response.success){
-				window.location = '#/my-profile_2';
+				window.location = '#/my-profile_6';
 			}
 		});				
   }
@@ -1602,6 +1665,14 @@ main.controller('MyProfileController5',['$scope','$http', function($scope, $http
     ($scope.langrateval2 != "") ? setlangraing(2, $scope.langrateval2) : $scope.langrateval2 = "";
     ($scope.langrateval3 != "") ? setlangraing(3, $scope.langrateval3) : $scope.langrateval3 = "";
     ($scope.langrateval4 != "") ? setlangraing(4, $scope.langrateval4) : $scope.langrateval4 = "";
+
+    $("select[id^=lang]").on("change",function(){
+      if($(this).val() == ""){
+        var row_id = this.id.slice(-1);
+        $("input[id=langrateval"+row_id+"]").val("");
+        $("span.ratings img[id^=start_"+row_id+"]").attr("src","images/star-black.png");
+      }
+    });
   });
 
   $scope.step5Update = step5Update;
@@ -1644,4 +1715,16 @@ main.controller('MyProfileController5',['$scope','$http', function($scope, $http
             }
         }
     }
+})
+.directive('customOnChange', function() {
+  return {
+    restrict: 'A',
+    link: function (scope, element, attrs) {
+      var onChangeHandler = scope.$eval(attrs.customOnChange);
+      element.on('change', onChangeHandler);
+      element.on('$destroy', function() {
+        element.off();
+      });
+    }
+  };
 });

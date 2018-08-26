@@ -162,7 +162,7 @@ $app->get('/getfilterprofiles',function () use ($app) {
 	}
 
 	if($search_text){
-		$search_qry .= " AND (p.first_name LIKE '%".$search_text."%' OR p.last_name LIKE '%".$search_text."%' OR m.profile_number LIKe '%".$search_text."%')";		
+		$search_qry .= " AND (p.first_name = '".$search_text."' OR p.last_name = '".$search_text."' OR m.profile_number = '".$search_text."')";		
 	}
 	$qry = "SELECT p.*, m.profile_group_id, m.profile_number, m.profile_number_first_name_last_name, m.version, m.current, g.name as gender_name, hc.name as hair_color_name, ec.name as eye_color_name FROM profiles p INNER JOIN memberships m ON m.profile_id = p.id INNER JOIN genders g ON g.id = p.gender_id INNER JOIN hair_colors hc ON hc.id = p.hair_color_id INNER JOIN eye_colors ec ON ec.id = p.eye_color_id  WHERE (p.profile_status_id = '1' OR  p.profile_status_id = '2') AND m.current ='1' AND p.id IN (SELECT profile_id from photos WHERE published ='1' GROUP by profile_id) ".$search_qry."  ORDER by case WHEN m.profile_number LIKE 'CF%' THEN 1 WHEN m.profile_number LIKE 'CM%' THEN 2 WHEN m.profile_number LIKE 'A%' THEN 3 WHEN m.profile_number LIKE 'J%' THEN 4  WHEN m.profile_number LIKE 'YF%' THEN 5 WHEN m.profile_number LIKE 'YM%' THEN 6 ELSE 7 END ";
 	$query = $db->prepare($qry); 
@@ -772,8 +772,9 @@ $app->get('/getgroupingprofiles', function () use ($app) {
 	$reponse = array();
 	$rowcount = 0;
 	$grouping_profile = array();
+	$grouptoken =  $app->request->get('grouptoken');
 
-	$query_check_gb = $db->prepare("SELECT *, date_format(added_on , '%d.%m.%Y') as addedon  FROM grouping where status = '1' order by group_name asc"); 
+	$query_check_gb = $db->prepare("SELECT *, date_format(added_on , '%d.%m.%Y') as addedon  FROM grouping where token_id= '".$grouptoken."' AND status = '1' order by group_name asc"); 
 	$query_check_gb->execute();
 	$rows_gb = $query_check_gb->fetchAll(PDO::FETCH_ASSOC);
 	if(count($rows_gb)>0) {
@@ -856,9 +857,10 @@ Type : GET
 $app->get('/removegroupfromgrouping', function () use ($app) { 
     global $db;
 	$groupid =  $app->request->get('groupid');
+	$grouptoken =  $app->request->get('grouptoken');
 
 	if($groupid){
-		$query_check_gb = $db->prepare("SELECT * FROM grouping where group_id = '".$groupid."'"); 
+		$query_check_gb = $db->prepare("SELECT * FROM grouping where group_id = '".$groupid."' AND token_id = '".$grouptoken."'"); 
 		$query_check_gb->execute();
 		$rows_gb = $query_check_gb->fetchAll(PDO::FETCH_ASSOC);
 		if(count($rows_gb)>0) {
@@ -879,7 +881,7 @@ $app->get('/removegroupfromgrouping', function () use ($app) {
 	$rowcount = 0;
 	$grouping_profile = array();
 
-	$query_check_gb = $db->prepare("SELECT *, date_format(added_on , '%d.%m.%Y') as addedon  FROM grouping where status = '1' order by group_name asc"); 
+	$query_check_gb = $db->prepare("SELECT *, date_format(added_on , '%d.%m.%Y') as addedon  FROM grouping where status = '1' AND token_id = '".$grouptoken."' order by group_name asc"); 
 	$query_check_gb->execute();
 	$rows_gb = $query_check_gb->fetchAll(PDO::FETCH_ASSOC);
 	if(count($rows_gb)>0) {
@@ -966,9 +968,10 @@ $app->get('/addgroupintogrouping', function () use ($app) {
 	$reponse = array();
 	$rowcount = 0;
 
-	$grouping_token = generate_uuid();
+	//$grouping_token = generate_uuid();
+	$grouping_token = $app->request->get('grouptoken');
 	
-	$query_check_gp = $db->prepare("SELECT * FROM `grouping` where `group_name` LIKE '%".$groupname."%'"); 
+	$query_check_gp = $db->prepare("SELECT * FROM `grouping` where `group_name` LIKE '%".$groupname."%' AND token_id = '".$grouping_token."'"); 
 	$query_check_gp->execute();
 	$rows_gp = $query_check_gp->fetchAll(PDO::FETCH_ASSOC);
 	if(count($rows_gp)>0) {
@@ -984,7 +987,7 @@ $app->get('/addgroupintogrouping', function () use ($app) {
 	$rowcount = 0;
 	$grouping_profile = array();
 
-	$query_check_gb = $db->prepare("SELECT *, date_format(added_on , '%d.%m.%Y') as addedon  FROM grouping where status = '1' order by group_name asc"); 
+	$query_check_gb = $db->prepare("SELECT *, date_format(added_on , '%d.%m.%Y') as addedon  FROM grouping where status = '1' AND token_id = '".$grouping_token."' order by group_name asc"); 
 	$query_check_gb->execute();
 	$rows_gb = $query_check_gb->fetchAll(PDO::FETCH_ASSOC);
 	if(count($rows_gb)>0) {
@@ -1627,8 +1630,8 @@ $app->post('/step5Create',function () use ($app) {
 	$data =  json_decode($app->request->getBody(), true);
 	$response = array();
 	global $imageClass;
-	$_SESSION['operation'] = $data['operation'];
-	$_SESSION['user_profile_id'] = $data['user_profile_id'];
+	$_SESSION['operation'] = isset($data['operation']) ? $data['operation'] : "insert";
+	$_SESSION['user_profile_id'] = isset($data['user_profile_id']) ? $data['user_profile_id'] : "";
 
 	$_SESSION["step5"]["status"] 			=1;
 
@@ -1773,6 +1776,7 @@ Parameter : Form post parameters
 Type : POST
 ******************************************/
 $app->post('/step6Create',function () use ($app) { 
+	ini_set("max_input_vars", 2000000);
 	$operation = (isset($_SESSION['operation'])) ? $_SESSION['operation'] : 'insert';
 	$user_profile_id = (isset($_SESSION['user_profile_id'])) ? $_SESSION['user_profile_id'] : '';
 
@@ -2028,17 +2032,17 @@ $app->post('/step6Create',function () use ($app) {
 						move_uploaded_file($_FILES['Image_file']['tmp_name'][$key],$location.$filename);
 						$query = "UPDATE photos 
 											SET
-											path = $location,
-											original_path = $location,
-											filename = $filename,
+											path = '$location',
+											original_path = '$location',
+											filename = '$filename',
 											published = 1,
 											position = $key,
 											phototype_id = 1,
-											image = $filename,
+											image = '$filename',
 											updated_at = now(),
-											image_tmp = $filename,
+											image_tmp = '$filename',
 											image_processing = 1,
-											image_token = $filename
+											image_token = '$filename'
 											WHERE
 											profile_id = $user_profile_id";
 						$query_prepared = $db->prepare($query);
@@ -2073,6 +2077,94 @@ $app->post('/step6Create',function () use ($app) {
 				echoResponse(200,array('status'=>true,'msg'=>'Updated Sucessfully'));
 		}
 });
+
+/******************************************
+Purpose: Send to email id
+Parameter : form field
+Type : POST
+******************************************/
+
+$app->post('/fileuploadparser', function () use ($app) {
+
+	$fileName = $_FILES["Image_file"]["name"][0]; // The file name
+	$fileTmpLoc = $_FILES["Image_file"]["tmp_name"][0]; // File in the PHP tmp folder
+	$fileType = $_FILES["Image_file"]["type"]; // The type of file it is
+	$fileSize = $_FILES["Image_file"]["size"]; // File size in bytes
+	$fileErrorMsg = $_FILES["Image_file"]["error"]; // 0 for false... and 1 for true
+
+	// $file_name = $_FILES['Image_file']['name'][$key];
+	$file_name = $_FILES['Image_file']['name'];
+	$location = $_SERVER['DOCUMENT_ROOT'].'/images/uploads/';
+// var_dump($_FILES);
+	if (!$fileTmpLoc) { // if file not chosen
+		
+	    echo "ERROR: Please browse for a file before clicking the upload button.";
+	    exit();
+	}
+	if(move_uploaded_file($fileTmpLoc, $location.$fileName)){
+	    echo "$fileName upload is complete";
+	} else {
+	    echo "move_uploaded_file function failed";
+	}
+
+});
+
+/******************************************
+Purpose: Send to email id
+Parameter : form field
+Type : POST
+******************************************/
+
+$app->post('/sendemail', function () use ($app) { 
+  global $db;
+  $data = json_decode($app->request->getBody(), true);
+  $response = array();
+  $to_email = $data['to_email'];
+  $from_email = $data['form_email'];
+  $mail_body ='';$to_cc ='';
+  if(isset($data['mail_body'])){
+    $mail_body = $data['mail_body'];
+  }
+  if(isset($data['to_cc'])){
+    $to_cc = $data['to_cc'];
+  }
+
+  $html = '<table style="text-align:left" cellspacing="0" cellpadding="0" width="556" border="0">
+    <tbody>
+    <tr>
+    <td>
+    <table style="width:100%" border="0">
+    <tbody>
+    <tr>
+    <td align="left"><img alt="Mailtoplogo" src="http://134.213.29.220/assets/mailTopLogo.png" ></td>
+    <td style="width:270px;padding-top:18px" align="left" valign="top"><b style="color:#696969">Castit <span class="il">Lightbox</span>:</b><br>'.$mail_body.'</td>
+    </tr>
+    <tr>
+    <td colspan="2"><img alt="Mailtopborder" src="http://134.213.29.220/assets/mailTopBorder.jpg"></td>
+    </tr>
+    </tbody>
+    </table>
+    </td>
+    </tr>
+    <tr>';
+
+  $subject = "Castit Workshop enquiry";
+  $headers = "MIME-Version: 1.0" . "\r\n";
+  $headers .= "Content-type:text/html;charset=UTF-8" . "\r\n";
+  $headers .= 'From: Castit <info@ldsstage.in>' . "\r\n";
+  //$headers .= 'Reply-To: <'.$from_email.'>' . "\r\n";
+  if($to_cc){
+    $headers .= 'CC: <'.$to_cc.'>' ."\r\n";
+  }
+  //$html .= 'testemail';
+  mail( $to_email, $subject, $html, $headers ); // Accountant
+  $response['success'] = true;
+  $response['message'] = 'Email er sendt!';
+
+  echoResponse(200, $response);
+});
+
+
 /******************************************
 Purpose: Send Lighbox profiles to email id
 Parameter : form field
@@ -2450,7 +2542,9 @@ $app->get('/getgroupinglist', function () use ($app) {
     global $db;
 	$grouping = array();
 	$reponse =  array();
-	$query_grouping = $db->prepare("SELECT * FROM grouping WHERE status ='1' order by group_name"); 
+	$grouptoken =  $app->request->get('grouptoken');
+
+	$query_grouping = $db->prepare("SELECT * FROM grouping WHERE token_id='".$grouptoken."' AND status ='1' order by group_name"); 
 	$query_grouping->execute();
 	$rows_grouping = $query_grouping->fetchAll(PDO::FETCH_ASSOC);
 	$rowcount = count($rows_grouping);
@@ -2475,9 +2569,9 @@ $app->get('/addnewgrouping', function () use ($app) {
 	$reponse = array();
 	$rowcount = 0;
 
-	$grouping_token = generate_uuid();
+	$grouping_token = $app->request->get('grouptoken');
 	
-	$query_check_gp = $db->prepare("SELECT * FROM `grouping` where `group_name` LIKE '%".$groupname."%'"); 
+	$query_check_gp = $db->prepare("SELECT * FROM `grouping` where `group_name` LIKE '%".$groupname."%' AND token_id ='".$grouping_token."'"); 
 	$query_check_gp->execute();
 	$rows_gp = $query_check_gp->fetchAll(PDO::FETCH_ASSOC);
 	if(count($rows_gp)>0) {
@@ -2488,7 +2582,7 @@ $app->get('/addnewgrouping', function () use ($app) {
 			$gpid = $db->exec($q_gruping);
 	}
 	
-	$query_grouping = $db->prepare("SELECT * FROM grouping WHERE status ='1' order by group_name"); 
+	$query_grouping = $db->prepare("SELECT * FROM grouping WHERE status ='1' AND token_id ='".$grouping_token."' order by group_name"); 
 	$query_grouping->execute();
 	$rows_grouping = $query_grouping->fetchAll(PDO::FETCH_ASSOC);
 	$rowcount = count($rows_grouping);
@@ -2842,6 +2936,20 @@ $app->post('/resetpassword',function () use ($app) {
 		}
 	echoResponse(200, $response);
 });
+
+/******************************************
+Purpose: Create and get Group Token
+Parameter : null
+Type : GET
+******************************************/
+$app->get('/getgrouptoken',function () use ($app) { 
+    global $db;
+	$group_token = generate_uuid();
+	$response = array( 'success' => true, 'grouptoken' => $group_token);
+	echoResponse(200, $response);
+});
+
+
 //JSON coneverion
 function echoResponse($status_code, $response) {
     global $app;

@@ -9,6 +9,15 @@
         </div>
       </div>
       <!--close section-top-->
+<form id="upload_form" enctype="multipart/form-data" method="post">
+<input custom-on-change="uploadFile" type="file" name="file1" id="file1"><br>
+<progress ng-non-bindable id="progress" value="0" max="100" style="width:300px;height: 5px; color: red"></progress>
+<progressbar id="progressBar" value="0" max="100" style="width:300px;height: 5px; color: red"></progressbar>
+<!-- <progress id="progressBar" value="0" max="100" style="width:300px;"></progress> -->
+<h3 id="status"></h3>
+<p id="loaded_n_total"></p>
+</form>
+
       <form name="profile_ansog_form6" id="profile_ansog_form6" ng-submit="step6Create()">
         <div class="section-middle">
           <div class="black-section">
@@ -29,9 +38,12 @@
                     </div>
                     
                     <div class="form_box form_box5 black-placeholder">
-                      <input id="ansigt_text" ng-model="files[0].name" name="" type="text" class="input2" placeholder="Ansigt*">
+                      <!-- <input id="ansigt_text" ng-model="files[0].name" name="" type="text" class="input2" placeholder="Ansigt*"> -->
+                      <input custom-on-change="uploadFile" type="file" name="file1" id="file1"><br>
+                      <progress ng-non-bindable id="progress" value="0" max="100" style="width:300px;height: 5px; color: red"></progress>
+
                       <label for="ansigt" class="upload1"></label>
-                      <input ng-file-model="files[0]"  id="ansigt" name="" type="file" class="input2" placeholder="Ansigt*" style="display:none">
+                      <!-- <input ng-file-model="files[0]"  id="ansigt" name="" type="file" class="input2" placeholder="Ansigt*" style="display:none"> -->
                     </div>
                     <div class="form_box form_box5 black-placeholder">
                       <input id="profil_text" ng-model="files[1].name" name="" type="text" class="input2" placeholder="Profil*">
