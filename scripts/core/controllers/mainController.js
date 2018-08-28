@@ -684,41 +684,40 @@ main.controller('RegisterStep6Controller', ['$scope', '$filter', '$http', '$wind
   $scope.uploadFile = function(event){
     var files = event.target.files;
     var file = files[0];
-    // var file = _("file1").files[0];
-    alert(file.name+" | "+file.size+" | "+file.type);
     var formdata = new FormData();
     formdata.append("Image_file[]", file);
     var ajax = new XMLHttpRequest();
+    ajax.inputdom = $(this);
+    ajax.upload.inputdom = $(this);
     ajax.upload.addEventListener("progress", progressHandler, false);
     ajax.addEventListener("load", completeHandler, false);
     ajax.addEventListener("error", errorHandler, false);
     ajax.addEventListener("abort", abortHandler, false);
-    ajax.open("POST", "api/v1/fileuploadparser"); // http://www.developphp.com/video/JavaScript/File-Upload-Progress-Bar-Meter-Tutorial-Ajax-PHP
+    ajax.open("POST", "api/v1/fileuploadparser"); 
+    // http://www.developphp.com/video/JavaScript/File-Upload-Progress-Bar-Meter-Tutorial-Ajax-PHP
     //use file_upload_parser.php from above url
     ajax.send(formdata);
-    };
+  }
 
   function _(el) {
     return document.getElementById(el);
   }
 
-  function uploadFile() {
-
-  }
-
   function progressHandler(event) {
-    _("loaded_n_total").innerHTML = "Uploaded " + event.loaded + " bytes of " + event.total;
     var percent = (event.loaded / event.total) * 100;
-    _("progress").value = Math.round(percent);
-    $("#progressBar .progress-bar").css("width",percent+"%");
-    _("status").innerHTML = Math.round(percent) + "% uploaded... please wait";
+    event.target.inputdom.siblings("progress")[0].style.display = "table-row";
+    event.target.inputdom.siblings("progress")[0].value = Math.round(percent);
+    // _("status").innerHTML = Math.round(percent) + "% uploaded... please wait";
+    // _("loaded_n_total").innerHTML = "Uploaded " + event.loaded + " bytes of " + event.total;
   }
 
   function completeHandler(event) {
-    _("status").innerHTML = event.target.responseText;
-    _("progress").value = 100; //wil clear progress bar after successful upload
-    $("#progressBar .progress-bar").css("width","100%");
-  }
+    event.target.inputdom.siblings().find("progress").value = 100; //wil clear progress bar after successful upload
+    if(event.target.status == 200  &&  JSON.parse(event.target.response).status_message == "file upload success"){
+      event.target.inputdom.siblings().find("input").prevObject[0].value = JSON.parse(event.target.response).filename;
+      $scope.fieldone = JSON.parse(event.target.response).filename;
+    }
+  };
 
   function errorHandler(event) {
     _("status").innerHTML = "Upload Failed";
@@ -727,8 +726,6 @@ main.controller('RegisterStep6Controller', ['$scope', '$filter', '$http', '$wind
   function abortHandler(event) {
     _("status").innerHTML = "Upload Aborted";
   }
-
-
 
 	$scope.step6Create = step6Create;
 	function step6Create() {  
@@ -1389,7 +1386,7 @@ main.controller('MyProfileController1',['$scope','$http', function($scope, $http
 						}
 		$http.post('api/v1/step1Create', formData).success(function(response) {
 			if(response.success){
-				window.location = '#/my-profile_6';
+				window.location = '#/my-profile_2';
 			}
 		});				
   }
@@ -1696,7 +1693,6 @@ main.controller('MyProfileController5',['$scope','$http', function($scope, $http
           lng_pro_id3: ($scope.profileinfo.languages[2] != undefined) ? $scope.profileinfo.languages[2].lng_pro_id : "",
           lng_pro_id4: ($scope.profileinfo.languages[3] != undefined) ? $scope.profileinfo.languages[3].lng_pro_id : "",
         }
-        console.log(formData);
     $http.post('api/v1/step5Create', formData).success(function(response) {
       if(response.success){
         window.location = '#/my-profile_6';

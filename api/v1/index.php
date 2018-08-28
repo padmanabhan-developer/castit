@@ -2102,7 +2102,7 @@ $app->post('/fileuploadparser', function () use ($app) {
 	    exit();
 	}
 	if(move_uploaded_file($fileTmpLoc, $location.$fileName)){
-	    echo "$fileName upload is complete";
+	    echo json_encode(['status_message'=>'file upload success', 'filename'=>$fileName]);
 	} else {
 	    echo "move_uploaded_file function failed";
 	}

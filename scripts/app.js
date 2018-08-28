@@ -31,7 +31,7 @@ angular
         templateUrl: 'views/index.html',
       })
       .otherwise({
-        redirectTo: '/'
+        redirectTo: '/index'
       });
   }])
   .run(['$rootScope', '$location', '$cookieStore', '$http', function($rootScope, $location, $cookieStore, $http) {
@@ -45,7 +45,7 @@ angular
             var restrictedPage = $.inArray($location.path(), ['/landing','/profiles', '/index', '/about-us', '/contact', '/ansog-trin1', '/ansog-trin2', '/ansog-trin3', '/ansog-trin4', '/ansog-trin5', '/login', '/ansog-trin6', '/ansog-trin7', '/reset-password']) === -1;
             var loggedIn = $rootScope.globals.currentUser;
             if (restrictedPage && !loggedIn) {
-                $location.path('/landing');
+                $location.path('/index');
             }
         });
   }]);
