@@ -81,12 +81,18 @@ $app->get('/getprofiles',function () use ($app) {
 	$image= '';
     $rows_image = $query_image->fetchAll(PDO::FETCH_ASSOC);
 	if(count($rows_image) > 0){
-		$path = $rows_image[0]['create_year']."/".$rows_image[0]['create_month']."/".$rows_image[0]['create_date']."/".$rows_image[0]['id']."/big_";
-		$profile_image = 'http://134.213.29.220/profile_images/'.$path.$rows_image[0]['image'];
-		//$profile_image = 'http://134.213.29.220/assets/profile_images/'.$path.$rows_image[0]['image'];
-		
+		if (strpos($rows_image[0]['path'], 'vhost') !== false) {
+			$path = $rows_image[0]['path'];
+			$profile_image = 'http://134.213.29.220/images/uploads/'.$rows_image[0]['image'];
+		}
+		else{
+			$path = $rows_image[0]['create_year']."/".$rows_image[0]['create_month']."/".$rows_image[0]['create_date']."/".$rows_image[0]['id']."/big_";
+			$profile_image = 'http://134.213.29.220/profile_images/'.$path.$rows_image[0]['image'];
 		
 		}
+			//$profile_image = 'http://134.213.29.220/assets/profile_images/'.$path.$rows_image[0]['image'];
+
+	}
 
 
 			$profiles[] = array('id' 			=> $row['id'],
@@ -162,7 +168,7 @@ $app->get('/getfilterprofiles',function () use ($app) {
 	}
 
 	if($search_text){
-		$search_qry .= " AND (p.first_name = '".$search_text."' OR p.last_name = '".$search_text."' OR m.profile_number = '".$search_text."')";		
+		$search_qry .= " AND (p.first_name LIKE '".$search_text."' OR p.last_name LIKE '".$search_text."' OR m.profile_number LIKe '".$search_text."')";		
 	}
 	$qry = "SELECT p.*, m.profile_group_id, m.profile_number, m.profile_number_first_name_last_name, m.version, m.current, g.name as gender_name, hc.name as hair_color_name, ec.name as eye_color_name FROM profiles p INNER JOIN memberships m ON m.profile_id = p.id INNER JOIN genders g ON g.id = p.gender_id INNER JOIN hair_colors hc ON hc.id = p.hair_color_id INNER JOIN eye_colors ec ON ec.id = p.eye_color_id  WHERE (p.profile_status_id = '1' OR  p.profile_status_id = '2') AND m.current ='1' AND p.id IN (SELECT profile_id from photos WHERE published ='1' GROUP by profile_id) ".$search_qry."  ORDER by case WHEN m.profile_number LIKE 'CF%' THEN 1 WHEN m.profile_number LIKE 'CM%' THEN 2 WHEN m.profile_number LIKE 'A%' THEN 3 WHEN m.profile_number LIKE 'J%' THEN 4  WHEN m.profile_number LIKE 'YF%' THEN 5 WHEN m.profile_number LIKE 'YM%' THEN 6 ELSE 7 END ";
 	$query = $db->prepare($qry); 
@@ -184,8 +190,14 @@ $app->get('/getfilterprofiles',function () use ($app) {
 	$image= '';
     $rows_image = $query_image->fetchAll(PDO::FETCH_ASSOC);
 	if(count($rows_image) > 0){
-		$path = $rows_image[0]['create_year']."/".$rows_image[0]['create_month']."/".$rows_image[0]['create_date']."/".$rows_image[0]['id']."/big_";
-		$profile_image = 'http://134.213.29.220/profile_images/'.$path.$rows_image[0]['image'];
+		if (strpos($rows_image[0]['path'], 'vhost') !== false) {
+			$path = $rows_image[0]['path'];
+			$profile_image = 'http://134.213.29.220/images/uploads/'.$rows_image[0]['image'];
+		}
+		else{
+			$path = $rows_image[0]['create_year']."/".$rows_image[0]['create_month']."/".$rows_image[0]['create_date']."/".$rows_image[0]['id']."/big_";
+			$profile_image = 'http://134.213.29.220/profile_images/'.$path.$rows_image[0]['image'];
+		}
 		
 		}
 		$name = $row['first_name'];
@@ -262,8 +274,16 @@ $app->get('/getsingleprofiles',function () use ($app) {
 		$imgc = 1;
 		if(count($rows_image) > 0){
 			foreach($rows_image as $row_image){
-				$path = $row_image['create_year']."/".$row_image['create_month']."/".$row_image['create_date']."/".$row_image['id']."/big_";
-				$profile_images[] = array('imgcnt' => $imgc, 'urloriginal' =>$row_image['image'], 'fullpath'=>'http://134.213.29.220/profile_images/'.$path.$row_image['image']);
+				if (strpos($row_image['path'], 'vhost') !== false) {
+					$fullpath = 'http://134.213.29.220/images/uploads/'.$row_image['image'];
+				}
+				else{
+					$path = $row_image['create_year']."/".$row_image['create_month']."/".$row_image['create_date']."/".$row_image['id']."/big_";
+					$fullpath = 'http://134.213.29.220/profile_images/'.$path.$row_image['image'];
+				}
+				
+				$profile_images[] = array('imgcnt' => $imgc, 'urloriginal' =>$row_image['image'], 'fullpath'=>$fullpath);
+				
 				$imgc++;
 			}
 		}
@@ -277,8 +297,17 @@ $app->get('/getsingleprofiles',function () use ($app) {
 		$videoc = 1;
 		if(count($rows_video) > 0){
 			foreach($rows_video as $row_video){
+				/*
+				if (strpos($row_video['path'], 'vhost') !== false) {
+					$vpath = 'http://134.213.29.220/images/uploads/'.$row_video['filename'];
+					$thumbpath = 'http://134.213.29.220/images/uploads/'.$row_video['filename'];
+				}
+				else{
+					$vpath = 'http://assets3.castit.dk'.$row_video['path']."/".$row_video['filename'];
+					$thumbpath = 'http://assets3.castit.dk'.$row_video['thumbnail_photo_path']."/".$row_video['thumbnail_photo_filename'];
+				} */
 				$vpath = 'http://assets3.castit.dk'.$row_video['path']."/".$row_video['filename'];
-				$thumbpath = 'http://assets3.castit.dk'.$row_video['thumbnail_photo_path']."/".$row_video['thumbnail_photo_filename'];
+					$thumbpath = 'http://assets3.castit.dk'.$row_video['thumbnail_photo_path']."/".$row_video['thumbnail_photo_filename'];
 				$profile_videos[] = array('vidcnt' => $videoc, 'urloriginal' =>$vpath, 'img_thum'=>$thumbpath, 'fullpath'=>$vpath);
 				$videoc++;
 			}
@@ -407,6 +436,7 @@ $app->get('/updatelightboxprofiles', function () use ($app) {
 	$rowcount = 0;
 	$profile_note =  $app->request->get('profile_notes');
 	$profile_grouping =  $app->request->get('selectedgroupings');
+	$grouptoken =  $app->request->get('grouptoken');
 
 	if(isset($_SESSION["lightbox_token"])){
 		$lightbox_token = $_SESSION["lightbox_token"];
@@ -486,13 +516,20 @@ $app->get('/updatelightboxprofiles', function () use ($app) {
 						$image= '';
 						$rows_image = $query_image->fetchAll(PDO::FETCH_ASSOC);
 						if(count($rows_image) > 0){
-							$path = $rows_image[0]['create_year']."/".$rows_image[0]['create_month']."/".$rows_image[0]['create_date']."/".$rows_image[0]['id']."/thumb_";
-							$profile_image = 'http://134.213.29.220/profile_images/'.$path.$rows_image[0]['image'];
+							if (strpos($rows_image[0]['path'], 'vhost') !== false) {
+								$profile_image = 'http://134.213.29.220/images/uploads/'.$rows_image[0]['image'];
+							}
+							else{
+								$path = $rows_image[0]['create_year']."/".$rows_image[0]['create_month']."/".$rows_image[0]['create_date']."/".$rows_image[0]['id']."/thumb_";
+								$profile_image = 'http://134.213.29.220/profile_images/'.$path.$rows_image[0]['image'];
+							}
 							
 							}
 								$lb_note = isset($_SESSION["lb_notes"][$row['id']]) ? $_SESSION["lb_notes"][$row['id']]: '' ;
 								$groupnamear = array();
-								$lb_group_qry = "SELECT pg.*, g.group_name from profile_grouping pg JOIN grouping g ON pg.group_id = g.group_id WHERE pg.profile_id='".$row['id']."'";	
+							
+								$lb_group_qry = "SELECT pg.*, g.group_name from profile_grouping pg JOIN grouping g ON pg.group_id = g.group_id AND g.token_id = '".$grouptoken."' WHERE pg.profile_id='".$row['id']."'";	
+							
 								$query_group = $db->prepare($lb_group_qry);
 								$query_group->execute();
 								$rows_group = $query_group->fetchAll(PDO::FETCH_ASSOC);
@@ -553,6 +590,7 @@ $app->get('/removelightboxprofiles', function () use ($app) {
 	$lb_pprofiles = array();
 	$reponse = array();
 	$rowcount = 0;
+	$grouptoken =  $app->request->get('grouptoken');
 
 	if(isset($_SESSION["lightbox_token"])){
 		$lightbox_token = $_SESSION["lightbox_token"];
@@ -597,13 +635,18 @@ $app->get('/removelightboxprofiles', function () use ($app) {
 						$image= '';
 						$rows_image = $query_image->fetchAll(PDO::FETCH_ASSOC);
 						if(count($rows_image) > 0){
-							$path = $rows_image[0]['create_year']."/".$rows_image[0]['create_month']."/".$rows_image[0]['create_date']."/".$rows_image[0]['id']."/thumb_";
-							$profile_image = 'http://134.213.29.220/profile_images/'.$path.$rows_image[0]['image'];
+							if (strpos($rows_image[0]['path'], 'vhost') !== false) {
+								$profile_image = 'http://134.213.29.220/images/uploads/'.$rows_image[0]['image'];
+							}
+							else{
+								$path = $rows_image[0]['create_year']."/".$rows_image[0]['create_month']."/".$rows_image[0]['create_date']."/".$rows_image[0]['id']."/thumb_";
+								$profile_image = 'http://134.213.29.220/profile_images/'.$path.$rows_image[0]['image'];
+							}
 							
 							}
 								$lb_note = isset($_SESSION["lb_notes"][$row['id']]) ? $_SESSION["lb_notes"][$row['id']]: '' ;
 								$groupnamear = array();
-								$lb_group_qry = "SELECT pg.*, g.group_name from profile_grouping pg JOIN grouping g ON pg.group_id = g.group_id WHERE pg.profile_id='".$row['id']."'";	
+								$lb_group_qry = "SELECT pg.*, g.group_name from profile_grouping pg JOIN grouping g ON pg.group_id = g.group_id  AND g.token_id = '".$grouptoken."' WHERE pg.profile_id='".$row['id']."'";	
 								$query_group = $db->prepare($lb_group_qry);
 								$query_group->execute();
 								$rows_group = $query_group->fetchAll(PDO::FETCH_ASSOC);
@@ -665,6 +708,7 @@ $app->get('/getlightboxprofiles', function () use ($app) {
 	$lb_pprofiles = array();
 	$reponse = array();
 	$rowcount = 0;
+	$grouptoken =  $app->request->get('grouptoken');
 
 	if(isset($_SESSION["lightbox_token"])){
 		$lightbox_token = $_SESSION["lightbox_token"];
@@ -709,12 +753,16 @@ $app->get('/getlightboxprofiles', function () use ($app) {
 				$image= '';
 				$rows_image = $query_image->fetchAll(PDO::FETCH_ASSOC);
 				if(count($rows_image) > 0){
-					$path = $rows_image[0]['create_year']."/".$rows_image[0]['create_month']."/".$rows_image[0]['create_date']."/".$rows_image[0]['id']."/thumb_";
-					$profile_image = 'http://134.213.29.220/profile_images/'.$path.$rows_image[0]['image'];
-					
+					if (strpos($rows_image[0]['path'], 'vhost') !== false) {
+						$profile_image = 'http://134.213.29.220/images/uploads/'.$rows_image[0]['image'];
 					}
+					else{
+						$path = $rows_image[0]['create_year']."/".$rows_image[0]['create_month']."/".$rows_image[0]['create_date']."/".$rows_image[0]['id']."/thumb_";
+						$profile_image = 'http://134.213.29.220/profile_images/'.$path.$rows_image[0]['image'];
+					}
+				}
 				$groupnamear = array();
-				$lb_group_qry = "SELECT pg.*, g.group_name from profile_grouping pg JOIN grouping g ON pg.group_id = g.group_id WHERE pg.profile_id='".$row['id']."'";	
+				$lb_group_qry = "SELECT pg.*, g.group_name from profile_grouping pg JOIN grouping g ON pg.group_id = g.group_id AND g.token_id = '".$grouptoken."' WHERE pg.profile_id='".$row['id']."'";	
 				$query_group = $db->prepare($lb_group_qry);
 				$query_group->execute();
 				$rows_group = $query_group->fetchAll(PDO::FETCH_ASSOC);
@@ -806,10 +854,15 @@ $app->get('/getgroupingprofiles', function () use ($app) {
 						$image= '';
 						$rows_image = $query_image->fetchAll(PDO::FETCH_ASSOC);
 						if(count($rows_image) > 0){
-							$path = $rows_image[0]['create_year']."/".$rows_image[0]['create_month']."/".$rows_image[0]['create_date']."/".$rows_image[0]['id']."/thumb_";
-							$profile_image = 'http://134.213.29.220/profile_images/'.$path.$rows_image[0]['image'];
-							
+							if (strpos($rows_image[0]['path'], 'vhost') !== false) {
+								$profile_image = 'http://134.213.29.220/images/uploads/'.$rows_image[0]['image'];
 							}
+							else{
+								$path = $rows_image[0]['create_year']."/".$rows_image[0]['create_month']."/".$rows_image[0]['create_date']."/".$rows_image[0]['id']."/thumb_";
+								$profile_image = 'http://134.213.29.220/profile_images/'.$path.$rows_image[0]['image'];
+							}
+							
+						}
 						$lb_note = isset($_SESSION["lb_notes"][$row['id']]) ? $_SESSION["lb_notes"][$row['id']]: '' ;
 						$lb_pprofiles[] = array('id' 			=> $row['id'],
 											'bureau' 		=> $row['bureau'],
@@ -913,10 +966,14 @@ $app->get('/removegroupfromgrouping', function () use ($app) {
 						$image= '';
 						$rows_image = $query_image->fetchAll(PDO::FETCH_ASSOC);
 						if(count($rows_image) > 0){
-							$path = $rows_image[0]['create_year']."/".$rows_image[0]['create_month']."/".$rows_image[0]['create_date']."/".$rows_image[0]['id']."/thumb_";
-							$profile_image = 'http://134.213.29.220/profile_images/'.$path.$rows_image[0]['image'];
-							
+							if (strpos($rows_image[0]['path'], 'vhost') !== false) {
+								$profile_image = 'http://134.213.29.220/images/uploads/'.$rows_image[0]['image'];
 							}
+							else{
+								$path = $rows_image[0]['create_year']."/".$rows_image[0]['create_month']."/".$rows_image[0]['create_date']."/".$rows_image[0]['id']."/thumb_";
+								$profile_image = 'http://134.213.29.220/profile_images/'.$path.$rows_image[0]['image'];
+							}
+						}
 						$lb_note = isset($_SESSION["lb_notes"][$row['id']]) ? $_SESSION["lb_notes"][$row['id']]: '' ;
 						$lb_pprofiles[] = array('id' 			=> $row['id'],
 											'bureau' 		=> $row['bureau'],
@@ -1019,10 +1076,14 @@ $app->get('/addgroupintogrouping', function () use ($app) {
 						$image= '';
 						$rows_image = $query_image->fetchAll(PDO::FETCH_ASSOC);
 						if(count($rows_image) > 0){
-							$path = $rows_image[0]['create_year']."/".$rows_image[0]['create_month']."/".$rows_image[0]['create_date']."/".$rows_image[0]['id']."/thumb_";
-							$profile_image = 'http://134.213.29.220/profile_images/'.$path.$rows_image[0]['image'];
-							
+							if (strpos($rows_image[0]['path'], 'vhost') !== false) {
+								$profile_image = 'http://134.213.29.220/images/uploads/'.$rows_image[0]['image'];
 							}
+							else{
+								$path = $rows_image[0]['create_year']."/".$rows_image[0]['create_month']."/".$rows_image[0]['create_date']."/".$rows_image[0]['id']."/thumb_";
+								$profile_image = 'http://134.213.29.220/profile_images/'.$path.$rows_image[0]['image'];
+							}
+						}
 						$lb_note = isset($_SESSION["lb_notes"][$row['id']]) ? $_SESSION["lb_notes"][$row['id']]: '' ;
 						$lb_pprofiles[] = array('id' 			=> $row['id'],
 											'bureau' 		=> $row['bureau'],
@@ -1776,7 +1837,6 @@ Parameter : Form post parameters
 Type : POST
 ******************************************/
 $app->post('/step6Create',function () use ($app) { 
-	ini_set("max_input_vars", 2000000);
 	$operation = (isset($_SESSION['operation'])) ? $_SESSION['operation'] : 'insert';
 	$user_profile_id = (isset($_SESSION['user_profile_id'])) ? $_SESSION['user_profile_id'] : '';
 
@@ -2236,10 +2296,14 @@ $app->post('/sendlightbox', function () use ($app) {
 						$image= '';
 						$rows_image = $query_image->fetchAll(PDO::FETCH_ASSOC);
 						if(count($rows_image) > 0){
-							$path = $rows_image[0]['create_year']."/".$rows_image[0]['create_month']."/".$rows_image[0]['create_date']."/".$rows_image[0]['id']."/lightbox_";
-							$profile_image = 'http://134.213.29.220/profile_images/'.$path.$rows_image[0]['image'];
-							
+							if (strpos($rows_image[0]['path'], 'vhost') !== false) {
+								$profile_image = 'http://134.213.29.220/images/uploads/'.$rows_image[0]['image'];
 							}
+							else{
+								$path = $rows_image[0]['create_year']."/".$rows_image[0]['create_month']."/".$rows_image[0]['create_date']."/".$rows_image[0]['id']."/thumb_";
+								$profile_image = 'http://134.213.29.220/profile_images/'.$path.$rows_image[0]['image'];
+							}
+						}
 			
 						$html .= '<td style="vertical-align:top">
 							<table style="width:100%">
@@ -2353,10 +2417,14 @@ $app->post('/sendgroup', function () use ($app) {
 						$image= '';
 						$rows_image = $query_image->fetchAll(PDO::FETCH_ASSOC);
 						if(count($rows_image) > 0){
-							$path = $rows_image[0]['create_year']."/".$rows_image[0]['create_month']."/".$rows_image[0]['create_date']."/".$rows_image[0]['id']."/lightbox_";
-							$profile_image = 'http://134.213.29.220/profile_images/'.$path.$rows_image[0]['image'];
-							
+							if (strpos($rows_image[0]['path'], 'vhost') !== false) {
+								$profile_image = 'http://134.213.29.220/images/uploads/'.$rows_image[0]['image'];
 							}
+							else{
+								$path = $rows_image[0]['create_year']."/".$rows_image[0]['create_month']."/".$rows_image[0]['create_date']."/".$rows_image[0]['id']."/thumb_";
+								$profile_image = 'http://134.213.29.220/profile_images/'.$path.$rows_image[0]['image'];
+							}
+						}
 			
 						$html .= '<td style="vertical-align:top">
 							<table style="width:100%">
@@ -2477,10 +2545,15 @@ $app->post('/sendgroup', function () use ($app) {
 						$image= '';
 						$rows_image = $query_image->fetchAll(PDO::FETCH_ASSOC);
 						if(count($rows_image) > 0){
-							$path = $rows_image[0]['create_year']."/".$rows_image[0]['create_month']."/".$rows_image[0]['create_date']."/".$rows_image[0]['id']."/lightbox_";
-							$profile_image = 'http://134.213.29.220/profile_images/'.$path.$rows_image[0]['image'];
-							
+							if (strpos($rows_image[0]['path'], 'vhost') !== false) {
+								$profile_image = 'http://134.213.29.220/images/uploads/'.$rows_image[0]['image'];
 							}
+							else{
+								$path = $rows_image[0]['create_year']."/".$rows_image[0]['create_month']."/".$rows_image[0]['create_date']."/".$rows_image[0]['id']."/thumb_";
+								$profile_image = 'http://134.213.29.220/profile_images/'.$path.$rows_image[0]['image'];
+							}
+							
+						}
 			
 						$html .= '<td style="vertical-align:top">
 							<table style="width:100%">
