@@ -3022,6 +3022,74 @@ $app->get('/getgrouptoken',function () use ($app) {
 	echoResponse(200, $response);
 });
 
+$app->post('/fileuploadparser', function () use ($app) {
+
+  $fileName     = $_FILES["Image_file"]["name"][0]; // The file name
+  $fileTmpLoc   = $_FILES["Image_file"]["tmp_name"][0]; // File in the PHP tmp folder
+  $fileType     = $_FILES["Image_file"]["type"]; // The type of file it is
+  $fileSize     = $_FILES["Image_file"]["size"]; // File size in bytes
+  $fileErrorMsg = $_FILES["Image_file"]["error"]; // 0 for false... and 1 for true
+
+  // $file_name = $_FILES['Image_file']['name'][$key];
+  $file_name    = $_FILES['Image_file']['name'];
+  $location     = $_SERVER['DOCUMENT_ROOT'].'/images/uploads/';
+// var_dump($_FILES);
+  if (!$fileTmpLoc) { // if file not chosen
+    
+      echo "ERROR: Please browse for a file before clicking the upload button.";
+      exit();
+  }
+  if(move_uploaded_file($fileTmpLoc, $location.$fileName)){
+    if(isset($_REQUEST["uploaded_file_type"]) && $_REQUEST["uploaded_file_type"] == "video"){
+      $client = new Rackspace(Rackspace::UK_IDENTITY_ENDPOINT, array(
+        'username' => 'castit',
+        'apiKey'   => '187a515209d0affd473fedaedd6d770b'
+      ));
+
+      $objectStoreService = $client->objectStoreService(null, 'LON');
+      $container          = $objectStoreService->getContainer('video_original_files');
+      $date_dir           = date("o-m-d");
+      $localFileName      = $location.$fileName;
+      $remoteFileName     = "/profiles/".$date_dir."/".time()."__".$fileName;
+
+      $handle = fopen($localFileName, 'r');
+      $container->uploadObject($remoteFileName, $handle);
+      unset($handle);
+
+
+      $zencoder_input   = "cf+uk://castit:187a515209d0affd473fedaedd6d770b@video_original_files".$remoteFileName;
+      $zencoder_output  = "cf+uk://castit:187a515209d0affd473fedaedd6d770b@videos_public/videos".$remoteFileName;
+
+      $zencoder_array = [
+        "input"     => $zencoder_input,
+        "outputs"   => array(
+          "label"   => "mp4 high",
+          "url"     => $zencoder_output,
+          "h264_profile" => "high",
+        ),
+      ];
+
+      $zencoder_json = json_encode($zencoder_array);
+      $url = 'https://app.zencoder.com/api/v2/jobs';
+      $ch = curl_init( $url );
+      curl_setopt( $ch, CURLOPT_POST, 1);
+      curl_setopt( $ch, CURLOPT_POSTFIELDS, $zencoder_json);
+      curl_setopt( $ch, CURLOPT_RETURNTRANSFER , 1);
+      curl_setopt($ch, CURLOPT_HTTPHEADER, array(
+        'Content-Type: application/json ',
+        'Zencoder-Api-Key: 9477541a57e1eb2471b1ff256ca4b92c'
+      ));
+
+      $response = curl_exec( $ch );
+    }
+
+    echo json_encode(['status_message'=>'file upload success', 'filename'=>$fileName]);
+  } 
+  else {
+    echo "move_uploaded_file function failed";
+  }
+
+});
 
 //JSON coneverion
 function echoResponse($status_code, $response) {

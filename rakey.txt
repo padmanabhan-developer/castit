@@ -1,2 +1,68 @@
 Rackspace API Key
 187a515209d0affd473fedaedd6d770b
+
+
+zencoder fullaccess
+9477541a57e1eb2471b1ff256ca4b92c
+
+
+10031831
+
+10014906
+
+"guzzlehttp/guzzle": "^6.3@dev"
+
+
+
+post
+https://app.zencoder.com/api/v2/jobs
+headers:
+Content-Type: application/json 
+Zencoder-Api-Key: {Your_API_Key}
+
+http://61ce54a83d3eb7c7a67e-e47d0b5e0bd1c7ce288bd6781fb92cad.r89.cf3.rackcdn.com/profiles/2018-09-03/1535970374__0000000Malin.mp4
+
+https://storage101.lon3.clouddrive.com/v1/MossoCloudFS_8846bab4-d78a-47a9-8794-38aa6c346059/
+test_api_padmanabhan/
+testdirone%2Ftesttwo%2Ftest3%2F1535964770slider.zip
+?
+temp_url_sig=eceb9300a728354e5979b4a97b76b6e8a1e38072
+&
+temp_url_expires=1536051225
+
+
+
+https://storage101.lon3.clouddrive.com/v1/MossoCloudFS_8846bab4-d78a-47a9-8794-38aa6c346059/video_original_files/profiles/2018-09-03/1535970374__0123123.mp4
+
+cf+uk://username:api_key@container/object
+cf+uk://castit:187a515209d0affd473fedaedd6d770b@test_api_padmanabhan/1535970374__0123123.mp4
+
+
+
+https://mycloud.rackspace.com/cloud/10014906/files#object-store%2CcloudFiles%2CLON/videos_public/videos%2Fprofiles%2F
+
+{
+  "input": "cf+uk://castit:187a515209d0affd473fedaedd6d770b@test_api_padmanabhan/1535970374__0123123.mp4",
+  "outputs": [{
+    "label": "mp4 high",
+    "url": "cf+uk://castit:187a515209d0affd473fedaedd6d770b@test_api_padmanabhan/testdirone/22/1535970374__0123123.mp4",
+    "h264_profile": "high"
+  }]
+}
+
+
+data
+input - A valid URL to a media file (HTTP/HTTPS, FTP/FTPS, SFTP, Azure, GCS, CF or S3), with or without authentication
+notifications - An array of notification strings (valid email addresses or URLs), or hashes of url and format
+outputs - Array of output specifications
+  type - standard
+  url - A S3, Cloud Files, GCS, FTP, FTPS, SFTP, Aspera, Azure, HTTP, or RTMP URL where Zencoder will put the transcoded file
+  filename - The filename of a finished file
+thumbnails 
+  filename - Interpolated thumbnail filename
+  number - A number of thumbnails, evenly-spaced
+
+
+
+
+

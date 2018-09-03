@@ -11,7 +11,6 @@ progress{
   border: none;
   display: none;
 }
-
 html, body, div, span, applet, object, iframe, h1, h2, h3, h4, h5, h6, p, blockquote, a, abbr, acronym, big, font, img, small, center, dl, dt, dd, ol, ul, li, fieldset, form, label, legend, table, tbody, tfoot, thead, tr, th, td, input, textarea, select {margin:0; padding:0; border:0; outline:0; font-size:100%; vertical-align:baseline; font-weight:normal; box-sizing:border-box;}
 body {line-height:1; }
 ol, ul {list-style:none;}
@@ -1556,4 +1555,6 @@ ul.slides {
   overflow: hidden;
 }
 .list_san3{text-transform:lowercase;}
+
+
 

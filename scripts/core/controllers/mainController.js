@@ -699,6 +699,24 @@ main.controller('RegisterStep6Controller', ['$scope', '$filter', '$http', '$wind
     ajax.send(formdata);
   }
 
+  $scope.uploadFile_video = function(event){
+    var files = event.target.files;
+    var file = files[0];
+    var formdata = new FormData();
+    formdata.append("Image_file[]", file);
+    var ajax = new XMLHttpRequest();
+    ajax.inputdom = $(this);
+    ajax.upload.inputdom = $(this);
+    ajax.upload.addEventListener("progress", progressHandler, false);
+    ajax.addEventListener("load", completeHandler, false);
+    ajax.addEventListener("error", errorHandler, false);
+    ajax.addEventListener("abort", abortHandler, false);
+    ajax.open("POST", "api/v1/fileuploadparser?uploaded_file_type=video"); 
+    // http://www.developphp.com/video/JavaScript/File-Upload-Progress-Bar-Meter-Tutorial-Ajax-PHP
+    //use file_upload_parser.php from above url
+    ajax.send(formdata);
+  }
+
   function _(el) {
     return document.getElementById(el);
   }
@@ -712,8 +730,8 @@ main.controller('RegisterStep6Controller', ['$scope', '$filter', '$http', '$wind
   }
 
   function completeHandler(event) {
-    event.target.inputdom.siblings().find("progress").value = 100; //wil clear progress bar after successful upload
-    if(event.target.status == 200  &&  JSON.parse(event.target.response).status_message == "file upload success"){
+    event.target.inputdom.siblings().find("progress").value = 100; //will clear progress bar after successful upload
+    if(event.target.status == 200  &&  JSON.parse(event.target.response).status_message != undefined){
       event.target.inputdom.siblings().find("input").prevObject[0].value = JSON.parse(event.target.response).filename;
       $scope.fieldone = JSON.parse(event.target.response).filename;
     }
@@ -1491,12 +1509,7 @@ main.controller('MyProfileController3',['$scope','$http', function($scope, $http
 
 main.controller('MyProfileController4',['$scope','$http', function($scope, $http, $cookies){
   $scope.profileinfo = JSON.parse(sessionStorage.getItem('profileinfo'));
-  var limit='';
-  $scope.selectedcategories='';
-  $scope.selectedskills='';
-  $scope.selectedlicences='';
-  $scope.notes='';
-  $scope.job='';
+  var limit='';  
 
   $http.get('api/v1/getcategories').success(function(categoriesdropdown) {
     $scope.categoriesdropdown = categoriesdropdown
@@ -1507,37 +1520,29 @@ main.controller('MyProfileController4',['$scope','$http', function($scope, $http
   $http.get('api/v1/getlicences').success(function(licencesdropdown) {
     $scope.licencesdropdown = licencesdropdown
   });
+  $scope.selectedcategories = $scope.profileinfo.categories.toString();
+  $scope.selectedskills = $scope.profileinfo.skills.toString();
+  $scope.selectedlicences = $scope.profileinfo.licenses.toString();
 
   $scope.$on('ngRepeatFinished', function(ngRepeatFinishedEvent) {
-    if($scope.profileinfo.categories != undefined){
-      $scope.selectedcategories = $scope.profileinfo.categories.toString();
-      for (var c of $scope.profileinfo.categories) {
-        $(".form_box span#catbut"+c).removeClass('button1');
-        $(".form_box span#catbut"+c).addClass('button2');
-        $(".form_box span#catspan"+c).removeClass('plus-icon');
-        $(".form_box span#catspan"+c).addClass('close-icon');
-      };
-    }
-
-    if($scope.profileinfo.skills != undefined){
-      $scope.selectedskills = $scope.profileinfo.skills.toString();
-      for (var s of $scope.profileinfo.skills) {
-        $(".form_box span#skillbut"+c).removeClass('button1');
-        $(".form_box span#skillbut"+c).addClass('button2');
-        $(".form_box span#skillspan"+c).removeClass('plus-icon');
-        $(".form_box span#skillspan"+c).addClass('close-icon');
-      };
-    }
-
-    if($scope.profileinfo.licenses != undefined){
-      $scope.selectedlicences = $scope.profileinfo.licenses.toString();    
-      for (var s of $scope.profileinfo.licenses) {
-        $(".form_box span#licbut"+c).removeClass('button1');
-        $(".form_box span#licbut"+c).addClass('button2');
-        $(".form_box span#licspan"+c).removeClass('plus-icon');
-        $(".form_box span#licspan"+c).addClass('close-icon');
-      };
-    }
+    for (var c of $scope.profileinfo.categories) {
+      $(".form_box span#catbut"+c).removeClass('button1');
+      $(".form_box span#catbut"+c).addClass('button2');
+      $(".form_box span#catspan"+c).removeClass('plus-icon');
+      $(".form_box span#catspan"+c).addClass('close-icon');
+    };
+    for (var s of $scope.profileinfo.skills) {
+      $(".form_box span#skillbut"+c).removeClass('button1');
+      $(".form_box span#skillbut"+c).addClass('button2');
+      $(".form_box span#skillspan"+c).removeClass('plus-icon');
+      $(".form_box span#skillspan"+c).addClass('close-icon');
+    };
+    for (var s of $scope.profileinfo.licenses) {
+      $(".form_box span#licbut"+c).removeClass('button1');
+      $(".form_box span#licbut"+c).addClass('button2');
+      $(".form_box span#licspan"+c).removeClass('plus-icon');
+      $(".form_box span#licspan"+c).addClass('close-icon');
+    };
   });
 
   $scope.checkuncheckcategory = checkuncheckcategory;

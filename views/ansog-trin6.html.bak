@@ -32,14 +32,14 @@
                       <input id="ansigt_text" ng-model="fieldone" name="" type="text" class="input2" placeholder="Ansigt*">
                       <label for="ansigt" class="upload1"></label>
                       <input custom-on-change="uploadFile" type="file" name="file1" id="ansigt" class="input2" placeholder="Ansigt*" style="display:none">
-                      <progress ng-non-bindable id="progress" value="0" max="100"></progress>
+                      <progress ng-non-bindable id="progress" value="0" max="100" style="width:100%;height: 5px; color: red;display:none"></progress>
                       <!-- <input ng-file-model="files[0]"  id="ansigt" name="" type="file" class="input2" placeholder="Ansigt*" style="display:none"> -->
                     </div>
                     <div class="form_box form_box5 black-placeholder">
                       <input id="profil_text" name="" type="text" class="input2" placeholder="Profil*">
                       <label for="profil" class="upload1"></label>
                       <input custom-on-change="uploadFile" type="file" name="file1" id="profil" class="input2" placeholder="Ansigt*" style="display:none">
-                      <progress ng-non-bindable id="progress" value="0" max="100" ></progress>
+                      <progress ng-non-bindable id="progress" value="0" max="100" style="width:100%;height: 5px; color: red;display:none"></progress>
 
                       <!-- <input id="profil" ng-file-model="files[1]"  name="" type="file" class="input2" placeholder="Ansigt*" style="display:none"> -->
                     </div>
@@ -47,28 +47,28 @@
                       <input id="helfigur_text" name="" type="text" class="input2" placeholder="Helfigur*">
                       <label for="helfigur" class="upload1"></label>
                       <input custom-on-change="uploadFile" type="file" name="file1" id="helfigur" class="input2" placeholder="Ansigt*" style="display:none">
-                      <progress ng-non-bindable id="progress" value="0" max="100" ></progress>
+                      <progress ng-non-bindable id="progress" value="0" max="100" style="width:100%;height: 5px; color: red;display:none"></progress>
                       <!-- <input id="helfigur" ng-file-model="files[2]" name="" type="file" class="input2" placeholder="Ansigt*" style="display:none"> -->
                     </div>
                     <div class="form_box form_box5">
                       <input id="helfigur_text" name="" type="text" class="input2" placeholder="Ekstra">
                       <label for="ekstra" class="upload2"></label>
                       <input custom-on-change="uploadFile" type="file" name="file1" id="ekstra" class="input2" placeholder="Ansigt*" style="display:none">
-                      <progress ng-non-bindable id="progress" value="0" max="100" ></progress>
+                      <progress ng-non-bindable id="progress" value="0" max="100" style="width:100%;height: 5px; color: red;display:none"></progress>
                       <!-- <input id="ekstra" ng-file-model="files[3]" name="" type="file" class="input2" placeholder="Ansigt*" style="display:none"> -->
                     </div>
                     <div class="form_box form_box5">
                       <input id="helfigur_text" name="" type="text" class="input2" placeholder="Ekstra">
                       <label for="ekstra1" class="upload2"></label>
                       <input custom-on-change="uploadFile" type="file" name="file1" id="ekstra1" class="input2" placeholder="Ansigt*" style="display:none">
-                      <progress ng-non-bindable id="progress" value="0" max="100" ></progress>
+                      <progress ng-non-bindable id="progress" value="0" max="100" style="width:100%;height: 5px; color: red;display:none"></progress>
                       <!-- <input id="ekstra1" name="" ng-file-model="files[4]" type="file" class="input2" placeholder="Ansigt*" style="display:none"> -->
                     </div>
                     <div class="form_box form_box5">
                       <input id="helfigur_text" name="" type="text" class="input2" placeholder="Ekstra">
                       <label for="ekstra2" class="upload2"></label>
                       <input custom-on-change="uploadFile" type="file" name="file1" id="ekstra2" class="input2" placeholder="Ansigt*" style="display:none">
-                      <progress ng-non-bindable id="progress" value="0" max="100" ></progress>
+                      <progress ng-non-bindable id="progress" value="0" max="100" style="width:100%;height: 5px; color: red;display:none"></progress>
                       <!-- <input id="ekstra2" ng-file-model="files[5]" name="" type="file" class="input2" placeholder="Ansigt*" style="display:none"> -->
                     </div>
                     
@@ -83,7 +83,7 @@
                       <input id="helfigur_text" name="" type="text" class="input2" placeholder="Foto af hænder">
                       <label for="hænder" class="upload2" style="top:18px !important"></label>
                       <input custom-on-change="uploadFile" type="file" name="file1" id="hænder" class="input2" placeholder="Ansigt*" style="display:none">
-                      <progress ng-non-bindable id="progress" value="0" max="100" ></progress>
+                      <progress ng-non-bindable id="progress" value="0" max="100" style="width:100%;height: 5px; color: red;display:none"></progress>
                       <!-- <input id="hænder" ng-file-model="files[6]" name="" type="file" class="input2" placeholder="Ansigt*" style="display:none"> -->
                     </div>
                     <div class="form_box">
@@ -91,7 +91,7 @@
                       <input id="helfigur_text" name="" type="text" class="input2" placeholder="Foto af fødder">
                       <label for="fødder" class="upload2" style="top:18px !important"></label>
                       <input custom-on-change="uploadFile" type="file" name="file1" id="fødder" class="input2" placeholder="Ansigt*" style="display:none">
-                      <progress ng-non-bindable id="progress" value="0" max="100" ></progress>
+                      <progress ng-non-bindable id="progress" value="0" max="100" style="width:100%;height: 5px; color: red;display:none"></progress>
                       <!-- <input id="fødder"  ng-file-model="files[7]" name="" type="file" class="input2" placeholder="Ansigt*" style="display:none"> -->
                     </div>
                     <div class="form_box">
@@ -99,7 +99,7 @@
                       <input id="helfigur_text" name="" type="text" class="input2" placeholder="Foto af familie">
                       <label for="familie" class="upload2" style="top:18px !important"></label>
                       <input custom-on-change="uploadFile" type="file" name="file1" id="familie" class="input2" placeholder="Ansigt*" style="display:none">
-                      <progress ng-non-bindable id="progress" value="0" max="100" ></progress>
+                      <progress ng-non-bindable id="progress" value="0" max="100" style="width:100%;height: 5px; color: red;display:none"></progress>
                       <!-- <input id="familie" ng-file-model="files[8]" name="" type="file" class="input2" placeholder="Ansigt*" style="display:none"> -->
                     </div>
                     <div class="form_box">
@@ -107,7 +107,7 @@
                       <input id="helfigur_text" name="" type="text" class="input2" placeholder="Foto af tvilling">
                       <label for="tvilling" class="upload2" style="top:18px !important"></label>
                       <input custom-on-change="uploadFile" type="file" name="file1" id="tvilling" class="input2" placeholder="Ansigt*" style="display:none">
-                      <progress ng-non-bindable id="progress" value="0" max="100" ></progress>
+                      <progress ng-non-bindable id="progress" value="0" max="100" style="width:100%;height: 5px; color: red;display:none"></progress>
                       <!-- <input id="tvilling"  ng-file-model="files[9]" name="" type="file" class="input2" placeholder="Ansigt*" style="display:none"> -->
                     </div>
                   </div>
@@ -123,29 +123,29 @@
                     <div class="form_box form_box5">
                       <input id="helfigur_text" ng-model="videos[0].name" name="" type="text" class="input2" placeholder="Upload">
                       <label for="video1" class="upload2"></label>
-                      <input custom-on-change="uploadFile_video" type="file" name="file1" id="video1" class="input2" placeholder="Ansigt*" style="display:none">
-                      <progress ng-non-bindable id="progress" value="0" max="100" ></progress>
+                      <input custom-on-change="uploadFile" type="file" name="file1" id="video1" class="input2" placeholder="Ansigt*" style="display:none">
+                      <progress ng-non-bindable id="progress" value="0" max="100" style="width:100%;height: 5px; color: red;display:none"></progress>
                       <!-- <input id="video1" ng-file-model="videos[0]" name="" type="file" class="input2" placeholder="Ansigt*" style="display:none"> -->
                     </div>
                     <div class="form_box form_box5">
                       <input id="helfigur_text" ng-model="videos[1].name" name="" type="text" class="input2" placeholder="Upload">
-                      <input custom-on-change="uploadFile_video" type="file" name="file1" id="video2" class="input2" placeholder="Ansigt*" style="display:none">
-                      <progress ng-non-bindable id="progress" value="0" max="100" ></progress>
+                      <input custom-on-change="uploadFile" type="file" name="file1" id="video2" class="input2" placeholder="Ansigt*" style="display:none">
+                      <progress ng-non-bindable id="progress" value="0" max="100" style="width:100%;height: 5px; color: red;display:none"></progress>
                       <label for="video2" class="upload2"></label>
                       <!-- <input id="video2" ng-file-model="videos[1]" name="" type="file" class="input" placeholder="Ansigt*" style="display:none"> -->
                     </div>
                     <div class="form_box form_box5">
                       <input id="helfigur_text" ng-model="videos[2].name" name="" type="text" class="input2" placeholder="Upload">
                       <label for="video3" class="upload2"></label>
-                      <input custom-on-change="uploadFile_video" type="file" name="file1" id="video3" class="input2" placeholder="Ansigt*" style="display:none">
-                      <progress ng-non-bindable id="progress" value="0" max="100" ></progress>
+                      <input custom-on-change="uploadFile" type="file" name="file1" id="video3" class="input2" placeholder="Ansigt*" style="display:none">
+                      <progress ng-non-bindable id="progress" value="0" max="100" style="width:100%;height: 5px; color: red;display:none"></progress>
                       <!-- <input id="video3" ng-file-model="videos[2]" name="" type="file" class="input2" placeholder="Ansigt*" style="display:none"> -->
                     </div>
                     <div class="form_box form_box5">
                       <input id="helfigur_text" ng-model="videos[3].name" name="" type="text" class="input2" placeholder="Upload">
                       <label for="video4" class="upload2"></label>
-                      <input custom-on-change="uploadFile_video" type="file" name="file1" id="video4" class="input2" placeholder="Ansigt*" style="display:none">
-                      <progress ng-non-bindable id="progress" value="0" max="100" ></progress>
+                      <input custom-on-change="uploadFile" type="file" name="file1" id="video4" class="input2" placeholder="Ansigt*" style="display:none">
+                      <progress ng-non-bindable id="progress" value="0" max="100" style="width:100%;height: 5px; color: red;display:none"></progress>
                       <!-- <input id="video4" ng-file-model="videos[3]" name="" type="file" class="input2" placeholder="Ansigt*" style="display:none"> -->
                     </div>
                     <!-- <div class="form_box form_box5">
@@ -209,7 +209,7 @@
         </form>
         <div class="section-bottom">
           <div class="blackpage-controller">
-            <a href="#/my-profile_5" class="black-prev">FORRIGE SIDE</a>
+            <a href="#/ansog-trin5" class="black-prev">FORRIGE SIDE</a>
           </div>
           <!--close section-bottom-->
         </div>
@@ -217,7 +217,7 @@
       </div>
       <!--close content-->
     </div>
-    <input type="hidden" name="" class="operation" value="update">
+    <input type="hidden" name="" class="operation" value="insert">
     <!--close wrapper-->
   </body>
 </html>

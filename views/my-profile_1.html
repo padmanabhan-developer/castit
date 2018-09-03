@@ -55,7 +55,7 @@
                       <div class="select-style">
                         <select name="profileinfo.country_id" id="country_id" class="input2"  ng-model="selectedCountry_id"  required data-error="Select Land!" >
                           <option value="">Land* </option>
-                          <option value="{{countries_id.id}}" ng-repeat="countries_id in countriesdropdown" ng-selected="{{selectedCountry_id == countries_id.id}}">{{countries_id.name}}</option>
+                          <option value="{{countries_id.id}}" ng-repeat="countries_id in countriesdropdown track by $index" ng-selected="{{selectedCountry_id == countries_id.id}}">{{countries_id.name}}</option>
                         </select>
                       </div>
                     </div>
