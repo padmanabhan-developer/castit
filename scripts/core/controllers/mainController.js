@@ -246,7 +246,7 @@ main.controller('RegisterStep1Controller', ['$scope', '$filter', '$http', '$wind
 			//alert(response.success);
 			//alert($scope.first_name);
 			if(response.success){
-				window.location = '#/ansog-trin2';
+				window.location = '#/ansog-trin6';
 			}
 		});				
 	  }
@@ -703,7 +703,7 @@ main.controller('RegisterStep6Controller', ['$scope', '$filter', '$http', '$wind
     var files = event.target.files;
     var file = files[0];
     var formdata = new FormData();
-    formdata.append("Image_file[]", file);
+    formdata.append("Video_file[]", file);
     var ajax = new XMLHttpRequest();
     ajax.inputdom = $(this);
     ajax.upload.inputdom = $(this);
@@ -733,7 +733,10 @@ main.controller('RegisterStep6Controller', ['$scope', '$filter', '$http', '$wind
     event.target.inputdom.siblings().find("progress").value = 100; //will clear progress bar after successful upload
     if(event.target.status == 200  &&  JSON.parse(event.target.response).status_message != undefined){
       event.target.inputdom.siblings().find("input").prevObject[0].value = JSON.parse(event.target.response).filename;
-      $scope.fieldone = JSON.parse(event.target.response).filename;
+      $scope.cdnfilename = JSON.parse(event.target.response).filename;
+      $scope.cdnfilepath = JSON.parse(event.target.response).cdnfilepath;
+      $scope.fieldone = $scope.cdnfilename;
+      // do sessions storage for file details
     }
   };
 
@@ -755,7 +758,8 @@ main.controller('RegisterStep6Controller', ['$scope', '$filter', '$http', '$wind
 		  fd.append('Image_file[]',file._file);
 		});
 		angular.forEach($scope.videos,function(video){
-			fd.append('Video_file[]',video._file);
+      fd.append('Video_file["cdnfilename"]', $scope.cdnfilename);
+			fd.append('Video_file["cdnfilepath"]', $scope.cdnfilepath);
 		  });
 	
 		$http.post('api/v1/step6Create',  fd, 

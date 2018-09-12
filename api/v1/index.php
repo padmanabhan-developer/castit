@@ -3,6 +3,9 @@ require '../libs/Slim/Slim.php';
 require_once 'dbHelper.php';
 require_once 'SimpleImage.php';
 
+require '../../vendor/autoload.php';
+use OpenCloud\Rackspace; 
+
 // Get Slim instance
 \Slim\Slim::registerAutoloader();
 $app = new \Slim\Slim();
@@ -76,18 +79,22 @@ $app->get('/getprofiles',function () use ($app) {
 
 			// Profile Image
 			$profile_image ='';
-			$query_image = $db->prepare("SELECT *, DATE_FORMAT(created_at, '%Y') as create_year, DATE_FORMAT(created_at, '%m') as create_month, DATE_FORMAT(created_at, '%d') as create_date FROM photos WHERE profile_id = '".$row['id']."' and published ='1' ORDER BY position ASC LIMIT 1"); 
-	$query_image->execute();
-	$image= '';
+			$query_image = $db->prepare("SELECT *, DATE_FORMAT(created_at, '%Y') as create_year, DATE_FORMAT(created_at, '%m') as create_month, DATE_FORMAT(created_at, '%d') as create_date FROM photos WHERE profile_id = '".$row['id']."' and published ='1' ORDER BY position ASC "); 
+		$query_image->execute();
+		$image= '';
     $rows_image = $query_image->fetchAll(PDO::FETCH_ASSOC);
-	if(count($rows_image) > 0){
-		if (strpos($rows_image[0]['path'], 'vhost') !== false) {
-			$path = $rows_image[0]['path'];
-			$profile_image = 'http://134.213.29.220/images/uploads/'.$rows_image[0]['image'];
+    $rows_count = count($rows_image); 
+	if($rows_count > 0){
+		$min = 0;
+		$max = $rows_count - 1;
+		$random_index = rand($min, $max);
+		if (strpos($rows_image[$random_index]['path'], 'vhost') !== false) {
+			$path = $rows_image[$random_index]['path'];
+			$profile_image = 'http://134.213.29.220/images/uploads/'.$rows_image[$random_index]['image'];
 		}
 		else{
-			$path = $rows_image[0]['create_year']."/".$rows_image[0]['create_month']."/".$rows_image[0]['create_date']."/".$rows_image[0]['id']."/big_";
-			$profile_image = 'http://134.213.29.220/profile_images/'.$path.$rows_image[0]['image'];
+			$path = $rows_image[$random_index]['create_year']."/".$rows_image[$random_index]['create_month']."/".$rows_image[$random_index]['create_date']."/".$rows_image[$random_index]['id']."/big_";
+			$profile_image = 'http://134.213.29.220/profile_images/'.$path.$rows_image[$random_index]['image'];
 		
 		}
 			//$profile_image = 'http://134.213.29.220/assets/profile_images/'.$path.$rows_image[0]['image'];
@@ -189,14 +196,19 @@ $app->get('/getfilterprofiles',function () use ($app) {
 	$query_image->execute();
 	$image= '';
     $rows_image = $query_image->fetchAll(PDO::FETCH_ASSOC);
-	if(count($rows_image) > 0){
-		if (strpos($rows_image[0]['path'], 'vhost') !== false) {
-			$path = $rows_image[0]['path'];
-			$profile_image = 'http://134.213.29.220/images/uploads/'.$rows_image[0]['image'];
+
+    $rows_count = count($rows_image); 
+	if($rows_count > 0){
+		$min = 0;
+		$max = $rows_count - 1;
+		$random_index = rand($min, $max);
+		if (strpos($rows_image[$random_index]['path'], 'vhost') !== false) {
+			$path = $rows_image[$random_index]['path'];
+			$profile_image = 'http://134.213.29.220/images/uploads/'.$rows_image[$random_index]['image'];
 		}
 		else{
-			$path = $rows_image[0]['create_year']."/".$rows_image[0]['create_month']."/".$rows_image[0]['create_date']."/".$rows_image[0]['id']."/big_";
-			$profile_image = 'http://134.213.29.220/profile_images/'.$path.$rows_image[0]['image'];
+			$path = $rows_image[$random_index]['create_year']."/".$rows_image[$random_index]['create_month']."/".$rows_image[$random_index]['create_date']."/".$rows_image[$random_index]['id']."/big_";
+			$profile_image = 'http://134.213.29.220/profile_images/'.$path.$rows_image[$random_index]['image'];
 		}
 		
 		}
@@ -1837,9 +1849,9 @@ Parameter : Form post parameters
 Type : POST
 ******************************************/
 $app->post('/step6Create',function () use ($app) { 
+	ppe($_SESSION);
 	$operation = (isset($_SESSION['operation'])) ? $_SESSION['operation'] : 'insert';
 	$user_profile_id = (isset($_SESSION['user_profile_id'])) ? $_SESSION['user_profile_id'] : '';
-
 	global $db;
 	$first_name=$_SESSION["step1"]["first_name"];
 	$last_name=$_SESSION["step1"]["last_name"];
@@ -1956,24 +1968,22 @@ $app->post('/step6Create',function () use ($app) {
 					}
 				}
 
-				if(isset($_FILES['Image_file']['name'][0])){
-					foreach($_FILES['Image_file']['name'] as $key=>$value){
-						$filename = $_FILES['Image_file']['name'][$key];
+				if(isset($_SESSION['Image_file'])){
+					foreach($_SESSION['Image_file'] as $key => $image){
+						$filename = $image['name'][0];
 						$location = $_SERVER['DOCUMENT_ROOT'].'/images/uploads/';
-						move_uploaded_file($_FILES['Image_file']['tmp_name'][$key],$location.$filename);
+						move_uploaded_file($image['tmp_name'][0],$location.$filename);
 						$query = "INSERT INTO `photos` (`path`,`original_path`,`profile_id`,`filename`,`published`,`position`,`phototype_id`,`image`,`created_at`,`updated_at`,`image_tmp`,`image_processing`,`image_token`) VALUES ('".$location."','".$location."','".$profile_id."','".$filename."','1','".$key."','1','".$filename."',now(),now(),'".$filename."','1','".$filename."')";
 						$db->exec($query);
 					}	
 				}
 
-				if(isset($_FILES['Video_file']['name'][0])){
-					//echo "ok";die;
-					foreach($_FILES['Video_file']['name'] as $key=>$value){
-						$filename = $_FILES['Video_file']['name'][$key];
-						$location = $_SERVER['DOCUMENT_ROOT'].'/images/uploads/';
-						move_uploaded_file($_FILES['Video_file']['tmp_name'][$key],$location.$filename);
+				if(isset($_SESSION['Video_file'])){
+					foreach($_SESSION['Video_file'] as $key=>$video){
+						$filename = $value['cdnfilename'];
+						$location = $value['cdnfilepath'];
+
 						$query = "INSERT INTO `videos` (`profile_id`,`path`,`uploaded_as_filename`,`filename`,`video_original_path`,`video_original_filename`,`video_original_file_basename`,`thumbnail_original_photo_path`,`thumbnail_photo_path`,`thumbnail_photo_filename`,`thumbnail_at_time`,`published`,`position`) VALUES ('".$profile_id."','".$location."','".$location."','".$filename."','".$filename."','".$filename."','".$filename."','".$filename."','".$filename."','".$filename."','3','1','".$key."')";
-						//echo $query;die;
 						$db->exec($query);
 					}	
 				}
@@ -2110,11 +2120,10 @@ $app->post('/step6Create',function () use ($app) {
 					}	
 				}
 
-				if(isset($_FILES['Video_file']['name'][0])){
-					foreach($_FILES['Video_file']['name'] as $key=>$value){
-						$filename = $_FILES['Video_file']['name'][$key];
-						$location = $_SERVER['DOCUMENT_ROOT'].'/images/uploads/';
-						move_uploaded_file($_FILES['Video_file']['tmp_name'][$key],$location.$filename);
+				if(isset($_FILES['Video_file']['cdnfilepath'])){
+					foreach($_FILES['Video_file'] as $key=>$value){
+						$filename = $value['cdnfilename'];
+						$location = $value['cdnfilepath'];
 						$query = "UPDATE videos 
 											SET
 											path=$location,
@@ -2143,7 +2152,7 @@ Purpose: Send to email id
 Parameter : form field
 Type : POST
 ******************************************/
-
+/* // disabled this as it is handled in another section
 $app->post('/fileuploadparser', function () use ($app) {
 
 	$fileName = $_FILES["Image_file"]["name"][0]; // The file name
@@ -2168,7 +2177,7 @@ $app->post('/fileuploadparser', function () use ($app) {
 	}
 
 });
-
+*/
 /******************************************
 Purpose: Send to email id
 Parameter : form field
@@ -3023,72 +3032,82 @@ $app->get('/getgrouptoken',function () use ($app) {
 });
 
 $app->post('/fileuploadparser', function () use ($app) {
+  $cdnfilepath	=	'';
+  $time 				=	time();  
+	if(!isset($_REQUEST["uploaded_file_type"])){
+		$_SESSION["Image_file"][]	= $_FILES["Image_file"];
+	  $fileName     = $_FILES["Image_file"]["name"][0]; // The file name
+	  $fileTmpLoc   = $_FILES["Image_file"]["tmp_name"][0]; // File in the PHP tmp folder
+	  $fileType     = $_FILES["Image_file"]["type"]; // The type of file it is
+	  $fileSize     = $_FILES["Image_file"]["size"]; // File size in bytes
+	  $fileErrorMsg = $_FILES["Image_file"]["error"]; // 0 for false... and 1 for true
+	  $_SESSION["Image_file_location"][] = $location = $_SERVER['DOCUMENT_ROOT'].'/images/uploads/';
+	// var_dump($_FILES);
+	  if (!$fileTmpLoc) { // if file not chosen
+	      echo "ERROR: Please browse for a file before clicking the upload button.";
+	      exit();
+	  }
+	  if(move_uploaded_file($fileTmpLoc, $location.$fileName)){
+	    echo json_encode(['status_message'=>'file upload success', 'filename'=>$fileName]);
+	  } 
+	  else {
+	    echo "move_uploaded_file function failed";
+	  }
+	}	
+  
+  if(isset($_REQUEST["uploaded_file_type"]) && $_REQUEST["uploaded_file_type"] == "video"){
+  	$_SESSION["Video_file"][]	= $_FILES["Video_file"];
+	  $fileName     = $_SESSION["Video_file"]["name"][]			= $_FILES["Video_file"]["name"][0]; // The file name
+	  $fileTmpLoc   = $_SESSION["Video_file"]["tmp_name"][] = $_FILES["Video_file"]["tmp_name"][0]; // File in the PHP tmp folder
+	  $fileType     = $_SESSION["Video_file"]["type"][] 		= $_FILES["Video_file"]["type"]; // The type of file it is
+	  $fileSize     = $_SESSION["Video_file"]["size"][] 		= $_FILES["Video_file"]["size"]; // File size in bytes
+	  $fileErrorMsg = $_SESSION["Video_file"]["error"][] 		= $_FILES["Video_file"]["error"]; // 0 for false... and 1 for true
+	  $location     = $_SESSION["Video_file_location"][] = $_SERVER['DOCUMENT_ROOT'].'/images/uploads/';
 
-  $fileName     = $_FILES["Image_file"]["name"][0]; // The file name
-  $fileTmpLoc   = $_FILES["Image_file"]["tmp_name"][0]; // File in the PHP tmp folder
-  $fileType     = $_FILES["Image_file"]["type"]; // The type of file it is
-  $fileSize     = $_FILES["Image_file"]["size"]; // File size in bytes
-  $fileErrorMsg = $_FILES["Image_file"]["error"]; // 0 for false... and 1 for true
+    $client = new Rackspace(Rackspace::UK_IDENTITY_ENDPOINT, array(
+      'username' => 'castit',
+      'apiKey'   => '187a515209d0affd473fedaedd6d770b'
+    ));
 
-  // $file_name = $_FILES['Image_file']['name'][$key];
-  $file_name    = $_FILES['Image_file']['name'];
-  $location     = $_SERVER['DOCUMENT_ROOT'].'/images/uploads/';
-// var_dump($_FILES);
-  if (!$fileTmpLoc) { // if file not chosen
-    
-      echo "ERROR: Please browse for a file before clicking the upload button.";
-      exit();
+    $objectStoreService = $client->objectStoreService(null, 'LON');
+    $container          = $objectStoreService->getContainer('video_original_files');
+    $date_dir           = date("o-m-d");
+    $localFileName      = $location.$fileName;
+    $remoteFileName     = "/profiles/".$date_dir."/".$time."__".$fileName;
+    $cdnfilepath     = "/videos/profiles/".$date_dir;
+
+    $handle = fopen($localFileName, 'r');
+    $container->uploadObject($remoteFileName, $handle);
+    unset($handle);
+
+
+    $zencoder_input   = "cf+uk://castit:187a515209d0affd473fedaedd6d770b@video_original_files".$remoteFileName;
+    $zencoder_output  = "cf+uk://castit:187a515209d0affd473fedaedd6d770b@videos_public/videos".$remoteFileName;
+
+    $zencoder_array = [
+      "input"     => $zencoder_input,
+      "outputs"   => array(
+        "label"   => "mp4 high",
+        "url"     => $zencoder_output,
+        "h264_profile" 	=> "high",
+        "thumbnails"		=> ["format"=>"png", "filename"=>"thumbnail__".$time."__".$fileName]
+      ),
+    ];
+
+    $zencoder_json = json_encode($zencoder_array);
+    $url = 'https://app.zencoder.com/api/v2/jobs';
+    $ch = curl_init( $url );
+    curl_setopt( $ch, CURLOPT_POST, 1);
+    curl_setopt( $ch, CURLOPT_POSTFIELDS, $zencoder_json);
+    curl_setopt( $ch, CURLOPT_RETURNTRANSFER , 1);
+    curl_setopt($ch, CURLOPT_HTTPHEADER, array(
+      'Content-Type: application/json ',
+      'Zencoder-Api-Key: 9477541a57e1eb2471b1ff256ca4b92c'
+    ));
+
+    $response = curl_exec( $ch );
+    echo json_encode(['status_message'=>'file upload success', 'filename'=>$fileName, 'cdnfilepath'=>$cdnfilepath, 't'=>$time]);
   }
-  if(move_uploaded_file($fileTmpLoc, $location.$fileName)){
-    if(isset($_REQUEST["uploaded_file_type"]) && $_REQUEST["uploaded_file_type"] == "video"){
-      $client = new Rackspace(Rackspace::UK_IDENTITY_ENDPOINT, array(
-        'username' => 'castit',
-        'apiKey'   => '187a515209d0affd473fedaedd6d770b'
-      ));
-
-      $objectStoreService = $client->objectStoreService(null, 'LON');
-      $container          = $objectStoreService->getContainer('video_original_files');
-      $date_dir           = date("o-m-d");
-      $localFileName      = $location.$fileName;
-      $remoteFileName     = "/profiles/".$date_dir."/".time()."__".$fileName;
-
-      $handle = fopen($localFileName, 'r');
-      $container->uploadObject($remoteFileName, $handle);
-      unset($handle);
-
-
-      $zencoder_input   = "cf+uk://castit:187a515209d0affd473fedaedd6d770b@video_original_files".$remoteFileName;
-      $zencoder_output  = "cf+uk://castit:187a515209d0affd473fedaedd6d770b@videos_public/videos".$remoteFileName;
-
-      $zencoder_array = [
-        "input"     => $zencoder_input,
-        "outputs"   => array(
-          "label"   => "mp4 high",
-          "url"     => $zencoder_output,
-          "h264_profile" => "high",
-        ),
-      ];
-
-      $zencoder_json = json_encode($zencoder_array);
-      $url = 'https://app.zencoder.com/api/v2/jobs';
-      $ch = curl_init( $url );
-      curl_setopt( $ch, CURLOPT_POST, 1);
-      curl_setopt( $ch, CURLOPT_POSTFIELDS, $zencoder_json);
-      curl_setopt( $ch, CURLOPT_RETURNTRANSFER , 1);
-      curl_setopt($ch, CURLOPT_HTTPHEADER, array(
-        'Content-Type: application/json ',
-        'Zencoder-Api-Key: 9477541a57e1eb2471b1ff256ca4b92c'
-      ));
-
-      $response = curl_exec( $ch );
-    }
-
-    echo json_encode(['status_message'=>'file upload success', 'filename'=>$fileName]);
-  } 
-  else {
-    echo "move_uploaded_file function failed";
-  }
-
 });
 
 //JSON coneverion
@@ -3130,4 +3149,13 @@ function generate_uuid() {
 	
 $app->run();
 
+function pp($q){
+  echo '<pre>';
+  print_r($q);
+  echo '</pre>';
+}
+
+function ppe($q){
+  pp($q);exit;
+}
 ?>

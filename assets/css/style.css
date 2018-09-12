@@ -93,9 +93,7 @@ border-radius: 40px;}
 .leftboxheight{margin-top:90px;}
 .leftbox h2{padding:0 0 10px 10px; color:#fff; font-size:13px; font-family:Arial, Helvetica, sans-serif; text-transform:uppercase;letter-spacing: 0.5px;}
 .side-searchbox{float:left; width:100%; position:relative;}
-.side-input{float:left; width:90%; height:28px; background:#fff; border:none;-webkit-border-radius: 30px;
--moz-border-radius: 30px;
-border-radius: 30px; padding:0 10px 0 35px;}
+.side-input{float:left; width:90%; height:28px; background:#fff; border:none;-webkit-border-radius: 30px;-moz-border-radius: 30px;border-radius: 30px; padding:0; text-align: center;}
 .side-search{float:left; position:absolute; left:0; top:0; border:none; cursor:pointer; height:30px; width:36px; background:url(images/side-search.png) no-repeat center center;}
 .ul-style1{float:left; width:100%; margin:0; padding:0;}
 .ul-style1 li{float:left; background:url(images/side-devider.png) no-repeat right center; padding: 0 8px 0 0;
