@@ -43,15 +43,19 @@ if ($row > 0){
     $images_query->execute();
     foreach ($images_query->fetchAll(PDO::FETCH_ASSOC) as $pic_item) {
       $value['pics'][] = [
-        'path' => $pic_item['path'],
-        'original_path' => $pic_item['original_path'],
         'filename' => $pic_item['filename'],
         'position' => $pic_item['position'],
-        'phototype_id' => $pic_item['phototype_id'],
-        'image' => $pic_item['image'],
       ];
     }
 
+    $videos_query = $db->prepare("SELECT * FROM videos where profile_id = $pid and position in (0,1,2) ORDER BY position");
+    $videos_query->execute();
+    foreach ($videos_query->fetchAll(PDO::FETCH_ASSOC) as $pic_item) {
+      $value['vids'][] = [
+        'filename' => $pic_item['uploaded_as_filename'],
+        'position' => $pic_item['position'],
+      ];
+    }
 
     $user_profile = json_encode($value);
     echo $user_profile;

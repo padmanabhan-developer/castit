@@ -654,6 +654,9 @@ main.controller('RegisterStep6Controller', ['$scope', '$filter', '$http', '$wind
   if($(".operation") != undefined){
     operation = $(".operation").val();
   }
+  if(operation == 'update'){
+  	$scope.profileinfo = JSON.parse(sessionStorage.getItem('profileinfo'));
+  }
 
 	$rootScope.bodylayout = 'black';
 	$rootScope.interface = 'ansog';	
@@ -722,7 +725,7 @@ main.controller('RegisterStep6Controller', ['$scope', '$filter', '$http', '$wind
   }
 
   function progressHandler(event) {
-    var percent = (event.loaded / event.total) * 100;
+    var percent = (event.loaded / event.total) * 50;
     event.target.inputdom.siblings("progress")[0].style.display = "table-row";
     event.target.inputdom.siblings("progress")[0].value = Math.round(percent);
     // _("status").innerHTML = Math.round(percent) + "% uploaded... please wait";
@@ -730,12 +733,13 @@ main.controller('RegisterStep6Controller', ['$scope', '$filter', '$http', '$wind
   }
 
   function completeHandler(event) {
-    event.target.inputdom.siblings().find("progress").value = 100; //will clear progress bar after successful upload
     if(event.target.status == 200  &&  JSON.parse(event.target.response).status_message != undefined){
       event.target.inputdom.siblings().find("input").prevObject[0].value = JSON.parse(event.target.response).filename;
       $scope.cdnfilename = JSON.parse(event.target.response).filename;
       $scope.cdnfilepath = JSON.parse(event.target.response).cdnfilepath;
       $scope.fieldone = $scope.cdnfilename;
+
+      event.target.inputdom.siblings("progress")[0].value = 100; //will clear progress bar after successful upload
       // do sessions storage for file details
     }
   };
@@ -758,9 +762,10 @@ main.controller('RegisterStep6Controller', ['$scope', '$filter', '$http', '$wind
 		  fd.append('Image_file[]',file._file);
 		});
 		angular.forEach($scope.videos,function(video){
-      fd.append('Video_file["cdnfilename"]', $scope.cdnfilename);
+      		fd.append('Video_file["cdnfilename"]', $scope.cdnfilename);
 			fd.append('Video_file["cdnfilepath"]', $scope.cdnfilepath);
-		  });
+			fd.append('Video_file["thumbnail"]', $scope.thumbnail);
+	  	});
 	
 		$http.post('api/v1/step6Create',  fd, 
 					{

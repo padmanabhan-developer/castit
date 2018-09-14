@@ -1980,14 +1980,43 @@ $app->post('/step6Create',function () use ($app) {
 
 				if(isset($_SESSION['Video_file'])){
 					foreach($_SESSION['Video_file'] as $key=>$video){
-						$filename = $value['cdnfilename'];
-						$location = $value['cdnfilepath'];
-
-						$query = "INSERT INTO `videos` (`profile_id`,`path`,`uploaded_as_filename`,`filename`,`video_original_path`,`video_original_filename`,`video_original_file_basename`,`thumbnail_original_photo_path`,`thumbnail_photo_path`,`thumbnail_photo_filename`,`thumbnail_at_time`,`published`,`position`) VALUES ('".$profile_id."','".$location."','".$location."','".$filename."','".$filename."','".$filename."','".$filename."','".$filename."','".$filename."','".$filename."','3','1','".$key."')";
-						$db->exec($query);
-					}	
+						$filename = $video['cdnfilename'];
+						$location = $video['cdnfilepath'];
+						$cloud_orig_path = str_replace('/videos',"", $location);
+							$query = "INSERT INTO `videos` (
+									`profile_id`,
+									`path`,
+									`uploaded_as_filename`,
+									`filename`,
+									`video_original_path`,
+									`video_original_filename`,
+									`video_original_file_basename`,
+									`thumbnail_original_photo_path`,
+									`thumbnail_photo_path`,
+									`thumbnail_photo_filename`,
+									`thumbnail_at_time`,
+									`published`,
+									`position`) 
+								VALUES (
+									'".$user_profile_id."',
+									'".$location."',
+									'".$video["name"][0]."',
+									'".$filename."',
+									'".$cloud_orig_path."',
+									'".$filename."',
+									'".$filename."',
+									'".$location."',
+									'".$location."',
+									'".$thumbnail."',
+									'3',
+									'1',
+									'".$key."')";
+						$query_prepared = $db->prepare($query);
+						$query_prepared->execute();
+					}
+				unset($_SESSION['Video_file']);
+				unset($_SESSION['Video_file_location']);	
 				}
-				session_destroy();
 				echoResponse(200,array('status'=>true,'msg'=>'Registered Sucessfully'));
 
 			}
@@ -2095,50 +2124,99 @@ $app->post('/step6Create',function () use ($app) {
 					}
 				}
 
-				if(isset($_FILES['Image_file']['name'][0])){
-					foreach($_FILES['Image_file']['name'] as $key=>$value){
-						$filename = $_FILES['Image_file']['name'][$key];
+				if(isset($_SESSION['Image_file'])){
+					foreach($_SESSION['Image_file'] as $key => $image){
+						$filename = $image['name'][0];
 						$location = $_SERVER['DOCUMENT_ROOT'].'/images/uploads/';
-						move_uploaded_file($_FILES['Image_file']['tmp_name'][$key],$location.$filename);
-						$query = "UPDATE photos 
-											SET
-											path = '$location',
-											original_path = '$location',
-											filename = '$filename',
-											published = 1,
-											position = $key,
-											phototype_id = 1,
-											image = '$filename',
-											updated_at = now(),
-											image_tmp = '$filename',
-											image_processing = 1,
-											image_token = '$filename'
-											WHERE
-											profile_id = $user_profile_id";
+						move_uploaded_file($image['tmp_name'][0],$location.$filename);
+						$check_existing_record = "SELECT profile_id from photos where profile_id = $user_profile_id AND position = $key";
+						$check_existance = $db->prepare($check_existing_record);
+						$check_existance->execute();
+						$rowcount = $check_existance->rowCount();
+						if($rowcount > 0){
+							$query = "UPDATE photos 
+												SET
+													path = '$location',
+													original_path = '$location',
+													filename = '$filename',
+													published = 1,
+													phototype_id = 1,
+													image = '$filename',
+													updated_at = now(),
+													image_tmp = '$filename',
+													image_processing = 1,
+													image_token = '$filename'
+												WHERE
+													profile_id = $user_profile_id AND
+													position = $key";
+						}
+						else{
+							$query = "INSERT INTO `photos` (`path`,`original_path`,`profile_id`,`filename`,`published`,`position`,`phototype_id`,`image`,`created_at`,`updated_at`,`image_tmp`,`image_processing`,`image_token`) VALUES ('".$location."','".$location."','".$user_profile_id."','".$filename."','1','".$key."','1','".$filename."',now(),now(),'".$filename."','1','".$filename."')";
+						}
 						$query_prepared = $db->prepare($query);
 						$query_prepared->execute();
 					}	
 				}
 
-				if(isset($_FILES['Video_file']['cdnfilepath'])){
-					foreach($_FILES['Video_file'] as $key=>$value){
-						$filename = $value['cdnfilename'];
-						$location = $value['cdnfilepath'];
-						$query = "UPDATE videos 
-											SET
-											path=$location,
-											uploaded_as_filename=$location,
-											filename=$filename,
-											video_original_path=$filename,
-											video_original_filename=$filename,
-											video_original_file_basename=$filename,
-											thumbnail_original_photo_path=$filename,
-											thumbnail_photo_path=$filename,
-											thumbnail_photo_filename=$filename,
-											thumbnail_at_time=3,
-											published=1,
-											position=$key
-											WHERE profile_id=$user_profile_id";
+				if(isset($_SESSION['Video_file'])){
+					foreach($_SESSION['Video_file'] as $key=>$video){
+						$filename = $video['cdnfilename'];
+						$location = $video['cdnfilepath'];
+						$thumbnail = $video['thumbnail'];
+
+						$cloud_orig_path = str_replace('/videos',"", $location);
+						$check_existing_record = "SELECT profile_id from videos where profile_id = $user_profile_id AND position = $key";
+						$check_existance = $db->prepare($check_existing_record);
+						$check_existance->execute();
+						$rowcount = $check_existance->rowCount();
+						if($rowcount > 0){
+							$query = "UPDATE videos 
+												SET
+													`path`='$location',
+													`uploaded_as_filename`='".$video['name'][0]."',
+													`filename`='$filename',
+													`video_original_path`='$cloud_orig_path',
+													`video_original_filename`='$filename',
+													`video_original_file_basename`='$filename',
+													`thumbnail_original_photo_path`='$location',
+													`thumbnail_photo_path`='$location',
+													`thumbnail_photo_filename`='$thumbnail',
+													`thumbnail_at_time`=3,
+													`published`=1
+												WHERE 
+													`profile_id`=$user_profile_id AND
+													`position`=$key";
+						}
+						else{
+							$query = "INSERT INTO `videos` (
+									`profile_id`,
+									`path`,
+									`uploaded_as_filename`,
+									`filename`,
+									`video_original_path`,
+									`video_original_filename`,
+									`video_original_file_basename`,
+									`thumbnail_original_photo_path`,
+									`thumbnail_photo_path`,
+									`thumbnail_photo_filename`,
+									`thumbnail_at_time`,
+									`published`,
+									`position`) 
+								VALUES (
+									'".$user_profile_id."',
+									'".$location."',
+									'".$video['name'][0]."',
+									'".$filename."',
+									'".$cloud_orig_path."',
+									'".$filename."',
+									'".$filename."',
+									'".$location."',
+									'".$location."',
+									'".$thumbnail."',
+									'3',
+									'1',
+									'".$key."')";
+						}
 						$query_prepared = $db->prepare($query);
 						$query_prepared->execute();
 					}	
@@ -3036,13 +3114,13 @@ $app->post('/fileuploadparser', function () use ($app) {
   $time 				=	time();  
 	if(!isset($_REQUEST["uploaded_file_type"])){
 		$_SESSION["Image_file"][]	= $_FILES["Image_file"];
-	  $fileName     = $_FILES["Image_file"]["name"][0]; // The file name
-	  $fileTmpLoc   = $_FILES["Image_file"]["tmp_name"][0]; // File in the PHP tmp folder
-	  $fileType     = $_FILES["Image_file"]["type"]; // The type of file it is
-	  $fileSize     = $_FILES["Image_file"]["size"]; // File size in bytes
-	  $fileErrorMsg = $_FILES["Image_file"]["error"]; // 0 for false... and 1 for true
-	  $_SESSION["Image_file_location"][] = $location = $_SERVER['DOCUMENT_ROOT'].'/images/uploads/';
-	// var_dump($_FILES);
+	  $fileName     = $_FILES["Image_file"]["name"][0];
+	  $fileTmpLoc   = $_FILES["Image_file"]["tmp_name"][0];
+	  $fileType     = $_FILES["Image_file"]["type"];
+	  $fileSize     = $_FILES["Image_file"]["size"];
+	  $fileErrorMsg = $_FILES["Image_file"]["error"];
+	  $location = $_SERVER['DOCUMENT_ROOT'].'/images/uploads/';
+
 	  if (!$fileTmpLoc) { // if file not chosen
 	      echo "ERROR: Please browse for a file before clicking the upload button.";
 	      exit();
@@ -3056,45 +3134,52 @@ $app->post('/fileuploadparser', function () use ($app) {
 	}	
   
   if(isset($_REQUEST["uploaded_file_type"]) && $_REQUEST["uploaded_file_type"] == "video"){
-  	$_SESSION["Video_file"][]	= $_FILES["Video_file"];
-	  $fileName     = $_SESSION["Video_file"]["name"][]			= $_FILES["Video_file"]["name"][0]; // The file name
-	  $fileTmpLoc   = $_SESSION["Video_file"]["tmp_name"][] = $_FILES["Video_file"]["tmp_name"][0]; // File in the PHP tmp folder
-	  $fileType     = $_SESSION["Video_file"]["type"][] 		= $_FILES["Video_file"]["type"]; // The type of file it is
-	  $fileSize     = $_SESSION["Video_file"]["size"][] 		= $_FILES["Video_file"]["size"]; // File size in bytes
-	  $fileErrorMsg = $_SESSION["Video_file"]["error"][] 		= $_FILES["Video_file"]["error"]; // 0 for false... and 1 for true
-	  $location     = $_SESSION["Video_file_location"][] = $_SERVER['DOCUMENT_ROOT'].'/images/uploads/';
+	  unset($_SESSION["Video_file"]);
+	  $fileTmpLoc   = $_FILES["Video_file"]["tmp_name"][0];
 
     $client = new Rackspace(Rackspace::UK_IDENTITY_ENDPOINT, array(
       'username' => 'castit',
       'apiKey'   => '187a515209d0affd473fedaedd6d770b'
     ));
 
+    $location 					= $_SERVER['DOCUMENT_ROOT'].'/images/uploads/';
     $objectStoreService = $client->objectStoreService(null, 'LON');
     $container          = $objectStoreService->getContainer('video_original_files');
     $date_dir           = date("o-m-d");
+    $fileName						= $_FILES["Video_file"]["name"][0];
     $localFileName      = $location.$fileName;
     $remoteFileName     = "/profiles/".$date_dir."/".$time."__".$fileName;
-    $cdnfilepath     = "/videos/profiles/".$date_dir;
+    $cdnfilepath     		= "/videos/profiles/".$date_dir;
+	  $cdnfilename 				= $time."__".$fileName;
+	  $thumbnail 					= "thumb_".$cdnfilename.".png";
+		$_FILES["Video_file"]["cdnfilepath"] = $cdnfilepath;
+		$_FILES["Video_file"]["cdnfilename"] = $cdnfilename;
+		$_FILES["Video_file"]["thumbnail"] = $thumbnail;
 
+
+  	$_SESSION["Video_file"][]	= $_FILES["Video_file"];
+		move_uploaded_file($fileTmpLoc, $location.$fileName);
+    
     $handle = fopen($localFileName, 'r');
     $container->uploadObject($remoteFileName, $handle);
     unset($handle);
 
 
-    $zencoder_input   = "cf+uk://castit:187a515209d0affd473fedaedd6d770b@video_original_files".$remoteFileName;
-    $zencoder_output  = "cf+uk://castit:187a515209d0affd473fedaedd6d770b@videos_public/videos".$remoteFileName;
+    $zencoder_input   	= "cf+uk://castit:187a515209d0affd473fedaedd6d770b@video_original_files".$remoteFileName;
+    $zencoder_output  	= "cf+uk://castit:187a515209d0affd473fedaedd6d770b@videos_public/videos".$remoteFileName;
+    $zencoder_base_url  = "cf+uk://castit:187a515209d0affd473fedaedd6d770b@videos_public".$cdnfilepath;
 
     $zencoder_array = [
-      "input"     => $zencoder_input,
-      "outputs"   => array(
-        "label"   => "mp4 high",
-        "url"     => $zencoder_output,
-        "h264_profile" 	=> "high",
-        "thumbnails"		=> ["format"=>"png", "filename"=>"thumbnail__".$time."__".$fileName]
-      ),
+      "input_file"		=> $zencoder_input,
+      "output_file"		=> $zencoder_output,
+      "base_url"			=> $zencoder_base_url,
+      "filename"			=> $cdnfilename,
     ];
 
-    $zencoder_json = json_encode($zencoder_array);
+    // $zencoder_json = json_encode($zencoder_array);
+    $zencoder_json = build_json_zencoder($zencoder_array);
+
+    // ppe($zencoder_json);
     $url = 'https://app.zencoder.com/api/v2/jobs';
     $ch = curl_init( $url );
     curl_setopt( $ch, CURLOPT_POST, 1);
@@ -3106,9 +3191,31 @@ $app->post('/fileuploadparser', function () use ($app) {
     ));
 
     $response = curl_exec( $ch );
-    echo json_encode(['status_message'=>'file upload success', 'filename'=>$fileName, 'cdnfilepath'=>$cdnfilepath, 't'=>$time]);
+    echo json_encode(['status_message'=>'file upload success', 'filename'=>$fileName, 'cdnfilepath'=>$cdnfilepath, 't'=>$time, 'thumbnail'=>$thumbnail]);
   }
 });
+
+function build_json_zencoder($data_array){
+	$json = '{
+	"input": "'.$data_array["input_file"].'",
+	"outputs": [{
+		"thumbnails": [
+				{
+					"base_url": "'.$data_array["base_url"].'",
+					"label": "regular",
+					"number": 1,
+					"filename": "thumb_'.$data_array["filename"].'",
+					"public": "true"
+				}
+			]
+		},
+    {"label": "mp4 high"},
+    {"url": "'.$data_array["output_file"].'"},
+    {"h264_profile": "high"}
+	]
+	}';
+	return $json;
+}
 
 //JSON coneverion
 function echoResponse($status_code, $response) {
@@ -3146,7 +3253,59 @@ function generate_uuid() {
     );
 }	
 	
-	
+
+/*
+ * Activate a profile
+ *
+ */
+
+	/*
+profiles   	: profile status id, approved --> 1
+membership 	: manual all fields
+photos 			: verify exist
+	*/
+$app->post('/activateprofile', function () use ($app) {
+	$email 							= $_REQUEST['emailid'];
+	$query_string 			= "SELECT * from profiles WHERE email='".$email."'";
+	$user_profile_query = $db->prepare($query_string);
+	$user_profile_query->execute();
+	$row = $user_profile_query->rowCount();
+	if ($row > 0){
+	  foreach ($user_profile_query->fetchAll(PDO::FETCH_ASSOC) as $key => $value) {
+	  	$profile_id = $value['id'];
+	  	$update_profile_query 		= "UPDATE profiles SET approved = 1, profile_status_id = 1 WHERE email = $email";
+	  	$check_membership_query		= "SELECT * from membership where profile_id = $profile_id";
+	  	$check_membership 				= $db->prepare($check_membership_query);
+	  	$check_membership->execute();
+	  	$m_count = $check_membership->rowCount();
+	  	if($m_count > 0){
+	  		$membership_table_query = "UPDATE 
+	  				membership 
+	  			SET
+	  				current = 1
+  				WHERE
+  					profile_id = $profile_id
+	  		";
+	  	}
+	  	else{
+	  		// 1 male - CM; 2 female - CF
+	  		$profile_number_prefix = ($value['gender_id'] == 2) ? "CF":"CM";
+	  		$max_existing = $db->prepare("SELECT MAX(CAST(SUBSTRING(profile_number, 3) AS UNSIGNED)) FROM memberships where profile_number LIKE "CF%" OR profile_number LIKE 'CM%' ");
+	  		$profile_number = $profile_number_prefix + $max_existing + 1;
+	  		$membership_table_query = "INSERT INTO
+	  			membership
+	  			(`profile_id`, `profile_group_id`, `profile_number`, `profile_number_first_name_last_name`, `version`, `created_at`, `current`, `set_to_current_at`, `previous_profile_group_id`, `previous_profile_number`)
+	  			VALUES
+	  			($profile_id, 1, $profile_number_prefix)
+	  		";
+	  	}
+	  }
+	}
+	else{
+		echo 'No profile with mentioned Email ID';
+	}
+}
+
 $app->run();
 
 function pp($q){
