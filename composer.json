@@ -1,0 +1,15 @@
+{
+    "name": "castit/castit_app",
+    "description": "this is the frontend app for castit.dk",
+    "type": "project",
+    "require": {
+        "rackspace/php-opencloud": "dev-master"
+    },
+    "authors": [
+        {
+            "name": "Padmanabhan",
+            "email": "padmanabhan.developer.email@gmail.com"
+        }
+    ],
+    "minimum-stability": "dev"
+}

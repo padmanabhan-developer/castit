@@ -3,6 +3,9 @@ require '../libs/Slim/Slim.php';
 require_once 'dbHelper.php';
 require_once 'SimpleImage.php';
 
+require '../../vendor/autoload.php';
+use OpenCloud\Rackspace; 
+
 // Get Slim instance
 \Slim\Slim::registerAutoloader();
 $app = new \Slim\Slim();
@@ -57,17 +60,31 @@ Parameter : NIL
 Type : POST
 ******************************************/
 $app->get('/getprofiles',function () use ($app) { 
-    global $db;
+  global $db;
+  $sql = "SELECT 
+  p.*, m.profile_group_id, m.profile_number, m.profile_number_first_name_last_name, m.version, m.current, g.name 
+  as gender_name, hc.name 
+  as hair_color_name, ec.name 
+  as eye_color_name 
+FROM profiles p 
+  INNER JOIN memberships m ON m.profile_id = p.id 
+  INNER JOIN genders g ON g.id = p.gender_id 
+  INNER JOIN hair_colors hc ON hc.id = p.hair_color_id 
+  INNER JOIN eye_colors ec ON ec.id = p.eye_color_id  
+WHERE ( p.profile_status_id = '1' OR  p.profile_status_id = '2' ) 
+AND m.current ='1' 
+AND ( m.profile_number LIKE 'C%' OR m.profile_number LIKE 'A%'OR m.profile_number LIKE 'J%' OR m.profile_number LIKE 'Y%' ) 
+AND p.id IN ( SELECT profile_id from photos WHERE published ='1' GROUP by profile_id ) 
+ORDER BY RAND()";
 
+	$query = $db->prepare($sql); 
 
-	$query = $db->prepare("SELECT p.*, m.profile_group_id, m.profile_number, m.profile_number_first_name_last_name, m.version, m.current, g.name as gender_name, hc.name as hair_color_name, ec.name as eye_color_name FROM profiles p INNER JOIN memberships m ON m.profile_id = p.id INNER JOIN genders g ON g.id = p.gender_id INNER JOIN hair_colors hc ON hc.id = p.hair_color_id INNER JOIN eye_colors ec ON ec.id = p.eye_color_id  WHERE (p.profile_status_id = '1' OR  p.profile_status_id = '2') AND m.current ='1' AND (m.profile_number LIKE 'C%' OR m.profile_number LIKE 'A%'OR m.profile_number LIKE 'J%' OR m.profile_number LIKE 'Y%')  AND p.id IN (SELECT profile_id from photos WHERE published ='1' GROUP by profile_id) ORDER by case WHEN m.profile_number LIKE 'CF%' THEN 1 WHEN m.profile_number LIKE 'CM%' THEN 2 WHEN m.profile_number LIKE 'A%' THEN 3 WHEN m.profile_number LIKE 'J%' THEN 4  WHEN m.profile_number LIKE 'YF%' THEN 5 WHEN m.profile_number LIKE 'YM%' THEN 6 ELSE 7 END "); 
-
-	//echo $query;exit;
+	// echo $query;exit;
 	$query->execute();
-    $rows = $query->fetchAll(PDO::FETCH_ASSOC);
-    //echo 'sdsds';die;
-//	print_r($rows[0]);exit;
-    $profiles = array();
+	$rows = $query->fetchAll(PDO::FETCH_ASSOC);
+	// echo 'sdsds';die;
+	// print_r($rows[0]);exit;
+	$profiles = array();
 	if(count($rows)>0) {
 		foreach($rows as $row){
 			$birthdate = new DateTime($row['birthday']);
@@ -76,16 +93,14 @@ $app->get('/getprofiles',function () use ($app) {
 
 			// Profile Image
 			$profile_image ='';
-			$query_image = $db->prepare("SELECT *, DATE_FORMAT(created_at, '%Y') as create_year, DATE_FORMAT(created_at, '%m') as create_month, DATE_FORMAT(created_at, '%d') as create_date FROM photos WHERE profile_id = '".$row['id']."' and published ='1' ORDER BY position ASC LIMIT 1"); 
-	$query_image->execute();
-	$image= '';
+			$query_image = $db->prepare("SELECT *, DATE_FORMAT(created_at, '%Y') as create_year, DATE_FORMAT(created_at, '%m') as create_month, DATE_FORMAT(created_at, '%d') as create_date FROM photos WHERE profile_id = '".$row['id']."' and published ='1' ORDER BY position ASC "); 
+		$query_image->execute();
+		$image= '';
     $rows_image = $query_image->fetchAll(PDO::FETCH_ASSOC);
-	if(count($rows_image) > 0){
-		$path = $rows_image[0]['create_year']."/".$rows_image[0]['create_month']."/".$rows_image[0]['create_date']."/".$rows_image[0]['id']."/big_";
-		$profile_image = 'http://134.213.29.220/profile_images/'.$path.$rows_image[0]['image'];
-		//$profile_image = 'http://134.213.29.220/assets/profile_images/'.$path.$rows_image[0]['image'];
-		
-		
+		if(count($rows_image) > 0){
+			$path = $rows_image[0]['create_year']."/".$rows_image[0]['create_month']."/".$rows_image[0]['create_date']."/".$rows_image[0]['id']."/big_";
+			$profile_image = 'http://134.213.29.220/profile_images/'.$path.$rows_image[0]['image'];
+			//$profile_image = 'http://castit.dk/assets/profile_images/'.$path.$rows_image[0]['image'];
 		}
 
 
@@ -162,7 +177,7 @@ $app->get('/getfilterprofiles',function () use ($app) {
 	}
 
 	if($search_text){
-		$search_qry .= " AND (p.first_name LIKE '%".$search_text."%' OR p.last_name LIKE '%".$search_text."%' OR m.profile_number LIKe '%".$search_text."%')";		
+		$search_qry .= " AND (p.first_name = '".$search_text."' OR p.last_name = '".$search_text."' OR m.profile_number like '%".$search_text."%')";		
 	}
 	$qry = "SELECT p.*, m.profile_group_id, m.profile_number, m.profile_number_first_name_last_name, m.version, m.current, g.name as gender_name, hc.name as hair_color_name, ec.name as eye_color_name FROM profiles p INNER JOIN memberships m ON m.profile_id = p.id INNER JOIN genders g ON g.id = p.gender_id INNER JOIN hair_colors hc ON hc.id = p.hair_color_id INNER JOIN eye_colors ec ON ec.id = p.eye_color_id  WHERE (p.profile_status_id = '1' OR  p.profile_status_id = '2') AND m.current ='1' AND p.id IN (SELECT profile_id from photos WHERE published ='1' GROUP by profile_id) ".$search_qry."  ORDER by case WHEN m.profile_number LIKE 'CF%' THEN 1 WHEN m.profile_number LIKE 'CM%' THEN 2 WHEN m.profile_number LIKE 'A%' THEN 3 WHEN m.profile_number LIKE 'J%' THEN 4  WHEN m.profile_number LIKE 'YF%' THEN 5 WHEN m.profile_number LIKE 'YM%' THEN 6 ELSE 7 END ";
 	$query = $db->prepare($qry); 
@@ -183,9 +198,20 @@ $app->get('/getfilterprofiles',function () use ($app) {
 	$query_image->execute();
 	$image= '';
     $rows_image = $query_image->fetchAll(PDO::FETCH_ASSOC);
-	if(count($rows_image) > 0){
-		$path = $rows_image[0]['create_year']."/".$rows_image[0]['create_month']."/".$rows_image[0]['create_date']."/".$rows_image[0]['id']."/big_";
-		$profile_image = 'http://134.213.29.220/profile_images/'.$path.$rows_image[0]['image'];
+
+    $rows_count = count($rows_image); 
+	if($rows_count > 0){
+		$min = 0;
+		$max = $rows_count - 1;
+		$random_index = rand($min, $max);
+		if (strpos($rows_image[$random_index]['path'], 'vhost') !== false) {
+			$path = $rows_image[$random_index]['path'];
+			$profile_image = 'http://134.213.29.220/images/uploads/'.$rows_image[$random_index]['image'];
+		}
+		else{
+			$path = $rows_image[$random_index]['create_year']."/".$rows_image[$random_index]['create_month']."/".$rows_image[$random_index]['create_date']."/".$rows_image[$random_index]['id']."/big_";
+			$profile_image = 'http://134.213.29.220/profile_images/'.$path.$rows_image[$random_index]['image'];
+		}
 		
 		}
 		$name = $row['first_name'];
@@ -262,8 +288,16 @@ $app->get('/getsingleprofiles',function () use ($app) {
 		$imgc = 1;
 		if(count($rows_image) > 0){
 			foreach($rows_image as $row_image){
-				$path = $row_image['create_year']."/".$row_image['create_month']."/".$row_image['create_date']."/".$row_image['id']."/big_";
-				$profile_images[] = array('imgcnt' => $imgc, 'urloriginal' =>$row_image['image'], 'fullpath'=>'http://134.213.29.220/profile_images/'.$path.$row_image['image']);
+				if (strpos($row_image['path'], 'vhost') !== false) {
+					$fullpath = 'http://134.213.29.220/images/uploads/'.$row_image['image'];
+				}
+				else{
+					$path = $row_image['create_year']."/".$row_image['create_month']."/".$row_image['create_date']."/".$row_image['id']."/big_";
+					$fullpath = 'http://134.213.29.220/profile_images/'.$path.$row_image['image'];
+				}
+				
+				$profile_images[] = array('imgcnt' => $imgc, 'urloriginal' =>$row_image['image'], 'fullpath'=>$fullpath);
+				
 				$imgc++;
 			}
 		}
@@ -277,8 +311,17 @@ $app->get('/getsingleprofiles',function () use ($app) {
 		$videoc = 1;
 		if(count($rows_video) > 0){
 			foreach($rows_video as $row_video){
+				/*
+				if (strpos($row_video['path'], 'vhost') !== false) {
+					$vpath = 'http://134.213.29.220/images/uploads/'.$row_video['filename'];
+					$thumbpath = 'http://134.213.29.220/images/uploads/'.$row_video['filename'];
+				}
+				else{
+					$vpath = 'http://assets3.castit.dk'.$row_video['path']."/".$row_video['filename'];
+					$thumbpath = 'http://assets3.castit.dk'.$row_video['thumbnail_photo_path']."/".$row_video['thumbnail_photo_filename'];
+				} */
 				$vpath = 'http://assets3.castit.dk'.$row_video['path']."/".$row_video['filename'];
-				$thumbpath = 'http://assets3.castit.dk'.$row_video['thumbnail_photo_path']."/".$row_video['thumbnail_photo_filename'];
+					$thumbpath = 'http://assets3.castit.dk'.$row_video['thumbnail_photo_path']."/".$row_video['thumbnail_photo_filename'];
 				$profile_videos[] = array('vidcnt' => $videoc, 'urloriginal' =>$vpath, 'img_thum'=>$thumbpath, 'fullpath'=>$vpath);
 				$videoc++;
 			}
@@ -407,6 +450,7 @@ $app->get('/updatelightboxprofiles', function () use ($app) {
 	$rowcount = 0;
 	$profile_note =  $app->request->get('profile_notes');
 	$profile_grouping =  $app->request->get('selectedgroupings');
+	$grouptoken =  $app->request->get('grouptoken');
 
 	if(isset($_SESSION["lightbox_token"])){
 		$lightbox_token = $_SESSION["lightbox_token"];
@@ -486,13 +530,20 @@ $app->get('/updatelightboxprofiles', function () use ($app) {
 						$image= '';
 						$rows_image = $query_image->fetchAll(PDO::FETCH_ASSOC);
 						if(count($rows_image) > 0){
-							$path = $rows_image[0]['create_year']."/".$rows_image[0]['create_month']."/".$rows_image[0]['create_date']."/".$rows_image[0]['id']."/thumb_";
-							$profile_image = 'http://134.213.29.220/profile_images/'.$path.$rows_image[0]['image'];
+							if (strpos($rows_image[0]['path'], 'vhost') !== false) {
+								$profile_image = 'http://134.213.29.220/images/uploads/'.$rows_image[0]['image'];
+							}
+							else{
+								$path = $rows_image[0]['create_year']."/".$rows_image[0]['create_month']."/".$rows_image[0]['create_date']."/".$rows_image[0]['id']."/thumb_";
+								$profile_image = 'http://134.213.29.220/profile_images/'.$path.$rows_image[0]['image'];
+							}
 							
 							}
 								$lb_note = isset($_SESSION["lb_notes"][$row['id']]) ? $_SESSION["lb_notes"][$row['id']]: '' ;
 								$groupnamear = array();
-								$lb_group_qry = "SELECT pg.*, g.group_name from profile_grouping pg JOIN grouping g ON pg.group_id = g.group_id WHERE pg.profile_id='".$row['id']."'";	
+							
+								$lb_group_qry = "SELECT pg.*, g.group_name from profile_grouping pg JOIN grouping g ON pg.group_id = g.group_id AND g.token_id = '".$grouptoken."' WHERE pg.profile_id='".$row['id']."'";	
+							
 								$query_group = $db->prepare($lb_group_qry);
 								$query_group->execute();
 								$rows_group = $query_group->fetchAll(PDO::FETCH_ASSOC);
@@ -553,6 +604,7 @@ $app->get('/removelightboxprofiles', function () use ($app) {
 	$lb_pprofiles = array();
 	$reponse = array();
 	$rowcount = 0;
+	$grouptoken =  $app->request->get('grouptoken');
 
 	if(isset($_SESSION["lightbox_token"])){
 		$lightbox_token = $_SESSION["lightbox_token"];
@@ -597,13 +649,18 @@ $app->get('/removelightboxprofiles', function () use ($app) {
 						$image= '';
 						$rows_image = $query_image->fetchAll(PDO::FETCH_ASSOC);
 						if(count($rows_image) > 0){
-							$path = $rows_image[0]['create_year']."/".$rows_image[0]['create_month']."/".$rows_image[0]['create_date']."/".$rows_image[0]['id']."/thumb_";
-							$profile_image = 'http://134.213.29.220/profile_images/'.$path.$rows_image[0]['image'];
+							if (strpos($rows_image[0]['path'], 'vhost') !== false) {
+								$profile_image = 'http://134.213.29.220/images/uploads/'.$rows_image[0]['image'];
+							}
+							else{
+								$path = $rows_image[0]['create_year']."/".$rows_image[0]['create_month']."/".$rows_image[0]['create_date']."/".$rows_image[0]['id']."/thumb_";
+								$profile_image = 'http://134.213.29.220/profile_images/'.$path.$rows_image[0]['image'];
+							}
 							
 							}
 								$lb_note = isset($_SESSION["lb_notes"][$row['id']]) ? $_SESSION["lb_notes"][$row['id']]: '' ;
 								$groupnamear = array();
-								$lb_group_qry = "SELECT pg.*, g.group_name from profile_grouping pg JOIN grouping g ON pg.group_id = g.group_id WHERE pg.profile_id='".$row['id']."'";	
+								$lb_group_qry = "SELECT pg.*, g.group_name from profile_grouping pg JOIN grouping g ON pg.group_id = g.group_id  AND g.token_id = '".$grouptoken."' WHERE pg.profile_id='".$row['id']."'";	
 								$query_group = $db->prepare($lb_group_qry);
 								$query_group->execute();
 								$rows_group = $query_group->fetchAll(PDO::FETCH_ASSOC);
@@ -665,6 +722,7 @@ $app->get('/getlightboxprofiles', function () use ($app) {
 	$lb_pprofiles = array();
 	$reponse = array();
 	$rowcount = 0;
+	$grouptoken =  $app->request->get('grouptoken');
 
 	if(isset($_SESSION["lightbox_token"])){
 		$lightbox_token = $_SESSION["lightbox_token"];
@@ -709,12 +767,16 @@ $app->get('/getlightboxprofiles', function () use ($app) {
 				$image= '';
 				$rows_image = $query_image->fetchAll(PDO::FETCH_ASSOC);
 				if(count($rows_image) > 0){
-					$path = $rows_image[0]['create_year']."/".$rows_image[0]['create_month']."/".$rows_image[0]['create_date']."/".$rows_image[0]['id']."/thumb_";
-					$profile_image = 'http://134.213.29.220/profile_images/'.$path.$rows_image[0]['image'];
-					
+					if (strpos($rows_image[0]['path'], 'vhost') !== false) {
+						$profile_image = 'http://134.213.29.220/images/uploads/'.$rows_image[0]['image'];
 					}
+					else{
+						$path = $rows_image[0]['create_year']."/".$rows_image[0]['create_month']."/".$rows_image[0]['create_date']."/".$rows_image[0]['id']."/thumb_";
+						$profile_image = 'http://134.213.29.220/profile_images/'.$path.$rows_image[0]['image'];
+					}
+				}
 				$groupnamear = array();
-				$lb_group_qry = "SELECT pg.*, g.group_name from profile_grouping pg JOIN grouping g ON pg.group_id = g.group_id WHERE pg.profile_id='".$row['id']."'";	
+				$lb_group_qry = "SELECT pg.*, g.group_name from profile_grouping pg JOIN grouping g ON pg.group_id = g.group_id AND g.token_id = '".$grouptoken."' WHERE pg.profile_id='".$row['id']."'";	
 				$query_group = $db->prepare($lb_group_qry);
 				$query_group->execute();
 				$rows_group = $query_group->fetchAll(PDO::FETCH_ASSOC);
@@ -772,8 +834,9 @@ $app->get('/getgroupingprofiles', function () use ($app) {
 	$reponse = array();
 	$rowcount = 0;
 	$grouping_profile = array();
+	$grouptoken =  $app->request->get('grouptoken');
 
-	$query_check_gb = $db->prepare("SELECT *, date_format(added_on , '%d.%m.%Y') as addedon  FROM grouping where status = '1' order by group_name asc"); 
+	$query_check_gb = $db->prepare("SELECT *, date_format(added_on , '%d.%m.%Y') as addedon  FROM grouping where token_id= '".$grouptoken."' AND status = '1' order by group_name asc"); 
 	$query_check_gb->execute();
 	$rows_gb = $query_check_gb->fetchAll(PDO::FETCH_ASSOC);
 	if(count($rows_gb)>0) {
@@ -805,10 +868,15 @@ $app->get('/getgroupingprofiles', function () use ($app) {
 						$image= '';
 						$rows_image = $query_image->fetchAll(PDO::FETCH_ASSOC);
 						if(count($rows_image) > 0){
-							$path = $rows_image[0]['create_year']."/".$rows_image[0]['create_month']."/".$rows_image[0]['create_date']."/".$rows_image[0]['id']."/thumb_";
-							$profile_image = 'http://134.213.29.220/profile_images/'.$path.$rows_image[0]['image'];
-							
+							if (strpos($rows_image[0]['path'], 'vhost') !== false) {
+								$profile_image = 'http://134.213.29.220/images/uploads/'.$rows_image[0]['image'];
 							}
+							else{
+								$path = $rows_image[0]['create_year']."/".$rows_image[0]['create_month']."/".$rows_image[0]['create_date']."/".$rows_image[0]['id']."/thumb_";
+								$profile_image = 'http://134.213.29.220/profile_images/'.$path.$rows_image[0]['image'];
+							}
+							
+						}
 						$lb_note = isset($_SESSION["lb_notes"][$row['id']]) ? $_SESSION["lb_notes"][$row['id']]: '' ;
 						$lb_pprofiles[] = array('id' 			=> $row['id'],
 											'bureau' 		=> $row['bureau'],
@@ -856,9 +924,10 @@ Type : GET
 $app->get('/removegroupfromgrouping', function () use ($app) { 
     global $db;
 	$groupid =  $app->request->get('groupid');
+	$grouptoken =  $app->request->get('grouptoken');
 
 	if($groupid){
-		$query_check_gb = $db->prepare("SELECT * FROM grouping where group_id = '".$groupid."'"); 
+		$query_check_gb = $db->prepare("SELECT * FROM grouping where group_id = '".$groupid."' AND token_id = '".$grouptoken."'"); 
 		$query_check_gb->execute();
 		$rows_gb = $query_check_gb->fetchAll(PDO::FETCH_ASSOC);
 		if(count($rows_gb)>0) {
@@ -879,7 +948,7 @@ $app->get('/removegroupfromgrouping', function () use ($app) {
 	$rowcount = 0;
 	$grouping_profile = array();
 
-	$query_check_gb = $db->prepare("SELECT *, date_format(added_on , '%d.%m.%Y') as addedon  FROM grouping where status = '1' order by group_name asc"); 
+	$query_check_gb = $db->prepare("SELECT *, date_format(added_on , '%d.%m.%Y') as addedon  FROM grouping where status = '1' AND token_id = '".$grouptoken."' order by group_name asc"); 
 	$query_check_gb->execute();
 	$rows_gb = $query_check_gb->fetchAll(PDO::FETCH_ASSOC);
 	if(count($rows_gb)>0) {
@@ -911,10 +980,14 @@ $app->get('/removegroupfromgrouping', function () use ($app) {
 						$image= '';
 						$rows_image = $query_image->fetchAll(PDO::FETCH_ASSOC);
 						if(count($rows_image) > 0){
-							$path = $rows_image[0]['create_year']."/".$rows_image[0]['create_month']."/".$rows_image[0]['create_date']."/".$rows_image[0]['id']."/thumb_";
-							$profile_image = 'http://134.213.29.220/profile_images/'.$path.$rows_image[0]['image'];
-							
+							if (strpos($rows_image[0]['path'], 'vhost') !== false) {
+								$profile_image = 'http://134.213.29.220/images/uploads/'.$rows_image[0]['image'];
 							}
+							else{
+								$path = $rows_image[0]['create_year']."/".$rows_image[0]['create_month']."/".$rows_image[0]['create_date']."/".$rows_image[0]['id']."/thumb_";
+								$profile_image = 'http://134.213.29.220/profile_images/'.$path.$rows_image[0]['image'];
+							}
+						}
 						$lb_note = isset($_SESSION["lb_notes"][$row['id']]) ? $_SESSION["lb_notes"][$row['id']]: '' ;
 						$lb_pprofiles[] = array('id' 			=> $row['id'],
 											'bureau' 		=> $row['bureau'],
@@ -966,9 +1039,10 @@ $app->get('/addgroupintogrouping', function () use ($app) {
 	$reponse = array();
 	$rowcount = 0;
 
-	$grouping_token = generate_uuid();
+	//$grouping_token = generate_uuid();
+	$grouping_token = $app->request->get('grouptoken');
 	
-	$query_check_gp = $db->prepare("SELECT * FROM `grouping` where `group_name` LIKE '%".$groupname."%'"); 
+	$query_check_gp = $db->prepare("SELECT * FROM `grouping` where `group_name` LIKE '%".$groupname."%' AND token_id = '".$grouping_token."'"); 
 	$query_check_gp->execute();
 	$rows_gp = $query_check_gp->fetchAll(PDO::FETCH_ASSOC);
 	if(count($rows_gp)>0) {
@@ -984,7 +1058,7 @@ $app->get('/addgroupintogrouping', function () use ($app) {
 	$rowcount = 0;
 	$grouping_profile = array();
 
-	$query_check_gb = $db->prepare("SELECT *, date_format(added_on , '%d.%m.%Y') as addedon  FROM grouping where status = '1' order by group_name asc"); 
+	$query_check_gb = $db->prepare("SELECT *, date_format(added_on , '%d.%m.%Y') as addedon  FROM grouping where status = '1' AND token_id = '".$grouping_token."' order by group_name asc"); 
 	$query_check_gb->execute();
 	$rows_gb = $query_check_gb->fetchAll(PDO::FETCH_ASSOC);
 	if(count($rows_gb)>0) {
@@ -1016,10 +1090,14 @@ $app->get('/addgroupintogrouping', function () use ($app) {
 						$image= '';
 						$rows_image = $query_image->fetchAll(PDO::FETCH_ASSOC);
 						if(count($rows_image) > 0){
-							$path = $rows_image[0]['create_year']."/".$rows_image[0]['create_month']."/".$rows_image[0]['create_date']."/".$rows_image[0]['id']."/thumb_";
-							$profile_image = 'http://134.213.29.220/profile_images/'.$path.$rows_image[0]['image'];
-							
+							if (strpos($rows_image[0]['path'], 'vhost') !== false) {
+								$profile_image = 'http://134.213.29.220/images/uploads/'.$rows_image[0]['image'];
 							}
+							else{
+								$path = $rows_image[0]['create_year']."/".$rows_image[0]['create_month']."/".$rows_image[0]['create_date']."/".$rows_image[0]['id']."/thumb_";
+								$profile_image = 'http://134.213.29.220/profile_images/'.$path.$rows_image[0]['image'];
+							}
+						}
 						$lb_note = isset($_SESSION["lb_notes"][$row['id']]) ? $_SESSION["lb_notes"][$row['id']]: '' ;
 						$lb_pprofiles[] = array('id' 			=> $row['id'],
 											'bureau' 		=> $row['bureau'],
@@ -1092,13 +1170,16 @@ Type : POST
 $app->post('/step1Create',function () use ($app) { 
     global $db;
 	$data =  json_decode($app->request->getBody(), true);
+  // echo '<pre>';print_r($_SESSION["step1"]);exit;
 	$response = array();
 	global $imageClass;
 
 	$_SESSION["step1"]["status"] =1;
 	$_SESSION["step1"]["first_name"]= $data['first_name'];
 	$_SESSION["step1"]["last_name"]= $data['last_name'];
-	$_SESSION["step1"]["password"]= $data['password'];
+	if (isset($data['password'])) {
+		$_SESSION["step1"]["password"]= $data['password'];
+	}
 	$_SESSION["step1"]["address"]= $data['address'];
 	$_SESSION["step1"]["zipcode"]= $data['zipcode'];
 	$_SESSION["step1"]["city"]= $data['city'];
@@ -1624,8 +1705,11 @@ $app->post('/step5Create',function () use ($app) {
 	$data =  json_decode($app->request->getBody(), true);
 	$response = array();
 	global $imageClass;
+	$_SESSION['operation'] = isset($data['operation']) ? $data['operation'] : "insert";
+	$_SESSION['user_profile_id'] = isset($data['user_profile_id']) ? $data['user_profile_id'] : "";
 
 	$_SESSION["step5"]["status"] 			=1;
+
 	if(isset($data['lang1']))
 		$_SESSION["step5"]["lang1"]	= $data['lang1'];
 	if(isset($data['lang2']))
@@ -1634,6 +1718,7 @@ $app->post('/step5Create',function () use ($app) {
 		$_SESSION["step5"]["lang3"]	= $data['lang3'];
 	if(isset($data['lang4']))
 		$_SESSION["step5"]["lang4"]	= $data['lang4'];
+
 	if(isset($data['langrateval1']))
 		$_SESSION["step5"]["langrateval1"]	= $data['langrateval1'];
 	if(isset($data['langrateval2']))
@@ -1642,6 +1727,16 @@ $app->post('/step5Create',function () use ($app) {
 		$_SESSION["step5"]["langrateval3"]	= $data['langrateval3'];
 	if(isset($data['langrateval4']))
 		$_SESSION["step5"]["langrateval4"]	= $data['langrateval4'];
+
+	if(isset($data['lng_pro_id1']))
+		$_SESSION["step5"]["lng_pro_id1"]	= $data['lng_pro_id1'];
+	if(isset($data['lng_pro_id2']))
+		$_SESSION["step5"]["lng_pro_id2"]	= $data['lng_pro_id2'];
+	if(isset($data['lng_pro_id3']))
+		$_SESSION["step5"]["lng_pro_id3"]	= $data['lng_pro_id3'];
+	if(isset($data['lng_pro_id4']))
+		$_SESSION["step5"]["lng_pro_id4"]	= $data['lng_pro_id4'];
+
 	if(isset($data['dealekter1']))
 		$_SESSION["step5"]["dealekter1"]	= $data['dealekter1'];
 	if(isset($data['dealekter2']))
@@ -1756,7 +1851,13 @@ Parameter : Form post parameters
 Type : POST
 ******************************************/
 $app->post('/step6Create',function () use ($app) { 
-
+	unset($_SESSION['Image_file_location']);
+	unset($_SESSION['Video_file_location']);
+	unset($_SESSION['Video_file']['name']);
+	unset($_SESSION['Image_file']['name']);
+	// ppe($_SESSION);
+	$operation = (isset($_SESSION['operation'])) ? $_SESSION['operation'] : 'insert';
+	$user_profile_id = (isset($_SESSION['user_profile_id'])) ? $_SESSION['user_profile_id'] : '';
 	global $db;
 	$first_name=$_SESSION["step1"]["first_name"];
 	$last_name=$_SESSION["step1"]["last_name"];
@@ -1807,6 +1908,7 @@ $app->post('/step6Create',function () use ($app) {
 		$languages[2]['language_id']=$_SESSION["step5"]["lang3"];
 	if(isset($_SESSION["step5"]["lang4"])&& $_SESSION["step5"]["lang4"]!='')
 		$languages[3]['language_id']=$_SESSION["step5"]["lang4"];
+
 	if(isset($_SESSION["step5"]["langrateval1"]) && $_SESSION["step5"]["langrateval1"]!='')
 		$languages[0]['rating_id']=$_SESSION["step5"]["langrateval1"];
 	if(isset($_SESSION["step5"]["langrateval2"]) && $_SESSION["step5"]["langrateval2"]!='')
@@ -1815,6 +1917,16 @@ $app->post('/step6Create',function () use ($app) {
 		$languages[2]['rating_id']=$_SESSION["step5"]["langrateval3"];
 	if(isset($_SESSION["step5"]["langrateval4"]) && $_SESSION["step5"]["langrateval4"]!='')
 		$languages[3]['rating_id']=$_SESSION["step5"]["langrateval4"];
+
+	if(isset($_SESSION["step5"]["lng_pro_id1"]) && $_SESSION["step5"]["lng_pro_id1"]!='')
+		$languages[0]['lng_pro_id']=$_SESSION["step5"]["lng_pro_id1"];
+	if(isset($_SESSION["step5"]["lng_pro_id2"]) && $_SESSION["step5"]["lng_pro_id2"]!='')
+		$languages[1]['lng_pro_id']=$_SESSION["step5"]["lng_pro_id2"];
+	if(isset($_SESSION["step5"]["lng_pro_id3"]) && $_SESSION["step5"]["lng_pro_id3"]!='')
+		$languages[2]['lng_pro_id']=$_SESSION["step5"]["lng_pro_id3"];
+	if(isset($_SESSION["step5"]["lng_pro_id4"]) && $_SESSION["step5"]["lng_pro_id4"]!='')
+		$languages[3]['lng_pro_id']=$_SESSION["step5"]["lng_pro_id4"];
+
 	if(isset($_SESSION["step5"]["dealekter1"]) && $_SESSION["step5"]["dealekter1"]!='')
 		$dealekter1=$_SESSION["step5"]["dealekter1"];
 	if(isset($_SESSION["step5"]["dealekter2"]) && $_SESSION["step5"]["dealekter2"]!='')
@@ -1823,74 +1935,400 @@ $app->post('/step6Create',function () use ($app) {
 		$dealekter3=$_SESSION["step5"]["dealekter3"];
 
 		$agreed_to_these_terms=1;
-		$q_chip = "INSERT INTO `profiles` ( `first_name`, `last_name`, `gender_id`, `hair_color_id`,`eye_color_id`, `birthday`, `height`, `weight`, `shoe_size_from`, `shoe_size_to`, 	`shirt_size_from`,`shirt_size_to`,`pants_size_from`,`pants_size_to`,`bra_size`,`children_sizes`,`address`,`zipcode`,`city`,`country_id`,`phone`,`phone_at_work`,`email`,`job`,`notes`,`agreed_to_these_terms`,`password`,`hashed_password`,`created_at`,`updated_at`,`suite_size_from`,`suite_size_to`) VALUES ('".$first_name."', '".$last_name."','".$gender_id."',".$hair_color_id.",".$eye_color_id.",'".$birthday."',".$height.",".$weight.",".$shoe_size_from.",".$shoe_size_to.",".$shirt_size_from.",".$shirt_size_to.",".$pants_size_from.",".$pants_size_from.",".$bra_size.",".$children_sizes.",'".$address."','".$zipcode."','".$city."','".$country_id."','".$phone."','".$phone_at_work."','".$email."','".$job."','".$notes."','".$agreed_to_these_terms."','".$password."','".$hashed_password."',now(),now(),".$suite_size_from.",".$suite_size_to.")";
-				$profile_id = $db->exec($q_chip);
 
-				if($profile_id){
-					if($selectedcategories!=''){
-						$cat_arr= explode(",",$selectedcategories);
-						foreach($cat_arr as $cat){
-							$query = "INSERT INTO `categories_profiles` (`profile_id`,`category_id`) VALUES ('".$profile_id."','".$cat."')";
-							$db->exec($query);
-						}
+		if($operation == 'insert'){
+			$q_chip = "INSERT INTO `profiles` ( `first_name`, `last_name`, `gender_id`, `hair_color_id`,`eye_color_id`, `birthday`, `height`, `weight`, `shoe_size_from`, `shoe_size_to`, 	`shirt_size_from`,`shirt_size_to`,`pants_size_from`,`pants_size_to`,`bra_size`,`children_sizes`,`address`,`zipcode`,`city`,`country_id`,`phone`,`phone_at_work`,`email`,`job`,`notes`,`agreed_to_these_terms`,`password`,`hashed_password`,`created_at`,`updated_at`,`suite_size_from`,`suite_size_to`) VALUES ('".$first_name."', '".$last_name."','".$gender_id."',".$hair_color_id.",".$eye_color_id.",'".$birthday."',".$height.",".$weight.",".$shoe_size_from.",".$shoe_size_to.",".$shirt_size_from.",".$shirt_size_to.",".$pants_size_from.",".$pants_size_from.",".$bra_size.",".$children_sizes.",'".$address."','".$zipcode."','".$city."','".$country_id."','".$phone."','".$phone_at_work."','".$email."','".$job."','".$notes."','".$agreed_to_these_terms."','".$password."','".$hashed_password."',now(),now(),".$suite_size_from.",".$suite_size_to.")";
+
+			$profile_id = $db->exec($q_chip);
+			$user_profile_id = $profile_id;
+			if($profile_id){
+				if($selectedcategories!=''){
+					$cat_arr= explode(",",$selectedcategories);
+					foreach($cat_arr as $cat){
+						$query = "INSERT INTO `categories_profiles` (`profile_id`,`category_id`) VALUES ('".$profile_id."','".$cat."')";
+						$db->exec($query);
 					}
-					if($selectedskills!=''){
-						$skill_arr= explode(",",$selectedskills);
-						foreach($skill_arr as $skill){
-							$query = "INSERT INTO `profiles_skills` (`profile_id`,`skill_id`) VALUES ('".$profile_id."','".$skill."')";
-							$db->exec($query);
-						}
+				}
+
+				if($selectedskills!=''){
+					$skill_arr= explode(",",$selectedskills);
+					foreach($skill_arr as $skill){
+						$query = "INSERT INTO `profiles_skills` (`profile_id`,`skill_id`) VALUES ('".$profile_id."','".$skill."')";
+						$db->exec($query);
 					}
-					if($selectedlicences){
-						$license_arr= explode(",",$selectedlicences);
-						foreach($license_arr as $license){
-							$query = "INSERT INTO `drivers_licenses_profiles` (`profile_id`,`drivers_license_id`) VALUES ('".$profile_id."','".$license."')";
-							$db->exec($query);
-						}
+				}
+
+				if($selectedlicences){
+					$license_arr= explode(",",$selectedlicences);
+					foreach($license_arr as $license){
+					$query = "INSERT INTO `drivers_licenses_profiles` (`profile_id`,`drivers_license_id`) VALUES ('".$profile_id."','".$license."')";
+					$db->exec($query);
 					}
-					if(!empty($selectedlicences)){
-						foreach($languages as $language){
-							$query = "INSERT INTO `language_proficiencies` (`language_proficiency_language_id`,`profile_id`,`language_proficiency_rating_id`,`created_at`,`updated_at`) VALUES ('".$language['language_id']."','".$profile_id."','".$language['rating_id']."',now(),now())";
-							//echo $query;
-							$db->exec($query);
-						}
+				}
+
+				if(!empty($languages)){
+					foreach($languages as $language){
+						$query = "INSERT INTO `language_proficiencies` (`language_proficiency_language_id`,`profile_id`,`language_proficiency_rating_id`,`created_at`,`updated_at`) VALUES ('".$language['language_id']."','".$profile_id."','".$language['rating_id']."',now(),now())";
+						//echo $query;
+						$db->exec($query);
 					}
-						if(isset($_FILES['Image_file']['name'][0])){
-							foreach($_FILES['Image_file']['name'] as $key=>$value){
-								$filename = $_FILES['Image_file']['name'][$key];
-								$location = $_SERVER['DOCUMENT_ROOT'].'/images/uploads/';
-								move_uploaded_file($_FILES['Image_file']['tmp_name'][$key],$location.$filename);
-								$query = "INSERT INTO `photos` (`path`,`original_path`,`profile_id`,`filename`,`published`,`position`,`phototype_id`,`image`,`created_at`,`updated_at`,`image_tmp`,`image_processing`,`image_token`) VALUES ('".$location."','".$location."','".$profile_id."','".$filename."','1','".$key."','1','".$filename."',now(),now(),'".$filename."','1','".$filename."')";
-								$db->exec($query);
-							}	
-						}
-					
-					if(isset($_FILES['Video_file']['name'][0])){
-						//echo "ok";die;
-						foreach($_FILES['Video_file']['name'] as $key=>$value){
-							$filename = $_FILES['Video_file']['name'][$key];
-							$location = $_SERVER['DOCUMENT_ROOT'].'/images/uploads/';
-							move_uploaded_file($_FILES['Video_file']['tmp_name'][$key],$location.$filename);
-							$query = "INSERT INTO `videos` (`profile_id`,`path`,`uploaded_as_filename`,`filename`,`video_original_path`,`video_original_filename`,`video_original_file_basename`,`thumbnail_original_photo_path`,`thumbnail_photo_path`,`thumbnail_photo_filename`,`thumbnail_at_time`,`published`,`position`) VALUES ('".$profile_id."','".$location."','".$location."','".$filename."','".$filename."','".$filename."','".$filename."','".$filename."','".$filename."','".$filename."','3','1','".$key."')";
-							//echo $query;die;
-							$db->exec($query);
-						}	
-					
+				}
+
+				if(isset($_SESSION['Image_file'])){
+					foreach($_SESSION['Image_file'] as $key => $image){
+						$filename = $image['name'][0];
+						$location = $_SERVER['DOCUMENT_ROOT'].'/images/uploads/';
+						move_uploaded_file($image['tmp_name'][0],$location.$filename);
+						$query = "INSERT INTO `photos` (`path`,`original_path`,`profile_id`,`filename`,`published`,`position`,`phototype_id`,`image`,`created_at`,`updated_at`,`image_tmp`,`image_processing`,`image_token`) VALUES ('".$location."','".$location."','".$profile_id."','".$filename."','1','".$key."','1','".$filename."',now(),now(),'".$filename."','1','".$filename."')";
+						$db->exec($query);
 					}
-				session_destroy();
+				unset($_SESSION['Image_file']);
+				unset($_SESSION['Image_file_location']);
+				}
+
+				if(isset($_SESSION['Video_file'])){
+					foreach($_SESSION['Video_file'] as $key=>$video){
+						$filename = $video['cdnfilename'];
+						$location = $video['cdnfilepath'];
+						$thumbnail = $video['thumbnail'];
+						$cloud_orig_path = str_replace('/videos',"", $location);
+							$query = "INSERT INTO `videos` (
+									`profile_id`,
+									`path`,
+									`uploaded_as_filename`,
+									`filename`,
+									`video_original_path`,
+									`video_original_filename`,
+									`video_original_file_basename`,
+									`thumbnail_original_photo_path`,
+									`thumbnail_photo_path`,
+									`thumbnail_photo_filename`,
+									`thumbnail_at_time`,
+									`published`,
+									`position`) 
+								VALUES (
+									'".$user_profile_id."',
+									'".$location."',
+									'".$video["name"][0]."',
+									'".$filename."',
+									'".$cloud_orig_path."',
+									'".$filename."',
+									'".$filename."',
+									'".$location."',
+									'".$location."',
+									'".$thumbnail."',
+									'3',
+									'1',
+									'".$key."')";
+						$query_prepared = $db->prepare($query);
+						$query_prepared->execute();
+					}
+				unset($_SESSION['Video_file']);
+				unset($_SESSION['Video_file_location']);	
+				}
 				echoResponse(200,array('status'=>true,'msg'=>'Registered Sucessfully'));
 
-				}
-				else{
-					echoResponse(200,array('status'=>false,'msg'=>'Couldn\'t Register, Please try again later'));
-				}
-			
-				
-		
-	
+			}
+			else{
+				echoResponse(200,array('status'=>false,'msg'=>'Couldn\'t Register, Please try again later'));
+			}
+		}
+		if($operation == "update"){
+			if($user_profile_id != ""){
+				$q_chip =  "UPDATE profiles 
+								 		SET
+								 		first_name = '$first_name', 
+										last_name = '$last_name', 
+										gender_id = $gender_id, 
+										hair_color_id = $hair_color_id,
+										eye_color_id = $eye_color_id, 
+										birthday = $birthday,
+										height = $height, 
+										weight = $weight, 
+										shoe_size_from = $shoe_size_from, 
+										shoe_size_to = $shoe_size_to,
+										shirt_size_from = $shirt_size_from,
+										shirt_size_to = $shirt_size_to,
+										pants_size_from = $pants_size_from,
+										pants_size_to = $pants_size_to,
+										bra_size = '$bra_size',
+										children_sizes = $children_sizes,
+										address = '$address',
+										zipcode = '$zipcode',
+										city = '$city',
+										country_id = $country_id,
+										phone = '$phone',
+										phone_at_work = '$phone_at_work',
+										email = '$email',
+										job = '$job',
+										notes = '$notes',
+										agreed_to_these_terms = $agreed_to_these_terms,
+										password = '$password',
+										hashed_password = '$hashed_password',
+										updated_at = now(),
+										suite_size_from = $suite_size_from,
+										suite_size_to = $suite_size_to
 
-	
+									WHERE id = $user_profile_id";
+						$query_prepared = $db->prepare($q_chip);
+						$query_prepared->execute();
+				}
+
+				if($selectedcategories!=''){
+					if(!(is_array($selectedcategories))){
+						$cat_arr= explode(",",$selectedcategories);
+					}
+					else{
+						$cat_arr= $selectedcategories;
+					}
+					
+					foreach($cat_arr as $cat){
+						$query = "UPDATE categories_profiles SET category_id = $cat WHERE profile_id = $user_profile_id";
+						$query_prepared = $db->prepare($query);
+						$query_prepared->execute();
+					}
+				}
+
+				if($selectedskills!=''){
+					if(!(is_array($selectedskills))){
+						$skill_arr= explode(",",$selectedskills);
+					}
+					else{
+						$skill_arr= $selectedskills;
+					}
+					foreach($skill_arr as $skill){
+						$query = "UPDATE profiles_skills SET skill_id = $skill WHERE profile_id = $user_profile_id";
+						$query_prepared = $db->prepare($query);
+						$query_prepared->execute();
+					}
+				}
+
+				if($selectedlicences){
+					if(!(is_array($selectedlicences))){
+						$license_arr= explode(",",$selectedlicences);
+					}
+					else{
+						$license_arr= $selectedlicences;
+					}
+					foreach($license_arr as $license){
+						$query = "UPDATE drivers_licenses_profiles SET drivers_license_id = $license WHERE profile_id = $user_profile_id";
+						$query_prepared = $db->prepare($query);
+						$query_prepared->execute();
+					}
+				}
+
+				if(!empty($languages)){
+					foreach($languages as $language){
+						$language_id = $language['language_id'];
+						$rating_id = $language['rating_id'];
+						
+						if(isset($language['lng_pro_id'])){
+							$query = "INSERT INTO `language_proficiencies` (`language_proficiency_language_id`,`profile_id`,`language_proficiency_rating_id`,`created_at`,`updated_at`) VALUES ('".$language['language_id']."','".$user_profile_id."','".$language['rating_id']."',now(),now())";
+						}else{
+							$lng_pro_id = $language['lng_pro_id'];
+							$query = "UPDATE language_proficiencies SET language_proficiency_language_id = $language_id, language_proficiency_rating_id = $rating_id, updated_at = now() WHERE id = $lng_pro_id";
+						}
+						$query_prepared = $db->prepare($query);
+						$query_prepared->execute();
+					}
+				}
+
+				if(isset($_SESSION['Image_file'])){
+					foreach($_SESSION['Image_file'] as $key => $image){
+						$filename = $image['name'][0];
+						$location = $_SERVER['DOCUMENT_ROOT'].'/images/uploads/';
+						move_uploaded_file($image['tmp_name'][0],$location.$filename);
+						$check_existing_record = "SELECT profile_id from photos where profile_id = $user_profile_id AND position = $key";
+						$check_existance = $db->prepare($check_existing_record);
+						$check_existance->execute();
+						$rowcount = $check_existance->rowCount();
+						if($rowcount > 0){
+							$query = "UPDATE photos 
+												SET
+													path = '$location',
+													original_path = '$location',
+													filename = '$filename',
+													published = 1,
+													phototype_id = 1,
+													image = '$filename',
+													updated_at = now(),
+													image_tmp = '$filename',
+													image_processing = 1,
+													image_token = '$filename'
+												WHERE
+													profile_id = $user_profile_id AND
+													position = $key";
+						}
+						else{
+							$query = "INSERT INTO `photos` (`path`,`original_path`,`profile_id`,`filename`,`published`,`position`,`phototype_id`,`image`,`created_at`,`updated_at`,`image_tmp`,`image_processing`,`image_token`) VALUES ('".$location."','".$location."','".$user_profile_id."','".$filename."','1','".$key."','1','".$filename."',now(),now(),'".$filename."','1','".$filename."')";
+						}
+						$query_prepared = $db->prepare($query);
+						$query_prepared->execute();
+					}
+				unset($_SESSION['Image_file']);
+				unset($_SESSION['Image_file_location']);
+				}
+
+				if(isset($_SESSION['Video_file'])){
+					foreach($_SESSION['Video_file'] as $key=>$video){
+						$filename = $video['cdnfilename'];
+						$location = $video['cdnfilepath'];
+						$thumbnail = $video['thumbnail'];
+
+						$cloud_orig_path = str_replace('/videos',"", $location);
+						$check_existing_record = "SELECT profile_id from videos where profile_id = $user_profile_id AND position = $key";
+						$check_existance = $db->prepare($check_existing_record);
+						$check_existance->execute();
+						$rowcount = $check_existance->rowCount();
+						if($rowcount > 0){
+							$query = "UPDATE videos 
+												SET
+													`path`='$location',
+													`uploaded_as_filename`='".$video['name'][0]."',
+													`filename`='$filename',
+													`video_original_path`='$cloud_orig_path',
+													`video_original_filename`='$filename',
+													`video_original_file_basename`='$filename',
+													`thumbnail_original_photo_path`='$location',
+													`thumbnail_photo_path`='$location',
+													`thumbnail_photo_filename`='$thumbnail',
+													`thumbnail_at_time`=3,
+													`published`=1
+												WHERE 
+													`profile_id`=$user_profile_id AND
+													`position`=$key";
+						}
+						else{
+							$query = "INSERT INTO `videos` (
+									`profile_id`,
+									`path`,
+									`uploaded_as_filename`,
+									`filename`,
+									`video_original_path`,
+									`video_original_filename`,
+									`video_original_file_basename`,
+									`thumbnail_original_photo_path`,
+									`thumbnail_photo_path`,
+									`thumbnail_photo_filename`,
+									`thumbnail_at_time`,
+									`published`,
+									`position`) 
+								VALUES (
+									'".$user_profile_id."',
+									'".$location."',
+									'".$video['name'][0]."',
+									'".$filename."',
+									'".$cloud_orig_path."',
+									'".$filename."',
+									'".$filename."',
+									'".$location."',
+									'".$location."',
+									'".$thumbnail."',
+									'3',
+									'1',
+									'".$key."')";
+						}
+						$query_prepared = $db->prepare($query);
+						$query_prepared->execute();
+					}
+				unset($_SESSION['Video_file']);
+				unset($_SESSION['Video_file_location']);	
+				}
+				echoResponse(200,array('status'=>true,'msg'=>'Updated Sucessfully'));
+		}
 });
+
+/******************************************
+Purpose: Send to email id
+Parameter : form field
+Type : POST
+******************************************/
+/* // disabled this as it is handled in another section
+$app->post('/fileuploadparser', function () use ($app) {
+
+	$fileName = $_FILES["Image_file"]["name"][0]; // The file name
+	$fileTmpLoc = $_FILES["Image_file"]["tmp_name"][0]; // File in the PHP tmp folder
+	$fileType = $_FILES["Image_file"]["type"]; // The type of file it is
+	$fileSize = $_FILES["Image_file"]["size"]; // File size in bytes
+	$fileErrorMsg = $_FILES["Image_file"]["error"]; // 0 for false... and 1 for true
+
+	// $file_name = $_FILES['Image_file']['name'][$key];
+	$file_name = $_FILES['Image_file']['name'];
+	$location = $_SERVER['DOCUMENT_ROOT'].'/images/uploads/';
+// var_dump($_FILES);
+	if (!$fileTmpLoc) { // if file not chosen
+		
+	    echo "ERROR: Please browse for a file before clicking the upload button.";
+	    exit();
+	}
+	if(move_uploaded_file($fileTmpLoc, $location.$fileName)){
+	    echo json_encode(['status_message'=>'file upload success', 'filename'=>$fileName]);
+	} else {
+	    echo "move_uploaded_file function failed";
+	}
+
+});
+*/
+/******************************************
+Purpose: Send to email id
+Parameter : form field
+Type : POST
+******************************************/
+
+$app->post('/sendemail', function () use ($app) { 
+  global $db;
+  $data = json_decode($app->request->getBody(), true);
+  $response = array();
+  $to_email = $data['to_email'];
+  $from_email = $data['from_email'];
+  $mail_body ='';$to_cc ='';
+  if(isset($data['mail_body'])){
+    $mail_body = $data['mail_body'];
+  }
+  if(isset($data['to_cc'])){
+    $to_cc = $data['to_cc'];
+  }
+
+  $html = '<table style="text-align:left" cellspacing="0" cellpadding="0" width="556" border="0">
+    <tbody>
+    <tr>
+    <td>
+    <table style="width:100%" border="0">
+    <tbody>
+    <tr>
+    <td align="left"><img alt="Mailtoplogo" src="http://134.213.29.220/assets/mailTopLogo.png" ></td>
+    <td style="width:270px;padding-top:18px" align="left" valign="top"><b style="color:#696969">Castit <span class="il">Lightbox</span>:</b><br>'.$mail_body.'</td>
+    </tr>
+    <tr>
+    <td colspan="2"><img alt="Mailtopborder" src="http://134.213.29.220/assets/mailTopBorder.jpg"></td>
+    </tr>
+    </tbody>
+    </table>
+    </td>
+    </tr>
+    <tr>';
+
+  $subject = "Castit Workshop enquiry";
+  $headers = "MIME-Version: 1.0" . "\r\n";
+  $headers .= "Content-type:text/html;charset=UTF-8" . "\r\n";
+  $headers .= 'From: Castit <info@ldsstage.in>' . "\r\n";
+  //$headers .= 'Reply-To: <'.$from_email.'>' . "\r\n";
+  if($to_cc){
+    $headers .= 'CC: <'.$to_cc.'>' ."\r\n";
+  }
+
+	// $headers .= 'BCC: cat@castit.dk' . "\r\n";
+	$headers .= 'BCC: padmanabhann@mailinator.com, vs@anewnative.com, cat@castit.dk' . "\r\n";
+
+  //$html .= 'testemail';
+  mail( $to_email, $subject, $html, $headers ); // Accountant
+  $response['success'] = true;
+  $response['message'] = 'Email er sendt!';
+
+  echoResponse(200, $response);
+});
+
+
 /******************************************
 Purpose: Send Lighbox profiles to email id
 Parameter : form field
@@ -1903,7 +2341,9 @@ $app->post('/sendlightbox', function () use ($app) {
 	$response = array();
 	$to_email = $data['to_email'];
 	$from_email = $data['form_email'];
-	$mail_body ='';$to_cc ='';
+	$mail_body ='';
+	$to_cc ='';
+	$to_bcc='';
 	if(isset($data['mail_body'])){
 		$mail_body = $data['mail_body'];
 	}
@@ -1962,10 +2402,14 @@ $app->post('/sendlightbox', function () use ($app) {
 						$image= '';
 						$rows_image = $query_image->fetchAll(PDO::FETCH_ASSOC);
 						if(count($rows_image) > 0){
-							$path = $rows_image[0]['create_year']."/".$rows_image[0]['create_month']."/".$rows_image[0]['create_date']."/".$rows_image[0]['id']."/lightbox_";
-							$profile_image = 'http://134.213.29.220/profile_images/'.$path.$rows_image[0]['image'];
-							
+							if (strpos($rows_image[0]['path'], 'vhost') !== false) {
+								$profile_image = 'http://134.213.29.220/images/uploads/'.$rows_image[0]['image'];
 							}
+							else{
+								$path = $rows_image[0]['create_year']."/".$rows_image[0]['create_month']."/".$rows_image[0]['create_date']."/".$rows_image[0]['id']."/thumb_";
+								$profile_image = 'http://134.213.29.220/profile_images/'.$path.$rows_image[0]['image'];
+							}
+						}
 			
 						$html .= '<td style="vertical-align:top">
 							<table style="width:100%">
@@ -1997,6 +2441,9 @@ $app->post('/sendlightbox', function () use ($app) {
 			if($to_cc){
 				$headers .= 'CC: <'.$to_cc.'>' ."\r\n";
 			}
+			// $headers .= 'BCC: cat@castit.dk' . "\r\n";
+  		$headers .= 'BCC: padmanabhann@mailinator.com, vs@anewnative.com, cat@castit.dk' . "\r\n";
+
 			//$html .= 'testemail';
 			mail( $to_email, $subject, $html, $headers ); // Accountant
 			$response['success'] = true;
@@ -2079,10 +2526,14 @@ $app->post('/sendgroup', function () use ($app) {
 						$image= '';
 						$rows_image = $query_image->fetchAll(PDO::FETCH_ASSOC);
 						if(count($rows_image) > 0){
-							$path = $rows_image[0]['create_year']."/".$rows_image[0]['create_month']."/".$rows_image[0]['create_date']."/".$rows_image[0]['id']."/lightbox_";
-							$profile_image = 'http://134.213.29.220/profile_images/'.$path.$rows_image[0]['image'];
-							
+							if (strpos($rows_image[0]['path'], 'vhost') !== false) {
+								$profile_image = 'http://134.213.29.220/images/uploads/'.$rows_image[0]['image'];
 							}
+							else{
+								$path = $rows_image[0]['create_year']."/".$rows_image[0]['create_month']."/".$rows_image[0]['create_date']."/".$rows_image[0]['id']."/thumb_";
+								$profile_image = 'http://134.213.29.220/profile_images/'.$path.$rows_image[0]['image'];
+							}
+						}
 			
 						$html .= '<td style="vertical-align:top">
 							<table style="width:100%">
@@ -2125,18 +2576,21 @@ $app->post('/sendgroup', function () use ($app) {
 			//$headers .= "Reply-To: myplace2@example.com\r\n";
 			//$headers .= 'Return-Path: <'.$from_email.'>' ."\r\n";
 			//$headers .= "CC: sombodyelse@example.com\r\n";
-			$headers .= "BCC: hidden@example.com\r\n";
+			// $headers .= "BCC: hidden@example.com\r\n";
+			// $headers .= 'BCC: cat@castit.dk' . "\r\n";
+  		$headers .= 'BCC: padmanabhann@mailinator.com, vs@anewnative.com, cat@castit.dk' . "\r\n";
+
 			if($to_cc){
 				$headers .= 'CC: <'.$to_cc.'>' ."\r\n";
 			}
 			//$html .= 'testemail';
 			mail( $to_email, $subject, $html, $headers ); // Accountant
 			$response['success'] = true;
-			$response['message'] = 'Lightbox er sendt!';
+			$response['message'] = 'Group er sendt!';
 			}
 			else{
 			$response['success'] = true;
-			$response['message'] = 'No Profiles in Lightbox';
+			$response['message'] = 'No Profiles in Group';
 			}
 		
 
@@ -2203,10 +2657,15 @@ $app->post('/sendgroup', function () use ($app) {
 						$image= '';
 						$rows_image = $query_image->fetchAll(PDO::FETCH_ASSOC);
 						if(count($rows_image) > 0){
-							$path = $rows_image[0]['create_year']."/".$rows_image[0]['create_month']."/".$rows_image[0]['create_date']."/".$rows_image[0]['id']."/lightbox_";
-							$profile_image = 'http://134.213.29.220/profile_images/'.$path.$rows_image[0]['image'];
-							
+							if (strpos($rows_image[0]['path'], 'vhost') !== false) {
+								$profile_image = 'http://134.213.29.220/images/uploads/'.$rows_image[0]['image'];
 							}
+							else{
+								$path = $rows_image[0]['create_year']."/".$rows_image[0]['create_month']."/".$rows_image[0]['create_date']."/".$rows_image[0]['id']."/thumb_";
+								$profile_image = 'http://134.213.29.220/profile_images/'.$path.$rows_image[0]['image'];
+							}
+							
+						}
 			
 						$html .= '<td style="vertical-align:top">
 							<table style="width:100%">
@@ -2268,7 +2727,9 @@ $app->get('/getgroupinglist', function () use ($app) {
     global $db;
 	$grouping = array();
 	$reponse =  array();
-	$query_grouping = $db->prepare("SELECT * FROM grouping WHERE status ='1' order by group_name"); 
+	$grouptoken =  $app->request->get('grouptoken');
+
+	$query_grouping = $db->prepare("SELECT * FROM grouping WHERE token_id='".$grouptoken."' AND status ='1' order by group_name"); 
 	$query_grouping->execute();
 	$rows_grouping = $query_grouping->fetchAll(PDO::FETCH_ASSOC);
 	$rowcount = count($rows_grouping);
@@ -2293,9 +2754,9 @@ $app->get('/addnewgrouping', function () use ($app) {
 	$reponse = array();
 	$rowcount = 0;
 
-	$grouping_token = generate_uuid();
+	$grouping_token = $app->request->get('grouptoken');
 	
-	$query_check_gp = $db->prepare("SELECT * FROM `grouping` where `group_name` LIKE '%".$groupname."%'"); 
+	$query_check_gp = $db->prepare("SELECT * FROM `grouping` where `group_name` LIKE '%".$groupname."%' AND token_id ='".$grouping_token."'"); 
 	$query_check_gp->execute();
 	$rows_gp = $query_check_gp->fetchAll(PDO::FETCH_ASSOC);
 	if(count($rows_gp)>0) {
@@ -2306,7 +2767,7 @@ $app->get('/addnewgrouping', function () use ($app) {
 			$gpid = $db->exec($q_gruping);
 	}
 	
-	$query_grouping = $db->prepare("SELECT * FROM grouping WHERE status ='1' order by group_name"); 
+	$query_grouping = $db->prepare("SELECT * FROM grouping WHERE status ='1' AND token_id ='".$grouping_token."' order by group_name"); 
 	$query_grouping->execute();
 	$rows_grouping = $query_grouping->fetchAll(PDO::FETCH_ASSOC);
 	$rowcount = count($rows_grouping);
@@ -2660,6 +3121,129 @@ $app->post('/resetpassword',function () use ($app) {
 		}
 	echoResponse(200, $response);
 });
+
+/******************************************
+Purpose: Create and get Group Token
+Parameter : null
+Type : GET
+******************************************/
+$app->get('/getgrouptoken',function () use ($app) { 
+    global $db;
+	$group_token = generate_uuid();
+	$response = array( 'success' => true, 'grouptoken' => $group_token);
+	echoResponse(200, $response);
+});
+
+$app->post('/fileuploadparser', function () use ($app) {
+	// unset($_SESSION['Video_file']);
+	// unset($_SESSION['Image_file']);
+  $cdnfilepath	=	'';
+  $time 				=	time();  
+	if(!isset($_REQUEST["uploaded_file_type"])){
+		$_SESSION["Image_file"][]	= $_FILES["Image_file"];
+	  $fileName     = $_FILES["Image_file"]["name"][0];
+	  $fileTmpLoc   = $_FILES["Image_file"]["tmp_name"][0];
+	  $fileType     = $_FILES["Image_file"]["type"];
+	  $fileSize     = $_FILES["Image_file"]["size"];
+	  $fileErrorMsg = $_FILES["Image_file"]["error"];
+	  $location = $_SERVER['DOCUMENT_ROOT'].'/images/uploads/';
+
+	  if (!$fileTmpLoc) { // if file not chosen
+	      echo "ERROR: Please browse for a file before clicking the upload button.";
+	      exit();
+	  }
+	  if(move_uploaded_file($fileTmpLoc, $location.$fileName)){
+	    echo json_encode(['status_message'=>'file upload success', 'filename'=>$fileName]);
+	  } 
+	  else {
+	    echo "move_uploaded_file function failed";
+	  }
+	}	
+  
+  if(isset($_REQUEST["uploaded_file_type"]) && $_REQUEST["uploaded_file_type"] == "video"){
+	  unset($_SESSION["Video_file"]);
+	  $fileTmpLoc   = $_FILES["Video_file"]["tmp_name"][0];
+
+    $client = new Rackspace(Rackspace::UK_IDENTITY_ENDPOINT, array(
+      'username' => 'castit',
+      'apiKey'   => '187a515209d0affd473fedaedd6d770b'
+    ));
+
+    $location 					= $_SERVER['DOCUMENT_ROOT'].'/images/uploads/';
+    $objectStoreService = $client->objectStoreService(null, 'LON');
+    $container          = $objectStoreService->getContainer('video_original_files');
+    $date_dir           = date("o-m-d");
+    $fileName						= $_FILES["Video_file"]["name"][0];
+    $localFileName      = $location.$fileName;
+    $remoteFileName     = "/profiles/".$date_dir."/".$time."__".$fileName;
+    $cdnfilepath     		= "/videos/profiles/".$date_dir;
+	  $cdnfilename 				= $time."__".$fileName;
+	  $thumbnail 					= "thumb_".$cdnfilename.".png";
+		$_FILES["Video_file"]["cdnfilepath"] = $cdnfilepath;
+		$_FILES["Video_file"]["cdnfilename"] = $cdnfilename;
+		$_FILES["Video_file"]["thumbnail"] = $thumbnail;
+
+
+  	$_SESSION["Video_file"][]	= $_FILES["Video_file"];
+		move_uploaded_file($fileTmpLoc, $location.$fileName);
+    
+    $handle = fopen($localFileName, 'r');
+    $container->uploadObject($remoteFileName, $handle);
+    unset($handle);
+
+
+    $zencoder_input   	= "cf+uk://castit:187a515209d0affd473fedaedd6d770b@video_original_files".$remoteFileName;
+    $zencoder_output  	= "cf+uk://castit:187a515209d0affd473fedaedd6d770b@videos_public/videos".$remoteFileName;
+    $zencoder_base_url  = "cf+uk://castit:187a515209d0affd473fedaedd6d770b@videos_public".$cdnfilepath;
+
+    $zencoder_array = [
+      "input_file"		=> $zencoder_input,
+      "output_file"		=> $zencoder_output,
+      "base_url"			=> $zencoder_base_url,
+      "filename"			=> $cdnfilename,
+    ];
+
+    // $zencoder_json = json_encode($zencoder_array);
+    $zencoder_json = build_json_zencoder($zencoder_array);
+
+    // ppe($zencoder_json);
+    $url = 'https://app.zencoder.com/api/v2/jobs';
+    $ch = curl_init( $url );
+    curl_setopt( $ch, CURLOPT_POST, 1);
+    curl_setopt( $ch, CURLOPT_POSTFIELDS, $zencoder_json);
+    curl_setopt( $ch, CURLOPT_RETURNTRANSFER , 1);
+    curl_setopt($ch, CURLOPT_HTTPHEADER, array(
+      'Content-Type: application/json ',
+      'Zencoder-Api-Key: 9477541a57e1eb2471b1ff256ca4b92c'
+    ));
+
+    $response = curl_exec( $ch );
+    echo json_encode(['status_message'=>'file upload success', 'filename'=>$fileName, 'cdnfilepath'=>$cdnfilepath, 't'=>$time, 'thumbnail'=>$thumbnail]);
+  }
+});
+
+function build_json_zencoder($data_array){
+	$json = '{
+	"input": "'.$data_array["input_file"].'",
+	"outputs": [{
+		"thumbnails": [
+				{
+					"base_url": "'.$data_array["base_url"].'",
+					"label": "regular",
+					"number": 1,
+					"filename": "thumb_'.$data_array["filename"].'",
+					"public": "true"
+				}
+			]
+		},
+    {"label": "mp4 high"},
+    {"url": "'.$data_array["output_file"].'"},
+    {"h264_profile": "high"}
+	]
+	}';
+	return $json;
+}
+
 //JSON coneverion
 function echoResponse($status_code, $response) {
     global $app;
@@ -2699,4 +3283,13 @@ function generate_uuid() {
 	
 $app->run();
 
+function pp($q){
+  echo '<pre>';
+  print_r($q);
+  echo '</pre>';
+}
+
+function ppe($q){
+  pp($q);exit;
+}
 ?>
