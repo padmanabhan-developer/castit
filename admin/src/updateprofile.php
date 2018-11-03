@@ -15,7 +15,7 @@ if($extract_post_variables > 0){
         $prepared_query->execute();
       }
       else{
-        pp($key);
+        // pp($key);
         /*
         birth_day
         birth_month

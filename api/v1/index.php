@@ -61,6 +61,14 @@ Type : POST
 ******************************************/
 $app->get('/getprofiles',function () use ($app) { 
   global $db;
+  $offset = (isset($_GET['offset'])) ? $_GET['offset'] : 1;
+  $conditional_profiles = "AND ( m.profile_number LIKE 'C%' OR m.profile_number LIKE 'A%'OR m.profile_number LIKE 'J%' OR m.profile_number LIKE 'Y%' ) ";
+  if($offset < 1){
+	// excluding the Y profiles from first set
+	$conditional_profiles = "AND ( m.profile_number LIKE 'C%' OR m.profile_number LIKE 'A%'OR m.profile_number LIKE 'J%' ) ";
+	}
+  
+
   $sql = "SELECT 
   p.*, m.profile_group_id, m.profile_number, m.profile_number_first_name_last_name, m.version, m.current, g.name 
   as gender_name, hc.name 
@@ -72,13 +80,14 @@ FROM profiles p
   INNER JOIN hair_colors hc ON hc.id = p.hair_color_id 
   INNER JOIN eye_colors ec ON ec.id = p.eye_color_id  
 WHERE ( p.profile_status_id = '1' OR  p.profile_status_id = '2' ) 
-AND m.current ='1' 
-AND ( m.profile_number LIKE 'C%' OR m.profile_number LIKE 'A%'OR m.profile_number LIKE 'J%' OR m.profile_number LIKE 'Y%' ) 
-AND p.id IN ( SELECT profile_id from photos WHERE published ='1' GROUP by profile_id ) 
-ORDER BY RAND()";
+AND m.current ='1' "
+.$conditional_profiles.
+"AND p.id IN ( SELECT profile_id from photos WHERE published ='1' GROUP by profile_id ) ";
+$offset = $offset * 10;
+$limit  = " LIMIT 100 OFFSET ". $offset;
+$sql = $sql . $limit;
 
 	$query = $db->prepare($sql); 
-
 	// echo $query;exit;
 	$query->execute();
 	$rows = $query->fetchAll(PDO::FETCH_ASSOC);
@@ -177,9 +186,20 @@ $app->get('/getfilterprofiles',function () use ($app) {
 	}
 
 	if($search_text){
-		$search_qry .= " AND (p.first_name = '".$search_text."' OR p.last_name = '".$search_text."' OR m.profile_number like '%".$search_text."%')";		
+		$search_qry .= " AND (p.first_name = '".$search_text."' 
+		OR p.last_name = '".$search_text."' 
+		OR m.profile_number like '%".$search_text."%' 
+		OR CONCAT(p.first_name,' ',p.last_name) like '%".$search_text."%' 
+		OR p.first_name like '%".$search_text."%' 
+		OR p.last_name like '%".$search_text."%' )";		
 	}
 	$qry = "SELECT p.*, m.profile_group_id, m.profile_number, m.profile_number_first_name_last_name, m.version, m.current, g.name as gender_name, hc.name as hair_color_name, ec.name as eye_color_name FROM profiles p INNER JOIN memberships m ON m.profile_id = p.id INNER JOIN genders g ON g.id = p.gender_id INNER JOIN hair_colors hc ON hc.id = p.hair_color_id INNER JOIN eye_colors ec ON ec.id = p.eye_color_id  WHERE (p.profile_status_id = '1' OR  p.profile_status_id = '2') AND m.current ='1' AND p.id IN (SELECT profile_id from photos WHERE published ='1' GROUP by profile_id) ".$search_qry."  ORDER by case WHEN m.profile_number LIKE 'CF%' THEN 1 WHEN m.profile_number LIKE 'CM%' THEN 2 WHEN m.profile_number LIKE 'A%' THEN 3 WHEN m.profile_number LIKE 'J%' THEN 4  WHEN m.profile_number LIKE 'YF%' THEN 5 WHEN m.profile_number LIKE 'YM%' THEN 6 ELSE 7 END ";
+
+	$offset = (isset($_GET['offset'])) ? $_GET['offset'] : 1;
+	$offset = $offset * 10;
+	$limit  = " LIMIT 100 OFFSET ". $offset;
+	$qry = $qry . $limit;
+	// echo $qry;exit;
 	$query = $db->prepare($qry); 
 	$query->execute();
     $rows = $query->fetchAll(PDO::FETCH_ASSOC);
@@ -436,6 +456,19 @@ $app->get('/getsingleprofiles',function () use ($app) {
 	
 	echoResponse(200, $response);
 });
+
+/*
+* 
+*/
+
+$app->post('/updategroupdata', function () use ($app) {
+  global $db;
+  $params = $app->request;
+  $allPostVars = $app->request->post();
+  ppe($allPostVars);
+
+	}
+);
 
 /******************************************
 Purpose: Update in to lightbox profiles list

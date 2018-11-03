@@ -16,7 +16,6 @@ var frontend = angular.module('theme.demos.dashboard', [
 			if(groupdata.success){
 				$scope.groupToken = groupdata.grouptoken;
 				localStorage.setItem('grouptoken', $scope.groupToken);
-				
 			}else{
 				$scope.groupToken ='';
 			}
@@ -38,7 +37,7 @@ var frontend = angular.module('theme.demos.dashboard', [
 	$scope.pbox_profileid ='';
 	$scope.removeprofileid  ='';
 	$scope.removegroupid ='';
-    $scope.pageSize = 18;
+    $scope.pageSize = 40;
     $scope.profiles = [];
 	$scope.gpprofilecount =0;
 	$scope.photoiconclass='photo-iconactive';
@@ -53,7 +52,113 @@ var frontend = angular.module('theme.demos.dashboard', [
 			$scope.profiles ='';
 		}
 	 });
+   var getprofiles_offset = 0;
 
+   $("#search_text").change(function (e) { 
+      if($(this).val() == ""){
+        $(".rightbar-row").removeClass("filteractive");
+      }     
+   });
+
+   $("#gender").change(function (e) { 
+    if($(this).val() == ""){
+      $(".rightbar-row").removeClass("filteractive");
+    } 
+   });
+
+   $("#age_to").change(function (e) { 
+    if($(this).val() == "" && $("#age_from").val() == ""){
+      $(".rightbar-row").removeClass("filteractive");
+    } 
+   });
+
+	 $(".rightbar-row").scroll(function(){
+        if($(this).scrollTop() >= (this.scrollHeight - $(this).height() - 1)){
+        getprofiles_offset = getprofiles_offset + 1;
+        //   let search_text = $("input.search-input").val();
+        //   let sort    = $("input[name=sort]:checked").val();
+        //   let filter  = $("input[name=filter]:checked").val();
+    		//   data    = { sort: sort, filter: filter, search_text: search_text, offset: offset };
+        if($(".rightbar-row").hasClass("filteractive")) {
+          $http.get('api/v1/getfilterprofiles', {params:{search_text: $scope.search_text,age_from: $scope.age_from,age_to: $scope.age_to,genderval: $scope.genderval,purchase_name: $scope.purchase_name,submittype: $scope.submittype, offset: getprofiles_offset}}).success(function(homedata) {
+            $(".rightbar-row").addClass("filteractive");
+            $(".loading_ajax").hide();
+            $scope.homedata = homedata;
+            if(homedata.success === true){
+              $scope.profiles = homedata.profiles;
+            }else{
+              $(".no_result_ajax").show();
+              $scope.profiles ='';
+              $scope.loading = 'Ingen data fundet';
+            }
+          });	
+        }
+        else{
+          $http.get('api/v1/getprofiles', {params: {view: 'home', offset: getprofiles_offset}}).success(function(homedata) {
+            if(homedata.success){
+              $scope.profiles = $scope.profiles.concat(homedata.profiles);
+            }else{
+              $scope.profiles = $scope.profiles;
+            }
+          });
+        }
+
+
+          // $.get("api/v1/getprofiles", data,
+          //   function (response) {
+          //     $(".table-sec").find("table").find("tbody").append(response);
+          //   },
+          //   "html"
+          // );  
+        }
+    });
+
+	let x = 0;
+	$(".thumb").scroll(function(){
+		// $("span").text( x+= 1);
+		$scope.scrollDirection;
+		
+    });
+
+	$scope.scrollDirection = function(){
+		var scrollableElement = document.getElementById('scrollableElement');
+		scrollableElement.addEventListener('wheel', function (event){
+			var delta;
+			if (event.wheelDelta){
+				delta = event.wheelDelta;
+			}else{
+				delta = -1 * event.deltaY;
+			}
+			if (delta < 0){
+				console.log("DOWN");
+			}else if (delta > 0){
+				console.log("UP");
+			}
+		});
+	}
+
+
+  //   $(function() {
+  //     $( ".scroll-up" ).click(function(){
+  //        $('.rightbar-row').scrollTop($('.rightbar-row').scrollTop()-400);
+  //     }); 
+   
+  //     $( ".scroll-down" ).click(function(){
+  //       $('.rightbar-row').scrollTop($('.rightbar-row').scrollTop()+400);;
+  //     }); 
+  //  });
+
+
+    $('.scroll-down').click(function(){    
+      $('.rightbar-row').animate({
+        scrollTop: $('.rightbar-row').scrollTop()+600
+      }, 500);
+    });
+    $('.scroll-up').click(function(){    
+      $('.rightbar-row').animate({
+      scrollTop: $('.rightbar-row').scrollTop()-600
+      }, 500);
+    });
 
 	$(".sidebar1-close").click(function(){
 		$("#sidebar1").hide("slow"); 
@@ -168,7 +273,8 @@ var frontend = angular.module('theme.demos.dashboard', [
 		$("#sidebar1").show("slow"); 
 	});
 	$(".add-grupper").click(function(){
-			$(".addbox").show(); 
+			$(".addbox").show();
+			$("#new_group_name1").show().focus();
 			 
 		 });
 		 
@@ -306,18 +412,20 @@ var frontend = angular.module('theme.demos.dashboard', [
 	$scope.filterProfiles = filterProfiles;
 	function filterProfiles() {
     $scope.currentPage = 0;
-    $scope.pageSize = 18;
+    $scope.pageSize = 40;
     $scope.profiles = [];
     $scope.q = '';
 	$scope.loading = 'soger';
 	if(!$scope.genderval){
 		$scope.genderval='';
 	}
-		 //$scope.dataLoading = true;  
-		var formData = {search_text: $scope.search_text,age_from: $scope.age_from,age_to: $scope.age_to,genderval: $scope.genderval,purchase_name: $scope.purchase_name,submittype: $scope.submittype}
+     //$scope.dataLoading = true;  
+    getprofiles_offset = 0;
+		var formData = {search_text: $scope.search_text,age_from: $scope.age_from,age_to: $scope.age_to,genderval: $scope.genderval,purchase_name: $scope.purchase_name,submittype: $scope.submittype, offset: getprofiles_offset}
 		$(".no_result_ajax").hide();
 		$(".loading_ajax").show();
 		$http.get('api/v1/getfilterprofiles', {params:formData}).success(function(homedata) {
+      $(".rightbar-row").addClass("filteractive");
 			$(".loading_ajax").hide();
 			$scope.homedata = homedata;
 			if(homedata.success === true){
@@ -397,7 +505,8 @@ var frontend = angular.module('theme.demos.dashboard', [
 	}
 
 	$scope.add_new_group = add_new_group;
-	function add_new_group() {  
+	function add_new_group() {
+
 		if($scope.new_group_name){
 
 			var formData = {groupname: $scope.new_group_name, grouptoken : $scope.groupToken};
@@ -416,36 +525,45 @@ var frontend = angular.module('theme.demos.dashboard', [
 	}
 	$scope.profile_notes	=	'';
 	$scope.addToLightbox = addToLightbox;
-	function addToLightbox() {
 
-		var formData = {profileid: $scope.pbox_profileid, profile_notes : $scope.profile_notes, selectedgroupings:$scope.selectedgroupings, grouptoken : $scope.groupToken};
-
-		$http.get('api/v1/updatelightboxprofiles', {params:formData}).success(function(lightboxdata) {
-			$scope.lbprofilecount =lightboxdata.count;
-			if(lightboxdata.count){
-				$scope.lbprofiles = lightboxdata.lbprofiles;
-				
-					$http.get('api/v1/getgroupingprofiles', {params: {view: 'home', grouptoken : $scope.groupToken}}).success(function(groupingdata) {
-						$scope.gpprofilecount =groupingdata.count;
-						
-						if(groupingdata.count){
-							$scope.gpprofiles = groupingdata.gpprofiles;
-						}else{
-							$scope.gpprofiles ='';
-						}
-
-						$("#lightboxsubmit").fadeIn();
-					 });
-			$("#profilebox").fadeOut();
-
-
-			 		 
-
-			}else{
-				$scope.lbprofiles ='';
-			}
-		});	
+	$scope.addToGroup = addToGroup;
+	function addToGroup(group_id){
 		
+	}
+
+
+	function addToLightbox() {
+		
+		var formData = {profileid: $scope.pbox_profileid, profile_notes : $scope.profile_notes, selectedgroupings:$scope.selectedgroupings, grouptoken : $scope.groupToken};
+    
+		// $http.get('api/v1/updatelightboxprofiles', {params:formData}).success(function(lightboxdata) {
+		// 	$scope.lbprofilecount =lightboxdata.count;
+		// 	if(lightboxdata.count){
+		// 		$scope.lbprofiles = lightboxdata.lbprofiles;
+		// 			$http.get('api/v1/getgroupingprofiles', {params: {view: 'home', grouptoken : $scope.groupToken}}).success(function(groupingdata) {
+		// 				$scope.gpprofilecount =groupingdata.count;
+						
+		// 				if(groupingdata.count){
+		// 					$scope.gpprofiles = groupingdata.gpprofiles;
+		// 				}else{
+		// 					$scope.gpprofiles ='';
+		// 				}
+
+		// 				$("#lightboxsubmit").fadeIn();
+		// 			 });
+		// 	$("#profilebox").fadeOut();
+		// 	}else{
+		// 		$scope.lbprofiles ='';
+		// 	}
+    // });
+    $.post("api/groupings/groupings.php", formData,
+      function (data, textStatus, jqXHR) {
+        alert('aa');
+        console.log(formData);
+        console.log(data);        
+      },
+    );
+    
 	}
 	
 	$scope.removeFromLightboxPopup = removeFromLightboxPopup;
@@ -521,6 +639,7 @@ var frontend = angular.module('theme.demos.dashboard', [
 
 	$scope.addNewGroupInstant = function (){
 		$scope.ifAddGroupFormShow = true;
+		$("input[id=new_group_name1]").trigger('click');
 	};
 
 	$scope.addgroupintoGrouplist = addgroupintoGrouplist;
@@ -540,7 +659,9 @@ var frontend = angular.module('theme.demos.dashboard', [
 			});	
 		}
 	}
-
+	$("#new_group_name1").blur(function(){
+		$(".addbox").fadeOut();
+	});
 	$("#thumb1").click(function(){
 		$("inside-popup").show();
 		$("popup-video").hide(); 
