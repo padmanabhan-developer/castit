@@ -79,6 +79,7 @@
   animate-page-content
   faux-offcanvas
   to-top-on-load
+  ng-class="{'home': interface == 'home'}"
 >
 
 	<div id="wrapper" class="wrapper">

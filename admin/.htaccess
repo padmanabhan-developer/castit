@@ -1,0 +1,11 @@
+RewriteEngine On
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteRule ^([^\.]+)$ $1.php [NC,L]
+# RewriteRule ^([^\.]+)$ $1.html [NC,L]
+
+# Basic authentication for Admin
+#  AuthType Basic
+#  AuthName "Castit Admin"
+#  AuthUserFile /Applications/XAMPP/xamppfiles/htdocs/admin/.htpasswd
+#  AuthUserFile /var/www/vhost/castit.dk/admin/.htpasswd
+#  Require valid-user

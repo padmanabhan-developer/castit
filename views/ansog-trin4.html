@@ -15,34 +15,34 @@
                         <div class="black-section">
                              <div class="black-row">
                              
-                                  <div class="black-leftbar">
+                                  <div class="black-leftbar" style="width:20%">
                                        <p>For at ansøge om en profil, bedes du udfylde felterne og klikke videre til næste side.</p>
                                   </div><!--close black-leftbar-->
                                   
-                                  <div class="black-rightbar  livetitle">
+                                  <div class="black-rightbar  livetitle" style="width:80%">
                                        
                                        
                                        <div class="black-row">
-                                            <div class="black-cal6">
-                                                 <h3>LIDT OM MIG</h3>
+                                            <div class="black-cal6" style="width:30%">
+                                                 <h4>LIDT OM MIG</h4>
                                                  
                                                  <div class="form_box">
-                                                      <textarea name="notes" id="notes" ng-model="notes" cols="" rows="" placeholder="Skriv her..." class="textarea2" char-count maxlength="72" ></textarea>
+                                                      <textarea name="notes" id="notes" ng-model="notes" cols="" rows="" placeholder="Skriv her..." class="textarea2" char-count ></textarea>
                                                       <a href="#" class="edit2"></a>
                                                       <span class="words">{{ numberOfCharacters }}</span>
                                                  </div>
                                                  <h4>SPORT & HOBBY</h4>
                                                  <div class="form_box">
-                                                      <textarea name="job" id="job" ng-model="job" cols="" rows="" placeholder="Skriv her..." class="textarea2"  char-count-next maxlength="72"></textarea>
+                                                      <textarea name="job" id="job" ng-model="job" cols="" rows="" placeholder="Skriv her..." class="textarea2"  char-count-next></textarea>
                                                       <a href="#" class="edit2"></a>
                                                       <span class="words">{{ numberOfCharactersNext }}</span>
                                                  </div>
                                             </div><!--close black-cal4-->
                                             
-                                            <div class="black-cal6 kategori">
-                                            <input type="hidden" name="selectedcategories" id="selectedcategories" ng-model="selectedcategories" value="{{selectedcategories}}"  />
-                                            <input type="hidden" name="selectedskills" id="selectedskills" ng-model="selectedskills" value="{{selectedskills}}" />
-                                            <input type="hidden" name="selectedlicences" id="selectedlicences" ng-model="selectedlicences" value="{{selectedlicences}}"/>
+                                            <div class="black-cal6 kategori" style="width:70%">
+                                            <input type="hidden" name="selectedcategories" id="selectedcategories" ng-model="selectedcategories" value="{{selectedcategories}}"  required  />
+                                            <input type="hidden" name="selectedskills" id="selectedskills" ng-model="selectedskills" value="{{selectedskills}}"  required />
+                                            <input type="hidden" name="selectedlicences" id="selectedlicences" ng-model="selectedlicences" value="{{selectedlicences}}"  required />
                                                  <h3><strong>KATEGORI</strong> <small>/ Vælg én eller flere</small></h3>
                                                  <div class="form_box">
                                                       <span class="button1" id="catbut{{category.id}}" style="cursor:pointer;" ng-repeat="category in categoriesdropdown" ng-click="checkuncheckcategory(category.id)">{{category.name}} <span id="catspan{{category.id}}" class="plus-icon"></span></span>
