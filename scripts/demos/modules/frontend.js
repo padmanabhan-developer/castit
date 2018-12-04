@@ -2,13 +2,12 @@ var frontend = angular.module('theme.demos.dashboard', [
     'angular-skycons',
     'theme.demos.forms'
   ])
-  frontend.controller('FrontendController', ['$scope', '$rootScope', '$http', '$timeout', '$window', '$filter', function($scope,$rootScope, $http, $timeout, $window, $filter) {
+  frontend.controller('FrontendController', ['$scope', '$rootScope', '$http', '$timeout', '$window', '$filter', '$location', function($scope,$rootScope, $http, $timeout, $window, $filter, $location) {
     'use strict';
 	//$('#headerlogo').hide();
-	//alert('ddd');
-	
-	$rootScope.bodylayout = '';	
-	
+  //alert('ddd');
+  
+	$rootScope.bodylayout = '';		
 	$rootScope.interface = 'home';
 	$rootScope.isMaincontent = true;
 	$scope.ifLightboxForm = true;
@@ -18,33 +17,221 @@ var frontend = angular.module('theme.demos.dashboard', [
 	$scope.responsiveProfileDetail = true;
 	$scope.ifAddGroupFormShow = false;
 	$scope.response_text ='';
-    $scope.currentPage = 0;
+  $scope.currentPage = 0;
 	$scope.pbox_profileid ='';
 	$scope.removeprofileid  ='';
 	$scope.removegroupid ='';
-    $scope.pageSize = 18;
-    $scope.profiles = [];
+  $scope.pageSize = 40;
+  $scope.profiles = [];
 	$scope.gpprofilecount =0;
 	$scope.photoiconclass='photo-iconactive';
 	$scope.mediaiconclass='media-icon';
 	$scope.infoiconclass='info-icon';
-    $scope.q = '';
-	$scope.loading = 'Indlaeser';
-	$http.get('api/v1/getprofiles', {params: {view: 'home'}}).success(function(homedata) {
+  $scope.q = '';
+  $scope.loading = 'Indlaeser';
+  
+  
+
+	let argument_data = {params: {view: 'home'}};
+	if('group' in $location.search()){
+    let group_id = $location.search().group;
+    argument_data = {params: {view: 'home', group_id: group_id}}
+    $scope.group_username = $location.search().username;
+    $scope.group_shared_name = $location.search().groupname;
+    $scope.group_share_text = "<p>THIS IS A LIGHTBOX FOR:</p><p>"+$scope.group_shared_name+"</p><br><p>CREATED BY:</p><p>"+$scope.group_username+"</p><br><p>You can delete persons and edit text by clicking the group symbol on the right side menu.</p><br><p>When you are done editing, just click Send</p>";
+	}
+	$http.get('api/v1/getprofiles', argument_data).success(function(homedata) {
+		$scope.hasresults = false;
 		if(homedata.success){
-			$scope.profiles = homedata.profiles;
+      $scope.profiles = homedata.profiles;
+      if('group_token' in homedata && 'group' in $location.search()){
+        localStorage.setItem('grouptoken', homedata.group_token);
+        localStorage.setItem('grouptoken_groupid', argument_data.params.group_id);
+        // $scope.groupToken = homedata.group_token;
+        $(".leftbar").html($scope.group_share_text);
+      }
 		}else{
 			$scope.profiles ='';
 		}
-	 });
+   });
 
+   $scope.groupToken = localStorage.getItem('grouptoken') || '';
+
+   if($scope.groupToken ==''){
+     $http.get('api/v1/getgrouptoken', {params: {view: 'home'}}).success(function(groupdata) {
+       if(groupdata.success){
+         $scope.groupToken = groupdata.grouptoken;
+         localStorage.setItem('grouptoken', $scope.groupToken);
+       }else{
+         $scope.groupToken ='';
+       }
+      });
+   }
+
+   var getprofiles_offset = 0;
+
+   $("#search_text").change(function (e) { 
+      if($(this).val() == ""){
+		$(".rightbar-row").removeClass("filteractive");
+      }     
+   });
+
+   $("#search_text").on('input', function(){
+	if($(this).val() == ""){
+		$http.get('api/v1/getprofiles', {params: {view: 'home'}}).success(function(homedata) {
+			$scope.hasresults = false;
+			if(homedata.success){
+				$scope.profiles = homedata.profiles;
+			}else{
+				$scope.profiles ='';
+			}
+		 });
+	}
+   });
+
+   $("#gender").change(function (e) { 
+    if($(this).val() == ""){
+      $(".rightbar-row").removeClass("filteractive");
+    } 
+   });
+
+   $("#age_to").change(function (e) { 
+    if($(this).val() == "" && $("#age_from").val() == ""){
+      $(".rightbar-row").removeClass("filteractive");
+    } 
+   });
+
+	$(".rightbar-row").scroll(function(){
+        if(($(this).scrollTop() >= (this.scrollHeight - $(this).height() - 1)) && ($scope.profiles.length > 18) ){
+			console.log($scope.hasresults);
+        getprofiles_offset = getprofiles_offset + 1;
+        if($(".rightbar-row").hasClass("filteractive")) {
+          $http.get('api/v1/getfilterprofiles', {params:{search_text: $scope.search_text,age_from: $scope.age_from,age_to: $scope.age_to,genderval: $scope.genderval,purchase_name: $scope.purchase_name,submittype: $scope.submittype, offset: getprofiles_offset}}).success(function(homedata) {
+            $(".rightbar-row").addClass("filteractive");
+            $(".loading_ajax").hide();
+            $scope.homedata = homedata;
+            if(homedata.success === true){
+			  $scope.profiles = $scope.profiles.concat(homedata.profiles);
+			}
+			else{
+				if(!$scope.hasresults){
+					$(".no_result_ajax").show();
+					$scope.profiles ='';
+					$scope.loading = 'Ingen data fundet';
+				}
+            }
+          });	
+        }
+        else{
+          $http.get('api/v1/getprofiles', {params: {view: 'home', offset: getprofiles_offset}}).success(function(homedata) {
+			$scope.hasresults = false;
+            if(homedata.success){
+              $scope.profiles = $scope.profiles.concat(homedata.profiles);
+            }else{
+              $scope.profiles = $scope.profiles;
+            }
+          });
+        }
+    }
+    });
+
+	let x = 0;
+	$(".thumb").scroll(function(){
+		// $("span").text( x+= 1);
+		$scope.scrollDirection;
+		
+    });
+
+	$scope.scrollDirection = function(){
+		var scrollableElement = document.getElementById('scrollableElement');
+		scrollableElement.addEventListener('wheel', function (event){
+			var delta;
+			if (event.wheelDelta){
+				delta = event.wheelDelta;
+			}else{
+				delta = -1 * event.deltaY;
+			}
+			if (delta < 0){
+				console.log("DOWN");
+			}else if (delta > 0){
+				console.log("UP");
+			}
+		});
+	}
+
+	// var $currentElement = $(".wrapPM0").first();
+	// var scroll_index = 0;
+
+	// $(".scroll-down").click(function () {
+	// 	var $nextElement = $('.wrapPM'+ scroll_index+1);
+	// 	// Check if next element actually exists
+	// 	if($nextElement.length) {
+	// 		// If yes, update:
+	// 		// 1. $currentElement
+	// 		// 2. Scroll position
+	// 		$currentElement = $nextElement;
+	// 		$('html, body').stop(true).animate({
+	// 			scrollTop: $nextElement.offset().top
+	// 		}, 1000);
+	// 		scroll_index = scroll_index + 1;
+	// 	}
+	// 	return false;
+	// });
+	
+	// $(".scroll-up").click(function () {
+	// 	var $prevElement = $('.wrapPM'+ scroll_index-1);
+	// 	// Check if previous element actually exists
+	// 	if($prevElement.length) {
+	// 		// If yes, update:
+	// 		// 1. $currentElement
+	// 		// 2. Scroll position
+	// 		$currentElement = $prevElement;
+	// 		$('html, body').stop(true).animate({
+	// 			scrollTop: $prevElement.offset().top
+	// 		}, 1000);
+	// 		scroll_index = scroll_index - 1;
+	// 	}
+	// 	return false;  
+	// });
+
+	
+    // $(function() {
+    //   $( ".scroll-up" ).click(function(){
+    //      $('.rightbar-row').scrollTop($('.rightbar-row').scrollTop()-400);
+    //   }); 
+   
+    //   $( ".scroll-down" ).click(function(){
+    //     $('.rightbar-row').scrollTop($('.rightbar-row').scrollTop()+400);;
+    //   }); 
+   	// });
+   
+
+	
+	// $('.scroll-down').click(function (e) { //#A_ID is an example. Use the id of your Anchor
+	// 	$('.rightbar-row').animate({
+	// 		scrollTop: $('.wrapPM').offset().top - 20 //#DIV_ID is an example. Use the id of your destination on the page
+	// 	}, 'slow');
+	// });
+
+    $('.scroll-down').click(function(){    
+      $('.rightbar-row').animate({
+        scrollTop: $('.rightbar-row').scrollTop()+430
+      }, 500);
+    });
+    $('.scroll-up').click(function(){    
+      $('.rightbar-row').animate({
+      scrollTop: $('.rightbar-row').scrollTop()-430
+      }, 500);
+	});
+	
 
 	$(".sidebar1-close").click(function(){
 		$("#sidebar1").hide("slow"); 
 		 });
 		 
 	$(".side-top").click(function(){
-		$("#sidebar1").show("slow"); 
+		// $("#sidebar1")
+		$("#sidebar1").show("slow").css("display","inline-flex");
 	  });
 	
 	$("#tabnewblack").click(function(){
@@ -148,10 +335,11 @@ var frontend = angular.module('theme.demos.dashboard', [
 		$(".title1").removeClass("active");
 		$(".grupper").fadeIn(); 
 		$(".lightbox").fadeOut();
-		$("#sidebar1").show("slow"); 
+		$("#sidebar1").show("slow").css("display","inline-flex"); 
 	});
 	$(".add-grupper").click(function(){
-			$(".addbox").show(); 
+			$(".addbox").show();
+			$("#new_group_name1").show().focus();
 			 
 		 });
 		 
@@ -182,8 +370,13 @@ var frontend = angular.module('theme.demos.dashboard', [
 		$(".kon-dropdown").toggle("slow"); 
 	});
 		 
-	$(".res-menu").click(function(){
-		$(".res_menu ul li").toggle("slow"); 
+	
+	$(".res-menu").unbind("click").click(function(){
+		$(".res_menu ul li").fadeToggle("slow"); 
+	});
+	
+	$(".res_menu ul li").unbind('click').click(function(){
+		$(".res_menu ul li").hide();
 	});
 
 	$(".information-inside .poup-close2").click(function(){
@@ -196,7 +389,6 @@ var frontend = angular.module('theme.demos.dashboard', [
 	$scope.closeProfileboxpopup = closeProfileboxpopup;
 	function closeProfileboxpopup() {
 		$("#profilebox").fadeOut('slow');
-
 	}
 		 
 	$(".poup-close3").click(function(){
@@ -231,7 +423,7 @@ var frontend = angular.module('theme.demos.dashboard', [
         return Math.ceil($scope.getDataProfile().length/$scope.pageSize);                
     }
 
-	$http.get('api/v1/getlightboxprofiles', {params: {view: 'home'}}).success(function(lightboxdata) {
+	$http.get('api/v1/getlightboxprofiles', {params: {view: 'home', grouptoken : $scope.groupToken}}).success(function(lightboxdata) {
 		$scope.lbprofilecount =lightboxdata.count;
 		if(lightboxdata.count){
 			$scope.lbprofiles = lightboxdata.lbprofiles;
@@ -239,21 +431,25 @@ var frontend = angular.module('theme.demos.dashboard', [
 			$scope.lbprofiles ='';
 		}
 	 });
-
-	$http.get('api/v1/getgroupingprofiles', {params: {view: 'home'}}).success(function(groupingdata) {
+  let grouptoken_groupid = localStorage.getItem('grouptoken_groupid');
+  let grouping_arguments = {params: {view: 'home', grouptoken : $scope.groupToken}};
+  if(grouptoken_groupid != undefined && grouptoken_groupid != ''){
+    grouping_arguments = {params: {view: 'home', grouptoken : $scope.groupToken, grouptoken_groupid: grouptoken_groupid}};
+  }
+  // console.log(grouping_arguments);
+	$http.get('api/v1/getgroupingprofiles', grouping_arguments).success(function(groupingdata) {
 		$scope.gpprofilecount =groupingdata.count;
-		
 		if(groupingdata.count){
 			$scope.gpprofiles = groupingdata.gpprofiles;
 		}else{
 			$scope.gpprofiles ='';
-		}
-	 });
+		}	
+	});
 
 	var logged = '';
 	var usertype = '';
 	logged = $rootScope.globals.currentUser
-	usertype = ( logged )?logged.usertype:'';
+	usertype = ( logged ) ? logged.usertype:'';
 	if(usertype == 1) {
 		$scope.usertype = true;	
 	}
@@ -267,6 +463,9 @@ var frontend = angular.module('theme.demos.dashboard', [
 	$scope.set_gender = set_gender;
 	function set_gender(genderval){
 		//alert(genderval);
+		if($scope.genderval == genderval){
+			genderval = '';
+		}
 		$scope.genderval =genderval;
 		if(genderval==1){
 			angular.element(document.querySelector("#gender1")).addClass("active");
@@ -286,20 +485,27 @@ var frontend = angular.module('theme.demos.dashboard', [
 	$scope.filterProfiles = filterProfiles;
 	function filterProfiles() {
     $scope.currentPage = 0;
-    $scope.pageSize = 18;
+    $scope.pageSize = 40;
     $scope.profiles = [];
     $scope.q = '';
 	$scope.loading = 'soger';
 	if(!$scope.genderval){
 		$scope.genderval='';
 	}
-		 //$scope.dataLoading = true;  
-		var formData = {search_text: $scope.search_text,age_from: $scope.age_from,age_to: $scope.age_to,genderval: $scope.genderval,purchase_name: $scope.purchase_name,submittype: $scope.submittype}
+     //$scope.dataLoading = true;  
+    getprofiles_offset = 0;
+		var formData = {search_text: $scope.search_text,age_from: $scope.age_from,age_to: $scope.age_to,genderval: $scope.genderval,purchase_name: $scope.purchase_name,submittype: $scope.submittype, offset: getprofiles_offset}
+		$(".no_result_ajax").hide();
+		$(".loading_ajax").show();
 		$http.get('api/v1/getfilterprofiles', {params:formData}).success(function(homedata) {
-			//alert(response.success);
-			if(homedata.success){
+			$scope.hasresults = true;
+      		$(".rightbar-row").addClass("filteractive");
+			$(".loading_ajax").hide();
+			$scope.homedata = homedata;
+			if(homedata.success === true){
 				$scope.profiles = homedata.profiles;
 			}else{
+				$(".no_result_ajax").show();
 				$scope.profiles ='';
 				$scope.loading = 'Ingen data fundet';
 			}
@@ -308,10 +514,13 @@ var frontend = angular.module('theme.demos.dashboard', [
 	  
 	$scope.pbox_singleimage='';	
 	$scope.getProfileBox = function (profileid){
-		$scope.pbox_singleimage = '';
-		$scope.profile_notes = '';
-		$scope.pbox_profileid = profileid
-		$http.get('api/v1/getgroupinglist').success(function(groupingdata) {
+    $scope.selectedgroupings = '';
+	$scope.pbox_singleimage = '';
+	$scope.profile_notes = '';
+    $scope.pbox_profileid = profileid;
+    $scope.disable_lightbox_submit = true;
+    $scope.disable_lightbox_submit_style = {"background-color": "grey"};
+		$http.get('api/v1/getgroupinglist', {params: {view: 'home', grouptoken : $scope.groupToken}}).success(function(groupingdata) {
 			$scope.groupingcount =groupingdata.count;
 			if(groupingdata.count){
 				$scope.groupings = groupingdata.grouping;
@@ -331,35 +540,64 @@ var frontend = angular.module('theme.demos.dashboard', [
 		});	
 		$("#profilebox").fadeIn("slow"); 
 	}
+
 	$(".poup-close-profilebox").click(function(){
 		$("#profilebox").fadeOut(); 
 	});
+	
+	$(".group-view-toggle").click(function(){
+		alert('aaa');
+	});
+
+	$scope.togglegrouping = togglegrouping;
+	function togglegrouping($event){
+		let this_element = $event.currentTarget;
+		$(this_element).parent().siblings('.group-full').slideToggle();
+		$(this_element).toggleClass('rotated-arrow');
+	}
+
+	
+
 	$scope.selectedgroupings = '';
 	$scope.checkuncheckgrouping = checkuncheckgrouping;
-	function checkuncheckgrouping(groupingid) {  
-		var myElBut = angular.element( document.querySelector( '#groupingbut'+groupingid ) );
+	function checkuncheckgrouping(groupingid) {
+    var myElBut = angular.element( document.querySelector( '#groupingbut'+groupingid ) );
 		myElBut.toggleClass('button').toggleClass('button2');
-		var selgroupings = new Array();
-		if($scope.selectedgroupings){
+    var selgroupings = new Array();
+
+    if($scope.selectedgroupings){
 			 selgroupings = $scope.selectedgroupings.split(',');
-			 var selindex = selgroupings.indexOf(groupingid);
+       var selindex = selgroupings.indexOf(groupingid);
 			if( selindex !== -1) {
 					selgroupings.splice(selindex, 1); 
 			}else{
 					selgroupings.push(groupingid);
 			}
-		}else{
-			
-			if(myElBut.hasClass('button2'))
-				 selgroupings.push(groupingid);
-		}
-		$scope.selectedgroupings = selgroupings.toString();
+    }
+    else{			
+			if(myElBut.hasClass('button2')){
+      	selgroupings.push(groupingid);
+			}
+				 
+    }
+    $scope.selectedgroupings = selgroupings.toString();
+    if($scope.selectedgroupings == ""){
+      $scope.disable_lightbox_submit = true;
+      $scope.disable_lightbox_submit_style = {"background-color": "grey"};
+    }
+    else{
+      $scope.disable_lightbox_submit = false;
+      $scope.disable_lightbox_submit_style = {};
+    }
+
 	}
 
 	$scope.add_new_group = add_new_group;
-	function add_new_group() {  
+	function add_new_group() {
+
 		if($scope.new_group_name){
-			var formData = {groupname: $scope.new_group_name, };
+
+			var formData = {groupname: $scope.new_group_name, grouptoken : $scope.groupToken};
 	
 			$http.get('api/v1/addnewgrouping', {params:formData}).success(function(groupingdata) {
 				$scope.groupingcount =groupingdata.count;
@@ -375,16 +613,40 @@ var frontend = angular.module('theme.demos.dashboard', [
 	}
 	$scope.profile_notes	=	'';
 	$scope.addToLightbox = addToLightbox;
+
+	$scope.addToGroup = addToGroup;
+	function addToGroup(group_id){
+		
+	}
+
+
 	function addToLightbox() {
+    let pbox_profileid, profile_notes, selectedgroupings, groupToken;
 
-		var formData = {profileid: $scope.pbox_profileid, profile_notes : $scope.profile_notes, selectedgroupings:$scope.selectedgroupings};
 
+    /*
+		var formData = {
+      userid            : userid, 
+      profile_notes     : profile_notes, 
+      selectedgroupings : selectedgroupings, 
+      grouptoken        : groupToken
+    };
+    
+    $.post("api/groupings/groupings.php", formData,
+    function (data, textStatus, jqXHR) {
+      alert('aa');
+      console.log(formData);
+      console.log(data);        
+    },
+  );
+  */
+
+ var formData = {profileid: $scope.pbox_profileid, profile_notes : $scope.profile_notes, selectedgroupings:$scope.selectedgroupings};
 		$http.get('api/v1/updatelightboxprofiles', {params:formData}).success(function(lightboxdata) {
 			$scope.lbprofilecount =lightboxdata.count;
 			if(lightboxdata.count){
 				$scope.lbprofiles = lightboxdata.lbprofiles;
-				
-					$http.get('api/v1/getgroupingprofiles', {params: {view: 'home'}}).success(function(groupingdata) {
+					$http.get('api/v1/getgroupingprofiles', {params: {view: 'home', grouptoken : $scope.groupToken}}).success(function(groupingdata) {
 						$scope.gpprofilecount =groupingdata.count;
 						
 						if(groupingdata.count){
@@ -394,22 +656,22 @@ var frontend = angular.module('theme.demos.dashboard', [
 						}
 
 						$("#lightboxsubmit").fadeIn();
+						setTimeout(function(){
+							$("#lightboxsubmit").fadeOut();
+						}, 3000);
 					 });
 			$("#profilebox").fadeOut();
-
-
-			 		 
-
 			}else{
 				$scope.lbprofiles ='';
 			}
-		});	
-		
+    });
+    
 	}
 	
 	$scope.removeFromLightboxPopup = removeFromLightboxPopup;
-	function removeFromLightboxPopup(profileid) {
+	function removeFromLightboxPopup(profileid, groupid) {
 		$scope.removeprofileid = profileid;
+		$scope.removeProfileFromGroupId = groupid;
 		$("#lightbox_remove_popup").fadeIn('slow');
 	}
 	
@@ -429,7 +691,7 @@ var frontend = angular.module('theme.demos.dashboard', [
 	$scope.removeFromLightbox = removeFromLightbox;
 	function removeFromLightbox() {
 		if($scope.removeprofileid){
-			var formData = {profileid: $scope.removeprofileid}
+			var formData = {profileid: $scope.removeprofileid, grouptoken : $scope.groupToken}
 			$http.get('api/v1/removelightboxprofiles', {params:formData}).success(function(lightboxdata) {
 				$scope.lbprofilecount =lightboxdata.count;
 				if(lightboxdata.count){
@@ -439,6 +701,26 @@ var frontend = angular.module('theme.demos.dashboard', [
 				}
 				$scope.ifLightboxFormRemove = false;
 			});	
+		}
+	}
+
+	$scope.removeProfileFromGroup = removeProfileFromGroup;
+	function removeProfileFromGroup(profileid, groupid) {
+		if($scope.removeprofileid){
+			var formData = {profileid: $scope.removeprofileid, grouptoken : $scope.groupToken, groupid : $scope.removeProfileFromGroupId}
+			console.log(formData);
+			$scope.ifLightboxFormRemove = false;
+			$http.get('api/v1/removeProfileFromGroup', {params:formData}).success(function() {
+				$http.get('api/v1/getgroupingprofiles', {params: {view: 'home', grouptoken : $scope.groupToken}}).success(function(groupingdata) {
+					console.log(groupingdata);
+					$scope.gpprofilecount =groupingdata.count;
+					if(groupingdata.count){
+						$scope.gpprofiles = groupingdata.gpprofiles;
+					}else{
+						$scope.gpprofiles ='';
+					}
+				 });
+			});
 		}
 	}
 	
@@ -464,7 +746,7 @@ var frontend = angular.module('theme.demos.dashboard', [
 	$scope.removeFromGrouplist = removeFromGrouplist;
 	function removeFromGrouplist() {
 		if($scope.removegroupid){
-			var formData = {groupid: $scope.removegroupid}
+			var formData = {groupid: $scope.removegroupid, grouptoken : $scope.groupToken}
 			$http.get('api/v1/removegroupfromgrouping', {params:formData}).success(function(groupingdata) {
 				$scope.gpprofilecount =groupingdata.count;
 		
@@ -480,12 +762,13 @@ var frontend = angular.module('theme.demos.dashboard', [
 
 	$scope.addNewGroupInstant = function (){
 		$scope.ifAddGroupFormShow = true;
+		$("input[id=new_group_name1]").trigger('click');
 	};
 
 	$scope.addgroupintoGrouplist = addgroupintoGrouplist;
 	function addgroupintoGrouplist() {
 		if($scope.new_group_name1){
-			var formData = {groupname: $scope.new_group_name1}
+			var formData = {groupname: $scope.new_group_name1, grouptoken : $scope.groupToken}
 			$http.get('api/v1/addgroupintogrouping', {params:formData}).success(function(groupingdata) {
 				$scope.gpprofilecount =groupingdata.count;
 		
@@ -499,7 +782,9 @@ var frontend = angular.module('theme.demos.dashboard', [
 			});	
 		}
 	}
-
+	$("#new_group_name1").blur(function(){
+		$(".addbox").fadeOut();
+	});
 	$("#thumb1").click(function(){
 		$("inside-popup").show();
 		$("popup-video").hide(); 
@@ -515,7 +800,7 @@ var frontend = angular.module('theme.demos.dashboard', [
 		$scope.isGetSingleLoading=true;
 		$http.get('api/v1/getsingleprofiles', {params:{profileid:profileid}}).success(function(profiledata) {
 			//alert(response.success);
-			console.log(profiledata);
+			// console.log(profiledata);
 			if(profiledata.success){
 				
 				$scope.isGetSingleLoading=false;
@@ -540,16 +825,16 @@ var frontend = angular.module('theme.demos.dashboard', [
 	$scope.changeSingleVideoBig = changeSingleVideoBig;
 	function changeSingleVideoBig(profilevideo) {
 		//alert(profilevideo);
-		$('.video_side').removeClass('inactive');
-		$('#imagediv').addClass('inactive');
-		$('#photo_nav').hide();
+		jQuery('.video_side').removeClass('inactive');
+		jQuery('#imagediv').addClass('inactive');
+		jQuery('#photo_nav').hide();
 		//alert($scope.profile_videos.length)
-		$('#video_nav').show();
+		jQuery('#video_nav').show();
 		$scope.IsProfileVideo = true;
 		$scope.IsProfileImage = false;
 		$scope.currVideoUrl = profilevideo;
 		var video = $('#pro_video')[0];
-		$('video').mediaelementplayer({
+		jQuery('video').mediaelementplayer({
 			alwaysShowControls: false,
 			videoVolume: 'horizontal',
 			usePluginFullScreen : false,
@@ -719,6 +1004,36 @@ var frontend = angular.module('theme.demos.dashboard', [
 		});	
 		$("#profile_popup").fadeIn("slow"); 
 	}
+
+  $scope.showEmailPopup = function (){
+    $("#lightbox_popup.email").fadeIn('slow');
+    $("#lightbox_popup.email #to_email").val("tony.grahn@themethodlab.com");
+  };
+  $scope.cancelEmailPopup = function (){
+    $("#lightbox_popup.email").fadeOut('slow'); 
+  };
+  $scope.sendEmailForm = function (){
+    $scope.to_email = "tony.grahn@themethodlab.com";
+    var formData = {
+            from_email: $scope.from_email,
+            to_email: $scope.to_email,
+            to_cc: $scope.to_cc,
+            mail_body: $scope.mail_body,
+            }
+    $http.post('api/v1/sendemail', formData).success(function(response) {
+      if(response.success){
+    	$("#lightbox_popup.email").fadeOut('slow'); 
+        $scope.from_email ='';
+        $scope.to_email ='';
+        $scope.to_cc ='';
+        $scope.mail_body ='';
+        $scope.response_text =response.message;
+        $scope.apply;
+      }
+    }); 
+    // $("#profile_popup").fadeIn("slow"); 
+  }
+
 $scope.sendGroupForm = sendGroupForm;
 
 function sendGroupForm(groupid) {
@@ -730,20 +1045,23 @@ function sendGroupForm(groupid) {
 						form_email: $scope.form_email,
 						to_email: $scope.to_email,
 						to_cc: $scope.to_cc,
-						mail_body: $scope.mail_body,
+            mail_body: $scope.mail_body,
+            username: $scope.from_name,
 						}
-
 						
-		$http.post('api/v1/sendgroup', formData).success(function(sendlightboxstatus) {
-			if(sendlightboxstatus.success){
+
+		$http.post('api/v1/sendgroup', formData).success(function(sendgroupstatus) {
+			if(sendgroupstatus.success){
 				$scope.ifLightboxForm = false;
 				$scope.ifLightboxFormSuccess = true;
 				$scope.form_email ='';$scope.to_email ='';$scope.to_cc ='';$scope.mail_body ='';
-				$scope.response_text =sendlightboxstatus.message;
+				$scope.response_text =sendgroupstatus.message;
 				$scope.apply;
+				setTimeout(function(){
+					$("#send_group_popup").fadeOut();
+				}, 3000);
 			}
 		});	
-		$("#profile_popup").fadeIn("slow"); 
 	}
 /*$scope.sendGroupForm = function (){
 		var formData = {
@@ -883,5 +1201,3 @@ function showSendGroupPopup(groupid) {
         return input.slice(start);
     }
 });
-
-	
