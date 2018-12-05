@@ -1828,3 +1828,11 @@ progress{
 
 .icon.animate-show{z-index: 2;}
 .icon.animate-show.new-splash{z-index: 1;}
+
+.ansog_select_label {
+	color: #FFF;
+	font-size: 9px !important;
+	padding: 0 0 0px 8px;
+	text-transform: uppercase;
+	font-weight: normal !important;
+}

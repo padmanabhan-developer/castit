@@ -2034,6 +2034,42 @@ $app->post('/step6Create',function () use ($app) {
 			$profile_id = $db->exec($q_chip);
 			$user_profile_id = $profile_id;
 			if($profile_id){
+				
+				// 1 male - CM; 2 female - CF
+				$profile_number_prefix = ($gender_id == 2) ? "CF":"CM";
+				$max_existing = $db->prepare("SELECT MAX(CAST(SUBSTRING(profile_number, 3) AS UNSIGNED)) as max_profile FROM memberships where profile_number LIKE 'CF%' OR profile_number LIKE 'CM%' ");
+				$max_existing->execute();
+				$max_profile = $max_existing->fetchAll(PDO::FETCH_ASSOC);
+				
+				$profile_number = $profile_number_prefix . ($max_profile[0]['max_profile'] + 1);
+				$profile_number_first_name_last_name = $profile_number . " " . $first_name . " " . $last_name;
+				$version = 1;
+				$created_at = date("o-m-d H:i:s");
+				$current = 1;
+				$set_to_current_at = date("o-m-d");
+				$previous_profile_group_id = 1;
+				$previous_profile_number = '';
+	
+	
+				$membership_table_query = "INSERT INTO
+					memberships(
+					`profile_id`, 
+					`profile_group_id`, 
+					`profile_number`, 
+					`profile_number_first_name_last_name`, 
+					`version`, 
+					`created_at`, 
+					`current`, 
+					`set_to_current_at`, 
+					`previous_profile_group_id`, 
+					`previous_profile_number`)
+					VALUES
+					('$profile_id', 1, '$profile_number', '$profile_number_first_name_last_name', '$version', '$created_at', '$current', '$set_to_current_at', '$previous_profile_group_id', '$previous_profile_number' )";
+			
+				$activation = $db->prepare($membership_table_query);
+				$activation->execute();
+
+
 				if($selectedcategories!=''){
 					$cat_arr= explode(",",$selectedcategories);
 					foreach($cat_arr as $cat){
@@ -2160,11 +2196,51 @@ $app->post('/step6Create',function () use ($app) {
 										updated_at = now(),
 										suite_size_from = $suite_size_from,
 										suite_size_to = $suite_size_to
-
 									WHERE id = $user_profile_id";
 						$query_prepared = $db->prepare($q_chip);
 						$query_prepared->execute();
 				}
+				$check_membership_query		= "SELECT * from memberships where profile_id = $user_profile_id";
+				$check_membership 				= $db->prepare($check_membership_query);
+				$check_membership->execute();
+				$m_count = $check_membership->rowCount();
+				if($m_count > 0){
+				  $membership_table_query = "UPDATE memberships SET current = '1' WHERE profile_id = $user_profile_id";
+        }
+        else{
+          // 1 male - CM; 2 female - CF
+          $profile_number_prefix = ($gender_id == 2) ? "CF":"CM";
+          $max_existing = $db->prepare("SELECT MAX(CAST(SUBSTRING(profile_number, 3) AS UNSIGNED)) as max_profile FROM memberships where profile_number LIKE 'CF%' OR profile_number LIKE 'CM%' ");
+          $max_existing->execute();
+          $max_profile = $max_existing->fetchAll(PDO::FETCH_ASSOC);
+          
+          $profile_number = $profile_number_prefix . ($max_profile[0]['max_profile'] + 1);
+          $profile_number_first_name_last_name = $profile_number . " " . $first_name . " " . $last_name;
+          $version = 1;
+          $created_at = date("o-m-d H:i:s");
+          $current = 1;
+          $set_to_current_at = date("o-m-d");
+          $previous_profile_group_id = 1;
+          $previous_profile_number = '';
+  
+  
+          $membership_table_query = "INSERT INTO
+            memberships(
+            `profile_id`, 
+            `profile_group_id`, 
+            `profile_number`, 
+            `profile_number_first_name_last_name`, 
+            `version`, 
+            `created_at`, 
+            `current`, 
+            `set_to_current_at`, 
+            `previous_profile_group_id`, 
+            `previous_profile_number`)
+            VALUES
+            ('$user_profile_id', 1, '$profile_number', '$profile_number_first_name_last_name', '$version', '$created_at', '$current', '$set_to_current_at', '$previous_profile_group_id', '$previous_profile_number' )";
+        }
+        $activation = $db->prepare($membership_table_query);
+        $activation->execute();
 
 				if($selectedcategories!=''){
 					if(!(is_array($selectedcategories))){

@@ -631,11 +631,16 @@ main.controller('RegisterStep5Controller', ['$scope', '$filter', '$http', '$wind
 						dealekter2: $scope.dealekter2,
 						dealekter3: $scope.dealekter3
 						}
-		$http.post('api/v1/step5Create', formData).success(function(sucess) {
-			if(sucess){
-				window.location = '#/ansog-trin6';
-			}
-		});				
+						if(formData.langrateval1 != '' || formData.langrateval2 != '' || formData.langrateval3 != '' || formData.langrateval4 != ''){
+							$http.post('api/v1/step5Create', formData).success(function(sucess) {
+								if(sucess){
+									window.location = '#/ansog-trin6';
+								}
+							});	
+						}
+						else{
+							alert("Vælg venligst og bedøm mindst et sprog.");
+						}			
 	  }
 
   $("select[id^=lang]").on("change",function(){
