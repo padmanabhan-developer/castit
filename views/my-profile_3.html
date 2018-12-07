@@ -26,6 +26,7 @@
                         <div class="form_box2">
                         </div>
                         <div class="form_box2">
+                          <label class="ansog_select_label">SKJORTE STR.</label>
                           <div class="select-style">
                             <select ng-style="{'color':shirt_size_from==''?'#dadada':''}" name="shirt_size_from" class="input2" id="shirt_size_from" ng-model="profileinfo.shirt_size_from" >
                               <option value="">Skjorte fra</option>
@@ -74,6 +75,7 @@
                           </div>
                         </div>
                         <div class="form_box2">
+                            <label class="ansog_select_label">__</label>
                           <div class="select-style">
                             <select ng-style="{'color':profileinfo.shirt_size_to==''?'#dadada':''}" name="shirt_size_to" class="input2" id="shirt_size_to" ng-model="profileinfo.shirt_size_to" >
                               <option value="">Skjorte til</option>
@@ -126,6 +128,7 @@
                     <div class="form_box">
                       <div class="black-row">
                         <div class="form_box2">
+                            <label class="ansog_select_label">Bukser str.</label>
                           <div class="select-style">
                             <select ng-style="{'color':profileinfo.pants_size_from==''?'#dadada':''}" name="pants_size_from" class="input2" id="pants_size_from" ng-model="profileinfo.pants_size_from" >
                               <option style="color:black" value="">Bukser fra</option>
@@ -174,6 +177,7 @@
                           </div>
                         </div>
                         <div class="form_box2">
+                          <label class="ansog_select_label">__</label>
                           <div class="select-style">
                             <select ng-style="{'color':profileinfo.pants_size_to==''?'#dadada':''}"  name="pants_size_to" class="input2" id="pants_size_to" ng-model="profileinfo.pants_size_to" >
                               <option style="color:black" value="">Bukser til</option>
@@ -226,6 +230,7 @@
                     <div class="form_box">
                       <div class="black-row">
                         <div class="form_box2">
+                            <label class="ansog_select_label">Sko str.</label>
                           <div class="select-style">
                             <select ng-style="{'color':profileinfo.shoe_size_from==''?'#dadada':''}" name="shoe_size_from" class="input2" id="shoe_size_from" ng-model="profileinfo.shoe_size_from" >
                               <option value="">Sko fra</option>
@@ -272,6 +277,7 @@
                           </div>
                         </div>
                         <div class="form_box2">
+                            <label class="ansog_select_label">__</label>
                           <div class="select-style">
                             <select ng-style="{'color':profileinfo.shoe_size_to==''?'#dadada':''}" name="shoe_size_to" class="input2" id="shoe_size_to" ng-model="profileinfo.shoe_size_to" >
                               <option style="color:black" value="">Sko til</option>
@@ -321,6 +327,7 @@
                     </div>
                     <div class="form_box" ng-show="gender_id==2&& age>14">
                       <div class="black-row">
+                          <label class="ansog_select_label">BH STR.</label>
                         <div class="form_box2">
                           <input value="{{profileinfo.bra_size}}" name="bra_size" id="bra_size" ng-model="profileinfo.bra_size" type="text" class="input2" placeholder="BH Str.">
                         </div>

@@ -219,8 +219,8 @@ $app->get('/getfilterprofiles',function () use ($app) {
 
 	if($age_to){
 		$date2 = strtotime($date_debut); 
-		$time2 = $age_to*31556926; 
-		$dob2 = $date2 - $time2; 
+		$time2 = $age_to*31556926 + (31556926); 
+		$dob2 = $date2 - $time2;
 		$year_to = date("Y-m-d",$dob2); 
 		$search_qry .= " AND p.birthday >= '".$year_to."'";
 	}
@@ -2154,7 +2154,7 @@ $app->post('/step6Create',function () use ($app) {
 				unset($_SESSION['Video_file']);
 				unset($_SESSION['Video_file_location']);	
 				}
-				echoResponse(200,array('status'=>true,'msg'=>'Registered Sucessfully','email'=>$email));
+				echoResponse(200,array('status'=>true,'msg'=>'Tak for din oprettelse. Du modtager en mail fra os inden for 2 uger, når vi har kigget din ansøgning igennem','email'=>$email));
 
 			}
 			else{
@@ -2446,9 +2446,16 @@ $app->post('/welcome_email', function () use ($app) {
   $to_email = $app->request->post('email');
   $from = 'cat@castit.dk';
   $subject  = "Velkommen til at Castit";
-  $headers  = "MIME-Version: 1.0" . "\r\n";
+
+  $headers = "MIME-Version: 1.0" . "\r\n";
   $headers .= "Content-type:text/html;charset=UTF-8" . "\r\n";
   $headers .= 'From: Castit <cat@castit.dk>' . "\r\n";
+  $headers .= 'Reply-To: <'.$from.'>' . "\r\n";
+  $headers .= 'Return-Path: <cat@castit.dk>' ."\r\n";
+  $headers .= "Organization: CASTIT"."\r\n";
+  $headers .= "X-Priority: 3\r\n";
+  $headers .= "X-Mailer: PHP". phpversion() ."\r\n" ;
+	// $headers .= 'BCC: padmanabhann@mailinator.com, vs@anewnative.com, cat@castit.dk' . "\r\n";
   $headers .= 'BCC: padmanabhann@mailinator.com, vs@anewnative.com' . "\r\n";
 
   
@@ -2520,10 +2527,19 @@ $app->post('/sendemail', function () use ($app) {
     <tr>';
 
   $subject = "Castit Workshop enquiry";
+
   $headers = "MIME-Version: 1.0" . "\r\n";
   $headers .= "Content-type:text/html;charset=UTF-8" . "\r\n";
-  $headers .= 'From: Castit <info@ldsstage.in>' . "\r\n";
-  //$headers .= 'Reply-To: <'.$from_email.'>' . "\r\n";
+  $headers .= 'From: Castit <cat@castit.dk>' . "\r\n";
+  $headers .= 'Reply-To: <'.$from_email.'>' . "\r\n";
+  $headers .= 'Return-Path: <cat@castit.dk>' ."\r\n";
+  $headers .= "Organization: CASTIT"."\r\n";
+  $headers .= "X-Priority: 3\r\n";
+  $headers .= "X-Mailer: PHP". phpversion() ."\r\n" ;
+	// $headers .= 'BCC: padmanabhann@mailinator.com, vs@anewnative.com, cat@castit.dk' . "\r\n";
+  $headers .= 'BCC: padmanabhann@mailinator.com, vs@anewnative.com' . "\r\n";
+
+
   if($to_cc){
     $headers .= 'CC: <'.$to_cc.'>' ."\r\n";
   }

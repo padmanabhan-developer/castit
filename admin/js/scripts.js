@@ -392,8 +392,8 @@ $(document).ready(function () {
           function (returndata, textStatus, jqXHR) {
             let update_value = $("input[name=profile-status-value]").val();
             let email_data = {};
-            
-            if( (update_value == 1) && ($(".send_activation_email").attr("checked")) ) {
+
+            if( (update_value == 1) && ($(".send_activation_email")[0].checked) ) {
               email_data = { type: "activation", first_name: profile.first_name, email: profile.email };
               $.post("/admin/src/emails", email_data,
                 function (data, textStatus, jqXHR) {
@@ -404,7 +404,7 @@ $(document).ready(function () {
               );
             }
             
-            if( (update_value == 2) && ($(".send_deactivation_email").attr("checked")) ) {
+            if( (update_value == 2) && ($(".send_deactivation_email")[0].checked) ) {
               email_data = { type: "deactivation", first_name: profile.last_name, email: profile.email };
               $.post("/admin/src/emails", email_data,
                 function (data, textStatus, jqXHR) {
@@ -413,6 +413,11 @@ $(document).ready(function () {
                   window.location.reload(true);
                 }
               );
+            }
+
+            if( !$(".send_activation_email")[0].checked && !$(".send_deactivation_email")[0].checked ) {
+              alert("Profile Updated");
+              window.location.reload(true);
             }
           },
         );

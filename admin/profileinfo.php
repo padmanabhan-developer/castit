@@ -539,6 +539,7 @@ $payment_2_description = (isset($value['payments'][2]['description'])) ? $value[
                       	   <div class="row physical-info">
                            		
                                 <div class="col3">
+                                <label class="ansog_select_label">SKJORTE STR.</label>
                                 	 <div class="custom-select">
                                       <!-- shirt size / skjorte fra-->
                                       <select class="shirt_size_from">
@@ -556,6 +557,7 @@ $payment_2_description = (isset($value['payments'][2]['description'])) ? $value[
                                 </div>
                                 
                                 <div class="col3">
+                                <label class="ansog_select_label">__</label>
                                 	 <div class="custom-select">
                                       <!-- shirt size / skskjorteorte til-->
                                       <select class="shirt_size_to">
@@ -573,6 +575,7 @@ $payment_2_description = (isset($value['payments'][2]['description'])) ? $value[
                                 </div>
                                 
                                 <div class="col3">
+                                <label class="ansog_select_label">borne str.</label>
                                 	 <div class="custom-select">
                                       <!-- child size / borne fra-->
                                       <select class="child_size_from">
@@ -590,6 +593,7 @@ $payment_2_description = (isset($value['payments'][2]['description'])) ? $value[
                                 </div>
                                 
                                 <div class="col3">
+                                <label class="ansog_select_label">__</label>
                                 	 <div class="custom-select">
                                       <!-- child size / borne til -->
                                       <select class="child_size_to">
@@ -607,6 +611,7 @@ $payment_2_description = (isset($value['payments'][2]['description'])) ? $value[
                                 </div>
                                 
                                 <div class="col3">
+                                <label class="ansog_select_label">bukser str.</label>
                                 	 <div class="custom-select">
                                       <!-- pant size / bukser fra -->
                                       <select class="pants_size_from">
@@ -624,6 +629,7 @@ $payment_2_description = (isset($value['payments'][2]['description'])) ? $value[
                                 </div>
                                 
                                 <div class="col3">
+                                <label class="ansog_select_label">__</label>
                                 	 <div class="custom-select">
                                       <!-- pant size / bukser til-->
                                       <select class="pants_size_to">
@@ -641,23 +647,7 @@ $payment_2_description = (isset($value['payments'][2]['description'])) ? $value[
                                 </div>
                                 
                                 <div class="col3">
-                                	 <div class="custom-select">
-                                      <!-- Hair color / harfarve -->
-                                      <select class="hair_color_id">
-                                        <?php   
-                                          foreach ($hair_colors_list as $key => $color) {
-                                            $selected = '';
-                                            if($color['id'] == $value['hair_color_id']){
-                                              $selected = 'selected=selected';
-                                            }
-                                            echo "<option value='".$color['id']."' ".$selected.">".$color['name']."</option>";
-                                          }
-                                        ?>
-                                      </select>
-                                    </div>
-                                </div>
-                                
-                                <div class="col3">
+                                <label class="ansog_select_label">sko str.</label>
                                 	 <div class="custom-select">
                                       <!-- shoe size / sko fra-->
                                       <select class="shoe_size_from">
@@ -675,6 +665,7 @@ $payment_2_description = (isset($value['payments'][2]['description'])) ? $value[
                                 </div>
                                 
                                 <div class="col3">
+                                <label class="ansog_select_label">__</label>
                                 	 <div class="custom-select">
                                       <!-- shoe size / sko til-->
                                       <select class="shoe_size_to">
@@ -690,8 +681,27 @@ $payment_2_description = (isset($value['payments'][2]['description'])) ? $value[
                                       </select>
                                     </div>
                                 </div>
-                                                                
+                                
                                 <div class="col3">
+                                <label class="ansog_select_label">harfarve</label>
+                                	 <div class="custom-select">
+                                      <!-- Hair color / harfarve -->
+                                      <select class="hair_color_id">
+                                        <?php   
+                                          foreach ($hair_colors_list as $key => $color) {
+                                            $selected = '';
+                                            if($color['id'] == $value['hair_color_id']){
+                                              $selected = 'selected=selected';
+                                            }
+                                            echo "<option value='".$color['id']."' ".$selected.">".$color['name']."</option>";
+                                          }
+                                        ?>
+                                      </select>
+                                    </div>
+                                </div>
+
+                                <div class="col3">
+                                <label class="ansog_select_label">ojen farve</label>
                                 	 <div class="custom-select">
                                       <!-- eye color / ojen farve -->
                                       <select class="eye_color_id">
@@ -709,6 +719,7 @@ $payment_2_description = (isset($value['payments'][2]['description'])) ? $value[
                                 </div>
                                 
                                 <div class="col3">
+                                <label class="ansog_select_label">jakkesæt str.</label>
                                 	 <div class="custom-select">
                                       <!-- suit size / jakkesæt fra -->
                                       <select class="suite_size_from">
@@ -726,6 +737,7 @@ $payment_2_description = (isset($value['payments'][2]['description'])) ? $value[
                                 </div>
                                 
                                 <div class="col3">
+                                <label class="ansog_select_label">__</label>
                                 	 <div class="custom-select">
                                       <!-- suit size / jakkesæt til-->
                                       <select class="suite_size_to">
@@ -742,18 +754,21 @@ $payment_2_description = (isset($value['payments'][2]['description'])) ? $value[
                                     </div>
                                 </div>
                                 <div class="col3">
+                                <label class="ansog_select_label">højde</label>
                                 	 <div class="">
                                       <!-- height / hojde -->
                                       <input type="text" class="form-input1 height" placeholder="Højde" value="<?php echo $value['height'];?>" >
                                     </div>
                                 </div>                                
                                 <div class="col3">
+                                <label class="ansog_select_label">vægt</label>
                                 	 <div class="">
                                       <!-- weight / vaegt -->
                                       <input type="text" class="form-input1 weight" placeholder="Vægt" value="<?php echo $value['weight'];?>" >
                                     </div>
                                 </div>
                                 <div class="col3">
+                                <label class="ansog_select_label">BH str</label>
                                 	 <div class="">
                                       <!-- bra size / BH str-->
                                       <input type="text" class="form-input1 weight bra_size" placeholder="BH str" value="<?php echo $value['bra_size'];?>" >
