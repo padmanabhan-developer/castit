@@ -525,7 +525,7 @@ $(document).ready(function () {
         );
         
       });
-      
+
       break;
   }
 });
@@ -546,6 +546,8 @@ $(document).ready(function(){
   });
  
   $('#upload').click(function(){
+      $(".ajax_loading_container").fadeIn('fast');
+      $("#upload").attr("disabled","true");
       var fd = new FormData();
       var files = $('#file')[0].files[0];
       let profileId = $(this).attr('profile-id');
@@ -554,6 +556,7 @@ $(document).ready(function(){
       fd.append('request',1);
       fd.append('profile_id', profileId);
 
+      $('#file').val(''); 
       // AJAX request
       $.ajax({
           url: '/admin/src/'+ uploadmediatype +'upload',
@@ -562,6 +565,8 @@ $(document).ready(function(){
           contentType: false,
           processData: false,
           success: function(response){
+            $(".ajax_loading_container").hide();
+            $("#upload").removeAttr("disabled");
             response = JSON.parse(response);
             console.log(response);
             console.log(response.imgpath);
@@ -569,14 +574,24 @@ $(document).ready(function(){
                   // Show image preview
                   if(uploadmediatype == 'image'){
                     $('#preview').append("<img src='"+response.imgpath+"' width='100' height='100' style='display: inline-block;'>");
+                    
                   }
                   else{
-                    $('#preview').append("<p>Video Uploaded and is being processed by Zencoder.</p><p>Please continue uploading new videos or 'Complete' this form.</p>");
+                    $('#preview').append("<div class='video_upload_message'><p>Video Uploaded and is being processed by Zencoder. <p>This video will become available in short time.</p></p><p>Please continue uploading new videos or close this form.</p></div>");
+                    
+                    setTimeout(function(){
+                      $('.video_upload_message').fadeOut();
+                      $('.video_upload_message').html("");
+                    }, 10000)
                   }
               }else{
                   alert('file not uploaded');
               }
+          },
+          complete: function (jqXHR, status) {
+            $("#upload").removeAttr("disabled");
           }
+        
       });
   });
 

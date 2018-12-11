@@ -55,19 +55,21 @@
             <!-- Modal content-->
             <div class="modal-content">
                 <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <a href="/admin/profilemedia?id=<?php echo $_GET['id']; ?>&type=all"><button type="button" class="close">&times;</button></a>
                     <h4 class="modal-title">Upload Media</h4>
                 </div>
                 <div class="modal-body">
                     <!-- Form -->
                     <form id="uploadmediaform" method='post' action='' enctype="multipart/form-data">
                     <div class="upload_selection">
-                        <div class="radio radio-info"><input type="radio" name="uploadmediatype" value="image" checked="checked" autocomplete="off"><label>Image</label></div>
+                    <a href="#"> <div class="radio radio-info"><input type="radio" name="uploadmediatype" value="image" checked="checked" autocomplete="off"><label>Image</label></div></a>
                         <div class="radio radio-info"><input type="radio" name="uploadmediatype" value="video" autocomplete="off"><label>Video</label></div>
                     </div>
                         Select file : <input type='file' name='file' id='file' class='form-control' autocomplete="off"><br>
                         <input type='button' class='btn btn-info' value='Upload' id='upload' profile-id=<?php echo $_GET['id']?>>
-                        <span class="ajax_loading_container"></span>
+                        <!-- <span class="ajax_loading_container"></span> -->
+                        <div class="ajax_loading_container" style="display:none"></div>
+                        <!-- <div class="lds-roller"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div> -->
                         <!-- <input type='button' class='btn btn-info' value='Complete' id='complete' data-dismiss="modal"> -->
                     </form>
 

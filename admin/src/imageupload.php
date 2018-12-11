@@ -23,12 +23,12 @@ if(move_uploaded_file($_FILES['file']['tmp_name'],$location)){
 echo $response;
 */
 
-$fileName     = $_FILES["file"]["name"];
+$fileName     = isset($_FILES["file"]["name"]) ? $_FILES["file"]["name"] : "";
 $filename     = $fileName;
-$fileTmpLoc   = $_FILES["file"]["tmp_name"];
-$fileType     = $_FILES["file"]["type"];
-$fileSize     = $_FILES["file"]["size"];
-$fileErrorMsg = $_FILES["file"]["error"];
+$fileTmpLoc   = isset($_FILES["file"]["tmp_name"]) ? $_FILES["file"]["tmp_name"] : "";
+$fileType     = isset($_FILES["file"]["type"]) ? $_FILES["file"]["type"] : "";
+$fileSize     = isset($_FILES["file"]["size"]) ? $_FILES["file"]["size"] : "";
+$fileErrorMsg = isset($_FILES["file"]["error"]) ? $_FILES["file"]["error"] : "";
 $location     = $_SERVER['DOCUMENT_ROOT'].'/images/uploads/';
 $profile_id   = $_REQUEST['profile_id'];
 
