@@ -17,7 +17,7 @@ else{
   $user_profile_query->execute();
   $row = $user_profile_query->rowCount();
 }
-// echo $query_string; exit;
+
 if ($row > 0){
   foreach ($user_profile_query->fetchAll(PDO::FETCH_ASSOC) as $key => $value) {
     // unset($value['password']);
