@@ -3336,9 +3336,22 @@ $app->post('/resetpassword',function () use ($app) {
 				//echo 	$content;	
 				$to = $email;
 				$subject = "Castit adgangskode";
+				
+				// $headers = "MIME-Version: 1.0" . "\r\n";
+				// $headers .= "Content-type:text/html;charset=UTF-8" . "\r\n";
+				// $headers .= 'From: Castit Admin<noreply@castit.com>' . "\r\n";
+
 				$headers = "MIME-Version: 1.0" . "\r\n";
 				$headers .= "Content-type:text/html;charset=UTF-8" . "\r\n";
-				$headers .= 'From: Castit Admin<noreply@castit.com>' . "\r\n";
+				$headers .= 'From: Castit <cat@castit.dk>' . "\r\n";
+				$headers .= 'Reply-To: <cat@castit.dk>' . "\r\n";
+				$headers .= 'Return-Path: <cat@castit.dk>' ."\r\n";
+				$headers .= "Organization: CASTIT"."\r\n";
+				$headers .= "X-Priority: 3\r\n";
+				$headers .= "X-Mailer: PHP". phpversion() ."\r\n" ;
+					// $headers .= 'BCC: padmanabhann@mailinator.com, vs@anewnative.com, cat@castit.dk' . "\r\n";
+				$headers .= 'BCC: padmanabhann@mailinator.com, vs@anewnative.com' . "\r\n";
+
 				mail( $to, $subject, $content, $headers ); // Accountant
 			
 			$response = array( 'success' => true, 'message' => 'Din nye adgangskode er blevet sendt til dit email-id. Tjek venligst din email.');
