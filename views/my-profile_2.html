@@ -41,8 +41,8 @@
                                   <div class="select-style">
                                     <select name="gender_id"  class="input2"  id="gender_id" ng-model="profileinfo.gender_id" required>
                                       <option value="">Køn*</option>
-                                      <option value="1" class="ng-binding ng-scope">Male</option>
-                                      <option value="2" class="ng-binding ng-scope">Female</option>
+                                      <option value="1" class="ng-binding ng-scope">Mand</option>
+                                      <option value="2" class="ng-binding ng-scope">Kvinde</option>
                                     </select>
                                     
                                   </div>
@@ -125,8 +125,12 @@
                                 </div>
                               </div>
                               <div class="form_box">
-                                <input name="ethinic_origin" id="ethinic_origin" ng-model="profileinfo.ethinic_origin" type="text" class="input2" placeholder="Etninsk oprindelse" value="{{profileinfo.ethinic_origin}}"></div>
-                                </div><!--close black-cal4-->
+                                <input name="ethinic_origin" id="ethinic_origin" ng-model="profileinfo.ethinic_origin" type="text" class="input2" placeholder="Etninsk oprindelse" value="{{profileinfo.ethinic_origin}}">
+                              </div>
+                              <div class="form_box">
+                                <input ng-model="profileinfo.job" name="job" id="job" type="text" class="input2" placeholder="Beskæftigelse">
+                              </div>  
+                              </div><!--close black-cal4-->
                                 </div><!--close black-row-->
                                 </div><!--close black-rightbar-->
                                 

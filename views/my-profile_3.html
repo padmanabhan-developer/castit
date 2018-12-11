@@ -26,51 +26,51 @@
                         <div class="form_box2">
                         </div>
                         <div class="form_box2">
-                          <label class="ansog_select_label">SKJORTE STR.</label>
+                            <label class="ansog_select_label">Skjorte str.</label>
                           <div class="select-style">
                             <select ng-style="{'color':shirt_size_from==''?'#dadada':''}" name="shirt_size_from" class="input2" id="shirt_size_from" ng-model="profileinfo.shirt_size_from" >
                               <option value="">Skjorte fra</option>
-                              <option style="color:black" value="35" ng-show="gender_id==1&& age>14">35</option>
-                              <option style="color:black" value="36" ng-show="gender_id==1&& age>14">36</option>
-                              <option style="color:black" value="37" ng-show="gender_id==1&& age>14">37</option>
-                              <option style="color:black" value="38" ng-show="gender_id==1&& age>14">38</option>
-                              <option style="color:black" value="39" ng-show="gender_id==1&& age>14">39</option>
-                              <option style="color:black" value="40" ng-show="gender_id==1&& age>14">40</option>
-                              <option style="color:black" value="41" ng-show="gender_id==1&& age>14">41</option>
-                              <option style="color:black" value="42" ng-show="gender_id==1&& age>14">42</option>
-                              <option style="color:black" value="43" ng-show="gender_id==1&& age>14">43</option>
-                              <option style="color:black" value="44" ng-show="gender_id==1&& age>14">44</option>
-                              <option style="color:black" value="45" ng-show="gender_id==1&& age>14">45</option>
-                              <option style="color:black" value="46" ng-show="gender_id==1&& age>14">46</option>
-                              <option style="color:black" value="32" ng-show="gender_id==2&& age>14">32</option>
-                              <option style="color:black" value="34" ng-show="gender_id==2&& age>14">34</option>
-                              <option style="color:black" value="36" ng-show="gender_id==2&& age>14">36</option>
-                              <option style="color:black" value="38" ng-show="gender_id==2&& age>14">38</option>
-                              <option style="color:black" value="40" ng-show="gender_id==2&& age>14">40</option>
-                              <option style="color:black" value="42" ng-show="gender_id==2&& age>14">42</option>
-                              <option style="color:black" value="44" ng-show="gender_id==2&& age>14">44</option>
-                              <option style="color:black" value="46" ng-show="gender_id==2&& age>14">46</option>
-                              <option style="color:black" value="48" ng-show="gender_id==2&& age>14">48</option>
-                              <option style="color:black" value="50" ng-show="gender_id==2&& age>14">50</option>
-                              <option style="color:black" value="52" ng-show="gender_id==2&& age>14">52</option>
-                              <option style="color:black" value="54" ng-show="gender_id==2&& age>14">54</option>
-                              <option style="color:black" value="56" ng-show="gender_id==2&& age>14">56</option>
-                              <option style="color:black" value="58" ng-show="gender_id==2&& age>14">58</option>
-                              <option style="color:black" value="86" ng-show="age <=14">86</option>
-                              <option style="color:black" value="92" ng-show="age <=14">92</option>
-                              <option style="color:black" value="98" ng-show="age <=14">98</option>
-                              <option style="color:black" value="104" ng-show="age <=14">104</option>
-                              <option style="color:black" value="110" ng-show="age <=14">110</option>
-                              <option style="color:black" value="116" ng-show="age <=14">116</option>
-                              <option style="color:black" value="122" ng-show="age <=14">122</option>
-                              <option style="color:black" value="128" ng-show="age <=14">128</option>
-                              <option style="color:black" value="134" ng-show="age <=14">134</option>
-                              <option style="color:black" value="140" ng-show="age <=14">140</option>
-                              <option style="color:black" value="146" ng-show="age <=14">146</option>
-                              <option style="color:black" value="152" ng-show="age <=14">152</option>
-                              <option style="color:black" value="158" ng-show="age <=14">158</option>
-                              <option style="color:black" value="164" ng-show="age <=14">164</option>
-                              <option style="color:black" value="170" ng-show="age <=14">170</option>
+                              <option style="color:black" value="35" ng-if="gender_id==1&& age>14">35</option>
+                              <option style="color:black" value="36" ng-if="gender_id==1&& age>14">36</option>
+                              <option style="color:black" value="37" ng-if="gender_id==1&& age>14">37</option>
+                              <option style="color:black" value="38" ng-if="gender_id==1&& age>14">38</option>
+                              <option style="color:black" value="39" ng-if="gender_id==1&& age>14">39</option>
+                              <option style="color:black" value="40" ng-if="gender_id==1&& age>14">40</option>
+                              <option style="color:black" value="41" ng-if="gender_id==1&& age>14">41</option>
+                              <option style="color:black" value="42" ng-if="gender_id==1&& age>14">42</option>
+                              <option style="color:black" value="43" ng-if="gender_id==1&& age>14">43</option>
+                              <option style="color:black" value="44" ng-if="gender_id==1&& age>14">44</option>
+                              <option style="color:black" value="45" ng-if="gender_id==1&& age>14">45</option>
+                              <option style="color:black" value="46" ng-if="gender_id==1&& age>14">46</option>
+                              <option style="color:black" value="32" ng-if="gender_id==2&& age>14">32</option>
+                              <option style="color:black" value="34" ng-if="gender_id==2&& age>14">34</option>
+                              <option style="color:black" value="36" ng-if="gender_id==2&& age>14">36</option>
+                              <option style="color:black" value="38" ng-if="gender_id==2&& age>14">38</option>
+                              <option style="color:black" value="40" ng-if="gender_id==2&& age>14">40</option>
+                              <option style="color:black" value="42" ng-if="gender_id==2&& age>14">42</option>
+                              <option style="color:black" value="44" ng-if="gender_id==2&& age>14">44</option>
+                              <option style="color:black" value="46" ng-if="gender_id==2&& age>14">46</option>
+                              <option style="color:black" value="48" ng-if="gender_id==2&& age>14">48</option>
+                              <option style="color:black" value="50" ng-if="gender_id==2&& age>14">50</option>
+                              <option style="color:black" value="52" ng-if="gender_id==2&& age>14">52</option>
+                              <option style="color:black" value="54" ng-if="gender_id==2&& age>14">54</option>
+                              <option style="color:black" value="56" ng-if="gender_id==2&& age>14">56</option>
+                              <option style="color:black" value="58" ng-if="gender_id==2&& age>14">58</option>
+                              <option style="color:black" value="86" ng-if="age <=14">86</option>
+                              <option style="color:black" value="92" ng-if="age <=14">92</option>
+                              <option style="color:black" value="98" ng-if="age <=14">98</option>
+                              <option style="color:black" value="104" ng-if="age <=14">104</option>
+                              <option style="color:black" value="110" ng-if="age <=14">110</option>
+                              <option style="color:black" value="116" ng-if="age <=14">116</option>
+                              <option style="color:black" value="122" ng-if="age <=14">122</option>
+                              <option style="color:black" value="128" ng-if="age <=14">128</option>
+                              <option style="color:black" value="134" ng-if="age <=14">134</option>
+                              <option style="color:black" value="140" ng-if="age <=14">140</option>
+                              <option style="color:black" value="146" ng-if="age <=14">146</option>
+                              <option style="color:black" value="152" ng-if="age <=14">152</option>
+                              <option style="color:black" value="158" ng-if="age <=14">158</option>
+                              <option style="color:black" value="164" ng-if="age <=14">164</option>
+                              <option style="color:black" value="170" ng-if="age <=14">170</option>
                             </select>
                           </div>
                         </div>
@@ -79,47 +79,47 @@
                           <div class="select-style">
                             <select ng-style="{'color':profileinfo.shirt_size_to==''?'#dadada':''}" name="shirt_size_to" class="input2" id="shirt_size_to" ng-model="profileinfo.shirt_size_to" >
                               <option value="">Skjorte til</option>
-                              <option style="color:black" value="35" ng-show="gender_id==1&& age>14">35</option>
-                              <option style="color:black" value="36" ng-show="gender_id==1&& age>14">36</option>
-                              <option style="color:black" value="37" ng-show="gender_id==1&& age>14">37</option>
-                              <option style="color:black" value="38" ng-show="gender_id==1&& age>14">38</option>
-                              <option style="color:black" value="39" ng-show="gender_id==1&& age>14">39</option>
-                              <option style="color:black" value="40" ng-show="gender_id==1&& age>14">40</option>
-                              <option style="color:black" value="41" ng-show="gender_id==1&& age>14">41</option>
-                              <option style="color:black" value="42" ng-show="gender_id==1&& age>14">42</option>
-                              <option style="color:black" value="43" ng-show="gender_id==1&& age>14">43</option>
-                              <option style="color:black" value="44" ng-show="gender_id==1&& age>14">44</option>
-                              <option style="color:black" value="45" ng-show="gender_id==1&& age>14">45</option>
-                              <option style="color:black" value="46" ng-show="gender_id==1&& age>14">46</option>
-                              <option style="color:black" value="32" ng-show="gender_id==2&& age>14">32</option>
-                              <option style="color:black" value="34" ng-show="gender_id==2&& age>14">34</option>
-                              <option style="color:black" value="36" ng-show="gender_id==2&& age>14">36</option>
-                              <option style="color:black" value="38" ng-show="gender_id==2&& age>14">38</option>
-                              <option style="color:black" value="40" ng-show="gender_id==2&& age>14">40</option>
-                              <option style="color:black" value="42" ng-show="gender_id==2&& age>14">42</option>
-                              <option style="color:black" value="44" ng-show="gender_id==2&& age>14">44</option>
-                              <option style="color:black" value="46" ng-show="gender_id==2&& age>14">46</option>
-                              <option style="color:black" value="48" ng-show="gender_id==2&& age>14">48</option>
-                              <option style="color:black" value="50" ng-show="gender_id==2&& age>14">50</option>
-                              <option style="color:black" value="52" ng-show="gender_id==2&& age>14">52</option>
-                              <option style="color:black" value="54" ng-show="gender_id==2&& age>14">54</option>
-                              <option style="color:black" value="56" ng-show="gender_id==2&& age>14">56</option>
-                              <option style="color:black" value="58" ng-show="gender_id==2&& age>14">58</option>
-                              <option style="color:black" value="86" ng-show="age <=14">86</option>
-                              <option style="color:black" value="92" ng-show="age <=14">92</option>
-                              <option style="color:black" value="98" ng-show="age <=14">98</option>
-                              <option style="color:black" value="104" ng-show="age <=14">104</option>
-                              <option style="color:black" value="110" ng-show="age <=14">110</option>
-                              <option style="color:black" value="116" ng-show="age <=14">116</option>
-                              <option style="color:black" value="122" ng-show="age <=14">122</option>
-                              <option style="color:black" value="128" ng-show="age <=14">128</option>
-                              <option style="color:black" value="134" ng-show="age <=14">134</option>
-                              <option style="color:black" value="140" ng-show="age <=14">140</option>
-                              <option style="color:black" value="146" ng-show="age <=14">146</option>
-                              <option style="color:black" value="152" ng-show="age <=14">152</option>
-                              <option style="color:black" value="158" ng-show="age <=14">158</option>
-                              <option style="color:black" value="164" ng-show="age <=14">164</option>
-                              <option style="color:black" value="170" ng-show="age <=14">170</option>
+                              <option style="color:black" value="35" ng-if="gender_id==1&& age>14">35</option>
+                              <option style="color:black" value="36" ng-if="gender_id==1&& age>14">36</option>
+                              <option style="color:black" value="37" ng-if="gender_id==1&& age>14">37</option>
+                              <option style="color:black" value="38" ng-if="gender_id==1&& age>14">38</option>
+                              <option style="color:black" value="39" ng-if="gender_id==1&& age>14">39</option>
+                              <option style="color:black" value="40" ng-if="gender_id==1&& age>14">40</option>
+                              <option style="color:black" value="41" ng-if="gender_id==1&& age>14">41</option>
+                              <option style="color:black" value="42" ng-if="gender_id==1&& age>14">42</option>
+                              <option style="color:black" value="43" ng-if="gender_id==1&& age>14">43</option>
+                              <option style="color:black" value="44" ng-if="gender_id==1&& age>14">44</option>
+                              <option style="color:black" value="45" ng-if="gender_id==1&& age>14">45</option>
+                              <option style="color:black" value="46" ng-if="gender_id==1&& age>14">46</option>
+                              <option style="color:black" value="32" ng-if="gender_id==2&& age>14">32</option>
+                              <option style="color:black" value="34" ng-if="gender_id==2&& age>14">34</option>
+                              <option style="color:black" value="36" ng-if="gender_id==2&& age>14">36</option>
+                              <option style="color:black" value="38" ng-if="gender_id==2&& age>14">38</option>
+                              <option style="color:black" value="40" ng-if="gender_id==2&& age>14">40</option>
+                              <option style="color:black" value="42" ng-if="gender_id==2&& age>14">42</option>
+                              <option style="color:black" value="44" ng-if="gender_id==2&& age>14">44</option>
+                              <option style="color:black" value="46" ng-if="gender_id==2&& age>14">46</option>
+                              <option style="color:black" value="48" ng-if="gender_id==2&& age>14">48</option>
+                              <option style="color:black" value="50" ng-if="gender_id==2&& age>14">50</option>
+                              <option style="color:black" value="52" ng-if="gender_id==2&& age>14">52</option>
+                              <option style="color:black" value="54" ng-if="gender_id==2&& age>14">54</option>
+                              <option style="color:black" value="56" ng-if="gender_id==2&& age>14">56</option>
+                              <option style="color:black" value="58" ng-if="gender_id==2&& age>14">58</option>
+                              <option style="color:black" value="86" ng-if="age <=14">86</option>
+                              <option style="color:black" value="92" ng-if="age <=14">92</option>
+                              <option style="color:black" value="98" ng-if="age <=14">98</option>
+                              <option style="color:black" value="104" ng-if="age <=14">104</option>
+                              <option style="color:black" value="110" ng-if="age <=14">110</option>
+                              <option style="color:black" value="116" ng-if="age <=14">116</option>
+                              <option style="color:black" value="122" ng-if="age <=14">122</option>
+                              <option style="color:black" value="128" ng-if="age <=14">128</option>
+                              <option style="color:black" value="134" ng-if="age <=14">134</option>
+                              <option style="color:black" value="140" ng-if="age <=14">140</option>
+                              <option style="color:black" value="146" ng-if="age <=14">146</option>
+                              <option style="color:black" value="152" ng-if="age <=14">152</option>
+                              <option style="color:black" value="158" ng-if="age <=14">158</option>
+                              <option style="color:black" value="164" ng-if="age <=14">164</option>
+                              <option style="color:black" value="170" ng-if="age <=14">170</option>
                             </select>
                           </div>
                         </div>
@@ -132,96 +132,96 @@
                           <div class="select-style">
                             <select ng-style="{'color':profileinfo.pants_size_from==''?'#dadada':''}" name="pants_size_from" class="input2" id="pants_size_from" ng-model="profileinfo.pants_size_from" >
                               <option style="color:black" value="">Bukser fra</option>
-                              <option style="color:black" value="26" ng-show="gender_id==1&& age>14">26"</option>
-                              <option style="color:black" value="28" ng-show="gender_id==1&& age>14">28"</option>
-                              <option style="color:black" value="29" ng-show="gender_id==1&& age>14">29"</option>
-                              <option style="color:black" value="30" ng-show="gender_id==1&& age>14">30"</option>
-                              <option style="color:black" value="31" ng-show="gender_id==1&& age>14">31"</option>
-                              <option style="color:black" value="32" ng-show="gender_id==1&& age>14">32"</option>
-                              <option style="color:black" value="33" ng-show="gender_id==1&& age>14">33"</option>
-                              <option style="color:black" value="34" ng-show="gender_id==1&& age>14">34"</option>
-                              <option style="color:black" value="36" ng-show="gender_id==1&& age>14">36"</option>
-                              <option style="color:black" value="38" ng-show="gender_id==1&& age>14">38"</option>
-                              <option style="color:black" value="40" ng-show="gender_id==1&& age>14">40"</option>
-                              <option style="color:black" value="42" ng-show="gender_id==1&& age>14">42"</option>
-                              <option style="color:black" value="32" ng-show="gender_id==2&& age>14">32</option>
-                              <option style="color:black" value="34" ng-show="gender_id==2&& age>14">34</option>
-                              <option style="color:black" value="36" ng-show="gender_id==2&& age>14">36</option>
-                              <option style="color:black" value="38" ng-show="gender_id==2&& age>14">38</option>
-                              <option style="color:black" value="40" ng-show="gender_id==2&& age>14">40</option>
-                              <option style="color:black" value="42" ng-show="gender_id==2&& age>14">42</option>
-                              <option style="color:black" value="44" ng-show="gender_id==2&& age>14">44</option>
-                              <option style="color:black" value="46" ng-show="gender_id==2&& age>14">46</option>
-                              <option style="color:black" value="48" ng-show="gender_id==2&& age>14">48</option>
-                              <option style="color:black" value="50" ng-show="gender_id==2&& age>14">50</option>
-                              <option style="color:black" value="52" ng-show="gender_id==2&& age>14">52</option>
-                              <option style="color:black" value="54" ng-show="gender_id==2&& age>14">54</option>
-                              <option style="color:black" value="56" ng-show="gender_id==2&& age>14">56</option>
-                              <option style="color:black" value="58" ng-show="gender_id==2&& age>14">58</option>
-                              <option style="color:black" value="86" ng-show="age <=14">86</option>
-                              <option style="color:black" value="92" ng-show="age <=14">92</option>
-                              <option style="color:black" value="98" ng-show="age <=14">98</option>
-                              <option style="color:black" value="104" ng-show="age <=14">104</option>
-                              <option style="color:black" value="110" ng-show="age <=14">110</option>
-                              <option style="color:black" value="116" ng-show="age <=14">116</option>
-                              <option style="color:black" value="122" ng-show="age <=14">122</option>
-                              <option style="color:black" value="128" ng-show="age <=14">128</option>
-                              <option style="color:black" value="134" ng-show="age <=14">134</option>
-                              <option style="color:black" value="140" ng-show="age <=14">140</option>
-                              <option style="color:black" value="146" ng-show="age <=14">146</option>
-                              <option style="color:black" value="152" ng-show="age <=14">152</option>
-                              <option style="color:black" value="158" ng-show="age <=14">158</option>
-                              <option style="color:black" value="164" ng-show="age <=14">164</option>
-                              <option style="color:black" value="170" ng-show="age <=14">170</option>
+                              <option style="color:black" value="26" ng-if="gender_id==1&& age>14">26"</option>
+                              <option style="color:black" value="28" ng-if="gender_id==1&& age>14">28"</option>
+                              <option style="color:black" value="29" ng-if="gender_id==1&& age>14">29"</option>
+                              <option style="color:black" value="30" ng-if="gender_id==1&& age>14">30"</option>
+                              <option style="color:black" value="31" ng-if="gender_id==1&& age>14">31"</option>
+                              <option style="color:black" value="32" ng-if="gender_id==1&& age>14">32"</option>
+                              <option style="color:black" value="33" ng-if="gender_id==1&& age>14">33"</option>
+                              <option style="color:black" value="34" ng-if="gender_id==1&& age>14">34"</option>
+                              <option style="color:black" value="36" ng-if="gender_id==1&& age>14">36"</option>
+                              <option style="color:black" value="38" ng-if="gender_id==1&& age>14">38"</option>
+                              <option style="color:black" value="40" ng-if="gender_id==1&& age>14">40"</option>
+                              <option style="color:black" value="42" ng-if="gender_id==1&& age>14">42"</option>
+                              <option style="color:black" value="32" ng-if="gender_id==2&& age>14">32</option>
+                              <option style="color:black" value="34" ng-if="gender_id==2&& age>14">34</option>
+                              <option style="color:black" value="36" ng-if="gender_id==2&& age>14">36</option>
+                              <option style="color:black" value="38" ng-if="gender_id==2&& age>14">38</option>
+                              <option style="color:black" value="40" ng-if="gender_id==2&& age>14">40</option>
+                              <option style="color:black" value="42" ng-if="gender_id==2&& age>14">42</option>
+                              <option style="color:black" value="44" ng-if="gender_id==2&& age>14">44</option>
+                              <option style="color:black" value="46" ng-if="gender_id==2&& age>14">46</option>
+                              <option style="color:black" value="48" ng-if="gender_id==2&& age>14">48</option>
+                              <option style="color:black" value="50" ng-if="gender_id==2&& age>14">50</option>
+                              <option style="color:black" value="52" ng-if="gender_id==2&& age>14">52</option>
+                              <option style="color:black" value="54" ng-if="gender_id==2&& age>14">54</option>
+                              <option style="color:black" value="56" ng-if="gender_id==2&& age>14">56</option>
+                              <option style="color:black" value="58" ng-if="gender_id==2&& age>14">58</option>
+                              <option style="color:black" value="86" ng-if="age <=14">86</option>
+                              <option style="color:black" value="92" ng-if="age <=14">92</option>
+                              <option style="color:black" value="98" ng-if="age <=14">98</option>
+                              <option style="color:black" value="104" ng-if="age <=14">104</option>
+                              <option style="color:black" value="110" ng-if="age <=14">110</option>
+                              <option style="color:black" value="116" ng-if="age <=14">116</option>
+                              <option style="color:black" value="122" ng-if="age <=14">122</option>
+                              <option style="color:black" value="128" ng-if="age <=14">128</option>
+                              <option style="color:black" value="134" ng-if="age <=14">134</option>
+                              <option style="color:black" value="140" ng-if="age <=14">140</option>
+                              <option style="color:black" value="146" ng-if="age <=14">146</option>
+                              <option style="color:black" value="152" ng-if="age <=14">152</option>
+                              <option style="color:black" value="158" ng-if="age <=14">158</option>
+                              <option style="color:black" value="164" ng-if="age <=14">164</option>
+                              <option style="color:black" value="170" ng-if="age <=14">170</option>
                             </select>
                           </div>
                         </div>
                         <div class="form_box2">
-                          <label class="ansog_select_label">__</label>
+                            <label class="ansog_select_label">__</label>
                           <div class="select-style">
                             <select ng-style="{'color':profileinfo.pants_size_to==''?'#dadada':''}"  name="pants_size_to" class="input2" id="pants_size_to" ng-model="profileinfo.pants_size_to" >
                               <option style="color:black" value="">Bukser til</option>
-                              <option style="color:black" value="26" ng-show="gender_id==1&& age>14">26"</option>
-                              <option style="color:black" value="28" ng-show="gender_id==1&& age>14">28"</option>
-                              <option style="color:black" value="29" ng-show="gender_id==1&& age>14">29"</option>
-                              <option style="color:black" value="30" ng-show="gender_id==1&& age>14">30"</option>
-                              <option style="color:black" value="31" ng-show="gender_id==1&& age>14">31"</option>
-                              <option style="color:black" value="32" ng-show="gender_id==1&& age>14">32"</option>
-                              <option style="color:black" value="33" ng-show="gender_id==1&& age>14">33"</option>
-                              <option style="color:black" value="34" ng-show="gender_id==1&& age>14">34"</option>
-                              <option style="color:black" value="36" ng-show="gender_id==1&& age>14">36"</option>
-                              <option style="color:black" value="38" ng-show="gender_id==1&& age>14">38"</option>
-                              <option style="color:black" value="40" ng-show="gender_id==1&& age>14">40"</option>
-                              <option style="color:black" value="42" ng-show="gender_id==1&& age>14">42"</option>
-                              <option style="color:black" value="32" ng-show="gender_id==2&& age>14">32</option>
-                              <option style="color:black" value="34" ng-show="gender_id==2&& age>14">34</option>
-                              <option style="color:black" value="36" ng-show="gender_id==2&& age>14">36</option>
-                              <option style="color:black" value="38" ng-show="gender_id==2&& age>14">38</option>
-                              <option style="color:black" value="40" ng-show="gender_id==2&& age>14">40</option>
-                              <option style="color:black" value="42" ng-show="gender_id==2&& age>14">42</option>
-                              <option style="color:black" value="44" ng-show="gender_id==2&& age>14">44</option>
-                              <option style="color:black" value="46" ng-show="gender_id==2&& age>14">46</option>
-                              <option style="color:black" value="48" ng-show="gender_id==2&& age>14">48</option>
-                              <option style="color:black" value="50" ng-show="gender_id==2&& age>14">50</option>
-                              <option style="color:black" value="52" ng-show="gender_id==2&& age>14">52</option>
-                              <option style="color:black" value="54" ng-show="gender_id==2&& age>14">54</option>
-                              <option style="color:black" value="56" ng-show="gender_id==2&& age>14">56</option>
-                              <option style="color:black" value="58" ng-show="gender_id==2&& age>14">58</option>
-                              <option style="color:black" value="86" ng-show="age <=14">86</option>
-                              <option style="color:black" value="92" ng-show="age <=14">92</option>
-                              <option style="color:black" value="98" ng-show="age <=14">98</option>
-                              <option style="color:black" value="104" ng-show="age <=14">104</option>
-                              <option style="color:black" value="110" ng-show="age <=14">110</option>
-                              <option style="color:black" value="116" ng-show="age <=14">116</option>
-                              <option style="color:black" value="122" ng-show="age <=14">122</option>
-                              <option style="color:black" value="128" ng-show="age <=14">128</option>
-                              <option style="color:black" value="134" ng-show="age <=14">134</option>
-                              <option style="color:black" value="140" ng-show="age <=14">140</option>
-                              <option style="color:black" value="146" ng-show="age <=14">146</option>
-                              <option style="color:black" value="152" ng-show="age <=14">152</option>
-                              <option style="color:black" value="158" ng-show="age <=14">158</option>
-                              <option style="color:black" value="164" ng-show="age <=14">164</option>
-                              <option style="color:black" value="170" ng-show="age <=14">170</option>
+                              <option style="color:black" value="26" ng-if="gender_id==1&& age>14">26"</option>
+                              <option style="color:black" value="28" ng-if="gender_id==1&& age>14">28"</option>
+                              <option style="color:black" value="29" ng-if="gender_id==1&& age>14">29"</option>
+                              <option style="color:black" value="30" ng-if="gender_id==1&& age>14">30"</option>
+                              <option style="color:black" value="31" ng-if="gender_id==1&& age>14">31"</option>
+                              <option style="color:black" value="32" ng-if="gender_id==1&& age>14">32"</option>
+                              <option style="color:black" value="33" ng-if="gender_id==1&& age>14">33"</option>
+                              <option style="color:black" value="34" ng-if="gender_id==1&& age>14">34"</option>
+                              <option style="color:black" value="36" ng-if="gender_id==1&& age>14">36"</option>
+                              <option style="color:black" value="38" ng-if="gender_id==1&& age>14">38"</option>
+                              <option style="color:black" value="40" ng-if="gender_id==1&& age>14">40"</option>
+                              <option style="color:black" value="42" ng-if="gender_id==1&& age>14">42"</option>
+                              <option style="color:black" value="32" ng-if="gender_id==2&& age>14">32</option>
+                              <option style="color:black" value="34" ng-if="gender_id==2&& age>14">34</option>
+                              <option style="color:black" value="36" ng-if="gender_id==2&& age>14">36</option>
+                              <option style="color:black" value="38" ng-if="gender_id==2&& age>14">38</option>
+                              <option style="color:black" value="40" ng-if="gender_id==2&& age>14">40</option>
+                              <option style="color:black" value="42" ng-if="gender_id==2&& age>14">42</option>
+                              <option style="color:black" value="44" ng-if="gender_id==2&& age>14">44</option>
+                              <option style="color:black" value="46" ng-if="gender_id==2&& age>14">46</option>
+                              <option style="color:black" value="48" ng-if="gender_id==2&& age>14">48</option>
+                              <option style="color:black" value="50" ng-if="gender_id==2&& age>14">50</option>
+                              <option style="color:black" value="52" ng-if="gender_id==2&& age>14">52</option>
+                              <option style="color:black" value="54" ng-if="gender_id==2&& age>14">54</option>
+                              <option style="color:black" value="56" ng-if="gender_id==2&& age>14">56</option>
+                              <option style="color:black" value="58" ng-if="gender_id==2&& age>14">58</option>
+                              <option style="color:black" value="86" ng-if="age <=14">86</option>
+                              <option style="color:black" value="92" ng-if="age <=14">92</option>
+                              <option style="color:black" value="98" ng-if="age <=14">98</option>
+                              <option style="color:black" value="104" ng-if="age <=14">104</option>
+                              <option style="color:black" value="110" ng-if="age <=14">110</option>
+                              <option style="color:black" value="116" ng-if="age <=14">116</option>
+                              <option style="color:black" value="122" ng-if="age <=14">122</option>
+                              <option style="color:black" value="128" ng-if="age <=14">128</option>
+                              <option style="color:black" value="134" ng-if="age <=14">134</option>
+                              <option style="color:black" value="140" ng-if="age <=14">140</option>
+                              <option style="color:black" value="146" ng-if="age <=14">146</option>
+                              <option style="color:black" value="152" ng-if="age <=14">152</option>
+                              <option style="color:black" value="158" ng-if="age <=14">158</option>
+                              <option style="color:black" value="164" ng-if="age <=14">164</option>
+                              <option style="color:black" value="170" ng-if="age <=14">170</option>
                             </select>
                           </div>
                         </div>
@@ -325,17 +325,18 @@
                         </div>
                       </div>
                     </div>
-                    <div class="form_box" ng-show="gender_id==2&& age>14">
+                    <div class="form_box" ng-if="gender_id==2&& age>14">
                       <div class="black-row">
-                          <label class="ansog_select_label">BH STR.</label>
                         <div class="form_box2">
+                            <label class="ansog_select_label">BH Str.</label>
                           <input value="{{profileinfo.bra_size}}" name="bra_size" id="bra_size" ng-model="profileinfo.bra_size" type="text" class="input2" placeholder="BH Str.">
                         </div>
                       </div>
                     </div>
-                    <div class="form_box" ng-show="gender_id==1 && age>14">
+                    <div class="form_box" ng-if="gender_id==1 && age>14">
                       <div class="black-row">
                         <div class="form_box2">
+                            <label class="ansog_select_label">Jakkesæt str.</label>
                           <div class="select-style">
                             <select ng-style="{'color':profileinfo.suite_size_from==''?'#dadada':''}" name="suite_size_from" class="input2" id="suite_size_from" ng-model="profileinfo.suite_size_from" >
                               <option style="color:black" value="">Jakkesæt fra</option>
@@ -353,6 +354,7 @@
                           </div>
                         </div>
                         <div class="form_box2">
+                            <label class="ansog_select_label">__</label>
                           <div class="select-style">
                             <select ng-style="{'color':profileinfo.suite_size_to==''?'#dadada':''}" name="suite_size_to" class="input2" id="suite_size_to" ng-model="profileinfo.suite_size_to" >
                               <option style="color:black" value="">Jakkesæt til</option>
@@ -377,9 +379,11 @@
                     <div class="form_box">
                       <div class="black-row">
                         <div class="form_box2">
+                            <label class="ansog_select_label">Højde</label>
                           <input value="{{profileinfo.height}}" name="height" id="height" ng-model="profileinfo.height" type="text" class="input2" placeholder="Højde" >
                         </div>
                         <div class="form_box2">
+                            <label class="ansog_select_label">Vægt</label>
                           <input value="{{profileinfo.weight}}" name="weight" id="weight" ng-model="profileinfo.weight" type="text" class="input2" placeholder="Vægt" >
                         </div>
                       </div>
@@ -387,6 +391,7 @@
                     <div class="form_box">
                       <div class="black-row">
                         <div class="form_box2">
+                            <label class="ansog_select_label">Hårfarve</label>
                           <div class="select-style">
                             <select ng-style="{'color':profileinfo.hair_color_id==''?'#dadada':''}"  name="hair_color_id" class="input2" id="hair_color_id" ng-model="profileinfo.hair_color_id">
                               <option value="">Hårfarve</option>
@@ -403,13 +408,14 @@
                           </div>
                         </div>
                         <div class="form_box2">
+                            <label class="ansog_select_label">Øjen farve</label>
                           <div class="select-style">
                             <select ng-style="{'color':profileinfo.eye_color_id==''?'#dadada':''}"  name="eye_color_id" class="input2" id="eye_color_id" ng-model="profileinfo.eye_color_id">
                               <option value="">Øjen farve</option>
                               <option style="color:black" value="1"  class="ng-binding ng-scope">Brune</option>
                               <option style="color:black" value="3"  class="ng-binding ng-scope">Grønne</option>
                               <option style="color:black" value="4"  class="ng-binding ng-scope">Blågrønne</option>
-                              <option style="color:black" value="2"  class="ng-binding ng-scope">Blue</option>
+                              <option style="color:black" value="2"  class="ng-binding ng-scope">Blå</option>
                               <option style="color:black" value="5"  class="ng-binding ng-scope">Blågrå</option>
                               <option style="color:black" value="6"  class="ng-binding ng-scope">Grå</option>
                               <option style="color:black" value="7"  class="ng-binding ng-scope">Hazel</option>
@@ -420,7 +426,8 @@
                     </div>
                     <div class="form_box">
                       <div class="black-row">
-                        <div class="form_box2" ng-show="age<=14">
+                        <div class="form_box2" ng-if="age<=14">
+                            <label class="ansog_select_label">Børne str.</label>
                           <div class="select-style">
                             <select ng-style="{'color':profileinfo.children_sizes==''?'#dadada':''}" name="children_sizes" class="input2" id="children_sizes" ng-model="profileinfo.children_sizes">
                               <option value="">Børne str. til</option>
