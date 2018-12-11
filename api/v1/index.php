@@ -2778,7 +2778,7 @@ $app->post('/sendgroup', function () use ($app) {
             $html .= '<div class="pop-col3" style="float:left; padding:0 0; margin:0 0 20px 0;border: 5px solid white; width: 170px !important;">
               <div class="pop-col-inner" style=""float:left; width:100%; position:relative;>
                 <div class="pop-thumb" style="float:left; width:100%; position:relative; margin:0 0 10px 0; background-image: url('.$profile_image.'); height:217px;background-size: cover;background-repeat: no-repeat;background-position: top center;">
-                <h6 style="font-weight:normal; margin:0; padding:0;color:#fff; font-size:10px; line-height:20px; font-weight:normal; font-family:Arial, Helvetica, sans-serif; padding:13px 0 13px 0; background:rgba(0,0,0,0.75); position:absolute; left:0; bottom:0; width:100%; text-align:center;" >'.$row['first_name'].'.&nbsp;'.$row['profile_number'].'</h6>
+                <h6 style="font-weight:normal; margin:0; margin-top:100% !important; padding:0;color:#fff; font-size:10px; line-height:20px; font-weight:normal; font-family:Arial, Helvetica, sans-serif; padding:13px 0 13px 0; background:rgba(0,0,0,0.75); position:absolute; left:0; bottom:0; width:100%; text-align:center;" >'.$row['first_name'].'.&nbsp;'.$row['profile_number'].'</h6>
               </div>
               <h5 style="margin:0; padding:0;color:#000; font-size:12px; line-height:16px; font-weight:bold; font-family:Arial, Helvetica, sans-serif; margin:0 0 0 0;" >Note: </h5>
                   <p style="color:#d1d1d1; font-size:12px; line-height:16px; font-weight:normal; font-family:Arial, Helvetica, sans-serif; margin:0 0 0 0;">'.$rowp["profile_notes"].'</p>
