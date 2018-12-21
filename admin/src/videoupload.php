@@ -18,6 +18,8 @@ $objectStoreService = $client->objectStoreService(null, 'LON');
 $container          = $objectStoreService->getContainer('video_original_files');
 $date_dir           = date("o-m-d");
 $fileName			= $_FILES["file"]["name"];
+$ext = ".".pathinfo($fileName, PATHINFO_EXTENSION);
+$fileName			= unique_code(10).$ext;
 $localFileName      = $location.$fileName;
 $remoteFileName     = "/profiles/".$date_dir."/".$time."__".$fileName;
 $cdnfilepath     	= "/videos/profiles/".$date_dir;
@@ -27,8 +29,8 @@ $_FILES["file"]["cdnfilepath"] = $cdnfilepath;
 $_FILES["file"]["cdnfilename"] = $cdnfilename;
 $_FILES["file"]["thumbnail"] = $thumbnail;
 
-move_uploaded_file($fileTmpLoc, $location.$fileName);
-
+// move_uploaded_file($fileTmpLoc, $location.$fileName);
+if(move_uploaded_file($fileTmpLoc, $location.$fileName)){
 $handle = fopen($localFileName, 'r');
 $container->uploadObject($remoteFileName, $handle);
 unset($handle);
@@ -94,5 +96,9 @@ $filename = $cdnfilename;
 									'1',
 									'1')";
 						$query_prepared = $db->prepare($query);
-                        $query_prepared->execute();
+						$query_prepared->execute();
+								}
+								else{
+									echo "move_uploaded_file function failed";
+								}
 }

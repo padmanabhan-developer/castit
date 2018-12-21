@@ -838,7 +838,7 @@ progress{
   .side-tool li a{color:#fff; text-decoration:none; font-weight:800; } 
   .title4{float:left; color:#2c2e33;font-family:Arial, Helvetica, sans-serif; font-size:12px;font-weight:bold; }
   
-  .div-close{position: relative; float:right; background:url(images/div-close.png) no-repeat center center; width:15px; height:10px;margin-right: 10%;}
+  .div-close{position: relative; float:right; background:url(images/div-close.png) no-repeat center center; width:15px; height:15px;margin-right: 10%;}
   .div-open{float:right; background:url(images/div-open.png) no-repeat center center; width:15px; height:10px;}
   
   .sidebar_box2{float:left; width:100%; border-top:solid 1px #2c2e33; padding:20px 0 0 0;}

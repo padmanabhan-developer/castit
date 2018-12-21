@@ -259,7 +259,8 @@ main.controller('RegisterStep2Controller', ['$scope', '$filter', '$http', '$wind
 	$rootScope.bodylayout = 'black';
 	$rootScope.interface = 'ansog';	
 	$scope.phone_at_work='';
-	$scope.ethinic_origin = '';
+	$scope.ethnic_origin = '';
+	$scope.job = '';
 	var limit='';	 
  	$http.get('api/v1/checkstep2', {params: {limit: limit}}).success(function(reponse) {
 		if(reponse.step1status){
@@ -271,7 +272,8 @@ main.controller('RegisterStep2Controller', ['$scope', '$filter', '$http', '$wind
 				$scope.birth_day = reponse.step2.birth_day;
 				$scope.birth_month = reponse.step2.birth_month;
 				$scope.birth_year = reponse.step2.birth_year;
-				$scope.ethinic_origin = reponse.step2.ethinic_origin;
+				$scope.ethnic_origin = reponse.step2.ethnic_origin;
+				$scope.job = reponse.step2.job;
 			}
 		}
 		else{
@@ -299,7 +301,8 @@ main.controller('RegisterStep2Controller', ['$scope', '$filter', '$http', '$wind
 						birth_day: $scope.birth_day,
 						birth_month: $scope.birth_month,
 						birth_year: $scope.birth_year,
-						ethinic_origin: $scope.ethinic_origin
+						ethnic_origin: $scope.ethnic_origin,
+						job: $scope.job,
 						}
 
 
@@ -395,7 +398,8 @@ main.controller('RegisterStep3Controller', ['$scope', '$filter', '$http', '$wind
 main.controller('RegisterStep4Controller', ['$scope', '$filter', '$http', '$window', '$rootScope', '$routeParams', 'FlashService', function($scope, $filter, $http, $window, $rootScope, $routeParams, FlashService) {  
 	$rootScope.bodylayout = 'black';
 	$rootScope.interface = 'ansog';	
-	$scope.selectedcategories='';$scope.selectedskills='';$scope.selectedlicences='';$scope.notes='';$scope.job='';
+	$scope.selectedcategories='';$scope.selectedskills='';$scope.selectedlicences='';$scope.notes='';
+	$scope.sports_hobby='';
 	var limit='';	 
 
 	$http.get('api/v1/getcategories').success(function(categoriesdropdown) {
@@ -412,7 +416,7 @@ main.controller('RegisterStep4Controller', ['$scope', '$filter', '$http', '$wind
 		if((response.step1status) && (response.step2status) && (response.step3status)){
 			if(response.step4status){
 				$scope.notes 	= response.step4.notes;
-				$scope.job 	= response.step4.job;
+				$scope.sports_hobby 	= response.step4.sports_hobby;
 				$scope.selectedcategories 	= response.step4.selectedcategories;
 				$scope.selectedskills 	= response.step4.selectedskills;
 				$scope.selectedlicences 	= response.step4.selectedlicences;
@@ -522,12 +526,12 @@ main.controller('RegisterStep4Controller', ['$scope', '$filter', '$http', '$wind
 	
 	$scope.step4Create = step4Create;
 	function step4Create() {  
-		var formData = {
+		let formData = {
             notes: $scope.notes,
-						job: $scope.job,
 						selectedcategories: $scope.selectedcategories,
 						selectedskills: $scope.selectedskills,
-						selectedlicences: $scope.selectedlicences
+						selectedlicences: $scope.selectedlicences,
+						sportshobby: $scope.sports_hobby,
 						}
 		$http.post('api/v1/step4Create', formData).success(function(sucess) {
 			if(sucess){
@@ -648,7 +652,13 @@ main.controller('RegisterStep5Controller', ['$scope', '$filter', '$http', '$wind
       var row_id = this.id.slice(-1);
       $("input[id=langrateval"+row_id+"]").val("");
       $("span.ratings img[id^=start_"+row_id+"]").attr("src","images/star-black.png");
-    }
+		}
+		else{
+			var row_id = this.id.slice(-1);
+			$("input[id=langrateval"+row_id+"]").val("1");
+      $("span.ratings img[id^=start_"+row_id+"]").attr("src","images/star-black.png");
+      $("span.ratings img[id^=start_"+row_id+"_1]").attr("src","images/star-white.png");
+		}
   });
 	  
 }]);
@@ -855,7 +865,7 @@ main.controller('RegisterStep6Controller', ['$scope', '$filter', '$http', '$wind
 					if(response.status){
 						$scope.ifRegistring=false;
 						console.log(response);
-						data = { "email": response.email, "asdad": "adasdd" };
+						data = { "email": response.email };
 						$.post("/api/v1/welcome_email", data,
 							function (data, textStatus, jqXHR) {
 								
@@ -1585,8 +1595,8 @@ main.controller('MyProfileController2',['$scope','$http', function($scope, $http
   
   $scope.step2Update = step2Update;
   function step2Update() {
-    if($scope.profileinfo.ethinic_origin == undefined){
-      $scope.profileinfo.ethinic_origin = '';
+    if($scope.profileinfo.ethnic_origin == undefined){
+      $scope.profileinfo.ethnic_origin = '';
     }
     var formData = {
           email: $scope.profileinfo.email,
@@ -1596,7 +1606,8 @@ main.controller('MyProfileController2',['$scope','$http', function($scope, $http
           birth_day: $scope.profileinfo.birth_day,
           birth_month: $scope.profileinfo.birth_month,
           birth_year: $scope.profileinfo.birth_year,
-          ethinic_origin: $scope.profileinfo.ethinic_origin
+          ethnic_origin: $scope.profileinfo.ethnic_origin,
+          job: $scope.profileinfo.job
         }
     $http.post('api/v1/step2Create', formData).success(function(response) {
       if(response.success){
@@ -1771,9 +1782,10 @@ main.controller('MyProfileController4',['$scope','$http', function($scope, $http
   
   $scope.step4Update = step4Update;
   function step4Update() {
+		console.log($scope.profileinfo);
     var formData = {
           notes: $scope.profileinfo.notes,
-          job: $scope.profileinfo.job,
+          sportshobby: ($scope.profileinfo.sports_hobby) ? $scope.profileinfo.sports_hobby : ' ',
           selectedcategories: $scope.profileinfo.categories,
           selectedskills: $scope.profileinfo.skills,
           selectedlicences: $scope.profileinfo.licenses
@@ -1835,13 +1847,20 @@ main.controller('MyProfileController5',['$scope','$http', function($scope, $http
     ($scope.langrateval3 != "") ? setlangraing(3, $scope.langrateval3) : $scope.langrateval3 = "";
     ($scope.langrateval4 != "") ? setlangraing(4, $scope.langrateval4) : $scope.langrateval4 = "";
 
-    $("select[id^=lang]").on("change",function(){
-      if($(this).val() == ""){
-        var row_id = this.id.slice(-1);
-        $("input[id=langrateval"+row_id+"]").val("");
-        $("span.ratings img[id^=start_"+row_id+"]").attr("src","images/star-black.png");
-      }
-    });
+		$("select[id^=lang]").on("change",function(){
+			if($(this).val() == ""){
+				var row_id = this.id.slice(-1);
+				$("input[id=langrateval"+row_id+"]").val("");
+				$("span.ratings img[id^=start_"+row_id+"]").attr("src","images/star-black.png");
+			}
+			else{
+				var row_id = this.id.slice(-1);
+				$("input[id=langrateval"+row_id+"]").val("1");
+				$("span.ratings img[id^=start_"+row_id+"]").attr("src","images/star-black.png");
+				$("span.ratings img[id^=start_"+row_id+"_1]").attr("src","images/star-white.png");
+			}
+		});
+		
   });
 
   $scope.step5Update = step5Update;

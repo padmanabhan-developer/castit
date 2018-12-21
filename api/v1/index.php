@@ -5,6 +5,7 @@ require_once 'SimpleImage.php';
 
 require '../../vendor/autoload.php';
 use OpenCloud\Rackspace; 
+use Mailgun\Mailgun; 
 
 // Get Slim instance
 \Slim\Slim::registerAutoloader();
@@ -17,11 +18,15 @@ if (version_compare(PHP_VERSION, '5.4.0', '<')) {
     }
 // call our own dbHelper class
 $db = new dbHelper();
+$mgClient = new Mailgun('key-ebe8829c00330a3be43c59dd67da5b73');
+$domain = "mail.castit.dk";
 
 $imageClass = new SimpleImage();
 
 $app->post('/',function () use ($app) { 
-    global $db;
+	global $db;
+	global $mgClient;
+	global $domain;
 });
 
 /*****************************************
@@ -90,7 +95,7 @@ WHERE ( p.profile_status_id = '1')
 
 AND m.current ='1' "
 .$conditional_profiles.
-"AND p.id IN ( SELECT profile_id from photos WHERE published ='1' GROUP by profile_id ) ";
+"AND p.id IN ( SELECT profile_id from photos WHERE published ='1' and media_slet_status != '1' GROUP by profile_id ) ";
 $offset = $offset * 100;
 $limit  = " LIMIT 100 OFFSET ". $offset;
 $sql = $sql . " ORDER BY RAND() " . $limit;
@@ -142,7 +147,7 @@ $sql = $sql . " ORDER BY RAND() " . $limit;
 
 			// Profile Image
 			$profile_image ='';
-			$query_image = $db->prepare("SELECT *, DATE_FORMAT(created_at, '%Y') as create_year, DATE_FORMAT(created_at, '%m') as create_month, DATE_FORMAT(created_at, '%d') as create_date FROM photos WHERE profile_id = '".$row['id']."' and published ='1' ORDER BY position ASC "); 
+			$query_image = $db->prepare("SELECT *, DATE_FORMAT(created_at, '%Y') as create_year, DATE_FORMAT(created_at, '%m') as create_month, DATE_FORMAT(created_at, '%d') as create_date FROM photos WHERE profile_id = '".$row['id']."' and published ='1' and media_slet_status != '1' ORDER BY position ASC "); 
 		$query_image->execute();
 		$image= '';
     $rows_image = $query_image->fetchAll(PDO::FETCH_ASSOC);
@@ -231,9 +236,10 @@ $app->get('/getfilterprofiles',function () use ($app) {
 	if($search_text){
 		$search_qry .= " AND (p.first_name = '".$search_text."' 
 		OR p.last_name = '".$search_text."' 
-		OR m.profile_number like '%".$search_text."%' )";		
+		OR m.profile_number like '%".$search_text."%' 
+		OR m.profile_number = '".$search_text."')";		
 	}
-	$qry = "SELECT p.*, m.profile_group_id, m.profile_number, m.profile_number_first_name_last_name, m.version, m.current, g.name as gender_name, hc.name as hair_color_name, ec.name as eye_color_name FROM profiles p INNER JOIN memberships m ON m.profile_id = p.id INNER JOIN genders g ON g.id = p.gender_id INNER JOIN hair_colors hc ON hc.id = p.hair_color_id INNER JOIN eye_colors ec ON ec.id = p.eye_color_id  WHERE (p.profile_status_id = '1' ) AND m.current ='1' AND p.id IN (SELECT profile_id from photos WHERE published ='1' GROUP by profile_id) ".$search_qry."  ORDER by case WHEN m.profile_number LIKE 'CF%' THEN 1 WHEN m.profile_number LIKE 'CM%' THEN 2 WHEN m.profile_number LIKE 'A%' THEN 3 WHEN m.profile_number LIKE 'J%' THEN 4  WHEN m.profile_number LIKE 'YF%' THEN 5 WHEN m.profile_number LIKE 'YM%' THEN 6 ELSE 7 END ";
+	$qry = "SELECT p.*, m.profile_group_id, m.profile_number, m.profile_number_first_name_last_name, m.version, m.current, g.name as gender_name, hc.name as hair_color_name, ec.name as eye_color_name FROM profiles p INNER JOIN memberships m ON m.profile_id = p.id INNER JOIN genders g ON g.id = p.gender_id INNER JOIN hair_colors hc ON hc.id = p.hair_color_id INNER JOIN eye_colors ec ON ec.id = p.eye_color_id  WHERE (p.profile_status_id = '1' ) AND m.current ='1' AND p.id IN (SELECT profile_id from photos WHERE published ='1' and media_slet_status != '1' GROUP by profile_id) ".$search_qry."  ORDER by case WHEN m.profile_number LIKE 'CF%' THEN 1 WHEN m.profile_number LIKE 'CM%' THEN 2 WHEN m.profile_number LIKE 'A%' THEN 3 WHEN m.profile_number LIKE 'J%' THEN 4  WHEN m.profile_number LIKE 'YF%' THEN 5 WHEN m.profile_number LIKE 'YM%' THEN 6 ELSE 7 END ";
 
   $offset = (isset($_GET['offset'])) ? $_GET['offset'] : 1;
   
@@ -255,7 +261,7 @@ $app->get('/getfilterprofiles',function () use ($app) {
 
 			// Profile Image
 			$profile_image ='';
-			$query_image = $db->prepare("SELECT *, DATE_FORMAT(created_at, '%Y') as create_year, DATE_FORMAT(created_at, '%m') as create_month, DATE_FORMAT(created_at, '%d') as create_date FROM photos WHERE profile_id = '".$row['id']."' and published ='1' ORDER BY position ASC LIMIT 1"); 
+			$query_image = $db->prepare("SELECT *, DATE_FORMAT(created_at, '%Y') as create_year, DATE_FORMAT(created_at, '%m') as create_month, DATE_FORMAT(created_at, '%d') as create_date FROM photos WHERE profile_id = '".$row['id']."' and published ='1' and media_slet_status != '1' ORDER BY position ASC LIMIT 1"); 
 	$query_image->execute();
 	$image= '';
     $rows_image = $query_image->fetchAll(PDO::FETCH_ASSOC);
@@ -343,7 +349,7 @@ $app->get('/getsingleprofiles',function () use ($app) {
 
 		// Profile Image
 		$profile_images = array();
-		$query_image = $db->prepare("SELECT *, DATE_FORMAT(created_at, '%Y') as create_year, DATE_FORMAT(created_at, '%m') as create_month, DATE_FORMAT(created_at, '%d') as create_date FROM photos WHERE profile_id = '".$row['id']."' and published ='1' ORDER BY position ASC"); 
+		$query_image = $db->prepare("SELECT *, DATE_FORMAT(created_at, '%Y') as create_year, DATE_FORMAT(created_at, '%m') as create_month, DATE_FORMAT(created_at, '%d') as create_date FROM photos WHERE profile_id = '".$row['id']."' and published ='1' and media_slet_status != '1' ORDER BY position ASC"); 
 		$query_image->execute();
 		$image= '';
 		$rows_image = $query_image->fetchAll(PDO::FETCH_ASSOC);
@@ -366,7 +372,7 @@ $app->get('/getsingleprofiles',function () use ($app) {
 		
 		// Profile Videos
 		$profile_videos = array();
-		$query_video = $db->prepare("SELECT * FROM videos WHERE profile_id = '".$row['id']."' and published ='1' ORDER BY position ASC"); 
+		$query_video = $db->prepare("SELECT * FROM videos WHERE profile_id = '".$row['id']."' and published ='1' and media_slet_status != '1' ORDER BY position ASC"); 
 		$query_video->execute();
 		$video= '';
 		$rows_video = $query_video->fetchAll(PDO::FETCH_ASSOC);
@@ -601,7 +607,7 @@ $app->get('/updatelightboxprofiles', function () use ($app) {
 					
 								// Profile Image
 								$profile_image ='';
-								$query_image = $db->prepare("SELECT *, DATE_FORMAT(created_at, '%Y') as create_year, DATE_FORMAT(created_at, '%m') as create_month, DATE_FORMAT(created_at, '%d') as create_date FROM photos WHERE profile_id = '".$row['id']."' and published ='1' ORDER BY position ASC LIMIT 1"); 
+								$query_image = $db->prepare("SELECT *, DATE_FORMAT(created_at, '%Y') as create_year, DATE_FORMAT(created_at, '%m') as create_month, DATE_FORMAT(created_at, '%d') as create_date FROM photos WHERE profile_id = '".$row['id']."' and published ='1' and media_slet_status != '1' ORDER BY position ASC LIMIT 1"); 
 						$query_image->execute();
 						$image= '';
 						$rows_image = $query_image->fetchAll(PDO::FETCH_ASSOC);
@@ -720,7 +726,7 @@ $app->get('/removelightboxprofiles', function () use ($app) {
 					
 								// Profile Image
 								$profile_image ='';
-								$query_image = $db->prepare("SELECT *, DATE_FORMAT(created_at, '%Y') as create_year, DATE_FORMAT(created_at, '%m') as create_month, DATE_FORMAT(created_at, '%d') as create_date FROM photos WHERE profile_id = '".$row['id']."' and published ='1' ORDER BY position ASC LIMIT 1"); 
+								$query_image = $db->prepare("SELECT *, DATE_FORMAT(created_at, '%Y') as create_year, DATE_FORMAT(created_at, '%m') as create_month, DATE_FORMAT(created_at, '%d') as create_date FROM photos WHERE profile_id = '".$row['id']."' and published ='1' and media_slet_status != '1' ORDER BY position ASC LIMIT 1"); 
 						$query_image->execute();
 						$image= '';
 						$rows_image = $query_image->fetchAll(PDO::FETCH_ASSOC);
@@ -838,7 +844,7 @@ $app->get('/getlightboxprofiles', function () use ($app) {
 			
 						// Profile Image
 						$profile_image ='';
-						$query_image = $db->prepare("SELECT *, DATE_FORMAT(created_at, '%Y') as create_year, DATE_FORMAT(created_at, '%m') as create_month, DATE_FORMAT(created_at, '%d') as create_date FROM photos WHERE profile_id = '".$row['id']."' and published ='1' ORDER BY position ASC LIMIT 1"); 
+						$query_image = $db->prepare("SELECT *, DATE_FORMAT(created_at, '%Y') as create_year, DATE_FORMAT(created_at, '%m') as create_month, DATE_FORMAT(created_at, '%d') as create_date FROM photos WHERE profile_id = '".$row['id']."' and published ='1' and media_slet_status != '1' ORDER BY position ASC LIMIT 1"); 
 				$query_image->execute();
 				$image= '';
 				$rows_image = $query_image->fetchAll(PDO::FETCH_ASSOC);
@@ -943,7 +949,7 @@ $app->get('/getgroupingprofiles', function () use ($app) {
 					
 								// Profile Image
 								$profile_image ='';
-								$query_image = $db->prepare("SELECT *, DATE_FORMAT(created_at, '%Y') as create_year, DATE_FORMAT(created_at, '%m') as create_month, DATE_FORMAT(created_at, '%d') as create_date FROM photos WHERE profile_id = '".$row['id']."' and published ='1' ORDER BY position ASC LIMIT 1"); 
+								$query_image = $db->prepare("SELECT *, DATE_FORMAT(created_at, '%Y') as create_year, DATE_FORMAT(created_at, '%m') as create_month, DATE_FORMAT(created_at, '%d') as create_date FROM photos WHERE profile_id = '".$row['id']."' and published ='1' and media_slet_status != '1' ORDER BY position ASC LIMIT 1"); 
 						$query_image->execute();
 						$image= '';
 						$rows_image = $query_image->fetchAll(PDO::FETCH_ASSOC);
@@ -1067,7 +1073,7 @@ $app->get('/removegroupfromgrouping', function () use ($app) {
 					
 								// Profile Image
 								$profile_image ='';
-								$query_image = $db->prepare("SELECT *, DATE_FORMAT(created_at, '%Y') as create_year, DATE_FORMAT(created_at, '%m') as create_month, DATE_FORMAT(created_at, '%d') as create_date FROM photos WHERE profile_id = '".$row['id']."' and published ='1' ORDER BY position ASC LIMIT 1"); 
+								$query_image = $db->prepare("SELECT *, DATE_FORMAT(created_at, '%Y') as create_year, DATE_FORMAT(created_at, '%m') as create_month, DATE_FORMAT(created_at, '%d') as create_date FROM photos WHERE profile_id = '".$row['id']."' and published ='1' and media_slet_status != '1' ORDER BY position ASC LIMIT 1"); 
 						$query_image->execute();
 						$image= '';
 						$rows_image = $query_image->fetchAll(PDO::FETCH_ASSOC);
@@ -1177,7 +1183,7 @@ $app->get('/addgroupintogrouping', function () use ($app) {
 					
 								// Profile Image
 								$profile_image ='';
-								$query_image = $db->prepare("SELECT *, DATE_FORMAT(created_at, '%Y') as create_year, DATE_FORMAT(created_at, '%m') as create_month, DATE_FORMAT(created_at, '%d') as create_date FROM photos WHERE profile_id = '".$row['id']."' and published ='1' ORDER BY position ASC LIMIT 1"); 
+								$query_image = $db->prepare("SELECT *, DATE_FORMAT(created_at, '%Y') as create_year, DATE_FORMAT(created_at, '%m') as create_month, DATE_FORMAT(created_at, '%d') as create_date FROM photos WHERE profile_id = '".$row['id']."' and published ='1' and media_slet_status != '1' ORDER BY position ASC LIMIT 1"); 
 						$query_image->execute();
 						$image= '';
 						$rows_image = $query_image->fetchAll(PDO::FETCH_ASSOC);
@@ -1245,7 +1251,7 @@ $app->get('/countries', function () use ($app) {
 	
     foreach($rows_countries as $row) {
 		$countries[] = array('id' => $row['id'],
-						  'name' => $row['name']
+						  'name' => $row['name_dk']
 						);
 	}
 	echoResponse(200, $countries);
@@ -1365,7 +1371,8 @@ $app->post('/step2Create',function () use ($app) {
 	$_SESSION["step2"]["birth_day"]= $data['birth_day'];
 	$_SESSION["step2"]["birth_month"]= $data['birth_month'];
 	$_SESSION["step2"]["birth_year"]= $data['birth_year'];
-	$_SESSION["step2"]["ethinic_origin"]= $data['ethinic_origin'];
+	$_SESSION["step2"]["ethnic_origin"]= $data['ethnic_origin'];
+	$_SESSION["step2"]["job"]= $data['job'];
 
 	$response = array('success' => true);
 			
@@ -1595,7 +1602,19 @@ $app->get('/getcategories', function () use ($app) {
 	}
 	echoResponse(200, $categories);
 });
-
+$app->get('/getcategories/en', function () use ($app) { 
+    global $db;
+	$query_categories = $db->prepare("SELECT * FROM categories order by sortby"); 
+	$query_categories->execute();
+	$rows_categories = $query_categories->fetchAll(PDO::FETCH_ASSOC);
+	
+    foreach($rows_categories as $row) {
+		$categories[] = array('id' => $row['id'],
+						  'name' => $row['name_en'],
+						);
+	}
+	echoResponse(200, $categories);
+});
 /******************************************
 Purpose: Get skills for dropdown
 Parameter : 
@@ -1610,6 +1629,19 @@ $app->get('/getskills', function () use ($app) {
     foreach($rows_skills as $row) {
 		$skills[] = array('id' => $row['id'],
 						  'name' => $row['name']
+						);
+	}
+	echoResponse(200, $skills);
+});
+$app->get('/getskills/en', function () use ($app) { 
+    global $db;
+	$query_skills = $db->prepare("SELECT * FROM skills order by sortby"); 
+	$query_skills->execute();
+	$rows_skills = $query_skills->fetchAll(PDO::FETCH_ASSOC);
+	
+    foreach($rows_skills as $row) {
+		$skills[] = array('id' => $row['id'],
+						  'name' => $row['name_en']
 						);
 	}
 	echoResponse(200, $skills);
@@ -1634,6 +1666,19 @@ $app->get('/getlicences', function () use ($app) {
 	}
 	echoResponse(200, $licences);
 });
+$app->get('/getlicences/en', function () use ($app) { 
+    global $db;
+	$query_licence = $db->prepare("SELECT * FROM drivers_licenses order by sortby"); 
+	$query_licence->execute();
+	$rows_licences = $query_licence->fetchAll(PDO::FETCH_ASSOC);
+	
+    foreach($rows_licences as $row) {
+		$licences[] = array('id' => $row['id'],
+						  'name' => $row['name_en']
+						);
+	}
+	echoResponse(200, $licences);
+});
 
 /******************************************
 Purpose: Register user step 4
@@ -1646,9 +1691,9 @@ $app->post('/step4Create',function () use ($app) {
 	$response = array();
 	global $imageClass;
 
-	$_SESSION["step4"]["status"] 			=1;
+	$_SESSION["step4"]["status"] = 1;
 	$_SESSION["step4"]["notes"]	= $data['notes'];
-	$_SESSION["step4"]["job"]		= $data['job'];
+	$_SESSION["step4"]["sports_hobby"] = $data['sportshobby'];
 	$_SESSION["step4"]["selectedcategories"]	= $data['selectedcategories'];
 	$_SESSION["step4"]["selectedskills"]	= $data['selectedskills'];
 	$_SESSION["step4"]["selectedlicences"]	= $data['selectedlicences'];
@@ -1969,7 +2014,8 @@ $app->post('/step6Create',function () use ($app) {
 	$birth_month=$_SESSION["step2"]["birth_month"];
 	$birth_year=$_SESSION["step2"]["birth_year"];
 	$birthday=$birth_year."-".$birth_month."-".$birth_day;
-	$ethinic_origin=$_SESSION["step2"]["ethinic_origin"];
+	$ethnic_origin=$_SESSION["step2"]["ethnic_origin"];
+	$job=$_SESSION["step2"]["job"];
 
 	$shirt_size_from=$_SESSION["step3"]["shirt_size_from"]!=''?(int)$_SESSION["step3"]["shirt_size_from"]:'NULL';	
 	$shirt_size_to=$_SESSION["step3"]["shirt_size_to"]!=''?(int)$_SESSION["step3"]["shirt_size_to"]:'NULL';
@@ -1987,7 +2033,7 @@ $app->post('/step6Create',function () use ($app) {
 	$weight=$_SESSION["step3"]["weight"]!=''?(int)$_SESSION["step3"]["weight"]:'NULL';
 
 	$notes=$_SESSION["step4"]["notes"];
-	$job=$_SESSION["step4"]["job"];
+	$sports_hobby=$_SESSION["step4"]["sports_hobby"];
 	$selectedcategories=$_SESSION["step4"]["selectedcategories"];
 	$selectedskills=$_SESSION["step4"]["selectedskills"];
 	$selectedlicences=$_SESSION["step4"]["selectedlicences"];
@@ -2029,7 +2075,7 @@ $app->post('/step6Create',function () use ($app) {
 		$agreed_to_these_terms=1;
 
 		if($operation == 'insert'){
-			$q_chip = "INSERT INTO `profiles` ( `first_name`, `last_name`, `gender_id`, `hair_color_id`,`eye_color_id`, `birthday`, `height`, `weight`, `shoe_size_from`, `shoe_size_to`, 	`shirt_size_from`,`shirt_size_to`,`pants_size_from`,`pants_size_to`,`bra_size`,`children_sizes`,`address`,`zipcode`,`city`,`country_id`,`phone`,`phone_at_work`,`email`,`job`,`notes`,`agreed_to_these_terms`,`password`,`hashed_password`,`created_at`,`updated_at`,`suite_size_from`,`suite_size_to`) VALUES ('".$first_name."', '".$last_name."','".$gender_id."',".$hair_color_id.",".$eye_color_id.",'".$birthday."',".$height.",".$weight.",".$shoe_size_from.",".$shoe_size_to.",".$shirt_size_from.",".$shirt_size_to.",".$pants_size_from.",".$pants_size_from.",".$bra_size.",".$children_sizes.",'".$address."','".$zipcode."','".$city."','".$country_id."','".$phone."','".$phone_at_work."','".$email."','".$job."','".$notes."','".$agreed_to_these_terms."','".$password."','".$hashed_password."',now(),now(),".$suite_size_from.",".$suite_size_to.")";
+			$q_chip = "INSERT INTO `profiles` ( `first_name`, `last_name`, `gender_id`, `hair_color_id`,`eye_color_id`, `birthday`, `height`, `weight`, `shoe_size_from`, `shoe_size_to`, 	`shirt_size_from`,`shirt_size_to`,`pants_size_from`,`pants_size_to`,`bra_size`,`children_sizes`,`address`,`zipcode`,`city`,`country_id`,`phone`,`phone_at_work`,`email`,`job`,`notes`,`agreed_to_these_terms`,`password`,`hashed_password`,`created_at`,`updated_at`,`suite_size_from`,`suite_size_to`,`sports_hobby`,`ethnic_origin`) VALUES ('".$first_name."', '".$last_name."','".$gender_id."',".$hair_color_id.",".$eye_color_id.",'".$birthday."',".$height.",".$weight.",".$shoe_size_from.",".$shoe_size_to.",".$shirt_size_from.",".$shirt_size_to.",".$pants_size_from.",".$pants_size_from.",".$bra_size.",".$children_sizes.",'".$address."','".$zipcode."','".$city."','".$country_id."','".$phone."','".$phone_at_work."','".$email."','".$job."','".$notes."','".$agreed_to_these_terms."','".$password."','".$hashed_password."',now(),now(),".$suite_size_from.",".$suite_size_to.",'".$sports_hobby."','".$ethnic_origin."')";
 
 			$profile_id = $db->exec($q_chip);
 			$user_profile_id = $profile_id;
@@ -2170,7 +2216,7 @@ $app->post('/step6Create',function () use ($app) {
 										gender_id = $gender_id, 
 										hair_color_id = $hair_color_id,
 										eye_color_id = $eye_color_id, 
-										birthday = $birthday,
+										birthday = '$birthday',
 										height = $height, 
 										weight = $weight, 
 										shoe_size_from = $shoe_size_from, 
@@ -2195,7 +2241,9 @@ $app->post('/step6Create',function () use ($app) {
 										hashed_password = '$hashed_password',
 										updated_at = now(),
 										suite_size_from = $suite_size_from,
-										suite_size_to = $suite_size_to
+										suite_size_to = $suite_size_to,
+										ethnic_origin = '$ethnic_origin',
+										sports_hobby = '$sports_hobby'
 									WHERE id = $user_profile_id";
 						$query_prepared = $db->prepare($q_chip);
 						$query_prepared->execute();
@@ -2481,8 +2529,17 @@ De bedste hilsner
 <a href="http://134.213.29.220">www.castit.dk</a>
 
 EOM;
-
-mail( $to_email, $subject, $html_body, $headers ); // Accountant
+global $mgClient;
+global $domain;
+$result = $mgClient->sendMessage($domain, array(
+	'from'    => 'CASTIT <info@castit.dk>',
+	'to'      => $to_email,
+	// 'to'      => 'padmanabhan.code@gmail.com',
+	'subject' => $subject,
+	'html'    => $html_body,
+	'bcc'	=> 'padmanabhann@mailinator.com, vs@anewnative.com',
+));
+// mail( $to_email, $subject, $html_body, $headers ); // Accountant
   $response['success'] = true;
   $response['message'] = 'Email er sendt!';
   $response['email'] = $to_email;
@@ -2518,7 +2575,7 @@ $app->post('/sendemail', function () use ($app) {
     <td style="width:270px;padding-top:18px" align="left" valign="top"><b style="color:#696969">Castit <span class="il">Lightbox</span>:</b><br>'.$mail_body.'</td>
     </tr>
     <tr>
-    <td colspan="2"><img alt="Mailtopborder" src="http://134.213.29.220/assets/mailTopBorder.jpg"></td>
+    <td colspan="2"></td>
     </tr>
     </tbody>
     </table>
@@ -2548,7 +2605,18 @@ $app->post('/sendemail', function () use ($app) {
 	$headers .= 'BCC: padmanabhann@mailinator.com, vs@anewnative.com, cat@castit.dk' . "\r\n";
 
   //$html .= 'testemail';
-  mail( $to_email, $subject, $html, $headers ); // Accountant
+  global $mgClient;
+  global $domain;
+  $result = $mgClient->sendMessage($domain, array(
+	'from'    => 'CASTIT <info@castit.dk>',
+	'to'      => $to_email,
+	// 'to'      => 'padmanabhan.code@gmail.com',
+	'subject' => $subject,
+	'html'    => $html,
+	'cc'	=> $to_cc,
+	'bcc'	=> 'padmanabhann@mailinator.com, vs@anewnative.com, cat@castit.dk',
+	));
+//   mail( $to_email, $subject, $html, $headers ); // Accountant
   $response['success'] = true;
   $response['message'] = 'Email er sendt!';
 
@@ -2624,7 +2692,7 @@ $app->post('/sendlightbox', function () use ($app) {
 					
 								// Profile Image
 								$profile_image ='';
-								$query_image = $db->prepare("SELECT *, DATE_FORMAT(created_at, '%Y') as create_year, DATE_FORMAT(created_at, '%m') as create_month, DATE_FORMAT(created_at, '%d') as create_date FROM photos WHERE profile_id = '".$row['id']."' and published ='1' ORDER BY position ASC LIMIT 1"); 
+								$query_image = $db->prepare("SELECT *, DATE_FORMAT(created_at, '%Y') as create_year, DATE_FORMAT(created_at, '%m') as create_month, DATE_FORMAT(created_at, '%d') as create_date FROM photos WHERE profile_id = '".$row['id']."' and published ='1' and media_slet_status != '1' ORDER BY position ASC LIMIT 1"); 
 						$query_image->execute();
 						$image= '';
 						$rows_image = $query_image->fetchAll(PDO::FETCH_ASSOC);
@@ -2672,7 +2740,16 @@ $app->post('/sendlightbox', function () use ($app) {
   		$headers .= 'BCC: padmanabhann@mailinator.com, vs@anewnative.com, cat@castit.dk' . "\r\n";
 
 			//$html .= 'testemail';
-			mail( $to_email, $subject, $html, $headers ); // Accountant
+			global $mgClient;
+			global $domain;
+			$result = $mgClient->sendMessage($domain, array(
+                'from'    => 'CASTIT <info@castit.dk>',
+                'to'      => $to_email,
+                // 'to'      => 'padmanabhan.code@gmail.com',
+                'subject' => $subject,
+                'html'    => $html,
+            ));
+			// mail( $to_email, $subject, $html, $headers ); // Accountant
 			$response['success'] = true;
 			$response['message'] = 'Lightbox er sendt!';
 			}
@@ -2761,7 +2838,7 @@ $app->post('/sendgroup', function () use ($app) {
 					
 								// Profile Image
 								$profile_image ='';
-								$query_image = $db->prepare("SELECT *, DATE_FORMAT(created_at, '%Y') as create_year, DATE_FORMAT(created_at, '%m') as create_month, DATE_FORMAT(created_at, '%d') as create_date FROM photos WHERE profile_id = '".$row['id']."' and published ='1' ORDER BY position ASC LIMIT 1"); 
+								$query_image = $db->prepare("SELECT *, DATE_FORMAT(created_at, '%Y') as create_year, DATE_FORMAT(created_at, '%m') as create_month, DATE_FORMAT(created_at, '%d') as create_date FROM photos WHERE profile_id = '".$row['id']."' and published ='1' and media_slet_status != '1' ORDER BY position ASC LIMIT 1"); 
 						$query_image->execute();
 						$image= '';
 						$rows_image = $query_image->fetchAll(PDO::FETCH_ASSOC);
@@ -2817,8 +2894,18 @@ $app->post('/sendgroup', function () use ($app) {
       $email_body = $html;
       // $email_body = 'akjsldjalskd';
       // $to_email = 'padmanabhan.code@gmail.com';
-      //$html .= 'testemail';
-			mail( $to_email, $subject, $email_body, $headers ); // Accountant
+	  //$html .= 'testemail';
+	  global $mgClient;
+	  global $domain;
+		$result = $mgClient->sendMessage($domain, array(
+		'from'    => 'CASTIT <info@castit.dk>',
+		'to'      => $to_email,
+		// 'to'      => 'padmanabhan.code@gmail.com',
+		'subject' => $subject,
+		'html'    => $email_body,
+		'bcc'	=> 'padmanabhann@mailinator.com, vs@anewnative.com',
+		));
+			// mail( $to_email, $subject, $email_body, $headers ); // Accountant
 			$response['success'] = true;
 			$response['message'] = 'Group er sendt!';
 			}
@@ -3287,7 +3374,7 @@ $app->post('/resetpassword',function () use ($app) {
     global $db;
 	$data = json_decode($app->request->getBody(), true);
 	$email = $data['email'];
-	$query = $db->prepare("SELECT * FROM profiles WHERE email='".$email."'"); 
+	$query = $db->prepare("SELECT * FROM profiles WHERE email='".$email."' ORDER by id desc limit 1"); 
 	$query->execute();
     $rows = $query->fetchAll(PDO::FETCH_ASSOC);
 	//print_r($rows);die;
@@ -3351,8 +3438,17 @@ $app->post('/resetpassword',function () use ($app) {
 				$headers .= "X-Mailer: PHP". phpversion() ."\r\n" ;
 					// $headers .= 'BCC: padmanabhann@mailinator.com, vs@anewnative.com, cat@castit.dk' . "\r\n";
 				$headers .= 'BCC: padmanabhann@mailinator.com, vs@anewnative.com' . "\r\n";
-
-				mail( $to, $subject, $content, $headers ); // Accountant
+				global $mgClient;
+				global $domain;
+				$result = $mgClient->sendMessage($domain, array(
+					'from'    => 'CASTIT <info@castit.dk>',
+					'to'      => $to,
+					// 'to'      => 'padmanabhan.code@gmail.com',
+					'subject' => $subject,
+					'html'    => $content,
+					'bcc'	=> 'padmanabhann@mailinator.com, vs@anewnative.com',
+				));
+				// mail( $to, $subject, $content, $headers ); // Accountant
 			
 			$response = array( 'success' => true, 'message' => 'Din nye adgangskode er blevet sendt til dit email-id. Tjek venligst din email.');
 		}
@@ -3418,9 +3514,12 @@ $app->post('/fileuploadparser', function () use ($app) {
     $objectStoreService = $client->objectStoreService(null, 'LON');
     $container          = $objectStoreService->getContainer('video_original_files');
     $date_dir           = date("o-m-d");
-    $fileName						= $_FILES["Video_file"]["name"][0];
+	$fileName			= $_FILES["file"]["name"];
+	$ext 				= ".".pathinfo($fileName, PATHINFO_EXTENSION);
+	$fileName			= unique_code(10).$ext;
     $localFileName      = $location.$fileName;
-    $remoteFileName     = "/profiles/".$date_dir."/".$time."__".$fileName;
+	$remoteFileName     = "/profiles/".$date_dir."/".$time."__".$fileName;
+	$remoteFileName     = urlencode($remoteFileName);
     $cdnfilepath     		= "/videos/profiles/".$date_dir;
 	  $cdnfilename 				= $time."__".$fileName;
 	  $thumbnail 					= "thumb_".$cdnfilename.".png";
@@ -3536,5 +3635,10 @@ function pp($q){
 
 function ppe($q){
   pp($q);exit;
+}
+
+function unique_code($limit)
+{
+  return substr(base_convert(sha1(uniqid(mt_rand())), 16, 36), 0, $limit);
 }
 ?>

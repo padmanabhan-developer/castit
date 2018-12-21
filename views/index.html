@@ -41,7 +41,8 @@
                   <!-- <div class="col" ng-repeat="x in profiles | filter:q | startFrom:currentPage*pageSize | limitTo:pageSize"> -->
                   <div class="col" ng-repeat="x in profiles | filter:q " ng-class="{wrapPM{{$index}}  : !($index % 18)}">
                        <div class="col-inner" profileid={{x.id}} ng-mouseover="hoverInLb()" ng-mouseleave="hoverOutLb()">
-                            <div class="thumb"  data-thisproid={{x.id}} ng-click="getSingleProfile(x.id)" ng-style="{'background-image':'url({{x.profile_image}})'}">
+                            <!-- <div class="thumb"  data-thisproid={{x.id}} ng-click="getSingleProfile(x.id)" ng-style="{'background-image':'url({{x.profile_image}})'}" style="background-image: url('{{x.profile_image}}')"> -->
+                            <div class="thumb"  data-thisproid={{x.id}} ng-click="getSingleProfile(x.id)"  style="background-image: url('{{x.profile_image}}')">
                            
                             </div>
                               <div class="detail">
@@ -154,9 +155,7 @@
                          <p>Næste workshop afholdes d. xxxxx hos Castit i København.
                          Max 8 deltagere. Varighed 2 dage af 8 timer. Frokost og drikke inkluderet.
                          </p>
-                         <p> 
-                         For yderligere information, kontakt venligst Tony Grahn via dette link  (Kald knappen for “workshop”)
-                         </p>
+                         <p>For yderligere information, kontakt venligst Tony Grahn på nedenstående knap.</p>
                          
                <!-- <p class="login_box5"><input name="" class="login_button5" value="Spørgsmål" type="button"></p> -->
                <!-- <p class="login_box5"><input name="" class="login_button3" value="Tilmeld" type="button"></p> -->
@@ -252,6 +251,7 @@
                               <ul class="side-tool">
                                   <li><a href="javascript:void(0);" ng-click="removeGroup(gpprofile.group_id)">Slet</a></li>
                                   <li><a href="javascript:void(0);" ng-click="showSendGroupPopup(gpprofile.group_id);">Send</a></li>
+                                  <li><a href="javascript:void(0);" class="div-close group-view-toggle" ng-click="togglegrouping_top($event)"></a></li>
                               </ul>
                          </div>
                         <div class="sidebar1_box2_middle group-list">
@@ -349,7 +349,7 @@
                   </div> 
                                <div id="image_icons" class="image_icons"> 
                                    <div class="video_call3" ng-repeat="proimage in profile_images">
-                                        <span class="video-thumb" ng-class="{'profile-thumb-highlight':selectedThumb===$index}" ng-style="{'background-image':'url({{proimage.fullpath}})'}">
+                                        <span class="video-thumb" ng-class="{'profile-thumb-highlight':selectedThumb===$index}" style="background-image: url('{{proimage.fullpath}}')">
                                             <!--<img src="images/video-thumb.png" alt="">-->
                                             <span class="img_layer"  id="{{'progallerythumb'+ $index }}" ng-click ="changeSingleImageBig(proimage.fullpath,$index)">
                                                 <span class="number">{{proimage.imgcnt}}</span>
@@ -368,7 +368,8 @@
                 </div>
                            <div id="video_icons" class="video_icons">
                                <div class="video_call6" ng-repeat="provideo in profile_videos">
-                                    <span class="video-thumb" ng-style="{'background-image':'url({{provideo.img_thum}})'}">
+                                    <!-- <span class="video-thumb" ng-style="{'background-image':'url({{provideo.img_thum}})'}"> -->
+                                    <span class="video-thumb" style="background-image:url('{{provideo.img_thum}}')">
                                         <!--<img src="images/video-thumb2.png" alt="">-->
                                         <a href="javascript:void(0);" class="play-button" id="{{'progalleryvideo'+ $index }}" ng-click ="changeSingleVideoBig(provideo.fullpath)"></a>
                                         
@@ -386,7 +387,7 @@
                     
                       <h3 class="res-name">{{singleprofile.name}}. <strong>{{singleprofile.profile_number}}</strong></h3>
                     
-                          <div ng-show = "IsProfileImage" class="videobig_thumb" fade-in style="background-image:url({{singleimage}}); background-size: contain; background-position: center;">
+                          <div ng-show = "IsProfileImage" class="videobig_thumb" fade-in style="background-image:url('{{singleimage}}'); background-size: contain; background-position: center;">
                          <!-- <img src="images/model-info.png" alt="" id="thumb1" style="margin-top: -20px;">
                            <img src="images/video2.png" alt="" id="thumb2">-->
                           </div>

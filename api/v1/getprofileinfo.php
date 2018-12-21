@@ -12,7 +12,7 @@ if(isset($_GET['id']) && is_numeric($_GET['id'])){
 }
 else{
   $email = explode("email=", $_POST['PHPSESSID'])[1];
-  $query_string = "SELECT * from profiles WHERE email='".$email."'";
+  $query_string = "SELECT * from profiles WHERE email='".$email."' ORDER by id desc limit 1";
   $user_profile_query = $db->prepare($query_string);
   $user_profile_query->execute();
   $row = $user_profile_query->rowCount();
@@ -88,5 +88,3 @@ function ppe($q){
   pp($q);exit;
 }
 */
-
-?>

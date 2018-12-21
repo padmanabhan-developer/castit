@@ -4,12 +4,13 @@ require_once '../dbHelper.php';
 require_once 'functions.php';
 $db = new dbHelper();
 
+// pp($_POST);
 $extract_post_variables = extract($_POST);
 if($extract_post_variables > 0){
   foreach($_POST as $key => $value){
     if(!is_array($value)){
       if($db->check_column($key, 'profiles')){
-          if($key = 'approved'){ $value = 1 ;}
+        if($key == 'approved'){ $value = 1 ;}
         $sql_query = "UPDATE `profiles` SET ".$key."='".$value."' WHERE id = ".$_POST['id'];
         $prepared_query = $db->prepare($sql_query);
         $prepared_query->execute();
@@ -36,8 +37,79 @@ if($extract_post_variables > 0){
       $prepared_query->execute();
       */
     }
-    
   }
+  pp($_POST['payments']);
+  if(isset($_POST['languages']) && count($_POST['languages']) > 0){
+    $clear_existance_query = $db->prepare("delete from language_proficiencies where profile_id = ".$_POST['id']);
+    $clear_existance_query->execute();
+    foreach($_POST['languages'] as $key => $value){
+      if($value['language_id'] != 0 && $value['language_id'] != ''){
+        $sql_query = "INSERT INTO `language_proficiencies` (`language_proficiency_language_id`,`profile_id`,`language_proficiency_rating_id`,`created_at`,`updated_at`) VALUES ('".$value['language_id']."','".$_POST['id']."','".$value['rating']."',now(),now())";
+        $prepared_query = $db->prepare($sql_query);
+        $prepared_query->execute();
+      }
+    }
+  }
+  if(isset($_POST['payments']) && count($_POST['payments']) > 0){
+    $clear_existance_query = $db->prepare("delete from payments where profile_id = ".$_POST['id']);
+    $clear_existance_query->execute();
+    foreach($_POST['payments'] as $key => $value){
+      $sql_query = "INSERT INTO `payments` (`profile_id`,`payment_type_id`,`applies`,`paid`,`description`) VALUES ('".$_POST['id']."','".$value['payment_type_id']."','".$value['applies']."','".$value['paid']."','".$value['description']."')";
+      $prepared_query = $db->prepare($sql_query);
+      $prepared_query->execute();
+    }
+  }
+  if(isset($_POST['licenses']) && count($_POST['licenses']) > 0){
+    $clear_existance_query = $db->prepare("delete from drivers_licenses_profiles where profile_id = ".$_POST['id']);
+    $clear_existance_query->execute();
+    if(is_array($_POST['licenses'])){
+      foreach($_POST['licenses'] as $key => $value){
+        $sql_query = "INSERT INTO `drivers_licenses_profiles` (`profile_id`,`drivers_license_id`) VALUES ('".$_POST['id']."','".$value."')";
+        $prepared_query = $db->prepare($sql_query);
+        $prepared_query->execute();
+      }
+    }
+    else{
+      $sql_query = "INSERT INTO `drivers_licenses_profiles` (`profile_id`,`drivers_license_id`) VALUES ('".$_POST['id']."','".$_POST['licenses']."')";
+      $prepared_query = $db->prepare($sql_query);
+      $prepared_query->execute();
+    }
+  }
+
+  if(isset($_POST['skills']) && count($_POST['skills']) > 0){
+    $clear_existance_query = $db->prepare("delete from profiles_skills where profile_id = ".$_POST['id']);
+    $clear_existance_query->execute();
+    if(is_array($_POST['skills'])){
+      foreach($_POST['skills'] as $key => $value){
+        $sql_query = "INSERT INTO `profiles_skills` (`profile_id`,`skill_id`) VALUES ('".$_POST['id']."','".$value."')";
+        $prepared_query = $db->prepare($sql_query);
+        $prepared_query->execute();
+      }
+    }
+    else{
+      $sql_query = "INSERT INTO `profiles_skills` (`profile_id`,`skill_id`) VALUES ('".$_POST['id']."','".$_POST['skills']."')";
+      $prepared_query = $db->prepare($sql_query);
+      $prepared_query->execute();
+    }
+  }
+
+  if(isset($_POST['categories']) && count($_POST['categories']) > 0){
+    $clear_existance_query = $db->prepare("delete from categories_profiles where profile_id = ".$_POST['id']);
+    $clear_existance_query->execute();
+    if(is_array($_POST['categories'])){
+      foreach($_POST['categories'] as $key => $value){
+        $sql_query = "INSERT INTO `categories_profiles` (`profile_id`,`category_id`) VALUES ('".$_POST['id']."','".$value."')";
+        $prepared_query = $db->prepare($sql_query);
+        $prepared_query->execute();
+      }
+    }
+    else{
+      $sql_query = "INSERT INTO `categories_profiles` (`profile_id`,`category_id`) VALUES ('".$_POST['id']."','".$_POST['categories']."')";
+      $prepared_query = $db->prepare($sql_query);
+      $prepared_query->execute();
+    }
+  }
+
   $sql_query = "UPDATE `profiles` SET marked_as_new = ".$_POST['marked_as_new']." WHERE id = ".$_POST['id'];
   $prepared_query = $db->prepare($sql_query);
   $prepared_query->execute();

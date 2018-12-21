@@ -129,7 +129,7 @@ function form_images_html($value = array('pics'=>'') , $name, $profile_number, $
             
           </span>
           <span><i class="fas fa-trash-alt"  onclick="updatemedia_delete('.$pic['id'].', this)" media_type="image"></i></span>
-          <div class="gallery-image" style="background-image: url('.$img_src.')"></div>
+          <div class="gallery-image" style="background-image: url(\''.$img_src.'\')"></div>
           <div class="numbertext">'.($key+1).' / '.count($value['pics']).'</div>
           </div>';
 
@@ -225,3 +225,8 @@ function form_images_html($value = array('pics'=>'') , $name, $profile_number, $
     }';
     return $json;
   }
+
+function unique_code($limit)
+{
+  return substr(base_convert(sha1(uniqid(mt_rand())), 16, 36), 0, $limit);
+}

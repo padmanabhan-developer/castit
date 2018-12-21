@@ -345,6 +345,7 @@ $(document).ready(function () {
         profile.dealekter2  = "";
         profile.dealekter3  = "";
         profile.sports_hobby  = "";
+        profile.ethnic_origin  = "";
 
         profile.marked_as_new_from_day  = "";
         profile.marked_as_new_from_month  = "";
@@ -380,13 +381,26 @@ $(document).ready(function () {
             description: current_element.find("input[type=text]").val(),
             paid: (current_element.find(".paid").prop('checked')) ? "1" : "0",
             payment_type_id: payment_type_id
-          }
+          };
         }
         profile.payments = payments;
 
+        let languages = [];
+        for(let i=0; i<4; i++){
+          let language_id = $("#language_id_"+i).val();
+          let rating = $("#langrateval_"+i).val();
+          if(language_id != '' && rating != ''){
+            languages[i] = {
+              language_id: language_id,
+              rating: rating
+            };
+          }
+        }
+        profile.languages = languages;
+        // console.log(profile);
         var updated_profile_info = Object.assign({}, loaded_profile_info, profile);
         // console.log(loaded_profile_info.payments);
-        // console.log(updated_profile_info.payments);
+        // console.log(updated_profile_info);
         var email_sent = false;
         $.post("/admin/src/updateprofile", updated_profile_info,
           function (returndata, textStatus, jqXHR) {
@@ -399,7 +413,7 @@ $(document).ready(function () {
                 function (data, textStatus, jqXHR) {
                   email_sent = true;
                   alert("Profile Updated and eMail sent to user");
-                  window.location.reload(true);
+                  window.location = window.location;
                 }
               );
             }
@@ -410,14 +424,14 @@ $(document).ready(function () {
                 function (data, textStatus, jqXHR) {
                   email_sent = true;
                   alert("Profile Updated and eMail sent to user");
-                  window.location.reload(true);
+                  window.location = window.location;
                 }
               );
             }
 
             if( !$(".send_activation_email")[0].checked && !$(".send_deactivation_email")[0].checked ) {
               alert("Profile Updated");
-              window.location.reload(true);
+              window.location = window.location;
             }
           },
         );
@@ -535,6 +549,7 @@ $(document).ready(function(){
   
   $('input[type=radio][name=uploadmediatype]').change(function(){
     uploadmediatype = $(this).val();
+    $(".uploadfilefield").attr("accept", uploadmediatype+'/*');
   });
   
   $('#complete').click(function(){
@@ -556,7 +571,7 @@ $(document).ready(function(){
       fd.append('request',1);
       fd.append('profile_id', profileId);
 
-      $('#file').val(''); 
+      
       // AJAX request
       $.ajax({
           url: '/admin/src/'+ uploadmediatype +'upload',
@@ -565,6 +580,7 @@ $(document).ready(function(){
           contentType: false,
           processData: false,
           success: function(response){
+            console.log(response);
             $(".ajax_loading_container").hide();
             $("#upload").removeAttr("disabled");
             response = JSON.parse(response);
@@ -589,6 +605,7 @@ $(document).ready(function(){
               }
           },
           complete: function (jqXHR, status) {
+            $('#file').val(''); 
             $("#upload").removeAttr("disabled");
           }
         

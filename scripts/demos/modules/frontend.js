@@ -550,13 +550,19 @@ var frontend = angular.module('theme.demos.dashboard', [
 	});
 
 	$scope.togglegrouping = togglegrouping;
+	$scope.togglegrouping_top = togglegrouping_top;
 	function togglegrouping($event){
 		let this_element = $event.currentTarget;
 		$(this_element).parent().siblings('.group-full').slideToggle();
-		$(this_element).toggleClass('rotated-arrow');
+		$(this_element).parent().parent().find(".group-view-toggle").toggleClass('rotated-arrow');
 	}
-
+	function togglegrouping_top($event){
+		let this_element = $event.currentTarget;
+		$(this_element).parent().parent().parent().siblings('.group-full').slideToggle();
+		$(this_element).parent().parent().parent().parent().find(".group-view-toggle").toggleClass('rotated-arrow');
+	}
 	
+
 
 	$scope.selectedgroupings = '';
 	$scope.checkuncheckgrouping = checkuncheckgrouping;
@@ -794,8 +800,19 @@ var frontend = angular.module('theme.demos.dashboard', [
 	$scope.IsProfileImage = true;
 	$scope.IsProfileVideo = false;
 	$scope.isGetSingleLoading=false;
+	
 	$scope.getSingleProfile = function (profileid){
-		
+		$scope.IsProfileImage = true;
+		$scope.IsProfileVideo = false;
+		var videoElement = $('video')[0];
+		console.log(videoElement);
+		if(videoElement != undefined){
+			videoElement.pause();
+			videoElement.removeAttribute('src'); // empty source
+			videoElement.load();
+		}
+
+		$scope.currVideoUrl = '';
 		$scope.pbox_profileid = profileid;
 		$scope.isGetSingleLoading=true;
 		$http.get('api/v1/getsingleprofiles', {params:{profileid:profileid}}).success(function(profiledata) {
@@ -885,7 +902,7 @@ var frontend = angular.module('theme.demos.dashboard', [
 		$scope.currentIndexVideo>0?$scope.currentIndexVideo--:$scope.currentIndexVideo=$scope.profile_videos.length-1;
 	};
 	$scope.$watch('currentIndexVideo',function(){
-		//alert($scope.currentIndexVideo);
+		// alert($scope.currentIndexVideo);
 		if($scope.profile_videos){
 			$scope.currVideoUrl = $scope.profile_videos[$scope.currentIndexVideo].fullpath;
 			var video = $('#pro_video')[0];
@@ -1014,6 +1031,7 @@ var frontend = angular.module('theme.demos.dashboard', [
   };
   $scope.sendEmailForm = function (){
     $scope.to_email = "tony.grahn@themethodlab.com";
+    // $scope.to_email = "vs@anewnative.com, padmanabhan.code@gmail.com";
     var formData = {
             from_email: $scope.from_email,
             to_email: $scope.to_email,
