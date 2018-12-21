@@ -76,6 +76,7 @@ progress{
   .menu ul{margin:0; padding:0;}
   .menu ul li{float:left; color:#2d2e32; font-size:13px; font-family:Arial, Helvetica, sans-serif;}
   .menu ul li+li{margin:0 0 0 45px;}
+  .english .menu li+li{margin: 0 0 0 40px !important;}
   .menu ul li a{color:#2d2e32; font-weight:bold; text-decoration:none; line-height:1;}
   .menu ul li.active a {
       color: #dcdde0;
@@ -1635,9 +1636,11 @@ progress{
 	width: 101%;
 }
 }
-  
-  .lngname{color:#17181b !important; font-size:13px !important; font-weight:bold !important;}
-  .lngname em{color:#dcdde0 !important; font-style:normal !important;}
+  .lngname{color:#dcdde0;font-style:normal;}
+  .lngname span{cursor: pointer;}
+  .lngname .active {color:#17181b !important; font-size:13px !important; font-weight:bold !important;}
+  /* .lngname{color:#17181b !important; font-size:13px !important; font-weight:bold !important;}
+  .lngname em{color:#dcdde0 !important; font-style:normal !important;} */
   
   .menu{float:left;}
   .lngdiv{float:left; margin-left:30px;}
@@ -1770,10 +1773,10 @@ progress{
     background-size: cover;
 }
 
-.lang-active{
+.lang-active .active{
     color: #dcdde0 !important ;
 }
-.lang-active em{
+.lang-active span{
     color: #17181b !important ;
 }
 .about-castit p {

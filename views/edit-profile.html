@@ -138,7 +138,7 @@
                                      <div class="contat_form"><label>Confirm new password *</label><input ng-model="cnpassword" name="cnpassword" id="cnpassword" pattern=".{6,}" type="password" class="contact_input">
                                      <span class="error-message" ng-show="user_update_form.cnpassword.$invalid && !user_update_form.cnpassword.$pristine">
                                                Password does not match.</span>
-                                               <span class="error-message"  ng-show="npassword !== cnpassword">Password mismatch</span>
+                                               <span class="error-message"  ng-show="npassword !== cnpassword">{{isDanish ? 'Forkert password' : 'Password mismatch' }}</span>
                                         </div>
                                      </div>
                             </div>

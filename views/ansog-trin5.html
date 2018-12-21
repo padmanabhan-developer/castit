@@ -3,10 +3,10 @@
             <form name="profile_ansog_form5" id="profile_ansog_form5" ng-submit="step5Create()">
                   <div class="page-black livetitle">
                         <div class="section-top">
-                              <h2>Ansøgningsskema</h2>
+                              <h2>{{ isDanish ? 'Ansøgningsskema' : 'Application form' }}</h2>
                               <div class="black-right">
                                     <!-- <a href="#" class="black-edit"></a> -->
-                                    <a href="#/index" class="black-close">luk</a>
+                                    <a href="#/index{{isDanish ? '/da' : '/en'}}" class="black-close">{{ isDanish ? 'luk' : 'Close' }}</a>
                               </div>
                         </div>
                         <!--close section-top-->
@@ -17,7 +17,8 @@
                                     <div class="black-row">
 
                                           <div class="black-leftbar">
-                                                <p>For at oprette en profil, bedes du udfylde felterne og klikke videre til næste side.</p>
+                                                <p ng-if="isDanish">For at ansøge om en profil, bedes du udfylde felterne og klikke videre til næste side.</p>
+                                                <p ng-if="!isDanish">To apply for a profile please fill out the fields and continue to the next page.</p>
                                           </div>
                                           <!--close black-leftbar-->
 
@@ -26,12 +27,12 @@
 
                                                 <div class="black-row">
                                                       <div class="black-cal4 ">
-                                                            <h3>SPROG</h3>
+                                                            <h3>{{ isDanish ? 'SPROG' : 'LANGUAGE' }}</h3>
 
                                                             <div class="form_box">
                                                                   <div class="select-style">
                                                                         <select required name="lang1" id="lang1" ng-model="lang1" class="input2">
-                                                                              <option value="">Modersmål*</option>
+                                                                              <option value="">{{ isDanish ? 'Modersmål' : 'Mother tongue' }}*</option>
                                                                               <option value="{{language_id.id}}" ng-selected="{{lang1 == language_id.id}}" ng-repeat="language_id in languagesdropdown">{{language_id.name}}</option>
                                                                         </select>
                                                                   </div>
@@ -40,7 +41,7 @@
                                                             <div class="form_box">
                                                                   <div class="select-style">
                                                                         <select name="lang2" id="lang2" ng-model="lang2" class="input2">
-                                                                              <option value="">Sprog</option>
+                                                                              <option value="">{{ isDanish ? 'Sprog' : 'Language' }}</option>
                                                                               <option value="{{language_id.id}}" ng-selected="{{lang2 == language_id.id}}" ng-repeat="language_id in languagesdropdown">{{language_id.name}}</option>
                                                                         </select>
                                                                   </div>
@@ -49,7 +50,7 @@
                                                             <div class="form_box">
                                                                   <div class="select-style">
                                                                         <select name="lang3" id="lang3" ng-model="lang3" class="input2">
-                                                                              <option value="">Sprog</option>
+                                                                              <option value="">{{ isDanish ? 'Sprog' : 'Language' }}</option>
                                                                               <option value="{{language_id.id}}" ng-selected="{{lang3 == language_id.id}}" ng-repeat="language_id in languagesdropdown">{{language_id.name}}</option>
                                                                         </select>
                                                                   </div>
@@ -58,7 +59,7 @@
                                                             <div class="form_box">
                                                                   <div class="select-style">
                                                                         <select name="lang4" id="lang4" ng-model="lang4" class="input2">
-                                                                              <option value="">Sprog</option>
+                                                                              <option value="">{{ isDanish ? 'Sprog' : 'Language' }}</option>
                                                                               <option value="{{language_id.id}}" ng-selected="{{lang4 == language_id.id}}" ng-repeat="language_id in languagesdropdown">{{language_id.name}}</option>
                                                                         </select>
                                                                   </div>
@@ -67,7 +68,7 @@
                                                       <!--close black-cal4-->
                                                       <div class="black-cal4">
                                                             <h3 class="white-color">
-                                                                  <strong>Vælg niveau</strong>
+                                                                  <strong>{{ isDanish ? 'Vælg niveau' : 'Choose level' }}</strong>
                                                             </h3>
                                                             <input type="hidden" ng-required="lang1!=''" name="langrateval1" id="langrateval1" ng-model="langrateval1" value="{{langrateval1}}" />
                                                             <input type="hidden" ng-required="lang2!=''" name="langrateval2" id="langrateval2" ng-model="langrateval2" value="{{langrateval2}}" />
@@ -89,7 +90,7 @@
                                                       <div class="black-cal4">
                                                             <h3>&nbsp;</h3>
                                                             <div class="form_box4">
-                                                                  Begynder
+                                                                  {{ isDanish ? 'Begynder' : 'Beginner' }}
                                                                   <span class="ratings2">
                                                                         <img src="images/star-white.png" />
                                                                         <img src="images/star-black.png" />
@@ -99,7 +100,7 @@
                                                             </div>
 
                                                             <div class="form_box4">
-                                                                  Mellem
+                                                                  {{ isDanish ? 'Mellem' : 'Intermediate' }}
                                                                   <span class="ratings2">
                                                                         <img src="images/star-white.png" />
                                                                         <img src="images/star-white.png" />
@@ -109,7 +110,7 @@
                                                             </div>
 
                                                             <div class="form_box4">
-                                                                  Flydende
+                                                                  {{ isDanish ? 'Flydende' : 'Fluent' }}
                                                                   <span class="ratings2">
                                                                         <img src="images/star-white.png" />
                                                                         <img src="images/star-white.png" />
@@ -119,7 +120,7 @@
                                                             </div>
 
                                                             <div class="form_box4">
-                                                                  Perfekt
+                                                                  {{ isDanish ? 'Perfekt' : 'Perfect' }}
                                                                   <span class="ratings2">
                                                                         <img src="images/star-white.png" />
                                                                         <img src="images/star-white.png" />
@@ -128,17 +129,17 @@
                                                                   </span>
                                                             </div>
 
-                                                            <h4 class="white-color">Dealekter</h4>
+                                                            <h4 class="white-color">{{ isDanish ? 'Dealekter' : 'Dialects' }}</h4>
                                                             <div class="form_box">
-                                                                  <input name="dealekter1" id="dealekter1" ng-model="dealekter1" type="text" class="input2" placeholder="Skriv her">
+                                                                  <input name="dealekter1" id="dealekter1" ng-model="dealekter1" type="text" class="input2" placeholder="{{ isDanish ? 'Skriv her' : 'Write here' }}">
                                                             </div>
 
                                                             <div class="form_box">
-                                                                  <input name="dealekter2" id="dealekter2" ng-model="dealekter2" type="text" class="input2" placeholder="Skriv her">
+                                                                  <input name="dealekter2" id="dealekter2" ng-model="dealekter2" type="text" class="input2" placeholder="{{ isDanish ? 'Skriv her' : 'Write here' }}">
                                                             </div>
 
                                                             <div class="form_box">
-                                                                  <input name="dealekter3" id="dealekter3" ng-model="dealekter3" type="text" class="input2" placeholder="Skriv her">
+                                                                  <input name="dealekter3" id="dealekter3" ng-model="dealekter3" type="text" class="input2" placeholder="{{ isDanish ? 'Skriv her' : 'Write here' }}">
                                                             </div>
 
                                                       </div>
@@ -164,8 +165,8 @@
                         <div class="section-bottom">
                               <div class="blackpage-controller">
                              
-                            <a href="#/ansog-trin4" class="black-prev">FORRIGE SIDE</a>
-                            <button ng-disabled="profile_ansog_form5.$touched" type="submit" class="black-next">NÆSTE SIDE</button>
+                            <a href="#/ansog-trin4{{isDanish ? '/da' : '/en'}}" class="black-prev">{{ isDanish ? 'FORRIGE SIDE' : 'PREVIOUS PAGE' }}</a>
+                            <button ng-disabled="profile_ansog_form5.$touched" type="submit" class="black-next">{{ isDanish ? 'NÆSTE SIDE' : 'NEXT PAGE' }}</button>
                        </div>
                   </div>
                         <!--close section-bottom-->

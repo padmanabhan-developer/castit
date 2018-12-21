@@ -4,9 +4,9 @@
       <div class="page-black livetitle">
         
         <div class="section-top">
-          <h2>Ansøgningsskema</h2>
+          <h2>{{ isDanish ? 'Ansøgningsskema' : 'Application form' }}</h2>
           <div class="black-right">
-            <a href="#/index" class="black-close">luk</a>
+            <a href="#/index{{isDanish ? '/da' : '/en'}}" class="black-close">{{ isDanish ? 'luk' : 'Close' }}</a>
           </div>
         </div><!--close section-top-->
 
@@ -14,25 +14,26 @@
           <div class="black-section">
             <div class="black-row">
               <div class="black-leftbar">
-                <p>For at ansøge om en profil, bedes du udfylde felterne og klikke videre til næste side.</p>
+                <p ng-if="isDanish">For at ansøge om en profil, bedes du udfylde felterne og klikke videre til næste side.</p>
+                <p ng-if="!isDanish">To apply for a profile please fill out the fields and continue to the next page.</p>
               </div><!--close black-leftbar-->
               <div class="black-rightbar livetitle">
-                <h3>PERSONLIG INFO</h3>
+                <h3>{{ isDanish ? 'PERSONLIG INFO' : 'PERSONAL INFO' }}</h3>
                 <div class="black-row">
                   <div class="black-cal6">
                     <div class="form_box">
-                      <input ng-model="profileinfo.first_name" name="first_name" id="first_name" required pattern=".{2,}" type="text" class="input2" placeholder="Fornavn*" value="{{profileinfo.first_name}}">
+                      <input ng-model="profileinfo.first_name" name="first_name" id="first_name" required pattern=".{2,}" type="text" class="input2" placeholder="{{ isDanish ? 'Fornavn' : 'First name' }}*" value="{{profileinfo.first_name}}">
                     </div>
                     <div class="form_box">
-                      <input ng-model="profileinfo.last_name" name="last_name" id="last_name"  required pattern=".{2,}" type="text" class="input2" placeholder="Efternavn*" value="{{profileinfo.last_name}}">
+                      <input ng-model="profileinfo.last_name" name="last_name" id="last_name"  required pattern=".{2,}" type="text" class="input2" placeholder="{{ isDanish ? 'Efternavn' : 'Last name' }}*" value="{{profileinfo.last_name}}">
                     </div>
                     <div class="form_box">
-                      <input ng-model="profileinfo.password" name="password" id="password" pattern=".{2,}" type="password" class="input2" placeholder="Vælg password*" >
+                      <input ng-model="profileinfo.password" name="password" id="password" pattern=".{2,}" type="password" class="input2" placeholder="{{ isDanish ? 'Vælg password' : 'Choose password' }}*" >
                     </div>
                     <div class="form_box">
-                      <input ng-model="profileinfo.cpassword" name="cpassword" id="cpassword" compare-to="password"  pattern=".{2,}" type="password" class="input2" placeholder="Bekræft password*">
+                      <input ng-model="profileinfo.cpassword" name="cpassword" id="cpassword" compare-to="password"  pattern=".{2,}" type="password" class="input2" placeholder="{{ isDanish ? 'Bekræft password' : 'Confirm password' }}*">
                       <div ng-if="profile_ansog_form1.cpassword.$dirty" ng-messages="profile_ansog_form1.cpassword.$error" ng-hide="profile_ansog_form1.cpassword.$valid">  <div ng-message="compareTo">
-                          Password Confirm password mismatches
+                        {{ isDanish ? 'Password Confirm password mismatches' : 'Password Confirm password mismatches' }}
                         </div>
                       </div>
                     </div>
@@ -41,20 +42,20 @@
                     <div class="form_box">
                       <div class="black-row">
                         <div class="form_box">
-                          <input ng-model="profileinfo.address" name="address" id="address" required pattern=".{2,}" type="text" class="input2" placeholder="Adresse*" value="{{profileinfo.address}}">
+                          <input ng-model="profileinfo.address" name="address" id="address" required pattern=".{2,}" type="text" class="input2" placeholder="{{ isDanish ? 'Adresse*' : 'Address' }}*" value="{{profileinfo.address}}">
                         </div>
                         <div class="form_box2">
-                          <input ng-model="profileinfo.zipcode" name="zipcode" id="zipcode" required pattern=".{2,}" type="text" class="input2" placeholder="Postnr.*" value="{{profileinfo.zipcode}}">
+                          <input ng-model="profileinfo.zipcode" name="zipcode" id="zipcode" required pattern=".{2,}" type="text" class="input2" placeholder="{{ isDanish ? 'Postnr.' : 'Zip code' }}*" value="{{profileinfo.zipcode}}">
                         </div>
                         <div class="form_box2">
-                          <input ng-model="profileinfo.city" name="city" id="city" required pattern=".{2,}" type="text" class="input2" placeholder="By*" value="{{profileinfo.city}}">
+                          <input ng-model="profileinfo.city" name="city" id="city" required pattern=".{2,}" type="text" class="input2" placeholder="{{ isDanish ? 'By' : 'City' }}*" value="{{profileinfo.city}}">
                         </div>
                       </div>
                     </div>
                     <div class="form_box">
                       <div class="select-style">
-                        <select name="profileinfo.country_id" id="country_id" class="input2"  ng-model="selectedCountry_id"  required data-error="Select Land!" >
-                          <option value="">Land* </option>
+                        <select name="profileinfo.country_id" id="country_id" class="input2"  ng-model="selectedCountry_id"  required data-error="{{ isDanish ? 'Select Land!' : 'Select Country!' }}" >
+                          <option value="">{{ isDanish ? 'Land' : 'Country' }}* </option>
                           <option value="{{countries_id.id}}" ng-repeat="countries_id in countriesdropdown" ng-selected="{{selectedCountry_id == countries_id.id}}">{{countries_id.name}}</option>
                         </select>
                       </div>
@@ -70,7 +71,7 @@
         </div><!--close section-middle-->
         <div class="section-bottom">
           <div class="blackpage-controller">
-            <button ng-disabled="profile_ansog_form1.$touched" type="submit" class="black-next">NÆSTE SIDE</button>
+            <button ng-disabled="profile_ansog_form1.$touched" type="submit" class="black-next">{{ isDanish ? 'NÆSTE SIDE' : 'NEXT PAGE' }}</button>
           </div>
         </div><!--close section-bottom-->
       </div><!--close page-black-->

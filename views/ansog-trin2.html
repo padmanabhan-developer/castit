@@ -3,10 +3,10 @@
      <form name="profile_ansog_form2" id="profile_ansog_form2" ng-submit="step2Create()"> 
           <div class="page-black livetitle">
           	   <div class="section-top">
-               		<h2>Ansøgningsskema</h2>
+               		<h2>{{ isDanish ? 'Ansøgningsskema' : 'Application form' }}</h2>
                     <div class="black-right">
                     	 <!-- <a href="#" class="black-edit"></a> -->
-                         <a href="#/index" class="black-close">luk</a>
+                         <a href="#/index{{isDanish ? '/da' : '/en'}}" class="black-close">{{ isDanish ? 'luk' : 'Close' }}</a>
                     </div>
                </div><!--close section-top-->
                
@@ -16,22 +16,22 @@
                     	 <div class="black-row">
                          
                          	  <div class="black-leftbar">
-                              	   <p>For at ansøge om en profil, bedes du udfylde felterne og klikke videre til næste side.
-                                    </p>
+                                   <p ng-if="isDanish">For at ansøge om en profil, bedes du udfylde felterne og klikke videre til næste side.</p>
+                                   <p ng-if="!isDanish">To apply for a profile please fill out the fields and continue to the next page.</p>
                               </div><!--close black-leftbar-->
                               
                               <div class="black-rightbar livetitle">
                                    <div class="black-row wrap3">
                                    		<div class="black-cal6">
-                                        <h3>PERSONLIG INFO</h3> 
+                                        <h3>{{ isDanish ? 'PERSONLIG INFO' : 'PERSONAL INFO' }}</h3> 
                                         	 <div class="form_box">
-                                             	<input name="email" id="email" ng-model="email" type="email" class="input2" placeholder="Email*"  validate-email required="required"></div>
+                                             	<input name="email" id="email" ng-model="email" type="email" class="input2" placeholder="{{ isDanish ? 'Email' : 'Email' }}*"  validate-email required="required"></div>
                                              <div class="form_box">
                                              	  <div class="black-row">
                                                       <div class="form_box2">
-                                                      	<input name="phone" id="phone" ng-model="phone" type="text" class="input2" placeholder="Tlf. 1*" required="required"></div>
+                                                      	<input name="phone" id="phone" ng-model="phone" type="text" class="input2" placeholder="{{ isDanish ? 'Tlf. 1' : 'Tel. 1' }}*" required="required"></div>
                                                       <div class="form_box2">
-                                                      	<input name="phone_at_work" id="phone_at_work" ng-model="phone_at_work" type="text" class="input2" placeholder="Tlf. 2" >
+                                                      	<input name="phone_at_work" id="phone_at_work" ng-model="phone_at_work" type="text" class="input2" placeholder="{{ isDanish ? 'Tlf. 2' : 'Tel. 2' }}" >
                                                         </div>
                                                   </div>
                                              </div>
@@ -40,7 +40,7 @@
                                                       <div class="form_box2">
                                                       	   <div class="select-style">
                                                            		<select name="gender_id"  class="input2"  id="gender_id" ng-model="gender_id" required>
-                                                                	<option value="">Køn*</option>
+                                                                	<option value="">{{ isDanish ? 'Køn' : 'Gender' }}*</option>
                                                                     <option value="{{gen.id}}" ng-repeat="gen in gender">{{gen.name}}</option>
                                                                 </select>
                                                                
@@ -52,13 +52,13 @@
                                         </div><!--close black-cal4-->
                                         
                                         <div class="black-cal6 fodt">
-                                        	 <h3>FØDT</h3>
+                                        	 <h3>{{ isDanish ? 'FØDT' : 'BORN' }}</h3>
                                         	 <div class="form_box">
                                              	  <div class="black-row">
                                                       <div class="form_box3">
                                                       <div class="select-style">
                                                  <select name="birth_day" class="input2" id="birth_day" ng-model="birth_day" required>
-                                                                    <option value="">Dag</option>
+                                                                    <option value="">{{ isDanish ? 'Dag' : 'Day' }}</option>
                                                                     <option value="01">1</option>
                                                                     <option value="02">2</option>
                                                                     <option value="03">3</option>
@@ -98,7 +98,7 @@
                                                       <div class="form_box3">
                                                       <div class="select-style">
                                               <select name="birth_month" class="input2" id="birth_month" ng-model="birth_month" required>
-                                                                    <option value="">Mdr</option>
+                                                                    <option value="">{{ isDanish ? 'Mdr' : 'Month' }}</option>
                                                                     <option value="1">1</option>
                                                                     <option value="2">2</option>
                                                                     <option value="3">3</option>
@@ -118,7 +118,7 @@
                                                       <div class="form_box3">
                                                       	  <div class="select-style">
                                                            		<select name="birth_year" class="input2" id="birth_year" ng-model="birth_year" required>
-                                                                    <option value="">År</option>
+                                                                    <option value="">{{ isDanish ? 'År' : 'Year' }}</option>
                                                                     <option value="{{year_id.id}}" ng-selected="{{birth_year == year_id.id}}" ng-repeat="year_id in yearsdropdown">{{year_id.name}}</option>
                                                                 </select>
                                                            </div>
@@ -126,10 +126,10 @@
                                                   </div>
                                              </div>
                                              <div class="form_box">
-                                             <input name="ethnic_origin" id="ethnic_origin" ng-model="ethnic_origin" type="text" class="input2" placeholder="Etninsk oprindelse">
+                                             <input name="ethnic_origin" id="ethnic_origin" ng-model="ethnic_origin" type="text" class="input2" placeholder="{{ isDanish ? 'Etninsk oprindelse' : 'Ethnic Origin' }}">
                                             </div>
                                             <div class="form_box">
-                                                    <input ng-model="job" name="job" id="job" type="text" class="input2" placeholder="Beskæftigelse">
+                                                    <input ng-model="job" name="job" id="job" type="text" class="input2" placeholder="{{ isDanish ? 'Beskæftigelse' : 'Employment' }}">
                                                 </div>
                                         </div><!--close black-cal4-->
                                    </div><!--close black-row-->
@@ -144,8 +144,8 @@
                <div class="section-bottom">
                		<div class="blackpage-controller">
                     	
-                         <a href="#/ansog-trin1" class="black-prev">FORRIGE SIDE</a>
-                         <button ng-disabled="profile_ansog_form2.$touched" type="submit" class="black-next">NÆSTE SIDE</button>
+                         <a href="#/ansog-trin1{{isDanish ? '/da' : '/en'}}" class="black-prev">{{ isDanish ? 'FORRIGE SIDE' : 'PREVIOUS PAGE' }}</a>
+                         <button ng-disabled="profile_ansog_form2.$touched" type="submit" class="black-next">{{ isDanish ? 'NÆSTE SIDE' : 'NEXT PAGE' }}</button>
                     </div>
                </div><!--close section-bottom-->
           </div><!--close page-black-->
