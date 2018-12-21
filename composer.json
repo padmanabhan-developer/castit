@@ -3,7 +3,9 @@
     "description": "this is the frontend app for castit.dk",
     "type": "project",
     "require": {
-        "rackspace/php-opencloud": "dev-master"
+        "rackspace/php-opencloud": "dev-master",
+        "mailgun/mailgun-php": "dev-master",
+        "php-http/guzzle6-adapter": " ^1.0"
     },
     "authors": [
         {

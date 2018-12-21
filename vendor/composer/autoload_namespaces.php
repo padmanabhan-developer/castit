@@ -7,6 +7,7 @@ $baseDir = dirname($vendorDir);
 
 return array(
     'OpenCloud' => array($vendorDir . '/rackspace/php-opencloud/lib'),
+    'Mailgun' => array($vendorDir . '/mailgun/mailgun-php/src'),
     'Guzzle\\Tests' => array($vendorDir . '/guzzle/guzzle/tests'),
     'Guzzle' => array($vendorDir . '/guzzle/guzzle/src'),
 );
