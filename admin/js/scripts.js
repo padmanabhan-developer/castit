@@ -549,7 +549,25 @@ $(document).ready(function(){
   
   $('input[type=radio][name=uploadmediatype]').change(function(){
     uploadmediatype = $(this).val();
-    $(".uploadfilefield").attr("accept", uploadmediatype+'/*');
+    if(uploadmediatype == "image"){
+      $(".uploadfilefield").attr("accept", 'image/*');
+    }
+    if(uploadmediatype == "video"){
+      $(".uploadfilefield").attr("accept", '.mp4, .avi, .mkv, .mpeg, .mov, .m4v, .wmv, video/*');
+    }
+  });
+
+  $('input[type=radio][name=profile-number-selection]').change(function(){
+    let new_profile_number = $(this).val();
+    if(new_profile_number != undefined){
+      let profileid = $(this).attr('profile_id');
+      let data = {new_profile_number: new_profile_number, profileid: profileid};
+      $.post("/admin/src/updateprofilenumber", data,
+        function (data, textStatus, jqXHR) { 
+          window.location.reload();
+        }
+      );
+    }
   });
   
   $('#complete').click(function(){
@@ -580,12 +598,12 @@ $(document).ready(function(){
           contentType: false,
           processData: false,
           success: function(response){
-            console.log(response);
+            // console.log(response);
             $(".ajax_loading_container").hide();
             $("#upload").removeAttr("disabled");
             response = JSON.parse(response);
-            console.log(response);
-            console.log(response.imgpath);
+            // console.log(response);
+            // console.log(response.imgpath);
             if(response != 0){
                   // Show image preview
                   if(uploadmediatype == 'image'){

@@ -15,14 +15,15 @@ if ($row > 0){
     echo 'wrong';
 }
 */
-
+// var_dump($_POST);
 //include database connection file
 require_once 'dbHelper.php';
 
 $db = new dbHelper();
 
 // verifying user from database using PDO
-$query_string = "SELECT email from profiles WHERE email='".$_POST['user_email']."' && password='".$_POST['user_password']."' ORDER by id desc limit 1";
+$query_string = "SELECT email from profiles WHERE email='".$_POST['user_email']."' AND password='".$_POST['user_password']."' ORDER by id desc limit 1";
+// var_dump($query_string);
 $user_profile_query = $db->prepare($query_string);
 $user_profile_query->execute();
 $row = $user_profile_query->rowCount();

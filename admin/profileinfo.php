@@ -123,6 +123,7 @@ $payment_2_description = (isset($value['payments'][2]['description'])) ? $value[
 <title>Castit</title>
 <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
 <meta http-equiv="cache-control" content="no-store" />
+<meta http-equiv="expires" content="0">
 <link href="css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
 <link href="css/bootstrap-toggle.css" rel="stylesheet">
 <link rel="stylesheet" href="style.css">
@@ -180,6 +181,30 @@ $payment_2_description = (isset($value['payments'][2]['description'])) ? $value[
                         $offline_checked = 'checked="checked"';
                       }
                     ?>
+                
+                <?php
+                  $prefix_profilenumber = substr($profile_number , 0 , 1);
+                  $number_profilenumber = substr($profile_number , 1 );
+                  if(in_array(strtolower($prefix_profilenumber), array("c","y"))){ 
+                    $c_checked = (strtolower($prefix_profilenumber) == "c") ? 'checked="checked"' : '';
+                    $y_checked = (strtolower($prefix_profilenumber) == "y") ? 'checked="checked"' : '';
+                  ?>
+
+
+                  <div class="box0" style="width: 150px;">
+                    <div class="radio radio-info" style="width: 100%;">
+                      <input type="radio" name="profile-number-selection" id="Radios1" value="<?php echo "C".$number_profilenumber; ?>" profile_id=<?php echo $id; ?> <?php echo $c_checked;?>>
+                      <label><?php echo "C".$number_profilenumber; ?></label>
+                    </div>
+
+                    <div class="radio radio-info" style="width: 100%;">
+                      <input type="radio" name="profile-number-selection" id="Radios1" value="<?php echo "Y".$number_profilenumber; ?>" profile_id=<?php echo $id; ?> <?php echo $y_checked;?>>
+                      <label><?php echo "Y".$number_profilenumber; ?></label>
+                    </div>
+                  </div>
+                <?php
+                  }
+                ?>                
                  <div class="box0">
                         <div class="radio radio-info">
                         <input type="radio" name="profile-status-value" id="Radios1" value="1" profile_id=<?php echo $id; ?> <?php echo $online_checked;?>>
@@ -940,6 +965,9 @@ $payment_2_description = (isset($value['payments'][2]['description'])) ? $value[
                                           <?php */ ?>
                                           <?php
                                           $lang_html = '';
+                                          // pp($language_list);
+                                          // pp($value['languages']);
+                                          // echo "\n";
                                           for($i=0; $i < 4; $i++){
                                             $lang_html .= '<div class="form-row">
                                               <div class="custom-select">
@@ -949,6 +977,7 @@ $payment_2_description = (isset($value['payments'][2]['description'])) ? $value[
                                                     $selected = '';
                                                     if(isset($value['languages'][$i]) && $lang['id'] == $value['languages'][$i]['lang_id']){
                                                       $selected = 'selected=selected';
+                                                      // echo $selected;
                                                     }
                                                     $lang_html .= '<option value="'.$lang['id'].'" '.$selected.'>'.$lang['name'].' </option>';
                                                   }

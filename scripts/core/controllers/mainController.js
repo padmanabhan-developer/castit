@@ -323,7 +323,8 @@ main.controller('RegisterStep2Controller', ['$scope', '$filter', '$http', '$wind
 						birth_day: $scope.birth_day,
 						birth_month: $scope.birth_month,
 						birth_year: $scope.birth_year,
-						ethinic_origin: $scope.ethinic_origin
+						ethnic_origin: $scope.ethnic_origin,
+						job: $scope.job
 						}
 
 
@@ -687,11 +688,13 @@ main.controller('RegisterStep5Controller', ['$scope', '$filter', '$http', '$wind
 // Regsiter Step 6
 main.controller('RegisterStep6Controller', ['$scope', '$filter', '$http', '$window', '$rootScope', '$routeParams', 'FlashService', function($scope, $filter, $http, $window, $rootScope, $routeParams, FlashService) {
   var operation = '';
+	var final_message = $rootScope.isDanish ? 'Tak for din oprettelse. Du modtager en mail fra os inden for 2 uger, når vi har kigget din ansøgning igennem.' : 'Thank you for submitting your application. You will receive an email from us within 2 weeks.';
   if($(".operation") != undefined){
     operation = $(".operation").val();
   }
   if(operation == 'update'){
   	$scope.profileinfo = JSON.parse(sessionStorage.getItem('profileinfo'));
+		final_message = $rootScope.isDanish ? 'Profil opdateret' : 'Profile updated';
   }
 
   // document.getElementById("ansigt_text_field").value    = (sessionStorage.getItem('ansigt_text_field')) ? sessionStorage.getItem('ansigt_text_field') : "" ;
@@ -887,13 +890,13 @@ main.controller('RegisterStep6Controller', ['$scope', '$filter', '$http', '$wind
 						$scope.ifRegistring=false;
 						console.log(response);
 						data = { "email": response.email };
+						if(operation == "insert"){
 						$.post("/api/v1/welcome_email", data,
-							function (data, textStatus, jqXHR) {
-								
-							},
+								function (data, textStatus, jqXHR) {},
 						);
+						}
 
-						alert($rootScope.isDanish ? 'Tak for din oprettelse. Du modtager en mail fra os inden for 2 uger, når vi har kigget din ansøgning igennem.' : 'Thank you for submitting your application. You will receive an email from us within 2 weeks.');
+						alert(final_message);
 						window.location = '#/index' + ($rootScope.isDanish ? '/da' : '/en' );
 					}
 					else{
@@ -1472,26 +1475,29 @@ main.controller('UserPasswordResetController', ['$scope', '$filter', '$http', '$
 main.controller('AngularLoginController', ['$scope', '$filter', '$http', '$window', '$rootScope', 'FlashService', '$cookies', function($scope, $filter, $http, $window, $rootScope, FlashService, $cookies) { 
 	this.loginForm = function() {
 
-	var user_data='user_email=' +this.inputData.email+'&user_password='+this.inputData.password;
+	var user_data = {
+		user_email : this.inputData.email,
+		user_password : this.inputData.password,
+	};
+	// console.log(user_data);
 
-	$http({
-		method: 'POST',
-		url: 'api/v1/login.php',
-		data: user_data,
-		headers: {'Content-Type': 'application/x-www-form-urlencoded'}
-	})
-	.success(function(data) {
+	$.post('api/v1/login.php', user_data).done(
+		function(data){
 		if (data !== 'wrong') {
-			document.cookie = "email="+data.email; 
+				data = JSON.parse(data);
+				// console.log(data.email);
+				sessionStorage.setItem('loginemail', data.email);
 			$rootScope.globals.currentUser = data;
 			$scope.isLoggedIn = true;
 			window.location.href = '#/my-profile_1' + ($rootScope.isDanish ? '/da' : '/en' );
-		} else {
+			}
+			else {
 			$scope.errorMsg = $rootScope.isDanish ? "Forkert email/password" : "Invalid Email/Password";
 			$(".login-error-message").html($rootScope.isDanish ? "Brugernavn og/eller adgangskode kan ikke genkendes." : "username or password is not recognized.");
 		}
-	})
 	}
+	);
+}
 
 	$(".login_link").click(function(){
 		if($("#login_email").hasClass('ng-valid') && $("#login_email").val()!=""){
@@ -1558,22 +1564,42 @@ main.controller('AngularLoginController', ['$scope', '$filter', '$http', '$windo
 
 
 main.controller('MyProfileController1',['$scope', '$rootScope','$http', function($scope, $rootScope, $http, $cookies){
-	var cookies_current = document.cookie;
+	// var cookies_current = document.cookie;
+	var argument_data = {
+		email : sessionStorage.getItem('loginemail'),
+	};
   // $http.post('api/v1/getprofileinfo.php', { cookies_current: cookies_current})
 	$http.get('api/v1/countries').success(function(countriesdropdown) {
 		$scope.countriesdropdown = countriesdropdown;
 	});
+	
 	$http({
 		method: 'POST',
 		url: 'api/v1/getprofileinfo.php',
-		data: cookies_current,
-		headers: {'Content-Type': 'application/x-www-form-urlencoded'}
+		data: {email : sessionStorage.getItem('loginemail')},
+		// headers: {'Content-Type': 'application/x-www-form-urlencoded'}
+		headers: {'Content-Type': 'application/json'}
 	})
 	.success(function (response) {
      $scope.profileinfo = response;
      $scope.selectedCountry_id = $scope.profileinfo.country_id;
      sessionStorage.setItem('profileinfo', JSON.stringify(response));
    });
+	 
+	/*
+	$.post('api/v1/getprofileinfo.php', argument_data).done(
+		function (response) {
+			console.log(response);
+			// response = JSON.parse(response);
+			// $scope.profileinfo = response;
+			var result_profileinfo = response;
+			$scope.selectedCountry_id = $scope.profileinfo.country_id;
+			sessionStorage.setItem('profileinfo', JSON.stringify(response));
+		}
+	);
+	*/
+	
+	// $scope.profileinfo = result_profileinfo;
  	$scope.step1Update = step1Update;
 	function step1Update() {  
 		var formData = {first_name: $scope.profileinfo.first_name,
@@ -1602,6 +1628,9 @@ main.controller('MyProfileController2',['$scope', '$rootScope','$http', function
   $scope.profileinfo.birth_day    = birth_array[2];
   $scope.profileinfo.birth_month  = +birth_array[1];
   $scope.profileinfo.birth_year   = birth_array[0];
+	
+	// console.log($scope.profileinfo);
+
   $http.get('api/v1/years').success(function(yearsdropdown) {
     $scope.yearsdropdown = yearsdropdown
   });
@@ -1609,11 +1638,21 @@ main.controller('MyProfileController2',['$scope', '$rootScope','$http', function
   $http.get('api/v1/getstep2data', {params: {limit: limit}}).success(function(response) {
     $scope.gender=response.gender;
   });
-  var birth_month = ("0" + $scope.profileinfo.birth_month).slice(-2);
-  $("#birth_day option[value="+$scope.profileinfo.birth_day+"]").attr("selected","selected");
-  $("#birth_month option[value="+$scope.profileinfo.birth_month+"]").attr("selected","selected");
-  $("#birth_year option[value="+$scope.profileinfo.birth_year+"]").attr("selected","selected");
-  $("#gender_id option[value='"+$scope.profileinfo.gender_id+"']").attr("selected","selected");
+  // var birth_month = ("0" + $scope.profileinfo.birth_month).slice(-2);
+  // $("#birth_day option[value="+$scope.profileinfo.birth_day+"]").attr("selected","selected");
+	// $("#birth_day option[value="+$scope.profileinfo.birth_day+"]").prop('selected');
+	$("#birth_day").val($scope.profileinfo.birth_day);
+
+  // $("#birth_month option[value="+$scope.profileinfo.birth_month+"]").attr("selected","selected");
+  // $("#birth_month option[value="+$scope.profileinfo.birth_month+"]").prop('selected');
+	$("#birth_month").val($scope.profileinfo.birth_month);
+
+	// $("#birth_year option[value="+$scope.profileinfo.birth_year+"]").attr("selected","selected");
+	// $("#birth_year option[value="+$scope.profileinfo.birth_year+"]").prop('selected');
+	$("#birth_year").val($scope.profileinfo.birth_year);
+
+	// $("#gender_id option[value='"+$scope.profileinfo.gender_id+"']").attr("selected","selected");
+	$("#gender_id").val($scope.profileinfo.gender_id);
   
   $scope.step2Update = step2Update;
   function step2Update() {
@@ -1628,7 +1667,8 @@ main.controller('MyProfileController2',['$scope', '$rootScope','$http', function
           birth_day: $scope.profileinfo.birth_day,
           birth_month: $scope.profileinfo.birth_month,
           birth_year: $scope.profileinfo.birth_year,
-          ethinic_origin: $scope.profileinfo.ethinic_origin
+          ethnic_origin: $scope.profileinfo.ethnic_origin,
+          job: $scope.profileinfo.job
         }
     $http.post('api/v1/step2Create', formData).success(function(response) {
       if(response.success){
@@ -1651,22 +1691,38 @@ main.controller('MyProfileController3',['$scope', '$rootScope','$http', function
     $scope.hair_colors=response.hair_colors;
   });
 
-  $("#hair_color_id option[value='"+$scope.profileinfo.hair_color_id+"']").attr("selected","selected");
-  $("#eye_color_id option[value='"+$scope.profileinfo.eye_color_id+"']").attr("selected","selected");  
+  // $("#hair_color_id option[value='"+$scope.profileinfo.hair_color_id+"']").attr("selected","selected");
+	$("#hair_color_id").val($scope.profileinfo.hair_color_id);
 
-  $("#shirt_size_from option[value='"+$scope.profileinfo.shirt_size_from+"']").attr("selected","selected");
-  $("#shirt_size_to option[value='"+$scope.profileinfo.shirt_size_to+"']").attr("selected","selected");
+	// $("#eye_color_id option[value='"+$scope.profileinfo.eye_color_id+"']").attr("selected","selected");  
+	$("#eye_color_id").val($scope.profileinfo.eye_color_id);
+	
+	// $("#shirt_size_from option[value='"+$scope.profileinfo.shirt_size_from+"']").attr("selected","selected");
+	$("#shirt_size_from").val($scope.profileinfo.shirt_size_from);
 
-  $("#pants_size_from option[value='"+$scope.profileinfo.pants_size_from+"']").attr("selected","selected");
-  $("#pants_size_to option[value='"+$scope.profileinfo.pants_size_to+"']").attr("selected","selected");
+	// $("#shirt_size_to option[value='"+$scope.profileinfo.shirt_size_to+"']").attr("selected","selected");
+	$("#shirt_size_to").val($scope.profileinfo.shirt_size_to);
+
+  // $("#pants_size_from option[value='"+$scope.profileinfo.pants_size_from+"']").attr("selected","selected");
+	$("#pants_size_from").val($scope.profileinfo.pants_size_from);
+
+	// $("#pants_size_to option[value='"+$scope.profileinfo.pants_size_to+"']").attr("selected","selected");
+	$("#pants_size_to").val($scope.profileinfo.pants_size_to);
+
+  // $("#shoe_size_from option[value='"+$scope.profileinfo.shoe_size_from+"']").attr("selected","selected");
+	$("#shoe_size_from").val($scope.profileinfo.shoe_size_from);
+
+	// $("#shoe_size_to option[value='"+$scope.profileinfo.shoe_size_to+"']").attr("selected","selected");
+	$("#shoe_size_to").val($scope.profileinfo.shoe_size_to);
   
-  $("#shoe_size_from option[value='"+$scope.profileinfo.shoe_size_from+"']").attr("selected","selected");
-  $("#shoe_size_to option[value='"+$scope.profileinfo.shoe_size_to+"']").attr("selected","selected");
+  // $("#suite_size_from option[value='"+$scope.profileinfo.suite_size_from+"']").attr("selected","selected");
+	$("#suite_size_from").val($scope.profileinfo.suite_size_from);
 
-  $("#suite_size_from option[value='"+$scope.profileinfo.suite_size_from+"']").attr("selected","selected");
-  $("#suite_size_to option[value='"+$scope.profileinfo.suite_size_to+"']").attr("selected","selected");
+	// $("#suite_size_to option[value='"+$scope.profileinfo.suite_size_to+"']").attr("selected","selected");
+	$("#suite_size_to").val($scope.profileinfo.suite_size_to);
   
-  $("#bra_size option[value='"+$scope.profileinfo.bra_size+"']").attr("selected","selected");
+  // $("#bra_size option[value='"+$scope.profileinfo.bra_size+"']").attr("selected","selected");
+	$("#bra_size").val($scope.profileinfo.bra_size);
   
   $scope.step3Update = step3Update;
   function step3Update() {
@@ -1821,7 +1877,7 @@ main.controller('MyProfileController4',['$scope', '$rootScope','$http', function
         window.location = '#/my-profile_5' + ($rootScope.isDanish ? '/da' : '/en' );
       }
     });       
-  }
+	}
 }]);
 
 main.controller('MyProfileController5',['$scope', '$rootScope','$http', function($scope, $rootScope, $http, $cookies){

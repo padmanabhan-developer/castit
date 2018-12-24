@@ -2334,15 +2334,14 @@ $app->post('/step6Create',function () use ($app) {
 				}
 
 				if(!empty($languages)){
+					$clear_existance_query = $db->prepare("delete from language_proficiencies where profile_id = ".$user_profile_id);
+					$clear_existance_query->execute();
 					foreach($languages as $language){
 						$language_id = $language['language_id'];
 						$rating_id = $language['rating_id'];
 						
-						if(isset($language['lng_pro_id'])){
+						if($language_id != 0 && $language_id != ''){
 							$query = "INSERT INTO `language_proficiencies` (`language_proficiency_language_id`,`profile_id`,`language_proficiency_rating_id`,`created_at`,`updated_at`) VALUES ('".$language['language_id']."','".$user_profile_id."','".$language['rating_id']."',now(),now())";
-						}else{
-							$lng_pro_id = $language['lng_pro_id'];
-							$query = "UPDATE language_proficiencies SET language_proficiency_language_id = $language_id, language_proficiency_rating_id = $rating_id, updated_at = now() WHERE id = $lng_pro_id";
 						}
 						$query_prepared = $db->prepare($query);
 						$query_prepared->execute();
@@ -2816,7 +2815,7 @@ $app->post('/sendgroup', function () use ($app) {
            <div class="popup-container" style="margin: auto ; width: 730px ; padding: 0 15px ; max-width: 100%" >
                  <div class="popup-row1" style="border-bottom: solid 1px #2d2e32 ; float: left ; width: 730px; padding: 0 0 20px 0; margin: 0px 0 10px -5px;" >
 					   <div class="popup-logo" style="float:left; width:182px;" ><a href="#"><img style="max-width: 150px; margin-bottom: 15px;"  src="http://134.213.29.220/images/new_logo_black.png" alt="" /></a>
-					 	<a href="http://134.213.29.220/#/index?group='.$gid.'&username='.$username.'&groupname='.$group_addedon_value[0]['group_name'].'" style="background-color: blue;border-radius: 20px;padding: 7px 17px;color: #FFF;text-decoration: none;font-family: helvetica;font-size: 13px;">Open Lightbox</a>  
+					 	<a href="http://castit.local/#/index/da?group='.$gid.'&username='.$username.'&groupname='.$group_addedon_value[0]['group_name'].'" style="background-color: blue;border-radius: 20px;padding: 7px 17px;color: #FFF;text-decoration: none;font-family: helvetica;font-size: 13px;">Open Lightbox</a>  
 					   </div>
                        <div class="popup-text" style="display:block; padding:0 0 0 182px;">
                              <h4 style="padding:0;color:#000; font-size:16px; line-height:20px; font-weight:bold; font-family:Arial, Helvetica, sans-serif; margin:0 0 20px 0;" >Castit Lightbox:</h4>

@@ -1,7 +1,13 @@
 <?php
 //include database connection file
+
+$params = json_decode(file_get_contents('php://input'));
+
+// header('Content-Type: application/json');
+
 require_once 'dbHelper.php';
 $db = new dbHelper();
+
 
 if(isset($_GET['id']) && is_numeric($_GET['id'])){
   $id = $_GET['id'];
@@ -11,7 +17,8 @@ if(isset($_GET['id']) && is_numeric($_GET['id'])){
   $row = $user_profile_query->rowCount();
 }
 else{
-  $email = explode("email=", $_POST['PHPSESSID'])[1];
+  // $email = explode("email=", $_POST['PHPSESSID'])[1];
+  $email = $params->email;
   $query_string = "SELECT * from profiles WHERE email='".$email."' ORDER by id desc limit 1";
   $user_profile_query = $db->prepare($query_string);
   $user_profile_query->execute();
