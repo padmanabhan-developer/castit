@@ -2081,9 +2081,9 @@ $app->post('/step6Create',function () use ($app) {
 			$user_profile_id = $profile_id;
 			if($profile_id){
 				
-				// 1 male - CM; 2 female - CF
-				$profile_number_prefix = ($gender_id == 2) ? "CF":"CM";
-				$max_existing = $db->prepare("SELECT MAX(CAST(SUBSTRING(profile_number, 3) AS UNSIGNED)) as max_profile FROM memberships where profile_number LIKE 'CF%' OR profile_number LIKE 'CM%' ");
+				// 1 male - YM; 2 female - YF
+				$profile_number_prefix = ($gender_id == 2) ? "YF":"YM";
+				$max_existing = $db->prepare("SELECT MAX(CAST(SUBSTRING(profile_number, 3) AS UNSIGNED)) as max_profile FROM memberships where profile_number LIKE 'YF%' OR profile_number LIKE 'YM%' ");
 				$max_existing->execute();
 				$max_profile = $max_existing->fetchAll(PDO::FETCH_ASSOC);
 				
@@ -2815,7 +2815,7 @@ $app->post('/sendgroup', function () use ($app) {
            <div class="popup-container" style="margin: auto ; width: 730px ; padding: 0 15px ; max-width: 100%" >
                  <div class="popup-row1" style="border-bottom: solid 1px #2d2e32 ; float: left ; width: 730px; padding: 0 0 20px 0; margin: 0px 0 10px -5px;" >
 					   <div class="popup-logo" style="float:left; width:182px;" ><a href="#"><img style="max-width: 150px; margin-bottom: 15px;"  src="http://134.213.29.220/images/new_logo_black.png" alt="" /></a>
-					 	<a href="http://castit.local/#/index/da?group='.$gid.'&username='.$username.'&groupname='.$group_addedon_value[0]['group_name'].'" style="background-color: blue;border-radius: 20px;padding: 7px 17px;color: #FFF;text-decoration: none;font-family: helvetica;font-size: 13px;">Open Lightbox</a>  
+					 	<a href="http://134.213.29.220/#/index/da?group='.$gid.'&username='.$username.'&groupname='.$group_addedon_value[0]['group_name'].'" style="background-color: blue;border-radius: 20px;padding: 7px 17px;color: #FFF;text-decoration: none;font-family: helvetica;font-size: 13px;">Open Lightbox</a>  
 					   </div>
                        <div class="popup-text" style="display:block; padding:0 0 0 182px;">
                              <h4 style="padding:0;color:#000; font-size:16px; line-height:20px; font-weight:bold; font-family:Arial, Helvetica, sans-serif; margin:0 0 20px 0;" >Castit Lightbox:</h4>
