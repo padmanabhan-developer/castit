@@ -347,6 +347,9 @@ $(document).ready(function () {
         profile.sports_hobby  = "";
         profile.ethnic_origin  = "";
 
+        profile.marked_as_new_from = "";
+        profile.marked_as_new_till = "";
+
         profile.marked_as_new_from_day  = "";
         profile.marked_as_new_from_month  = "";
         profile.marked_as_new_from_year  = "";
@@ -454,7 +457,10 @@ $(document).ready(function () {
       $("input[name=profile-status-value]").change(function() {
         let profile_id = $(this).attr('profile_id');
         let update_value = $(this).val();
-        let data = {profile_id: profile_id, update_value: update_value};
+        let profile_number = '';
+        profile_number = $("input[name=profile-number-selection]").val();
+        // let update_value = 1;
+        let data = {profile_id: profile_id, update_value: update_value, profile_number: profile_number};
         // $(".send-email-notification").attr("profile-status", $(this).val());
         $.post("/admin/src/updateprofilestatus", data, function (returndata, textStatus, jqXHR) {
 

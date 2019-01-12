@@ -555,13 +555,25 @@ main.controller('RegisterStep4Controller', ['$scope', '$filter', '$http', '$wind
 						selectedlicences: $scope.selectedlicences,
 						sportshobby: $scope.sports_hobby,
 						}
-		$http.post('api/v1/step4Create', formData).success(function(sucess) {
-			if(sucess){
-				window.location = '#/ansog-trin5' + ($rootScope.isDanish ? '/da' : '/en' );
-			}
-		});				
-	  }
+		if(
+			($scope.selectedskills != undefined && $scope.selectedskills != '') && 
+			($scope.selectedcategories != undefined && $scope.selectedcategories != '') &&
+			($scope.selectedlicences != undefined && $scope.selectedlicences != '')
+			){
+			$http.post('api/v1/step4Create', formData).success(function(sucess) {
+				if(sucess){
+					window.location = '#/ansog-trin5' + ($rootScope.isDanish ? '/da' : '/en' );
+				}
+			});
+		}
+		else{
+			$(".alert_message").fadeIn("fast");
+		}		
+	}
 
+	$(".alert_message").click(function(){
+		$(this).fadeOut("fast");
+	});
 	  
 }]);
 
@@ -984,7 +996,56 @@ main.controller('FooterController', ['$scope', '$filter', '$http', '$window', '$
 
 
 
+main.controller('ResetPasswordController', ['$scope', '$filter', '$http', '$window', '$rootScope', '$routeParams', function($scope, $filter, $http, $window, $rootScope, $routeParams) {
+	function getUrlVars(){
+    var vars = [], hash;
+    var hashes = window.location.href.slice(window.location.href.indexOf('?') + 1).split('&');
+    for(var i = 0; i < hashes.length; i++){
+        hash = hashes[i].split('=');
+        vars.push(hash[0]);
+        vars[hash[0]] = hash[1];
+    }
+    return vars;
+	}
 
+	let query_param = getUrlVars();
+	$scope.resetPasswordFormSubmit = function(){
+		if($scope.resetpassword2 != $scope.resetpassword1){
+			$(".alert_message").fadeIn("fast");
+		}
+		else{
+			if($scope.resetpassword2 === $scope.resetpassword1){
+				var user_data = {
+					resetpassword : $scope.resetpassword1,
+					email: query_param.email,
+					resethash: query_param.resethash
+				};
+			
+				$.post('api/v1/newresetpassword.php', user_data).done(
+					function(data){
+						if (data == 'success') {
+							$(".success_message").fadeIn("fast");
+							setTimeout(function(){
+								window.location.href = '#/login' + ($rootScope.isDanish ? '/da' : '/en' );
+							}, 5000)
+						}
+						else {
+
+						}
+					}
+				);
+			}
+		}
+	}
+
+	$(".alert_message").click(function(){
+		$(".alert_message").fadeOut("fast");
+	});
+	$(".success_message").click(function(){
+		$(".alert_message").fadeOut("fast");
+	});
+
+}]);
 
 
 

@@ -2396,7 +2396,17 @@ input[id="update_media_pending"] {
 	animation: spin 1s linear infinite;
 	margin-left: 40%;
 }
-  
+
+.godkend_button{
+    border: none;
+    float: right;
+    width: 185px;
+    font-size: 15px;
+    font-family: helvetica;
+    padding: 0;
+    margin-right: -5px;
+    line-height: 35px;
+}
   /* Safari */
   @-webkit-keyframes spin {
     0% { -webkit-transform: rotate(0deg); }

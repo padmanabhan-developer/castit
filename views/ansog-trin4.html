@@ -72,10 +72,13 @@
                     <div class="blackpage-controller">
                      
                       <a href="#/ansog-trin3{{isDanish ? '/da' : '/en'}}" class="black-prev">{{ isDanish ? 'FORRIGE SIDE' : 'PREVIOUS PAGE' }}</a>
-                      <button ng-disabled="profile_ansog_form4.$invalid" type="submit" class="black-next">{{ isDanish ? 'NÆSTE SIDE' : 'NEXT PAGE' }}</button>
+                      <button type="submit" class="black-next">{{ isDanish ? 'NÆSTE SIDE' : 'NEXT PAGE' }}</button>
                  </div>
             </div><!--close section-bottom-->
               </div><!--close page-black-->
           </form>
      </div><!--close content-->
 </div><!--close wrapper-->
+<div class="alert_message" style="display:none">
+     <p>{{ isDanish ? 'Vælg mindst en værdi for KATEGORI, ERFARING og KØREKORT' : 'Please select at least one value for Category, Skill and Licence' }}</p>
+</div>

@@ -313,8 +313,10 @@
                                     <h4>{{gp_profile.name}}. {{gp_profile.age}} {{ isDanish ? 'år' : 'years' }}.</h4>
                                       <!-- <span class="bank"><a javascript:void(0);></a></span> -->
                                       <h5> {{gp_profile.group_name}}</h5>
-                                      <span class="edit3"><a href="javascript:void(0);"></a></span>
-                                      <p>{{gp_profile.lb_note}}</p>
+                                      <span class="edit3"><a href="javascript:void(0);" ng-click="enableNotesBoxFN()"></a></span>
+                                      <textarea name="" id="" class="notes-textarea" ng-model="gp_profile.lb_note" ng-disabled="!enableNotesBox" ng-blur="updateNotesFN($event)" profile_id="{{gp_profile.id}}" group_id="{{gpprofile.group_id}}" maxlength="60"></textarea>
+                                      
+                                      <!-- <p>{{gp_profile.lb_note}}</p> -->
                                  </div>
                                  
                                  <div class="sidebar1_box2_bottom2">
@@ -624,7 +626,7 @@
                     </div>
                    </form>
                </div>
-         <div  ng-show="!ifLightboxFormRemove" class="popup-title">{{ isDanish ? 'Slettet fra GRUPPE' : 'Group is deleted' }}!</div> 
+         <div  ng-show="!ifLightboxFormRemove" class="popup-title">{{ isDanish ? 'Slettet fra Gruppen' : 'Deleted from Group' }}!</div> 
           </div>
      </div>
 </div>
@@ -759,8 +761,9 @@
                                        <!-- <span class="popup-icon1"></span> -->
                                        <div class="form-box1">
                                        <input type="hidden" name="pbox_profileid" id="pbox_profileid" ng-model="pbox_profileid" value="" />
-                                            <textarea name="profile_notes" id="profile_notes" ng-model="profile_notes" cols="" rows="" placeholder="{{ isDanish ? 'Skriv note...':'Note' }}" class="textarea"></textarea>
+                                            <textarea name="profile_notes" id="profile_notes" ng-model="profile_notes" cols="" rows="" char-count placeholder="{{ isDanish ? 'Skriv note...':'Note' }}" class="textarea" maxlength="60"></textarea>
                                             <a href="javascript:void(0);" class="edit2"></a>
+                                            <span style="color:#8B8B8B" class="words">{{ 60 - numberOfCharacters }}</span>
                                        </div>
                                        <h3>23.01.17</h3>
                                   </div><!--close popup-box-->

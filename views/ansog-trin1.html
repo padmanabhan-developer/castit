@@ -39,7 +39,7 @@
                                              </div>
                                              <div class="form_box">
                                              	<input ng-model="cpassword" name="cpassword" id="cpassword" required compare-to="password"  pattern=".{2,}" type="password" class="input2" placeholder="{{ isDanish ? 'Bekræft password' : 'Confirm password' }}*">
-                                                <div ng-if="profile_ansog_form1.cpassword.$dirty" ng-messages="profile_ansog_form1.cpassword.$error" ng-hide="profile_ansog_form1.cpassword.$valid"><div ng-message="compareTo">{{ isDanish ? 'Password Confirm password mismatches' : 'Password Confirm password mismatches' }}</div></div>
+                                                <div ng-message="compareTo">{{ isDanish ? 'De givne passwords skal være ens' : 'Passwords given should be identical' }}</div></div>
                                              </div>
                                         </div><!--close black-cal4-->
                                         

@@ -64,19 +64,22 @@ Purpose: Home page Landing page
 Parameter : NIL
 Type : POST
 ******************************************/
+
 $app->get('/getprofiles',function () use ($app) { 
   global $db;
-  $offset = (isset($_GET['offset'])) ? $_GET['offset'] : 1;
+  $offset = (isset($_GET['offset'])) ? $_GET['offset'] : 0;
   $conditional_profiles = "AND ( m.profile_number LIKE 'C%' OR m.profile_number LIKE 'A%'OR m.profile_number LIKE 'J%' OR m.profile_number LIKE 'Y%' ) ";
   if($offset <= 1){
 	// excluding the Y profiles from first set
 	  $conditional_profiles = "AND ( m.profile_number LIKE 'C%') ";
   }
+  /*
   if($offset > 1){
     $conditional_profiles = "AND ( m.profile_number LIKE 'C%' OR m.profile_number LIKE 'J%' ) ";
   }
-  if($offset > 2){
-    $conditional_profiles = "AND ( m.profile_number LIKE 'C%' OR m.profile_number LIKE 'A%'OR m.profile_number LIKE 'J%' ) ";
+  */
+  if($offset > 1){
+    $conditional_profiles = "AND ( m.profile_number LIKE 'C%' OR m.profile_number LIKE 'A%' OR m.profile_number LIKE 'J%' or m.profile_number LIKE 'Y%') ";
   }
   
 
@@ -86,7 +89,7 @@ $app->get('/getprofiles',function () use ($app) {
   as hair_color_name, ec.name 
   as eye_color_name 
 FROM profiles p 
-  INNER JOIN memberships m ON m.profile_id = p.id 
+  INNER JOIN (select * from memberships where current = 1) m ON m.profile_id = p.id 
   INNER JOIN genders g ON g.id = p.gender_id 
   INNER JOIN hair_colors hc ON hc.id = p.hair_color_id 
   INNER JOIN eye_colors ec ON ec.id = p.eye_color_id  
@@ -96,9 +99,10 @@ WHERE ( p.profile_status_id = '1')
 AND m.current ='1' "
 .$conditional_profiles.
 "AND p.id IN ( SELECT profile_id from photos WHERE published ='1' and media_slet_status != '1' GROUP by profile_id ) ";
-$offset = $offset * 100;
-$limit  = " LIMIT 100 OFFSET ". $offset;
+$offset = $offset * 500;
+$limit  = " LIMIT 500 OFFSET ". $offset;
 $sql = $sql . " ORDER BY RAND() " . $limit;
+// $sql = $sql . " ORDER BY m.profile_id " . $limit;
 	  
   	if(isset($_GET['group_id']) && is_numeric($_GET['group_id']) && $_GET['group_id']>0){
 		$group_id = $_GET['group_id'];
@@ -106,12 +110,12 @@ $sql = $sql . " ORDER BY RAND() " . $limit;
 		$group_profiles_query->execute();
 		$group_profiles_rows = $group_profiles_query->fetchAll(PDO::FETCH_ASSOC);
       
-    $ids_in_group = array();
+    	$ids_in_group = array();
 		foreach($group_profiles_rows as $gp_row){
 			$ids_in_group[] = $gp_row['profile_id'];
-    }
+    	}
     // var_dump($ids_in_group);
-    $ids_in_group_sql = " (" . implode(",",$ids_in_group) . ") ";
+    	$ids_in_group_sql = " (" . implode(",",$ids_in_group) . ") ";
     // var_export($ids_in_group_sql);
 		$grouping_query = $db->prepare("SELECT * from grouping where group_id = $group_id");
 		$grouping_query->execute();
@@ -124,15 +128,16 @@ $sql = $sql . " ORDER BY RAND() " . $limit;
 			as eye_color_name 
 			FROM profiles p 
 			INNER JOIN 
-      (select * from memberships where current = 1) m ON m.profile_id = p.id 
+      		(select * from memberships where current = 1) m ON m.profile_id = p.id 
 			INNER JOIN genders g ON g.id = p.gender_id 
 			INNER JOIN hair_colors hc ON hc.id = p.hair_color_id 
 			INNER JOIN eye_colors ec ON ec.id = p.eye_color_id  
 			WHERE ( p.profile_status_id = '1' ) 
-      AND p.id IN $ids_in_group_sql";
+      		AND p.id IN $ids_in_group_sql";
 	}
 
 	$query = $db->prepare($sql); 
+	// echo $sql;exit;
 	// echo $query;exit;
 	$query->execute();
 	$rows = $query->fetchAll(PDO::FETCH_ASSOC);
@@ -147,17 +152,30 @@ $sql = $sql . " ORDER BY RAND() " . $limit;
 
 			// Profile Image
 			$profile_image ='';
-			$query_image = $db->prepare("SELECT *, DATE_FORMAT(created_at, '%Y') as create_year, DATE_FORMAT(created_at, '%m') as create_month, DATE_FORMAT(created_at, '%d') as create_date FROM photos WHERE profile_id = '".$row['id']."' and published ='1' and media_slet_status != '1' ORDER BY position ASC "); 
+			$query_image = $db->prepare("SELECT *, DATE_FORMAT(created_at, '%Y') as create_year, DATE_FORMAT(created_at, '%m') as create_month, DATE_FORMAT(created_at, '%d') as create_date FROM photos WHERE profile_id = '".$row['id']."' and published ='1' and media_slet_status != '1' ORDER BY position ASC limit 1"); 
 		$query_image->execute();
 		$image= '';
-    $rows_image = $query_image->fetchAll(PDO::FETCH_ASSOC);
+    	$rows_image = $query_image->fetchAll(PDO::FETCH_ASSOC);
 		if(count($rows_image) > 0){
-			$path = $rows_image[0]['create_year']."/".$rows_image[0]['create_month']."/".$rows_image[0]['create_date']."/".$rows_image[0]['id']."/big_";
-			$profile_image = 'http://134.213.29.220/profile_images/'.$path.$rows_image[0]['image'];
+			// $path = $rows_image[0]['create_year']."/".$rows_image[0]['create_month']."/".$rows_image[0]['create_date']."/".$rows_image[0]['id']."/big_";
+			// $profile_image = 'http://134.213.29.220/profile_images/'.$path.$rows_image[0]['image'];
 			//$profile_image = 'http://castit.dk/assets/profile_images/'.$path.$rows_image[0]['image'];
+			
+			$min = 0;
+			$rows_count = count($rows_image);
+			$max = $rows_count - 1;
+			$random_index = rand($min, $max);
+			$random_index = 0;
+			if (strpos($rows_image[$random_index]['path'], 'vhost') !== false) {
+				$path = $rows_image[$random_index]['path'];
+				$profile_image = 'http://134.213.29.220/images/uploads/'.$rows_image[$random_index]['image'];
+			}
+			else{
+				$path = $rows_image[$random_index]['create_year']."/".$rows_image[$random_index]['create_month']."/".$rows_image[$random_index]['create_date']."/".$rows_image[$random_index]['id']."/big_";
+				$profile_image = 'http://134.213.29.220/profile_images/'.$path.$rows_image[$random_index]['image'];
+			}
+
 		}
-
-
 			$profiles[] = array('id' 			=> $row['id'],
 								'bureau' 		=> $row['bureau'],
 								'nationality' 	=> $row['nationality'],
@@ -271,6 +289,7 @@ $app->get('/getfilterprofiles',function () use ($app) {
 		$min = 0;
 		$max = $rows_count - 1;
 		$random_index = rand($min, $max);
+		$random_index = 0;
 		if (strpos($rows_image[$random_index]['path'], 'vhost') !== false) {
 			$path = $rows_image[$random_index]['path'];
 			$profile_image = 'http://134.213.29.220/images/uploads/'.$rows_image[$random_index]['image'];
@@ -905,7 +924,13 @@ $app->get('/getlightboxprofiles', function () use ($app) {
 	echoResponse(200, $reponse);
   
 });
-
+$app->post('/updatenotes', function() use ($app){
+	global $db;
+	$data = json_decode($app->request->getBody());
+	$sql = "UPDATE `profile_grouping` set `profile_notes` = '".$data->notes."' WHERE `group_id` = ".$data->group_id." AND `profile_id` = ".$data->profile_id;
+	$updatenotes_in_db = $db->prepare($sql);
+	$updatenotes_in_db->execute();
+});
 /******************************************
 Purpose: Get Grouping profiles list
 Parameter : null
@@ -937,7 +962,6 @@ $app->get('/getgroupingprofiles', function () use ($app) {
 			$rowcountpg = count($rows_lb_pprofiles);
 			if($rowcountpg > 0){
 				foreach($rows_lb_pprofiles as $rowp) {
-					
 						$query = $db->prepare("SELECT p.*, m.profile_group_id, m.profile_number, m.profile_number_first_name_last_name, m.version, m.current, g.name as gender_name, hc.name as hair_color_name, ec.name as eye_color_name FROM profiles p INNER JOIN memberships m ON m.profile_id = p.id INNER JOIN genders g ON g.id = p.gender_id INNER JOIN hair_colors hc ON hc.id = p.hair_color_id INNER JOIN eye_colors ec ON ec.id = p.eye_color_id  WHERE p.id='".$rowp['profile_id']."' AND (p.profile_status_id = '1' ) AND m.current ='1' LIMIT 1"); 
 						$query->execute();
 						$rows = $query->fetchAll(PDO::FETCH_ASSOC);
@@ -963,7 +987,8 @@ $app->get('/getgroupingprofiles', function () use ($app) {
 							}
 							
 						}
-						$lb_note = isset($_SESSION["lb_notes"][$row['id']]) ? $_SESSION["lb_notes"][$row['id']]: '' ;
+						// $lb_note = isset($_SESSION["lb_notes"][$row['id']]) ? $_SESSION["lb_notes"][$row['id']]: '' ;
+						$lb_note = $rowp['profile_notes'];
 						$lb_pprofiles[] = array('id' 			=> $row['id'],
 											'bureau' 		=> $row['bureau'],
 											'nationality' 	=> $row['nationality'],
@@ -2818,7 +2843,7 @@ $app->post('/sendgroup', function () use ($app) {
 					 	<a href="http://134.213.29.220/#/index/da?group='.$gid.'&username='.$username.'&groupname='.$group_addedon_value[0]['group_name'].'" style="background-color: blue;border-radius: 20px;padding: 7px 17px;color: #FFF;text-decoration: none;font-family: helvetica;font-size: 13px;">Open Lightbox</a>  
 					   </div>
                        <div class="popup-text" style="display:block; padding:0 0 0 182px;">
-                             <h4 style="padding:0;color:#000; font-size:16px; line-height:20px; font-weight:bold; font-family:Arial, Helvetica, sans-serif; margin:0 0 20px 0;" >Castit Lightbox:</h4>
+                             <h4 style="padding:0;color:#000; font-size:16px; line-height:20px; font-weight:bold; font-family:Arial, Helvetica, sans-serif; margin:0 0 20px 0;" >Castit Lightbox: '.$group_addedon_value[0]['group_name'].'</h4>
                             <p style="color:#dddddd; font-size:14px; line-height:20px; font-weight:normal; font-family:Arial, Helvetica, sans-serif; margin:0;">'.$mail_body.'.</p>
                        </div>
                   </div><!--popup-row1-->
@@ -3408,12 +3433,11 @@ $app->post('/resetpassword',function () use ($app) {
 								width="90px"/> </div>
 								<div style="padding:0 30px;">';
 					$content .= '<h5 style="color: #646e78;font-size: 16px;padding:0;margin: 0; text-align:left;">Kære '.ucfirst($rows[0]['first_name']).' '.ucfirst($rows[0]['last_name']).',</h5>';
-				
-					$content .= '<p style="color: #646e78;font-size: 16px;text-align:left;">Din nye adgangskode er,</p>';
+					$reset_link = '<a href="http://134.213.29.220/#/reset-password?email='.$email.'&resethash='.$randompass.'">Nulstille kodeord</a>';
+					// $content .= '<p style="color: #646e78;font-size: 16px;text-align:left;">Din nye adgangskode er,</p>';
 					$content .= '<p style="color: #646e78;font-size: 16px;padding:0; line-height:18px; text-align:left; 
-								">Brugernavn :'.$email.'<br/>Adgangskode :'.$randompass.'<br/></p>
-								<p style="color: #646e78;font-size: 16px;padding:0; line-height:18px; text-align:left; 
-								">Log venligst ind på din konto og skift adgangskoden.<br/></p>';
+					">Klik venligst på linket og skift adgangskoden.<br/></p><p style="color: #646e78;font-size: 16px;padding:0; line-height:18px; text-align:left; 
+								">'.$reset_link.'<br/></p>';
 					$content .= '<p style="color: #646e78;text-align:left;font-size: 16px;padding:0 0 45px 0; margin:51px 0 0; 
 								line-height:20px; text-align:left;font-family:Calibri">Tak skal du have!<br><br>Med venlig hilsen,<br>Castit</p>
 								<div style="float:left; width:100%; margin:40px 0 0 0; border-top:solid 1px #dddddd; 	

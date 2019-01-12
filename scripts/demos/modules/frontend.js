@@ -29,27 +29,72 @@ var frontend = angular.module('theme.demos.dashboard', [
 	$scope.infoiconclass='info-icon';
   $scope.q = '';
   $scope.loading = 'Indlaeser';
-  
-  
+  $scope.enableNotesBox = false;
 
+	function removeDuplicates (json_all) {
+		var arr = [],
+			collection = [];
+		$.each(json_all, function (index, value) {
+			
+			if ($.inArray(value.id, arr) == -1) {
+				arr.push(value.id);
+				collection.push(value);
+			}
+		});
+		return collection;
+	}
+
+	function removeDuplicatesNew (json_all) {
+		var arr = [],
+			collection = [];
+		
+		$.each(json_all, function (index, value) {
+			if ($.inArray(value.id, arr) == -1) {
+				arr.push(value.id);
+				collection.push(value);
+			}
+		});
+		return collection;
+	}
+
+  $scope.enableNotesBoxFN = function(){
+	$scope.enableNotesBox = !$scope.enableNotesBox;
+  }
+  $scope.updateNotesFN = function($event){
+	  let data = { 
+			'group_id' : $event.currentTarget.attributes.group_id.nodeValue,
+			'profile_id': $event.currentTarget.attributes.profile_id.nodeValue,
+			'notes': $event.currentTarget.value
+		}
+	  $http.post('api/v1/updatenotes', data);
+  }
 	let argument_data = {params: {view: 'home'}};
 	if('group' in $location.search()){
-    let group_id = $location.search().group;
-    argument_data = {params: {view: 'home', group_id: group_id}}
-    $scope.group_username = $location.search().username;
-    $scope.group_shared_name = $location.search().groupname;
-    $scope.group_share_text = "<p>THIS IS A LIGHTBOX FOR:</p><p>"+$scope.group_shared_name+"</p><br><p>CREATED BY:</p><p>"+$scope.group_username+"</p><br><p>You can delete persons and edit text by clicking the group symbol on the right side menu.</p><br><p>When you are done editing, just click Send</p>";
+			if((window.location.hash).slice(-6) != 'loaded') {
+				window.location.hash = window.location.hash + '&loaded';
+				window.location.reload();
+			}
+		let group_id = $location.search().group;
+		argument_data = {params: {view: 'home', group_id: group_id}}
+		$scope.group_username = $location.search().username;
+		$scope.group_shared_name = $location.search().groupname;
+		if($scope.isDanish){
+			$scope.group_share_text = "<p>LIGHTBOX:</p><p>"+$scope.group_shared_name+"</p><br><p>Lavet af:</p><p>"+$scope.group_username+"</p><br><p>Du kan slette profiler og rette i tekst ved at klikke på gruppe symbolet til højre. Brug piletasterne til at navigerer i grupperne.</p><span class='side-icon3' id='tab_group1' style='border: none;padding: 0 0 10px 20px;'></span><br><p>Når du er færdig med at redigere, klik på send</p>";
+		}
+		else{
+			$scope.group_share_text = "<p>THIS IS A LIGHTBOX FOR:</p><p>"+$scope.group_shared_name+"</p><br><p>CREATED BY:</p><p>"+$scope.group_username+"</p><br><p>You can delete persons and edit text by clicking the group symbol on the right side menu.</p><span class='side-icon3' id='tab_group1' style='border: none;padding: 0 0 10px 20px;'></span><br><p>When you are done editing, just click Send</p>";
+		}
 	}
 	$http.get('api/v1/getprofiles', argument_data).success(function(homedata) {
 		$scope.hasresults = false;
 		if(homedata.success){
-      $scope.profiles = homedata.profiles;
-      if('group_token' in homedata && 'group' in $location.search()){
-        localStorage.setItem('grouptoken', homedata.group_token);
-        localStorage.setItem('grouptoken_groupid', argument_data.params.group_id);
-        // $scope.groupToken = homedata.group_token;
-        $(".leftbar").html($scope.group_share_text);
-      }
+			$scope.profiles = homedata.profiles;
+			if('group_token' in homedata && 'group' in $location.search()){
+			localStorage.setItem('grouptoken', homedata.group_token);
+			localStorage.setItem('grouptoken_groupid', argument_data.params.group_id);
+			// $scope.groupToken = homedata.group_token;
+			$(".leftbar").html($scope.group_share_text);
+			}
 		}else{
 			$scope.profiles ='';
 		}
@@ -103,7 +148,6 @@ var frontend = angular.module('theme.demos.dashboard', [
 
 	$(".rightbar-row").scroll(function(){
         if(($(this).scrollTop() >= (this.scrollHeight - $(this).height() - 1)) && ($scope.profiles.length > 18) ){
-			console.log($scope.hasresults);
         getprofiles_offset = getprofiles_offset + 1;
         if($(".rightbar-row").hasClass("filteractive")) {
           $http.get('api/v1/getfilterprofiles', {params:{search_text: $scope.search_text,age_from: $scope.age_from,age_to: $scope.age_to,genderval: $scope.genderval,purchase_name: $scope.purchase_name,submittype: $scope.submittype, offset: getprofiles_offset}}).success(function(homedata) {
@@ -126,8 +170,16 @@ var frontend = angular.module('theme.demos.dashboard', [
           $http.get('api/v1/getprofiles', {params: {view: 'home', offset: getprofiles_offset}}).success(function(homedata) {
 			$scope.hasresults = false;
             if(homedata.success){
-              $scope.profiles = $scope.profiles.concat(homedata.profiles);
+			//   $scope.profiles = removeDuplicates($scope.profiles.concat(homedata.profiles));
+			  $scope.profiles = $scope.profiles.concat(homedata.profiles);
+			//   let profiles_set = new Set($scope.profiles.concat(homedata.profiles));
+			//   let profiles_array = [...profiles_set];
+			//   $scope.profiles = profiles_array;
+			//   console.log($scope.profiles);
             }else{
+				if(getprofiles_offset > 2){
+					getprofiles_offset = getprofiles_offset - 1;
+				}
               $scope.profiles = $scope.profiles;
             }
           });
@@ -213,14 +265,21 @@ var frontend = angular.module('theme.demos.dashboard', [
 	// 	}, 'slow');
 	// });
 
-    $('.scroll-down').click(function(){    
+	var scroll_counter = 0;
+    $('.scroll-down').click(function(){
+		var nextElement = document.getElementsByClassName('wrapPM'+scroll_counter);
+		var nextTopPos = nextElement[0].offsetTop;
+		scroll_counter = scroll_counter + 18;
       $('.rightbar-row').animate({
-        scrollTop: $('.rightbar-row').scrollTop()+430
+        scrollTop: nextTopPos
       }, 500);
     });
-    $('.scroll-up').click(function(){    
+    $('.scroll-up').click(function(){
+		var prevElement = document.getElementsByClassName('wrapPM'+scroll_counter);
+		var prevTopPos = prevElement[0].offsetTop;
+		scroll_counter = scroll_counter - 18;
       $('.rightbar-row').animate({
-      scrollTop: $('.rightbar-row').scrollTop()-430
+      scrollTop: prevTopPos
       }, 500);
 	});
 	
@@ -444,6 +503,7 @@ var frontend = angular.module('theme.demos.dashboard', [
 		}else{
 			$scope.gpprofiles ='';
 		}	
+		// console.log($scope.gpprofiles);
 	});
 
 	var logged = '';
@@ -714,17 +774,18 @@ var frontend = angular.module('theme.demos.dashboard', [
 	function removeProfileFromGroup(profileid, groupid) {
 		if($scope.removeprofileid){
 			var formData = {profileid: $scope.removeprofileid, grouptoken : $scope.groupToken, groupid : $scope.removeProfileFromGroupId}
-			console.log(formData);
+			// console.log(formData);
 			$scope.ifLightboxFormRemove = false;
 			$http.get('api/v1/removeProfileFromGroup', {params:formData}).success(function() {
 				$http.get('api/v1/getgroupingprofiles', {params: {view: 'home', grouptoken : $scope.groupToken}}).success(function(groupingdata) {
-					console.log(groupingdata);
+					// console.log(groupingdata);
 					$scope.gpprofilecount =groupingdata.count;
 					if(groupingdata.count){
 						$scope.gpprofiles = groupingdata.gpprofiles;
 					}else{
 						$scope.gpprofiles ='';
 					}
+					// console.log($scope.gpprofiles);
 				 });
 			});
 		}
@@ -1077,6 +1138,8 @@ function sendGroupForm(groupid) {
 				$scope.apply;
 				setTimeout(function(){
 					$("#send_group_popup").fadeOut();
+					$scope.ifLightboxFormSuccess = false;
+					$scope.ifLightboxForm = true;
 				}, 3000);
 			}
 		});	

@@ -1,7 +1,8 @@
 <?php
-
 ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
+
 //include database connection file
 require_once 'dbHelper.php';
 require_once 'src/functions.php';
@@ -101,6 +102,10 @@ else{
     $value['birth_day'] = $birthday[2];
     $value['birth_month'] = $birthday[1];
     $value['birth_year'] = $birthday[0];
+
+    $marked_as_new_from = $value['marked_as_new_from'];
+    $marked_as_new_till = $value['marked_as_new_till'];
+
     $user_profile = json_encode($value);
   }
   $json_profile_info = json_encode($value);
@@ -113,6 +118,24 @@ else{
 $payment_0_description = (isset($value['payments'][0]['description'])) ? $value['payments'][0]['description'] : "";
 $payment_1_description = (isset($value['payments'][1]['description'])) ? $value['payments'][1]['description'] : "";
 $payment_2_description = (isset($value['payments'][2]['description'])) ? $value['payments'][2]['description'] : "";
+
+$age = date_diff(date_create($value['birthday']), date_create('today'))->y;
+$is_kid     = FALSE;
+$is_male    = FALSE;
+$is_female  = FALSE;
+
+if($age <= 14){
+  $is_kid = TRUE; 
+}
+
+if($value['gender_id'] == '1' && !$is_kid){
+  $is_male = TRUE;
+}
+
+if($value['gender_id'] == '2' && !$is_kid){
+  $is_female = TRUE;
+}
+// pp($value);
 
 ?>
 
@@ -148,11 +171,14 @@ $payment_2_description = (isset($value['payments'][2]['description'])) ? $value[
                         <div class="collapse navbar-collapse" id="navbar-collapse-1">
                             <ul class="nav navbar-nav">
                                 <li class="current-menu-item"><a href="/admin">Profiler</a></li>
-                                <li><a href="#">opret job</a></li>
-                                <li><a href="#">too do</a></li>
-                                <li><a href="#">tekst</a></li>
-                                <li><a href="#">intro billeder</a></li>
-                                <li><a href="#">alle profiler</a></li>	
+                                <li><a href="./profileinfo?id=<?php echo $id; ?>">opret job</a></li>
+                                <li><a href="./profileinfo?id=<?php echo $id; ?>">too do</a></li>
+                                <li><a href="./profileinfo?id=<?php echo $id; ?>">tekst</a></li>
+                                <li><a href="./profileinfo?id=<?php echo $id; ?>">intro billeder</a></li>
+                                <li><a href="./profileinfo?id=<?php echo $id; ?>">alle profiler</a></li>	
+                                <li><a href="./profileinfo?id=<?php echo $id; ?>">Castingsheet</a></li>
+                                <li><a href="./profileinfo?id=<?php echo $id; ?>">KALENDER</a></li>
+                                <li><a class="media_page_link" href="/admin/profilemedia?id=<?php echo $id; ?>&type=all">FOTO/VIDEO</a></li>
                             </ul>
                         </div><!-- /.navbar-collapse -->
                     </nav>
@@ -249,6 +275,7 @@ $payment_2_description = (isset($value['payments'][2]['description'])) ? $value[
                       	   <div class="row">
                                <div class="col3"><label>Fra:</label></div>
                                <?php
+                               /*
                                 if(isset($value['marked_as_new_from']) && $value['marked_as_new_from'] != NULL && $value['marked_as_new_from'] != '' && $value['marked_as_new_from'] != 0){
                                   $marked_as_new_from_day   = date("d", $value['marked_as_new_from']);
                                   $marked_as_new_from_month = date("m", $value['marked_as_new_from']);
@@ -259,15 +286,23 @@ $payment_2_description = (isset($value['payments'][2]['description'])) ? $value[
                                   $marked_as_new_from_month = "";
                                   $marked_as_new_from_year  = "";
                                 }
+                                */
                                ?>
+                               <?php /* ?>
                                 <div class="col3"><input value="<?php echo $marked_as_new_from_day;?>" type="text" class="form-input1 marked_as_new_from_day" placeholder="DD" maxlength=2></div>
                                 <div class="col3"><input value="<?php echo $marked_as_new_from_month;?>" type="text" class="form-input1 marked_as_new_from_month" placeholder="MM" maxlength=2></div>
                                 <div class="col3"><input value="<?php echo $marked_as_new_from_year;?>" type="text" class="form-input1 marked_as_new_from_year" placeholder="YYYY" maxlength=4></div>
+                                <?php */ ?>
+
+                                <div class="col6" style="padding:0; width:185px; float:right;"><input type="date" name="marked_as_new_from" class="form-input1 marked_as_new_from" style="padding-left: 25%; letter-spacing:1px; font-weight:bold" value="<?php echo $marked_as_new_from;?>"></div>
+                                
+
                            </div>
                            
                            <div class="row">
                                <div class="col3"><label>Til:</label></div>
                                <?php
+                               /*
                                 if(isset($value['marked_as_new_till']) && $value['marked_as_new_till'] != NULL && $value['marked_as_new_till'] != '' && $value['marked_as_new_till'] != 0){
                                   $marked_as_new_till_day   = date("d", $value['marked_as_new_till']);
                                   $marked_as_new_till_month = date("m", $value['marked_as_new_till']);
@@ -278,15 +313,20 @@ $payment_2_description = (isset($value['payments'][2]['description'])) ? $value[
                                   $marked_as_new_till_month = "";
                                   $marked_as_new_till_year  = "";
                                 }
+                                */
                                ?>
+                               <?php /* ?>
                                 <div class="col3"><input value="<?php echo $marked_as_new_till_day;?>" type="text" class="form-input1 marked_as_new_till_day" placeholder="DD" maxlength=2></div>
                                 <div class="col3"><input value="<?php echo $marked_as_new_till_month;?>" type="text" class="form-input1 marked_as_new_till_month" placeholder="MM" maxlength=2></div>
                                 <div class="col3"><input value="<?php echo $marked_as_new_till_year;?>" type="text" class="form-input1 marked_as_new_till_year" placeholder="YYYY" maxlength=4></div>
+                                <?php */ ?>
+                                <div class="col6" style="padding:0; width:185px; float:right"><input type="date" name="marked_as_new_till" class="form-input1 marked_as_new_till" style="padding-left: 25%; letter-spacing:1px; font-weight:bold" value="<?php echo $marked_as_new_till;?>"></div>
                            </div>
+                           <button class="btn_2 submit_update godkend_button">Godkend</button>
                       </div>
                       
                  
-                 	  <a class="upload-close" href="/admin"></a>
+                 	  <a class="upload-close" href="/admin" style="background-position-y: top"></a>
                  </div>
             </div>
        </div><!--close page-top-->
@@ -563,156 +603,32 @@ $payment_2_description = (isset($value['payments'][2]['description'])) ? $value[
                  	  <div class="form-inner1 form-inner3" style="margin-top:30px;">
                       	   <div class="row physical-info">
                            		
+                               <?php
+                               if($is_male){
+                                 include_once("male_sizes.php");
+                               }
+                               if($is_female){
+                                 include_once("female_sizes.php");
+                               }
+                               if($is_kid){
+                                 include_once("kid_sizes.php");
+                               }
+                               ?>
+                                <div class = "common_sizes" style="clear: both;">
                                 <div class="col3">
-                                <label class="ansog_select_label">SKJORTE STR.</label>
-                                	 <div class="custom-select">
-                                      <!-- shirt size / skjorte fra-->
-                                      <select class="shirt_size_from">
-                                        <?php
-                                        echo "<option value=''> - </option>";
-                                          for ($i=35; $i < 50; $i++) {
-                                            $selected = '';
-                                            if($i == $value['shirt_size_from']){
-                                              $selected = 'selected=selected';
-                                            }
-                                            echo "<option value='".$i."' ".$selected.">".$i."''</option>";
-                                          }
-                                          for ($i=86; $i < 171; $i = $i+6) {
-                                            $selected = '';
-                                            if($i == $value['shirt_size_from']){
-                                              $selected = 'selected=selected';
-                                            }
-                                            echo "<option value='".$i."' ".$selected.">".$i."cm</option>";
-                                          }
-                                        ?>
-                                      </select>
+                                <label class="ansog_select_label">højde</label>
+                                	 <div class="">
+                                      <!-- height / hojde -->
+                                      <input type="text" class="form-input1 height" placeholder="Højde" value="<?php echo $value['height'];?>" >
+                                    </div>
+                                </div>                                
+                                <div class="col3">
+                                <label class="ansog_select_label">vægt</label>
+                                	 <div class="">
+                                      <!-- weight / vaegt -->
+                                      <input type="text" class="form-input1 weight" placeholder="Vægt" value="<?php echo $value['weight'];?>" >
                                     </div>
                                 </div>
-                                
-                                <div class="col3">
-                                <label class="ansog_select_label">__</label>
-                                	 <div class="custom-select">
-                                      <!-- shirt size / skskjorteorte til-->
-                                      <select class="shirt_size_to">
-                                        <?php
-                                        echo "<option value=''> - </option>";
-                                          for ($i=35; $i < 50; $i++) { 
-                                            $selected = '';
-                                            if($i == $value['shirt_size_to']){
-                                              $selected = 'selected=selected';
-                                            }
-                                            echo "<option value='".$i."' ".$selected.">".$i."''</option>";
-                                          }
-                                        ?>
-                                      </select>
-                                    </div>
-                                </div>
-
-                                <?php /* ?>
-                                <div class="col3">
-                                <label class="ansog_select_label">borne str.</label>
-                                	 <div class="custom-select">
-                                      <!-- child size / borne fra-->
-                                      <select class="child_size_from">
-                                        <?php
-                                        echo "<option value=''> - </option>";
-                                          for ($i=25; $i < 175; $i++) { 
-                                            $selected = '';
-                                            if($i == $value['child_size_from']){
-                                              $selected = 'selected=selected';
-                                            }
-                                            echo "<option value='".$i."' ".$selected.">".$i."''</option>";
-                                          }
-                                        ?>
-                                      </select>
-                                    </div>
-                                </div><?php */ ?>
-                                
-                                
-                                
-                                <div class="col3">
-                                <label class="ansog_select_label">bukser str.</label>
-                                	 <div class="custom-select">
-                                      <!-- pant size / bukser fra -->
-                                      <select class="pants_size_from">
-                                        <?php
-                                        echo "<option value=''> - </option>";
-                                          for ($i=25; $i < 50; $i++) { 
-                                            $selected = '';
-                                            if($i == $value['pants_size_from']){
-                                              $selected = 'selected=selected';
-                                            }
-                                            echo "<option value='".$i."' ".$selected.">".$i."''</option>";
-                                          }
-                                          for ($i=86; $i < 171; $i = $i+6) {
-                                            $selected = '';
-                                            if($i == $value['pants_size_from']){
-                                              $selected = 'selected=selected';
-                                            }
-                                            echo "<option value='".$i."' ".$selected.">".$i."cm</option>";
-                                          }
-                                        ?>
-                                      </select>
-                                    </div>
-                                </div>
-                                
-                                <div class="col3">
-                                <label class="ansog_select_label">__</label>
-                                	 <div class="custom-select">
-                                      <!-- pant size / bukser til-->
-                                      <select class="pants_size_to">
-                                        <?php
-                                        echo "<option value=''> - </option>";
-                                          for ($i=25; $i < 50; $i++) { 
-                                            $selected = '';
-                                            if($i == $value['pants_size_to']){
-                                              $selected = 'selected=selected';
-                                            }
-                                            echo "<option value='".$i."' ".$selected.">".$i."''</option>";
-                                          }
-                                        ?>
-                                      </select>
-                                    </div>
-                                </div>
-                                
-                                <div class="col3">
-                                <label class="ansog_select_label">sko str.</label>
-                                	 <div class="custom-select">
-                                      <!-- shoe size / sko fra-->
-                                      <select class="shoe_size_from">
-                                        <?php
-                                        echo "<option value=''> - </option>";
-                                          for ($i=15; $i < 55; $i++) { 
-                                            $selected = '';
-                                            if($i == $value['shoe_size_from']){
-                                              $selected = 'selected=selected';
-                                            }
-                                            echo "<option value='".$i."' ".$selected.">".$i."''</option>";
-                                          }
-                                        ?>
-                                      </select>
-                                    </div>
-                                </div>
-                                
-                                <div class="col3">
-                                <label class="ansog_select_label">__</label>
-                                	 <div class="custom-select">
-                                      <!-- shoe size / sko til-->
-                                      <select class="shoe_size_to">
-                                        <?php
-                                        echo "<option value=''> - </option>";
-                                          for ($i=15; $i < 55; $i++) { 
-                                            $selected = '';
-                                            if($i == $value['shoe_size_to']){
-                                              $selected = 'selected=selected';
-                                            }
-                                            echo "<option value='".$i."' ".$selected.">".$i."''</option>";
-                                          }
-                                        ?>
-                                      </select>
-                                    </div>
-                                </div>
-                                
                                 <div class="col3">
                                 <label class="ansog_select_label">harfarve</label>
                                 	 <div class="custom-select">
@@ -733,7 +649,7 @@ $payment_2_description = (isset($value['payments'][2]['description'])) ? $value[
                                 </div>
 
                                 <div class="col3">
-                                <label class="ansog_select_label">ojen farve</label>
+                                <label class="ansog_select_label">Øjen farve</label>
                                 	 <div class="custom-select">
                                       <!-- eye color / ojen farve -->
                                       <select class="eye_color_id">
@@ -750,84 +666,7 @@ $payment_2_description = (isset($value['payments'][2]['description'])) ? $value[
                                       </select>
                                     </div>
                                 </div>
-                                
-                                <div class="col3">
-                                <label class="ansog_select_label">jakkesæt str.</label>
-                                	 <div class="custom-select">
-                                      <!-- suit size / jakkesæt fra -->
-                                      <select class="suite_size_from">
-                                        <?php
-                                          echo "<option value=''> - </option>";
-                                          for ($i=44; $i < 65; $i++) { 
-                                            $selected = '';
-                                            if($i == $value['suite_size_from']){
-                                              $selected = 'selected=selected';
-                                            }
-                                            echo "<option value='".$i."' ".$selected.">".$i."''</option>";
-                                          }
-                                        ?>
-                                      </select>
-                                    </div>
-                                </div>
-                                
-                                <div class="col3">
-                                <label class="ansog_select_label">__</label>
-                                	 <div class="custom-select">
-                                      <!-- suit size / jakkesæt til-->
-                                      <select class="suite_size_to">
-                                        <?php
-                                        echo "<option value=''> - </option>";
-                                          for ($i=44; $i < 65; $i++) { 
-                                            $selected = '';
-                                            if($i == $value['suite_size_to']){
-                                              $selected = 'selected=selected';
-                                            }
-                                            echo "<option value='".$i."' ".$selected.">".$i."''</option>";
-                                          }
-                                        ?>
-                                      </select>
-                                    </div>
-                                </div>
-                                
-                                <div class="col3">
-                                <label class="ansog_select_label">BH str</label>
-                                	 <div class="">
-                                      <!-- bra size / BH str-->
-                                      <input type="text" class="form-input1 weight bra_size" placeholder="BH str" value="<?php echo $value['bra_size'];?>" >
-                                    </div>
-                                </div>
-                                <div class="col3">
-                                <label class="ansog_select_label">borne str.</label>
-                                	 <div class="custom-select">
-                                      <!-- child size / borne til -->
-                                      <select class="children_sizes">
-                                        <?php
-                                        echo "<option value=''> - </option>";
-                                          for ($i=1; $i < 4; $i++) { 
-                                            $selected = '';
-                                            if($i == $value['children_sizes']){
-                                              $selected = 'selected=selected';
-                                            }
-                                            echo "<option value='".$i."' ".$selected.">".$i."</option>";
-                                          }
-                                        ?>
-                                      </select>
-                                    </div>
-                                </div>
-                                <div class="col3">
-                                <label class="ansog_select_label">højde</label>
-                                	 <div class="">
-                                      <!-- height / hojde -->
-                                      <input type="text" class="form-input1 height" placeholder="Højde" value="<?php echo $value['height'];?>" >
-                                    </div>
-                                </div>                                
-                                <div class="col3">
-                                <label class="ansog_select_label">vægt</label>
-                                	 <div class="">
-                                      <!-- weight / vaegt -->
-                                      <input type="text" class="form-input1 weight" placeholder="Vægt" value="<?php echo $value['weight'];?>" >
-                                    </div>
-                                </div>
+                              </div>
                            </div>
                       </div>
                  </div><!--close form-area-->
@@ -1115,8 +954,9 @@ $payment_2_description = (isset($value['payments'][2]['description'])) ? $value[
                  </div><!--close form-area-->
                  
                  <div class="button-area">
-                 	<a class="btn_1 cancel_update" href="/admin">Afvis</a>
-                  <a class="btn_2 submit_update" href="#">Godkend</a>
+                 	<!-- <a class="btn_1 cancel_update" href="/admin">Afvis</a> -->
+                  <!-- <a class="btn_2 submit_update" href="#">Godkend</a> -->
+                  <button class="btn_2 submit_update godkend_button">Godkend</button>
                   <textarea style="display:none" class="loaded_profile_info"><?php echo $json_profile_info;?></textarea>
                  </div>
                  
