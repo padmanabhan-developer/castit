@@ -111,7 +111,9 @@
 	<!-- build:js scripts/vendor.js -->
 	<!-- bower:js -->
 	<script src="bower_components/modernizr/modernizr.js"></script>
+	<script src="assets/js/withinviewport.js"></script>
 	<script src="assets/js/jquery-3.2.0.min.js"></script>
+	<script src="assets/js/jquery.withinviewport.js"></script>
 	<script src="bower_components/underscore/underscore.js"></script>
 	<script src="bower_components/angular/angular.js"></script>
 	<script src="bower_components/angular-resource/angular-resource.js"></script>

@@ -146,7 +146,79 @@ var frontend = angular.module('theme.demos.dashboard', [
     } 
    });
 
-	$(".rightbar-row").scroll(function(){
+	$scope.scroll_counter = 0;
+   $('.scroll-down').click(function(){
+	   $scope.scroll_counter = $scope.scroll_counter + 18;
+	   var nextElement = document.getElementsByClassName('wrapPM'+$scope.scroll_counter);
+	   var nextTopPos = nextElement[0].offsetTop;
+	   $('.rightbar-row').animate({
+		   scrollTop: nextTopPos
+	   }, 500);
+	//    console.log($('.rightbar-row').height());
+	//    console.log("nextTopPos", nextTopPos);
+   });
+   $('.scroll-up').click(function(){
+	   if($scope.scroll_counter > 0){
+		   $scope.scroll_counter = $scope.scroll_counter - 18;
+		   var prevElement = document.getElementsByClassName('wrapPM'+$scope.scroll_counter);
+		   var prevTopPos = prevElement[0].offsetTop;
+			 $('.rightbar-row').animate({
+				 scrollTop: prevTopPos
+			 }, 500);
+		// console.log($('.rightbar-row').height());
+		// console.log("prevTopPos", prevTopPos);
+	   }
+   });
+
+   function  checkInView(elem, container) {
+		var elem = $(elem);
+		var container = $(container);
+		console.log(elem);
+		console.log(container);
+		var contHeight = container.height();
+		var contTop = container.scrollTop();
+		var contBottom = contTop + contHeight ;
+
+		var elemTop = elem.offset().top - container.offset().top;
+		var elemBottom = elemTop + elem.height();
+		
+		var isTotal = (elemTop >= 0 && elemBottom <=contHeight);
+	//    var isPart = ((elemTop < 0 && elemBottom > 0 ) || (elemTop > 0 && elemTop <= container.height())) && partial ;
+	//    return  isTotal  || isPart ;
+		return isTotal;
+   }
+
+	   var scrollVisibleHeight = $(".wrapPM18").scrollTop();
+	   var initialScrollVisibleHeight = $(".wrapPM18").scrollTop();
+
+		$(".rightbar-row").scroll(function(){
+		// checkInView('[class^="wrapPM"]', ".rightbar-row");
+		// if($(this).scrollTop() - scrollVisibleHeight >= initialScrollVisibleHeight){
+		// 	$scope.scroll_counter = $scope.scroll_counter + (18 * ($(this).scrollTop() / initialScrollVisibleHeight));
+		// 	scrollVisibleHeight = $(this).scrollTop();
+		// }
+		// $('[class^="wrapPM"]').each(function(index, element){
+		// 	console.log(index);
+		// 	if($(".rightbar-row").scrollTop() > $(this)){
+		// 		$scope.scroll_counter = index * 18;
+		// 	}
+		// });
+		// console.log($('[class^="wrapPM"]'));
+		let wrapPMelement = $('[class*="wrapPM"]').withinviewport({
+			container: $('.rightbar-row'),
+		});
+		// console.log(wrapPMelement[0].className);
+		if(wrapPMelement[0]){
+			if(wrapPMelement[0].className){
+				let classes = wrapPMelement[0].className.split(' ');
+				classes.filter(function(elemClass){
+					if(elemClass.indexOf('wrapPM') !== -1){
+						$scope.scroll_counter = parseInt(elemClass.replace("wrapPM",''));
+					}
+				})
+			}
+		}
+		// console.log(qwe);
         if(($(this).scrollTop() >= (this.scrollHeight - $(this).height() - 1)) && ($scope.profiles.length > 18) ){
         getprofiles_offset = getprofiles_offset + 1;
         if($(".rightbar-row").hasClass("filteractive")) {
@@ -265,24 +337,6 @@ var frontend = angular.module('theme.demos.dashboard', [
 	// 	}, 'slow');
 	// });
 
-	var scroll_counter = 0;
-    $('.scroll-down').click(function(){
-		var nextElement = document.getElementsByClassName('wrapPM'+scroll_counter);
-		var nextTopPos = nextElement[0].offsetTop;
-		scroll_counter = scroll_counter + 18;
-      $('.rightbar-row').animate({
-        scrollTop: nextTopPos
-      }, 500);
-    });
-    $('.scroll-up').click(function(){
-		var prevElement = document.getElementsByClassName('wrapPM'+scroll_counter);
-		var prevTopPos = prevElement[0].offsetTop;
-		scroll_counter = scroll_counter - 18;
-      $('.rightbar-row').animate({
-      scrollTop: prevTopPos
-      }, 500);
-	});
-	
 
 	$(".sidebar1-close").click(function(){
 		$("#sidebar1").hide("slow"); 
@@ -1282,3 +1336,5 @@ function showSendGroupPopup(groupid) {
         return input.slice(start);
     }
 });
+
+  
