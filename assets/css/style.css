@@ -131,30 +131,20 @@ progress{
       margin-top: 140px !important;
   }
   .rightbar {
-    display: block;
-    padding: 0;
-    width: 80%;
-    float: left;
-    height: 64vh;
-    /* overflow-y: hidden; */
+      display: block;
+      padding: 6px 7px 0 0;
+      width: 80%;
+      float: left;
   }
-  .rightbar-row{margin:0 -2px;}
-  .col{float:left; width:16.666%; padding:0; margin:0;padding: 0px;
-    border-bottom: 0.15vh solid #000;
-    border-left: 2px solid #000;
-    border-top: 0.15vh solid #000;
-    }
+  .rightbar-row{margin:0 -5px;}
+  .col{float:left; width:16.666%; padding:2px; margin:0;}
   .col-inner{float:left; width:100%; position:relative; overflow:hidden; height: 21vh}
   /* .thumb{float:left; width:100%; height: 175px;overflow: hidden; */
   /* .thumb{float:left; width:100%; height: 26vh;overflow: hidden; */
   .thumb{float:left; width:100%;overflow: hidden;
   background-size: cover;
   background-position: center top;
-  background-repeat: no-repeat; cursor:pointer; 
-height: 21vh !important;
-border: 0px solid #000;
-padding: 0px;
-}
+  background-repeat: no-repeat; cursor:pointer; }
   .thumb img{float:left; width:101%;height:26vh; min-height:26vh; }
   .detail{
       float: left;
@@ -175,13 +165,12 @@ padding: 0px;
   .col-inner p strong{font-weight:bold; display:block;}
   /* .rightbar_inner{float:left; width:100%; position:relative;z-index: 1;margin-left:0;} */
   .rightbar_inner {
-    float: left;
-    width: 100%;
-    position: relative;
-    z-index: 1;
-    margin-left: 0;
-    overflow-x: hidden;
-    overflow-y: hidden;
+	float: left;
+	width: 100%;
+	position: relative;
+	z-index: 1;
+	margin-left: 0;
+	overflow-x: hidden;
 }
   .icon{position:absolute;  position: absolute;
     /* top:10px; right:10px; */
@@ -1634,13 +1623,13 @@ padding: 0px;
       padding: 15px 0 70px 0 !important;
   }
   .rightbar_inner .rightbar-row {
-    /* min-height: 549px; */
-    /* max-height: 75vh; */
-    overflow-y: scroll;
-    padding-right: 0;
-    box-sizing: content-box;
-    overflow-x: hidden;
-    width: 100%;
+	min-height: 549px;
+	max-height: 75vh;
+	overflow-y: scroll;
+	padding-right: 17px;
+	box-sizing: content-box;
+	overflow-x: hidden;
+	width: 101%;
 }
 @media screen and (min-width: 1400px){
   .rightbar_inner .rightbar-row {
@@ -1815,12 +1804,8 @@ padding: 0px;
 }
 .home #content {
     margin: 0;
-    min-height: 60vh;
-    height: 63.95vh;
-    overflow-y: hidden;
-    /* border-top: 2px solid #17181b; */
-    /* border-top: 0.35vh solid #17181b; */
-    border-bottom: 0;
+    min-height: 64vh;
+    height: 67vh;
 }
 
 .home .leftboxheight {
@@ -1830,9 +1815,8 @@ padding: 0px;
     margin-top: 5vh !important;
 }
 .home .rightbar_inner .rightbar-row {
-    min-height: 60vh;
+    min-height: 62vh;
     max-height: 65vh;
-    height: 64vh;
 }
 .home #footer {
     margin: 0 0 0 0;
