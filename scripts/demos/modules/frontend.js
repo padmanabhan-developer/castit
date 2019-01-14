@@ -146,7 +146,45 @@ var frontend = angular.module('theme.demos.dashboard', [
     } 
    });
 
+   $scope.scroll_counter = 0;
+   $('.scroll-down').click(function(){
+	   $scope.scroll_counter = $scope.scroll_counter + 18;
+	   var nextElement = document.getElementsByClassName('wrapPM'+$scope.scroll_counter);
+	   var nextTopPos = nextElement[0].offsetTop;
+	   $('.rightbar-row').animate({
+		   scrollTop: nextTopPos
+	   }, 500);
+	//    console.log($('.rightbar-row').height());
+	//    console.log("nextTopPos", nextTopPos);
+   });
+   $('.scroll-up').click(function(){
+	   if($scope.scroll_counter > 0){
+		   $scope.scroll_counter = $scope.scroll_counter - 18;
+		   var prevElement = document.getElementsByClassName('wrapPM'+$scope.scroll_counter);
+		   var prevTopPos = prevElement[0].offsetTop;
+			 $('.rightbar-row').animate({
+				 scrollTop: prevTopPos
+			 }, 500);
+		// console.log($('.rightbar-row').height());
+		// console.log("prevTopPos", prevTopPos);
+	   }
+   });
+
 	$(".rightbar-row").scroll(function(){
+		let wrapPMelement = $('[class*="wrapPM"]').withinviewport({
+			container: $('.rightbar-row'),
+		});
+		// console.log(wrapPMelement[0].className);
+		if(wrapPMelement[0]){
+			if(wrapPMelement[0].className){
+				let classes = wrapPMelement[0].className.split(' ');
+				classes.filter(function(elemClass){
+					if(elemClass.indexOf('wrapPM') !== -1){
+						$scope.scroll_counter = parseInt(elemClass.replace("wrapPM",''));
+					}
+				})
+			}
+		}
         if(($(this).scrollTop() >= (this.scrollHeight - $(this).height() - 1)) && ($scope.profiles.length > 18) ){
         getprofiles_offset = getprofiles_offset + 1;
         if($(".rightbar-row").hasClass("filteractive")) {
@@ -265,18 +303,8 @@ var frontend = angular.module('theme.demos.dashboard', [
 	// 	}, 'slow');
 	// });
 
-    $('.scroll-down').click(function(){    
-      $('.rightbar-row').animate({
-        scrollTop: $('.rightbar-row').scrollTop()+430
-      }, 500);
-    });
-    $('.scroll-up').click(function(){    
-      $('.rightbar-row').animate({
-      scrollTop: $('.rightbar-row').scrollTop()-430
-      }, 500);
-	});
-	
 
+	
 	$(".sidebar1-close").click(function(){
 		$("#sidebar1").hide("slow"); 
 		 });
