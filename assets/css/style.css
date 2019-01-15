@@ -135,7 +135,7 @@ progress{
     padding: 0;
     width: 80%;
     float: left;
-    height: 64vh;
+    height: inherit;
     /* overflow-y: hidden; */
   }
   .rightbar-row{margin:0 -2px;}
@@ -1816,7 +1816,7 @@ padding: 0px;
 .home #content {
     margin: 0;
     min-height: 60vh;
-    height: 63.95vh;
+    height: 63.6vh;
     overflow-y: hidden;
     /* border-top: 2px solid #17181b; */
     /* border-top: 0.35vh solid #17181b; */
