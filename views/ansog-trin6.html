@@ -1,4 +1,31 @@
 <style>
+    /*.upload-box-row:after, .upload-box-row:before {
+	content:'';
+	display:table;
+}
+.upload-box-row:after{
+	clear:both;
+}*/
+.upload-list-text {
+	margin-top:30px;
+	color: #32333c;
+    font-size: 16px;
+    font-family: Arial, Helvetica, sans-serif;
+    line-height: 24px;
+}
+.upload-list-text .upload-title{
+	margin-bottom:30px;
+}
+.upload-list { 
+	list-style:decimal; 
+	padding-left: 18px;
+}
+.upload-list li {
+	color: #32333c;
+    font-size: 16px;
+    font-family: Arial, Helvetica, sans-serif;
+    line-height: 24px;
+}
 .text-center { 
 	text-align:center;
 }
@@ -24,7 +51,7 @@
 	box-sizing:border-box;
 	overflow:hidden;
 }
-.placeholder-text, .upload-placeholder {
+.placeholder-text {
 	position:relative;
 	top: 50%;
 	-webkit-transform: translateY(-50%);
@@ -45,19 +72,10 @@
     opacity:0;
     cursor:pointer;
 }
-.uploader img{
-    position:absolute;
-    width:100%;
-    height:100%;
-    top:0px;
-    left:0px;
-    z-index:1;
-    border:none;
-	display:none;
-}
+
 .placeholder-text h2 {
 	color:#000;
-	font-size:30px;
+	font-size:20px;
 	margin-bottom:10px;
 }
 .upload-box-row {
@@ -71,7 +89,7 @@
 	float:left;
 	width:20%;
 }
-.upload-box {
+.upload-placeholder, .upload-box {
 	overflow:hidden;
 	height:140px;
 	border:2px dashed #222229;
@@ -87,11 +105,17 @@
 	bottom:10px;
 	left:10px;
 }
-.uploaded.imgupload {
+.upload-box.imgupload {
 	border: 2px solid #4f6ec3;
 }
-.uploaded.videoupload {
+.upload-placeholder {
 	border: 2px solid #fff;
+	display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    flex-direction: column;
+    color: #fff;
 }
 .upload-img {
 	position:absolute;
@@ -124,6 +148,40 @@ span.remove {
 }
 .upload-img.file-ok span.upload-number{
 	display: none;
+}
+.imgContainer {
+	overflow:hidden;
+	float: left;
+	width: calc( 20% - 10px);
+	height:140px;
+	border:2px solid #4f6ec3;
+	position:relative;
+	border-radius: 10px;
+    margin: 0 0px 10px 10px;
+}
+
+.imgContainer img{
+    position:absolute;
+    width:100%;
+    height:100%;
+    top:0px;
+    left:0px;
+    z-index:1;
+    border:none;
+}
+.imgContainer p {
+	position: absolute;
+    bottom: 0px;
+    left: 0px;
+	right: 0px;
+    z-index: 12;
+	text-align:center;
+	color:#fff;
+	white-space: nowrap;
+    width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    padding: 10px 5px;
 }
 .upload-placeholder span{
 	padding: 10px 0px;
@@ -176,18 +234,18 @@ span.addmore {
 	}
 }
 @media (min-width: 901px) and (max-width: 1000px) { 
-	.upload-box {
+	.upload-box, .upload-placeholder, .imgContainer {
 		height: 160px;
 		width: calc( 33.3333% - 10px);
 	}
 }
 @media (min-width: 801px) and (max-width: 900px) { 
-	.upload-box {
+	.upload-box, .upload-placeholder, .imgContainer {
 		width: calc( 33.3333% - 10px);
 	}
 }
 @media (min-width: 768px) and (max-width: 800px) { 
-	.upload-box {
+	.upload-box, .upload-placeholder, .imgContainer {
 		height: 160px;
 		width: calc( 50% - 10px);
 	}
@@ -235,154 +293,273 @@ span.addmore {
 	.black-close {
     	margin: 4px 0 0 20px;
 	}
+	.imgContainer, .upload-placeholder {
+		width: calc( 25% - 10px);
+	}
 }
-</style>
-<div ng-controller="RegisterStep6Controller" class="ansog1">
-  <div id="content" class="wrap2">
-    <div class="page-black livetitle">
-         <div class="section-top">
-             <h2>Ansøgningsskema</h2>
-              <div class="black-right">
-                 <a href="#" class="black-edit"></a>
-                   <a href="http://134.213.29.220/landing page.html" class="black-close">luk</a>
-              </div>
-         </div><!--close section-top-->
-         
-         <div class="section-middle">
-             
-              <div class="black-section">
-                 <div class="black-row">
-                   
-                       <div class="black-leftbar">
-                             <p>For at oprette en profil bedes du udfylde nedenstående skema og klikke “Ansøg i bunden af siden.</p>
-                        </div><!--close black-leftbar-->
-                        
-                        <div class="black-rightbar livetitle blackcontainer">
-                             <div class="black-row black-seperate">
-                             
-                                 <div class="black-cal4">
-                                    <div class="black-col-wrap">
-                                          <div class="upload_section text-center" style="padding-right:0px;">
-                                              <span class="drag-icon"><img src="images/upload-icon.png"></span>
-                                          </div>
-                                          <div class="upload-container">
-                                              <div class="upload-wrap uploader" onclick="$('#filePhoto').click()">
-                                                  <div class="placeholder-text">
-                                                      <h2>Place image/video</h2>
-                                                      <span>Click or incert image/video file here</span>
+@media (max-width: 500px) {
+	.imgContainer, .upload-placeholder {
+		width: calc( 33.33% - 10px);
+	}
+}
+    </style>
+    <div ng-controller="RegisterStep6Controller" class="ansog1">
+        <div id="content" class="wrap2">
+            <div class="page-black livetitle">
+                   <div class="section-top">
+                         <h2>Ansøgningsskema</h2>
+                      <div class="black-right">
+                           <!-- <a href="#" class="black-edit"></a> -->
+                           <a href="http://134.213.29.220/landing page.html" class="black-close">luk</a>
+                      </div>
+                 </div><!--close section-top-->
+                 
+                 <div class="section-middle">
+                         
+                      <div class="black-section">
+                           <div class="black-row">
+                           
+                                 <div class="black-leftbar" style="width:20%">
+                                       <p>For at oprette en profil bedes du udfylde nedenstående skema og klikke “Ansøg i bunden af siden.</p>
+                                     <div class="upload-list-text">
+                                         <h5 class="upload-title" style="font-size: 11px">Ekstra - upload foto hvis du:</h5>
+                                         <ol class="upload-list">
+                                             <li style="font-size: 13px"> Har paene haender </li>
+                                             <li style="font-size: 13px"> Har paene fødder </li>
+                                             <li style="font-size: 13px"> Vil stille op som familie </li>
+                                             <li style="font-size: 13px"> Har en enaegget tvilling </li>
+                                         </ol>
+                                     </div>
+                                </div><!--close black-leftbar-->
+                                
+                                <div class="black-rightbar livetitle blackcontainer" style="width:80%">
+                                     <div class="black-row black-seperate" style="width:100%">
+                                     
+                                             <div class="black-cal4" style="width:30%">
+                                              <div class="black-col-wrap">
+                                                  <div class="upload_section text-center" style="padding-right:0px;">
+                                                      <span class="drag-icon"><img src="images/upload-icon.png"></span>
                                                   </div>
-                                                  <img src="" class="filePhotoImg"/>
-                                                  <input type="file" name="userprofile_picture"  id="filePhoto" />
-                                                  <!--<span class="remove">X</span>-->
+                                                  <div class="upload-container">
+                                                      <div class="upload-wrap uploader" id="dragUploader">
+                                                          <div class="placeholder-text">
+                                                              <h2>Place image/video</h2>
+                                                              <span>Click or incert image/video file here</span>
+                                                          </div>
+                                                      </div>
+                                                  </div>
                                               </div>
-                                          </div>
-                                      </div>
-                                  </div><!--close black-col-->
-                                  
-                                  <div class="black-cal8">
-                                    <div class="black-col-wrap" style="padding-right:0px;">
-                                          <div class="upload_section" style="padding-right:0px;">
-                                             <span class="upload-title">UPLOAD FOTOS & VIDEOS</span>
-                                             <span class="upload-subtitle">Upload min. 3 fotos af dig selv* video materiale er valgfrit</span>
-                                         </div>
-                                          <div class="upload-container">
-                                            <div class="upload-box-row" id="upload-box-row">
-                                            
-                                                <div class="upload-box">
-                                                    <input type="file" name="uploadinput1" class="uploadinput" id="uploadinput1">
-                                                    <label for="uploadinput1" class="upload-img">
-                                                        <span class="upload-number" id="upload-number1">1</span>
-                                                        <span class="remove">X</span>
-                                                    </label>
-                                                </div>
-                                                <div class="upload-box">
-                                                    <input type="file" name="uploadinput2" class="uploadinput" id="uploadinput2">
-                                                    <label for="uploadinput2" class="upload-img">
-                                                        <span class="upload-number" id="upload-number2">2</span>
-                                                        <span class="remove">X</span>
-                                                    </label>
-                                                </div>
-                                                <div class="upload-box">
-                                                    <input type="file" name="uploadinput3" class="uploadinput" id="uploadinput3">
-                                                    <label for="uploadinput3" class="upload-img">
-                                                        <span class="upload-number" id="upload-number3">3</span>
-                                                        <span class="remove">X</span>
-                                                    </label>
-                                                </div>
-                                                <div class="upload-box">
-                                                    <input type="file" name="uploadinput4" class="uploadinput" id="uploadinput4">
-                                                    <label for="uploadinput4" class="upload-img">
-                                                        <span class="upload-number" id="upload-number4">4</span>
-                                                        <span class="remove">X</span>
-                                                    </label>
-                                                </div>
-                                                <div class="upload-box">
-                                                    <input type="file" name="uploadinput5" class="uploadinput" id="uploadinput5">
-                                                    <label for="uploadinput5" class="upload-img">
-                                                        <span class="upload-number" id="upload-number5">5</span>
-                                                        <span class="remove">X</span>
-                                                    </label>
-                                                </div>
-                                                <div class="upload-box">
-                                                    <input type="file" name="uploadinput6" class="uploadinput" id="uploadinput6">
-                                                    <label for="uploadinput6" class="upload-img">
-                                                        <span class="upload-number" id="upload-number2">6</span>
-                                                        <span class="remove">X</span>
-                                                    </label>
-                                                </div>
-                                                <div class="upload-box">
-                                                    <input type="file" name="uploadinput7" class="uploadinput" id="uploadinput7">
-                                                    <label for="uploadinput7" class="upload-img">
-                                                        <span class="upload-number" id="upload-number7">7</span>
-                                                        <span class="remove">X</span>
-                                                    </label>
-                                                </div>
-                                                <div class="upload-box">
-                                                    <input type="file" name="uploadinput8" class="uploadinput" id="uploadinput8">
-                                                    <label for="uploadinput8" class="upload-img">
-                                                        <span class="upload-number" id="upload-number8">8</span>
-                                                        <span class="remove">X</span>
-                                                    </label>
-                                                </div>
-                                                <div class="upload-box">
-                                                    <input type="file" name="uploadinput9" class="uploadinput" id="uploadinput9">
-                                                    <label for="uploadinput9" class="upload-img">
-                                                        <span class="upload-number" id="upload-number9">9</span>
-                                                        <span class="remove">X</span>
-                                                    </label>
-                                                </div>
-                                                <div class="upload-box">
-                                                    <input type="file" name="uploadinput10" class="uploadinput" id="uploadinput10">
-                                                    <label for="uploadinput10" class="upload-img">
-                                                        <span class="upload-number" id="upload-number10">10</span>
-                                                        <span class="remove">X</span>
-                                                    </label>
-                                                </div>
-                                                
-                                             </div>
-                                          </div>
-                                      </div>
-                                  </div><!--close black-col-->
-                                  
-                             </div><!--close black-row-->
-                        </div><!--close black-rightbar-->
-                        
-                   </div><!--close black-row-->
-              </div><!--close black-section-->
-              
-              <div class="black-numbers"><span class="span3"><em>06</em>/07</span></div>
-         </div><!--close section-middle-->
-         
-         <div class="section-bottom">
-             <div class="blackpage-controller">
-                 <span class="controller-title">NÆSTE STEP</span>
-                   <a href="http://134.213.29.220/Ansogning step5.html" class="black-prev"></a><a href="http://134.213.29.220/Ansogning step7.html" class="black-next"></a>
-              </div>
-         </div><!--close section-bottom-->
-    </div><!--close page-black-->
+                                          </div><!--close black-col-->
+                                          
+                                          <div class="black-cal8" style="width:70%">
+                                              <div class="black-col-wrap" style="padding-right:0px;">
+                                                  <div class="upload_section" style="padding-right:0px;">
+                                                     <span class="upload-title">UPLOAD FOTOS & VIDEOS</span>
+                                                     <span class="upload-subtitle">Upload min. 3 fotos af dig selv* video materiale er valgfrit</span>
+                                                 </div>
+                                                  <div class="upload-container">
+                                                    <div class="upload-box-row" id="upload-box-row">
+                                                        <label class="upload-placeholder">
+                                                            <span class="placeholder-icon"><img src="images/img-icon.png" class="placeholder-icon"></span>
+                                                            <span>Ansigt*</span>
+                                                        </label>
+                                                        <label class="upload-placeholder">
+                                                            <span class="placeholder-icon"><img src="images/img-icon.png"></span>
+                                                            <span>Profil*</span>
+                                                        </label>
+                                                        <label class="upload-placeholder">
+                                                            <span class="placeholder-icon"><img src="images/img-icon.png"></span>
+                                                            <span>Helfigur*</span>
+                                                        </label>
+                                                     </div>
+                                                  </div>
+                                              </div>
+                                          </div><!--close black-col-->
+                                          
+                                     </div><!--close black-row-->
+                                </div><!--close black-rightbar-->
+                                
+                           </div><!--close black-row-->
+                      </div><!--close black-section-->
+                      
+                      <div class="black-numbers"><span class="span3"><em>06</em>/07</span></div>
+                      
+                 </div><!--close section-middle-->
+                 
+                 <div class="section-bottom">
+                    <div class="blackpage-controller">
+                      <a href="#/ansog-trin5{{isDanish ? '/da' : '/en'}}" class="black-prev">{{ isDanish ? 'FORRIGE SIDE' : 'PREVIOUS PAGE' }}</a>
+                    </div>
+                    <!--close section-bottom-->
+                  </div><!--close section-bottom-->
+            </div><!--close page-black-->
+            
+       </div><!--close content-->
+       
+    </div><!--close wrapper-->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.0/jquery.min.js"></script>
+
+    <script>
+    /*$('.upload-box input[type="file"]').each(function(){
+      // Refs
+      var $file = $(this),
+          $label = $file.next('label'),
+          $labelText = $label.find('span:first-child'),
+          labelDefault = $labelText.text();
+          $labelRemove = $label.find('span:last-child'),
     
-</div><!--close content-->
-        <input type="hidden" name="" class="operation" value="insert">
-        <!--close wrapper-->
-      </body>
-    </html>
+      // When a new file is selected
+      $file.on('change', function(event){
+        var fileName = $file.val().split( '\\' ).pop(),
+            tmppath = URL.createObjectURL(event.target.files[0]);
+        //Check successfully selection
+        if( fileName ){
+          $label
+            .addClass('file-ok')
+            .css('background-image', 'url(' + tmppath + ')');
+          $labelText.text(fileName);
+        }else{
+          $label.removeClass('file-ok');
+          $labelText.text(labelDefault);
+        }
+      });
+      $labelRemove.on('click', function(event){
+          $label
+            .removeClass('file-ok')
+            .css('background-image', 'url(' + + ')');
+          $labelText.text(labelDefault);
+      });
+    });
+    
+    var imageLoader = document.getElementById('filePhoto');
+      imageLoader.addEventListener('change', handleImage, false);
+    
+      function handleImage(e) {
+          var reader = new FileReader();
+          reader.onload = function (event) {
+              $('.uploader img').attr('src',event.target.result);
+              $('.uploader img').show();
+              //$('.remove').show();
+          }
+          reader.readAsDataURL(e.target.files[0]);
+      }*/
+    </script>
+    <script type="text/javascript">
+    (function(window) {
+      function triggerCallback(e, callback) {
+        if(!callback || typeof callback !== 'function') {
+          return;
+        }
+        var files;
+        if(e.dataTransfer) {
+          files = e.dataTransfer.files;
+        } else if(e.target) {
+          files = e.target.files;
+        }
+        callback.call(null, files);
+      }
+      function makeDroppable(ele, callback) {
+        var input = document.createElement('input');
+        input.setAttribute('type', 'file');
+        input.setAttribute('multiple', true);
+        input.style.display = 'none';
+        input.addEventListener('change', function(e) {
+          triggerCallback(e, callback);
+        });
+        ele.appendChild(input);
+        
+        ele.addEventListener('dragover', function(e) {
+          e.preventDefault();
+          e.stopPropagation();
+          ele.classList.add('dragover');
+        });
+    
+        ele.addEventListener('dragleave', function(e) {
+          e.preventDefault();
+          e.stopPropagation();
+          ele.classList.remove('dragover');
+        });
+    
+        ele.addEventListener('drop', function(e) {
+          e.preventDefault();
+          e.stopPropagation();
+          ele.classList.remove('dragover');
+          triggerCallback(e, callback);
+        });
+        
+        
+        if($(window).width() < 1024)
+          {
+              ele.addEventListener('click', function() {
+          input.value = null;
+          input.click();
+        });
+          } else {
+              
+          }
+            
+          }
+      window.makeDroppable = makeDroppable;
+    })(this);
+    (function(window) {
+      makeDroppable(window.document.querySelector('#dragUploader'), function(files) {
+        console.log(files);
+            var ansigtHtml = '<label class="upload-placeholder">'+
+                           '<span class="placeholder-icon"><img src="images/img-icon.png"></span>'+
+                           '<span>Ansigt*</span>'+
+                           '</label>';
+          var profilHtml = '<label class="upload-placeholder">'+
+                         '<span class="placeholder-icon"><img src="images/img-icon.png"></span>'+
+                         '<span>Profil*</span>'+
+                         '</label>';
+          var helfigurHtml = '<label class="upload-placeholder">'+
+                         '<span class="placeholder-icon"><img src="images/img-icon.png"></span>'+
+                         '<span>Helfigur*</span>'+
+                         '</label>';
+        var output = document.querySelector('#upload-box-row');
+                if (files.length == 1) {
+                output.innerHTML  ='<label class="upload-placeholder">'+
+                                    '<span class="placeholder-icon"><img src="images/img-icon.png"></span>'+
+                                    '<span>Profil*</span>'+
+                                    '</label>'+
+                                    '<label class="upload-placeholder">'+
+                                    '<span class="placeholder-icon"><img src="images/img-icon.png"></span>'+ 
+                                    '<span>Helfigur*</span>' +
+                                    '</label>' ;
+              } else if (files.length == 2) {
+               output.innerHTML  ='<label class="upload-placeholder">'+
+                                  '<span class="placeholder-icon"><img src="images/img-icon.png"></span>'+ 
+                                  '<span>Helfigur*</span>' +
+                                  '</label>' ;
+              } else if (files.length == 3) {
+                output.innerHTML  ='' ;
+              } else  {
+                output.innerHTML  ='' ;
+              }
+        for(var i=0; i<files.length; i++) {
+           
+                    output.innerHTML += '<div class="imgContainer" id="imgContainer_'+ [i] +'"><img width="200" class="uploadImg" src="' + URL.createObjectURL(files[i]) + '" /> <p>'+files[i].name+'</p> <span class="remove" id="remove_' + [i] + '">X</span> </div>';
+                
+        }
+            $('.remove').show();
+            $("#remove_0").click(function(){
+                  $('#upload-box-row').append(ansigtHtml);
+            });
+            $("#remove_1").click(function(){
+                  $('#upload-box-row').append(profilHtml);
+            });
+            $("#remove_2").click(function(){
+                  $('#upload-box-row').append(helfigurHtml);
+            });
+            $(".remove").click(function(){
+                     $(this).parent('.imgContainer').remove();
+            });
+            
+      });
+    })(this);
+    
+    </script>
+            <input type="hidden" name="" class="operation" value="insert">
+            <!--close wrapper-->
+          </body>
+        </html>
