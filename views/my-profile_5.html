@@ -3,7 +3,7 @@
     <form name="profile_update_form5" id="profile_ansog_form5" ng-submit="step5Update()">
       <div class="page-black livetitle">
         <div class="section-top">
-          <h2>{{ isDanish ? 'Ansøgningsskema' : 'Application form' }}</h2>
+            <h2>{{ profileinfo.first_name }} {{ profileinfo.last_name }} - {{ profileinfo.profile_number }}</h2>
           <div class="black-right">
             <!-- <a href="#" class="black-edit"></a> -->
             <a href="#/index{{isDanish ? '/da' : '/en'}}" class="black-close">{{ isDanish ? 'luk' : 'Close' }}</a>
@@ -14,14 +14,14 @@
           <div class="black-section">
             <div class="black-row">
               <div class="black-leftbar">
-                <p ng-if="isDanish">For at ansøge om en profil, bedes du udfylde felterne og klikke videre til næste side.</p>
-                <p ng-if="!isDanish">To apply for a profile please fill out the fields and continue to the next page.</p>
+                  <p ng-if="isDanish">For at opdatere din profil bedes du udfylde felterne og klikke videre til næste side.</p>
+                  <p ng-if="!isDanish">To update your profile please fill out the fields and continue to the next page.</p>
               </div>
               <!--close black-leftbar-->
               <div class="black-rightbar  livetitle blackcontainer">
                 <div class="black-row">
                   <div class="black-cal4 ">
-                    <h3>{{ isDanish ? 'SPROG' : 'LANGUAGE' }}</h3>
+                    <h3 class="choose-language white-color">{{ isDanish ? 'SPROG' : 'LANGUAGE' }}</h3>
                     <div class="form_box">
                       <div class="select-style">
                         <select required name="lang1" id="lang1" ng-model="lang1" class="input2">
@@ -57,7 +57,7 @@
                   </div>
                   <!--close black-cal4-->
                   <div class="black-cal4">
-                    <h3 class="white-color">
+                    <h3 class="choose-level white-color">
                     <strong>{{ isDanish ? 'Vælg niveau' : 'Choose level' }}</strong>
                     </h3>
                     <input type="hidden" ng-required="lang1!=''" name="langrateval1" id="langrateval1" ng-model="langrateval1" value="{{langrateval1}}" />

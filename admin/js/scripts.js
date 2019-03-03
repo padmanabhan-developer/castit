@@ -180,6 +180,11 @@ $(document).ready(function () {
       );
       */
 
+      $(".disabled").attr('disabled', true);
+      if($("input[name='profile-number-selection'][checked='checked']").val().charAt(0) == 'B'){
+        $(".bureau").removeClass('disabled').removeAttr('disabled');
+      }
+
       $(".ratings img").click(function(event){
         let rating = $(this).attr('ratevalue');
         $(this).siblings("input").val(rating);
@@ -322,7 +327,7 @@ $(document).ready(function () {
         profile.gender_id  = "";
         profile.hair_color_id  = "";
         profile.eye_color_id  = "";
-        // profile.birthday  = "";
+        profile.bureau  = "";
         profile.birth_day  = "";
         profile.birth_month  = "";
         profile.birth_year  = "";
@@ -357,7 +362,7 @@ $(document).ready(function () {
         profile.marked_as_new_till_month  = "";
         profile.marked_as_new_till_year  = "";
 
-
+        profile.profile_status_id  = $("input[name=profile-status-value][checked=checked]").val();
 
         for(let property_name in profile){
           if($("."+property_name) != undefined){
@@ -407,9 +412,9 @@ $(document).ready(function () {
         var email_sent = false;
         $.post("/admin/src/updateprofile", updated_profile_info,
           function (returndata, textStatus, jqXHR) {
-            let update_value = $("input[name=profile-status-value]").val();
+            let update_value = $("input[name=profile-status-value][checked=checked]").val();
             let email_data = {};
-
+            // console.log($("input[name=profile-status-value][checked=checked]"));
             if( (update_value == 1) && ($(".send_activation_email")[0].checked) ) {
               email_data = { type: "activation", first_name: profile.first_name, email: profile.email };
               $.post("/admin/src/emails", email_data,
@@ -464,6 +469,9 @@ $(document).ready(function () {
         // $(".send-email-notification").attr("profile-status", $(this).val());
         $.post("/admin/src/updateprofilestatus", data, function (returndata, textStatus, jqXHR) {
 
+        }).done(function() {
+          $("input[name=profile-status-value]").attr('checked', false);
+          $("input[name=profile-status-value][value="+update_value+"]").attr('checked', true);
         });
       });
 
@@ -565,8 +573,14 @@ $(document).ready(function(){
 
   $('input[type=radio][name=profile-number-selection]').change(function(){
     let new_profile_number = $(this).val();
+    let profileid = $(this).attr('profile_id');
     if(new_profile_number != undefined){
-      let profileid = $(this).attr('profile_id');
+      if(new_profile_number.charAt(0) == "B"){
+        $("input[name='profile-status-value'][value='2']").click();
+        let data = {profile_id: profileid, update_value: '5'}
+        $.post("/admin/src/updateprofilestatus", data,function (data, textStatus, jqXHR) {});
+      }
+      // let profileid = $(this).attr('profile_id');
       let data = {new_profile_number: new_profile_number, profileid: profileid};
       $.post("/admin/src/updateprofilenumber", data,
         function (data, textStatus, jqXHR) { 
@@ -833,5 +847,21 @@ function provide_clicks_for_profile_status_update(){
         );
       } );
     }
+  });
+  $(".set-bureau").unbind('click').click(function (event) {
+    let tr_element = $(this).parent().parent().parent();
+    let profile_id = $(this).parent().attr('profileid');
+    let update_value = 5;
+    let data = {profile_id: profile_id, update_value: update_value}
+    $.post("/admin/src/updateprofilestatus", data,function (data, textStatus, jqXHR) {
+      data_2    = {profile_id: profile_id, singleselect: 1};
+      $.get("/admin/src/getprofiles", data_2,
+        function (response, textStatus, jqXHR) {
+          tr_element.replaceWith(response);
+          provide_clicks_for_profile_status_update();
+        },
+        "html"
+      );
+    } );
   });
 }

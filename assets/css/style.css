@@ -131,20 +131,30 @@ progress{
       margin-top: 140px !important;
   }
   .rightbar {
-      display: block;
-      padding: 6px 7px 0 0;
-      width: 80%;
-      float: left;
+    display: block;
+    padding: 0;
+    width: 80%;
+    float: left;
+    height: inherit;
+    /* overflow-y: hidden; */
   }
-  .rightbar-row{margin:0 -5px;}
-  .col{float:left; width:16.666%; padding:2px; margin:0;}
+  .rightbar-row{margin:0 -2px;}
+  .col{float:left; width:16.666%; padding:0; margin:0;padding: 0px;
+    border-bottom: 0.15vh solid #000;
+    border-left: 2px solid #000;
+    border-top: 0.15vh solid #000;
+    }
   .col-inner{float:left; width:100%; position:relative; overflow:hidden; height: 21vh}
   /* .thumb{float:left; width:100%; height: 175px;overflow: hidden; */
   /* .thumb{float:left; width:100%; height: 26vh;overflow: hidden; */
   .thumb{float:left; width:100%;overflow: hidden;
   background-size: cover;
   background-position: center top;
-  background-repeat: no-repeat; cursor:pointer; }
+  background-repeat: no-repeat; cursor:pointer; 
+height: 21vh !important;
+border: 0px solid #000;
+padding: 0px;
+}
   .thumb img{float:left; width:101%;height:26vh; min-height:26vh; }
   .detail{
       float: left;
@@ -165,12 +175,13 @@ progress{
   .col-inner p strong{font-weight:bold; display:block;}
   /* .rightbar_inner{float:left; width:100%; position:relative;z-index: 1;margin-left:0;} */
   .rightbar_inner {
-	float: left;
-	width: 100%;
-	position: relative;
-	z-index: 1;
-	margin-left: 0;
-	overflow-x: hidden;
+    float: left;
+    width: 100%;
+    position: relative;
+    z-index: 1;
+    margin-left: 0;
+    overflow-x: hidden;
+    overflow-y: hidden;
 }
   .icon{position:absolute;  position: absolute;
     /* top:10px; right:10px; */
@@ -435,7 +446,7 @@ progress{
   /* .information-inside-cal{float:left; width:auto; padding:0 20px;} */
   .information-inside p{color:#000; font-family:Arial, Helvetica, sans-serif; font-size:13px; line-height:20px; margin:0 0 20px 0; letter-spacing: 0.5px;}
   .information-inside p a{color:#000; text-decoration:none;}
-  
+  .castit-workshop p{margin:0 0 12px}
 .information-inside {
     float: left;
     width: 100%;
@@ -463,7 +474,7 @@ progress{
   .section-bottom{float:left; width:100%; border-top:solid 1px #fff; position:relative; }
   .blackpage-controller{float:right; margin:45px 0;}
   .controller-title{float:left; color:#fefefe; font-size:13px; font-family:Arial, Helvetica, sans-serif; text-transform:uppercase; line-height:19px; margin:0 35px 0 0;}
-  .black-prev{float:left; width:120px; height:19px; background:url(images/prev2.png) no-repeat 0 0; background-position: right center; color:#32343c;padding-top: 3px;}
+  .black-prev{float:left; width:150px; text-align: center; height:19px; background:url(images/prev2.png) no-repeat 0 0; background-position: right center; color:#32343c;padding-top: 3px;}
   .black-prev:hover{background:url(images/prev2-ho.png) no-repeat 0 0; background-position: right center; color:#fff}
   .black-next{float:left; width:120px; height:19px; background:url(images/next2.png) no-repeat 0 0; margin:0 0 0 30px; border:none;color:#FFF}
   .black-next:hover{background:url(images/next2-ho.png) no-repeat 0 0; color:#fff;}
@@ -486,7 +497,7 @@ progress{
   .black-section{float:left; width:100%;}
   .black-row{margin:0 -10px;}
   .black-leftbar{float:left; width:25%; padding:0 10px; margin:45px 0 0 0;}
-  .black-leftbar p{color: #32333c; font-size:13px; font-family:Arial, Helvetica, sans-serif; line-height:18px;}
+  .black-leftbar p{color: rgba(255,255,255,.6); font-size:13px; font-family:Arial, Helvetica, sans-serif; line-height:18px;}
   
   .black-rightbar{float:left; width:75%; padding:0 10px; margin:-7px 0 0 0;}
   .black-rightbar h3{color:#a9a9a9; font-size:13px; font-family:Arial, Helvetica, sans-serif; line-height:20px; margin:0 0 40px 0;}
@@ -498,12 +509,15 @@ progress{
   .input2{float:left; width:100%; background:#fff; height:35px;-webkit-border-radius: 35px;
   -moz-border-radius: 35px;
   border-radius: 35px; padding:0 10px; color:#000; font-size:13px; font-family:Arial, Helvetica, sans-serif; font-weight:bold;}
+  
+  
+  
   .form_box2{float:left; width:50%; margin:0; padding:0 10px;}
   .form_box3{float:left; width:33.333%; margin:0; padding:0 10px;}
   
-  .form_box input::-webkit-input-placeholder,.form_box textarea::-webkit-input-placeholder {color:#dadada !important;}
-  .form_box input::-moz-input-placeholder,.form_box textarea::-moz-input-placeholder {color:#dadada !important; }
-  .form_box input::-ms-input-placeholder,.form_box textarea::-ms-input-placeholder {color:#dadada !important; }
+  .form_box input::-webkit-input-placeholder,.form_box textarea::-webkit-input-placeholder {color:#000 !important;}
+  .form_box input::-moz-input-placeholder,.form_box textarea::-moz-input-placeholder {color:#000 !important; }
+  .form_box input::-ms-input-placeholder,.form_box textarea::-ms-input-placeholder {color:#000 !important; }
   .black-numbers{float:left; width:100%; margin:75px 0 0 0 ;}
   
   .form_box.black-placeholder input::-webkit-input-placeholder{color:#000 !important;}
@@ -1077,10 +1091,10 @@ progress{
       width:100%;
   }
   .downjoin{
-      width:100%;
-      position: absolute;
-  top: 430px;
-  right: -133px;
+    /* width:100%; */ width:25%;
+    position: absolute;
+    top: 430px;
+    /* right: -133px; */ right: 0;
   }
   .popup-icon_11 {
       float: left;
@@ -1618,22 +1632,23 @@ progress{
   .ansog1  .input2 {
       height: 30px !important;
       font-size: 12px !important;
+      line-height: 13px;
   }
   .ansog1 .section-login {
       padding: 15px 0 70px 0 !important;
   }
   .rightbar_inner .rightbar-row {
-	min-height: 549px;
-	max-height: 75vh;
-	overflow-y: scroll;
-	padding-right: 17px;
-	box-sizing: content-box;
-	overflow-x: hidden;
-	width: 101%;
+    /* min-height: 549px; */
+    /* max-height: 75vh; */
+    overflow-y: scroll;
+    padding-right: 0;
+    box-sizing: content-box;
+    overflow-x: hidden;
+    width: 100%;
 }
 @media screen and (min-width: 1400px){
   .rightbar_inner .rightbar-row {
-	width: 101%;
+	width: 100%;
 }
 }
   .lngname{color:#dcdde0;font-style:normal;}
@@ -1804,8 +1819,12 @@ progress{
 }
 .home #content {
     margin: 0;
-    min-height: 64vh;
-    height: 67vh;
+    min-height: 60vh;
+    height: 63.6vh;
+    overflow-y: hidden;
+    /* border-top: 2px solid #17181b; */
+    /* border-top: 0.35vh solid #17181b; */
+    border-bottom: 0;
 }
 
 .home .leftboxheight {
@@ -1815,8 +1834,9 @@ progress{
     margin-top: 5vh !important;
 }
 .home .rightbar_inner .rightbar-row {
-    min-height: 62vh;
+    min-height: 60vh;
     max-height: 65vh;
+    height: 64vh;
 }
 .home #footer {
     margin: 0 0 0 0;
@@ -1858,14 +1878,18 @@ progress{
 }
 
 .alert_message, .success_message{
-    background-color: rgb(255, 255, 255, 0.9);
+    /* background-color: rgb(255, 255, 255, 0.9); */
     position: fixed;
     top: 0;
     left: 0;
     right: 0;
     bottom: 0;
+    background-color: #FFF;
+    opacity: 0.9;
 }
 
+div.alert_message p,
+div.success_message p,
 .alert_message p,
 .success_message p{
     top: 50%;
@@ -1891,3 +1915,22 @@ textarea.notes-textarea{
     /* border: 1px solid; */
     resize: none
 }
+
+div.ng-binding{float: left;
+    width: 100%;
+    margin: 5px 0 0 0;
+    color: rgba(255,255,255,0.6);}
+	
+	.black-menu{cursor:pointer;}
+	
+	#header{position:relative;}
+	
+.landingpage .container{position:static !important;}	
+
+.landingpage .home-table {
+    position: absolute;
+    top: 0;    z-index: 9;left: 0;
+}
+
+.close-leftbar{background:url(images/close.png) no-repeat center center; width:30px; height:30px; float:right;}
+.leftbar-logo{float:left; width:250px;}

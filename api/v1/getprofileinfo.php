@@ -31,6 +31,17 @@ if ($row > 0){
     // unset($value['hashed_password']);
     
     $pid = $value['id'];
+
+    $profile_number_query = $db->prepare("select profile_number from memberships where profile_id = $pid");
+    $profile_number_query->execute();
+    $c = $profile_number_query->rowCount();
+    // echo $c;
+    foreach($profile_number_query->fetchAll(PDO::FETCH_ASSOC) as $item){
+      // echo '<pre>';
+      // var_dump($profile_number);
+      $value['profile_number'] = $item['profile_number'];
+    }
+
     $category_query = $db->prepare("SELECT category_id FROM categories_profiles where profile_id = $pid");
     $category_query->execute();
     foreach ($category_query->fetchAll(PDO::FETCH_ASSOC) as $ct_item){

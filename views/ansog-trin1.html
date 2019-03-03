@@ -39,7 +39,7 @@
                                              </div>
                                              <div class="form_box">
                                              	<input ng-model="cpassword" name="cpassword" id="cpassword" required compare-to="password"  pattern=".{2,}" type="password" class="input2" placeholder="{{ isDanish ? 'Bekræft password' : 'Confirm password' }}*">
-                                                <div ng-message="compareTo">{{ isDanish ? 'De givne passwords skal være ens' : 'Passwords given should be identical' }}</div></div>
+                                                <!-- <div ng-message="compareTo">{{ isDanish ? 'De givne passwords skal være ens' : 'Passwords given should be identical' }}</div></div> -->
                                              </div>
                                         </div><!--close black-cal4-->
                                         
@@ -48,7 +48,7 @@
                                              	  <div class="black-row">
                                                   
                                                   <div class="form_box">
-                                                      	<input ng-model="address" name="address" id="address" required pattern=".{2,}" type="text" class="input2" placeholder="{{ isDanish ? 'Adresse*' : 'Address' }}">
+                                                      	<input ng-model="address" name="address" id="address" required pattern=".{2,}" type="text" class="input2" placeholder="{{ isDanish ? 'Adresse' : 'Address' }}*">
                                                       </div>
                                                   
                                                       <div class="form_box2">
@@ -74,7 +74,7 @@
                          </div><!--close black-row-->
                     </div><!--close black-section-->
                     
-                    <div class="black-numbers"><span class="span3"><em>01</em>/06</span></div>
+                    <div class="black-numbers"><span class="span3"><em>01</em>/07</span></div>
                </div><!--close section-middle-->
                
                <div class="section-bottom">

@@ -61,7 +61,7 @@ curl_setopt($ch, CURLOPT_HTTPHEADER, array(
 ));
 
 $response = curl_exec( $ch );
-echo json_encode(['status_message'=>'file upload success', 'filename'=>$fileName, 'cdnfilepath'=>$cdnfilepath, 't'=>$time, 'imgpath'=>$thumbnail]);
+echo json_encode(['status_message'=>'file upload success', 'filename'=>$fileName, 'cdnfilepath'=>$cdnfilepath, 't'=>$time, 'imgpath'=>$thumbnail, 'zencode'=>[$zencoder_input, $zencoder_output]]);
 
 $filename = $cdnfilename;
 						$location = $cdnfilepath;

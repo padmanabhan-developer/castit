@@ -38,7 +38,7 @@ if($extract_post_variables > 0){
       */
     }
   }
-  pp($_POST['payments']);
+  // pp($_POST['payments']);
   if(isset($_POST['languages']) && count($_POST['languages']) > 0){
     $clear_existance_query = $db->prepare("delete from language_proficiencies where profile_id = ".$_POST['id']);
     $clear_existance_query->execute();

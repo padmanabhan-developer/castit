@@ -4,7 +4,7 @@
       <div class="page-black livetitle">
         
         <div class="section-top">
-          <h2>{{ isDanish ? 'Ansøgningsskema' : 'Application form' }}</h2>
+          <h2>{{ profileinfo.first_name }} {{ profileinfo.last_name }} - {{ profileinfo.profile_number }}</h2>
           <div class="black-right">
             <a href="#/index{{isDanish ? '/da' : '/en'}}" class="black-close">{{ isDanish ? 'luk' : 'Close' }}</a>
           </div>
@@ -14,8 +14,8 @@
           <div class="black-section">
             <div class="black-row">
               <div class="black-leftbar">
-                <p ng-if="isDanish">For at ansøge om en profil, bedes du udfylde felterne og klikke videre til næste side.</p>
-                <p ng-if="!isDanish">To apply for a profile please fill out the fields and continue to the next page.</p>
+                <p ng-if="isDanish">For at opdatere din profil bedes du udfylde felterne og klikke videre til næste side.</p>
+                <p ng-if="!isDanish">To update your profile please fill out the fields and continue to the next page.</p>
               </div><!--close black-leftbar-->
               <div class="black-rightbar livetitle">
                 <h3>{{ isDanish ? 'PERSONLIG INFO' : 'PERSONAL INFO' }}</h3>
@@ -31,9 +31,9 @@
                       <input ng-model="profileinfo.password" name="password" id="password" pattern=".{2,}" type="password" class="input2" placeholder="{{ isDanish ? 'Vælg password' : 'Choose password' }}*" >
                     </div>
                     <div class="form_box">
-                      <input ng-model="profileinfo.cpassword" name="cpassword" id="cpassword" compare-to="password"  pattern=".{2,}" type="password" class="input2" placeholder="{{ isDanish ? 'Bekræft password' : 'Confirm password' }}*">
+                      <input ng-model="profileinfo.password" name="cpassword" id="cpassword" compare-to="password"  pattern=".{2,}" type="password" class="input2" placeholder="{{ isDanish ? 'Bekræft password' : 'Confirm password' }}*">
                       <div ng-if="profile_ansog_form1.cpassword.$dirty" ng-messages="profile_ansog_form1.cpassword.$error" ng-hide="profile_ansog_form1.cpassword.$valid">  <div ng-message="compareTo">
-                        {{ isDanish ? 'Password Confirm password mismatches' : 'Password Confirm password mismatches' }}
+                        {{ isDanish ? 'Password Confirm password mismatches' : 'Passwords entered are not matching each other' }}
                         </div>
                       </div>
                     </div>
@@ -42,7 +42,7 @@
                     <div class="form_box">
                       <div class="black-row">
                         <div class="form_box">
-                          <input ng-model="profileinfo.address" name="address" id="address" required pattern=".{2,}" type="text" class="input2" placeholder="{{ isDanish ? 'Adresse*' : 'Address' }}*" value="{{profileinfo.address}}">
+                          <input ng-model="profileinfo.address" name="address" id="address" required pattern=".{2,}" type="text" class="input2" placeholder="{{ isDanish ? 'Adresse' : 'Address' }}*" value="{{profileinfo.address}}">
                         </div>
                         <div class="form_box2">
                           <input ng-model="profileinfo.zipcode" name="zipcode" id="zipcode" required pattern=".{2,}" type="text" class="input2" placeholder="{{ isDanish ? 'Postnr.' : 'Zip code' }}*" value="{{profileinfo.zipcode}}">

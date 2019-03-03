@@ -3,7 +3,7 @@
     <form name="profile_update_form4" id="profile_ansog_form4" ng-submit="step4Update()">
       <div class="page-black livetitle">
         <div class="section-top">
-          <h2>{{ isDanish ? 'Ansøgningsskema' : 'Application form' }}</h2>
+            <h2>{{ profileinfo.first_name }} {{ profileinfo.last_name }} - {{ profileinfo.profile_number }}</h2>
           <div class="black-right">
             <!-- <a href="#" class="black-edit"></a> -->
             <a href="#/index{{isDanish ? '/da' : '/en'}}" class="black-close">{{ isDanish ? 'luk' : 'Close' }}</a>
@@ -16,8 +16,8 @@
               <div class="black-row">
                 
                 <div class="black-leftbar" style="width:20%">
-                  <p ng-if="isDanish">For at ansøge om en profil, bedes du udfylde felterne og klikke videre til næste side.</p>
-                  <p ng-if="!isDanish">To apply for a profile please fill out the fields and continue to the next page.</p>
+                    <p ng-if="isDanish">For at opdatere din profil bedes du udfylde felterne og klikke videre til næste side.</p>
+                    <p ng-if="!isDanish">To update your profile please fill out the fields and continue to the next page.</p>
                   </div><!--close black-leftbar-->
                   
                   <div class="black-rightbar  livetitle" style="width:80%">

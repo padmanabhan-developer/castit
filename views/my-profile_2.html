@@ -3,7 +3,7 @@
     <form name="profile_update_form2" id="profile_ansog_form2" ng-submit="step2Update()">
       <div class="page-black livetitle">
         <div class="section-top">
-          <h2>{{ isDanish ? 'Ansøgningsskema' : 'Application form' }}</h2>
+            <h2>{{ profileinfo.first_name }} {{ profileinfo.last_name }} - {{ profileinfo.profile_number }}</h2>
           <div class="black-right">
             <!-- <a href="#" class="black-edit"></a> -->
             <a href="#/index{{isDanish ? '/da' : '/en'}}" class="black-close">{{ isDanish ? 'luk' : 'Close' }}</a>
@@ -16,8 +16,8 @@
               <div class="black-row">
                 
                 <div class="black-leftbar">
-                  <p ng-if="isDanish">For at ansøge om en profil, bedes du udfylde felterne og klikke videre til næste side.</p>
-                  <p ng-if="!isDanish">To apply for a profile please fill out the fields and continue to the next page.</p>
+                    <p ng-if="isDanish">For at opdatere din profil bedes du udfylde felterne og klikke videre til næste side.</p>
+                    <p ng-if="!isDanish">To update your profile please fill out the fields and continue to the next page.</p>
                   </div><!--close black-leftbar-->
                   
                   <div class="black-rightbar livetitle">
@@ -59,7 +59,7 @@
                                   <div class="form_box3">
                                     <div class="select-style">
                                       <select name="birth_day" class="input2" id="birth_day" ng-model="profileinfo.birth_day" required>
-                                        <option value="">{{ isDanish ? 'Dag' : 'Day' }}</option>
+                                        <option value="">{{ isDanish ? 'Dag' : 'Day' }}*</option>
                                         <option value="01">01</option>
                                         <option value="02">02</option>
                                         <option value="03">03</option>
@@ -98,7 +98,7 @@
                                   <div class="form_box3">
                                     <div class="select-style">
                                       <select name="birth_month" class="input2" id="birth_month" ng-model="profileinfo.birth_month" required>
-                                        <option value="">{{ isDanish ? 'Mdr' : 'Month' }}</option>
+                                        <option value="">{{ isDanish ? 'Mdr.' : 'Month' }}*</option>
                                         <option value="1">01</option>
                                         <option value="2">02</option>
                                         <option value="3">03</option>
@@ -117,7 +117,7 @@
                                   <div class="form_box3">
                                     <div class="select-style">
                                       <select name="birth_year" class="input2" id="birth_year" ng-model="profileinfo.birth_year" required>
-                                        <option value="">{{ isDanish ? 'År' : 'Year' }}</option>
+                                        <option value="">{{ isDanish ? 'År' : 'Year' }}*</option>
                                         <option value="{{year_id.id}}" ng-selected="{{profileinfo.birth_year == year_id.id}}" ng-repeat="year_id in yearsdropdown">{{year_id.name}}</option>
                                       </select>
                                     </div>

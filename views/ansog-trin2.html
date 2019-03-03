@@ -58,7 +58,7 @@
                                                       <div class="form_box3">
                                                       <div class="select-style">
                                                  <select name="birth_day" class="input2" id="birth_day" ng-model="birth_day" required>
-                                                                    <option value="">{{ isDanish ? 'Dag' : 'Day' }}</option>
+                                                                    <option value="">{{ isDanish ? 'Dag*' : 'Day*' }}</option>
                                                                     <option value="01">1</option>
                                                                     <option value="02">2</option>
                                                                     <option value="03">3</option>
@@ -98,7 +98,7 @@
                                                       <div class="form_box3">
                                                       <div class="select-style">
                                               <select name="birth_month" class="input2" id="birth_month" ng-model="birth_month" required>
-                                                                    <option value="">{{ isDanish ? 'Mdr' : 'Month' }}</option>
+                                                                    <option value="">{{ isDanish ? 'Mdr.*' : 'Month*' }}</option>
                                                                     <option value="1">1</option>
                                                                     <option value="2">2</option>
                                                                     <option value="3">3</option>
@@ -118,7 +118,7 @@
                                                       <div class="form_box3">
                                                       	  <div class="select-style">
                                                            		<select name="birth_year" class="input2" id="birth_year" ng-model="birth_year" required>
-                                                                    <option value="">{{ isDanish ? 'År' : 'Year' }}</option>
+                                                                    <option value="">{{ isDanish ? 'År*' : 'Year*' }}</option>
                                                                     <option value="{{year_id.id}}" ng-selected="{{birth_year == year_id.id}}" ng-repeat="year_id in yearsdropdown">{{year_id.name}}</option>
                                                                 </select>
                                                            </div>
@@ -126,7 +126,7 @@
                                                   </div>
                                              </div>
                                              <div class="form_box">
-                                             <input name="ethnic_origin" id="ethnic_origin" ng-model="ethnic_origin" type="text" class="input2" placeholder="{{ isDanish ? 'Etninsk oprindelse' : 'Ethnic Origin' }}">
+                                             <input name="ethnic_origin" id="ethnic_origin" ng-model="ethnic_origin" type="text" class="input2" placeholder="{{ isDanish ? 'Etnisk oprindelse' : 'Ethnic Origin' }}">
                                             </div>
                                             <div class="form_box">
                                                     <input ng-model="job" name="job" id="job" type="text" class="input2" placeholder="{{ isDanish ? 'Beskæftigelse' : 'Employment' }}">
@@ -138,7 +138,7 @@
                          </div><!--close black-row-->
                     </div><!--close black-section-->
                     
-                    <div class="black-numbers"><span class="span3"><em>02</em>/06</span></div>
+                    <div class="black-numbers"><span class="span3"><em>02</em>/07</span></div>
                </div><!--close section-middle-->
                
                <div class="section-bottom">

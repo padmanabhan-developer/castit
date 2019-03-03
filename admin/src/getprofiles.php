@@ -25,6 +25,9 @@
       case 'slet':
         $filter = " AND p.profile_status_id = '4' ";  
         break;
+      case 'bureau':
+        $filter = " AND p.profile_status_id = '5' ";  
+        break;
       default:
         $filter = "";
         break;
@@ -36,9 +39,10 @@
 
     if($sort_param == 'first_name' && $search_text != ''){
       $order  = " ORDER BY CASE 
-      WHEN p.first_name like '%".$search_text."%' THEN 1
-      WHEN p.last_name like '%".$search_text."%' THEN 2
-      WHEN p.email like '%".$search_text."%' THEN 3
+      WHEN p.first_name like '".$search_text."' THEN 1
+      WHEN p.first_name like '".$search_text."%' THEN 2
+      WHEN p.first_name like '%".$search_text."%' THEN 3
+      
       END
       ";
     }
@@ -48,7 +52,7 @@
     
     $limit  = " LIMIT 100 OFFSET ".$offset;
 
-    $query = "SELECT * FROM profiles p WHERE 1 AND p.profile_status_id IN (1,2,3) " . $filter . $order . $limit;
+    $query = "SELECT * FROM profiles p WHERE 1 AND p.profile_status_id IN (1,2,3,5) " . $filter . $order . $limit;
 
     if(isset($search_text) && $search_text!=""){
       $query = "SELECT * FROM profiles p INNER JOIN memberships m ON m.profile_id = p.id WHERE 1 " . $filter . " AND 
@@ -59,8 +63,8 @@
       OR p.first_name like '%".$search_text."%' 
       OR p.last_name like '%".$search_text."%' 
       OR p.email like '".$search_text."'
-      OR p.email like '%".$search_text."%'
-      ) AND p.profile_status_id IN (1,2,3)". $order . $limit;
+      
+      ) AND p.profile_status_id IN (1,2,3,5)". $order . $limit;
       
       /* if(in_array($search_text, ['CM','CF','YM','YF','BM','BF'])){ // A and J are excluded here as it too less for a search input
         $query = "SELECT * FROM profiles p INNER JOIN memberships m ON m.profile_id = p.id WHERE 1 " . $filter . " AND (m.profile_number like '%".$search_text."%')" . $order . $limit;
@@ -71,9 +75,9 @@
   else{
     $passed_profile_id = $_GET['profile_id'];
     $profile_id = $passed_profile_id;
-    $query = "SELECT * FROM profiles p INNER JOIN memberships m ON m.profile_id = p.id WHERE p.id = '". $passed_profile_id ."' AND p.profile_status_id IN (1,2,3) order by m.version desc limit 1 ";
+    $query = "SELECT * FROM profiles p INNER JOIN memberships m ON m.profile_id = p.id WHERE p.id = '". $passed_profile_id ."' AND p.profile_status_id IN (1,2,3,5) order by m.version desc limit 1 ";
   }
-  // pp($query);
+  // pp($query);exit;
   $user_profile_query = $db->prepare($query);
   $user_profile_query->execute();
   $row = $user_profile_query->rowCount();
@@ -135,16 +139,19 @@
       if($info['profile_number']){
         switch ($info['profile_status']) {
           case '1':
-            $status_info = '<td class="td5" ><p profileid="'. $info["profile_id"] .'"><span class="green set-online">Online</span> / <span class="set-offline">Offline</span> / <span class="set-pending">Pending</span> / <span class="set-slet">Slet</span></p></td>';
+            $status_info = '<td class="td5" ><p profileid="'. $info["profile_id"] .'"><span class="green set-online">Online</span> / <span class="set-offline">Offline</span> / <span class="set-pending">Pending</span> / <span class="set-slet">Slet</span> / <span class="set-bureau" >Bureau</span></p></td>';
             break;
           case '2':
-            $status_info = '<td class="td5" ><p profileid="'. $info["profile_id"] .'"><span class="set-online">Online</span> / <span class="pink set-offline" >Offline</span> / <span class="set-pending">Pending</span> / <span class="set-slet">Slet</span></p></td>';
+            $status_info = '<td class="td5" ><p profileid="'. $info["profile_id"] .'"><span class="set-online">Online</span> / <span class="pink set-offline" >Offline</span> / <span class="set-pending">Pending</span> / <span class="set-slet">Slet</span> / <span class="set-bureau" >Bureau</span></p></td>';
             break;
           case '3':
-            $status_info = '<td class="td5" ><p profileid="'. $info["profile_id"] .'"><span class="set-online">Online</span> / <span class="set-offline">Offline</span> / <span class="orange set-pending" >Pending</span> / <span class="set-slet">Slet</span></p></td>';
+            $status_info = '<td class="td5" ><p profileid="'. $info["profile_id"] .'"><span class="set-online">Online</span> / <span class="set-offline">Offline</span> / <span class="orange set-pending" >Pending</span> / <span class="set-slet">Slet</span> / <span class="set-bureau" >Bureau</span></p></td>';
             break;
           case '4':
-            $status_info = '<td class="td5" ><p profileid="'. $info["profile_id"] .'"><span class="set-online">Online</span> / <span class="set-offline">Offline</span> / <span class="set-pending">Pending</span> / <span class="navy set-slet" >Slet</span></p></td>';
+            $status_info = '<td class="td5" ><p profileid="'. $info["profile_id"] .'"><span class="set-online">Online</span> / <span class="set-offline">Offline</span> / <span class="set-pending">Pending</span> / <span class="navy set-slet" >Slet</span> / <span class="set-bureau" >Bureau</span></p></td>';
+            break;
+          case '5':
+            $status_info = '<td class="td5" ><p profileid="'. $info["profile_id"] .'"><span class="set-online">Online</span> / <span class="set-offline">Offline</span> / <span class="set-pending">Pending</span> / <span class="set-slet" >Slet</span> / <span class="brown set-bureau" >Bureau</span></p></td>';
             break;
           default:
             $status_info = '<td class="td5" ><p>Online / Offline / Pending / Slet</p></td>';

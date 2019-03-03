@@ -16,15 +16,15 @@
               <div ng-show="error" class="alert alert-danger">{{error}}</div>
               <form name="login" ng-submit="angCtrl.loginForm()" class="form-horizontal" method="POST" role="form">
                 <div class="login_box">
-                  <label>PROFIL LOGIN</label>
+                  <label>{{ isDanish ? 'PROFIL LOGIN' : 'PROFILE LOGIN' }}</label>
                   <input id='login_email' name="" type="email" placeholder="Email" class="login_input" ng-model="angCtrl.inputData.email" required>
                 </div>
                 <div class="login_box">
-                  <label>{{ isDanish ? 'INDTAST KODE' : 'PASSWORD' }}</label>
+                  <label>{{ isDanish ? 'INDTASTET KODE' : 'PASSWORD' }}</label>
                   <input name="" type="password" placeholder="**********" class="login_input" ng-model="angCtrl.inputData.password">
                 </div>
                 <div class="login_box">
-                  <a href="javascript:;" class="login_link">{{ isDanish ? 'Glemt adgangskode' : 'Forgot password?' }}</a>
+                  <a href="javascript:;" class="login_link">{{ isDanish ? 'Glemt adgangskode' : 'Forgot your password?' }}</a>
                   <p class="login-error-message"></p>
                 </div>
                 <div class="login_box2">

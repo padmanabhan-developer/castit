@@ -406,7 +406,6 @@ main.controller('RegisterStep3Controller', ['$scope', '$filter', '$http', '$wind
 						height: ($scope.height) ? $scope.height : '-',
 						weight: ($scope.weight) ? $scope.weight : '-',
 						}
-						console.log(formData);
 		$http.post('api/v1/step3Create', formData).success(function(sucess) {
 			if(sucess){
 				window.location = '#/ansog-trin4' + ($rootScope.isDanish ? '/da' : '/en' );
@@ -784,7 +783,7 @@ main.controller('RegisterStep5Controller', ['$scope', '$filter', '$http', '$wind
 main.controller('RegisterStep6Controller',['$scope', '$http', '$rootScope', function($scope, $http, $rootScope) {
 	$rootScope.bodylayout = 'black';
 	$rootScope.interface = 'ansog';
-	if(!localStorage.getItem('imagecount') || localStorage.getItem('imagecount') == 'NaN'){
+	if(!localStorage.getItem('imagecount')){
 		localStorage.setItem('imagecount','0');
 		
 	}
@@ -818,7 +817,8 @@ main.controller('RegisterStep6Controller',['$scope', '$http', '$rootScope', func
     ajax.addEventListener("error", errorHandler, false);
     ajax.addEventListener("abort", abortHandler, false);
     ajax.open("POST", api_url); 
-	ajax.send(formdata);
+		ajax.send(formdata);
+		localStorage.setItem('imagecount', parseInt(localStorage.getItem('imagecount')) + 1);
 	});
 	function _(el) {
     return document.getElementById(el);
@@ -838,33 +838,62 @@ main.controller('RegisterStep6Controller',['$scope', '$http', '$rootScope', func
 		let jsonresponse = JSON.parse(event.target.response);
 
     if(event.target.status == 200  &&  jsonresponse.status_message != undefined){
-        let imagecount =  parseInt(localStorage.getItem('imagecount'));
-        $scope.cdnfilename = jsonresponse.filename;
-        let bg_img = "'" + $scope.cdnfilename + "'";
-        let bg_vdo = "'http://assets3.castit.dk"+jsonresponse.cdnfilepath+"/"+jsonresponse.thumbnail+"'";
-        let mediatype = jsonresponse.type;
-        $scope.cdnfilepath = jsonresponse.cdnfilepath;
-        // document.querySelector(".remove_this_preview_box") ? document.querySelector(".remove_this_preview_box").remove() : '';
-        let preview_html = '';
-        if(mediatype == 'image'){
-            $("div.upload-img:eq("+imagecount+")").css("background-image", "url(" + bg_img + ")");
-            localStorage.setItem('imagecount', parseInt(localStorage.getItem('imagecount')) + 1);
-        }
-        if(mediatype == 'video'){
-        
-        }
+			// event.target.inputdom.siblings().find("input").prevObject[0].value = JSON.parse(event.target.response).filename;
+			let imagecount =  parseInt(localStorage.getItem('imagecount'));
+			$scope.cdnfilename = jsonresponse.filename;
+			let bg_img = "'" + $scope.cdnfilename + "'";
+			let bg_vdo = "'http://assets3.castit.dk"+jsonresponse.cdnfilepath+"/"+jsonresponse.thumbnail+"'";
+			let mediatype = jsonresponse.type;
+			$scope.cdnfilepath = jsonresponse.cdnfilepath;
+			document.querySelector(".remove_this_preview_box") ? document.querySelector(".remove_this_preview_box").remove() : '';
+			// $scope.fieldone = $scope.cdnfilename;
+			let preview_html = '';
+			if(mediatype == 'image'){
+				//  preview_html = '<div  class="upload-box" id="preview_container'+imagecount+'"><div for="uploadinput'+imagecount+'" class="upload-img" style="background-image:url('+bg_img+')"><span class="remove">X</span></div></div>';
+				// $(".upload-box-row").append(preview_html);
+				document.querySelector("label.upload-img").style.backgroundImage = "url('+bg_img+')";
+				// $("label.upload-img").style("background-image",'url('+bg_img+')');
+				$(".upload-box-row").children().find(".upload-img").unbind('mouseenter mouseleave');
+				$(".upload-box-row").children().find(".upload-img").on('mouseenter mouseleave', function(){
+					$(this).children().toggle();
+					$(this).children().click(function(){
+						$(this).parent().parent().remove();
+						let current_thumbs = $(".upload-box-row").children();
+						localStorage.setItem('imagecount', current_thumbs.length);
+						localStorage.setItem('preview_html', current_thumbs.prop('outerHTML'));
+					});
+				});
+				
+				if(localStorage.getItem('preview_html') == 'null'){
+					localStorage.setItem('preview_html','');
+				}
+				localStorage.setItem('preview_html', localStorage.getItem('preview_html') + preview_html);
+
+			}
+			if(mediatype == 'video'){
+				preview_html = '<div class="upload-box" id="preview_container'+imagecount+'"><label for="uploadinput'+imagecount+'" class="upload-img" style="background-image:url('+bg_vdo+')"><span class="remove ">X</span></label></div>';
+				$(".upload-box-row").append(preview_html);
+
+				$(".upload-box-row").children().find(".upload-img").unbind('mouseenter mouseleave');
+				$(".upload-box-row").children().find(".upload-img").on('mouseenter mouseleave', function(){
+					$(this).children().toggle();
+					$(this).children().click(function(){
+						$(this).parent().parent().remove();
+						let current_thumbs = $(".upload-box-row").children();
+						localStorage.setItem('imagecount', current_thumbs.length);
+						localStorage.setItem('preview_html', current_thumbs.prop('outerHTML'));
+					});
+				});
+				
+				if(localStorage.getItem('preview_html') == 'null'){
+					localStorage.setItem('preview_html','');
+				}
+
+				localStorage.setItem('preview_html', localStorage.getItem('preview_html') + preview_html);
+			}
     }
   }
-  $(".upload-img").on('mouseenter mouseleave', function(){
-      $(this).find(".remove").toggle();
-  });
-  $(".remove").click(function(){
-      if($(this).parent().css("background-image") != 'none'){
-				console.log($(this));
-        $(this).parent().css("background-image",'');
-        localStorage.setItem('imagecount', parseInt(localStorage.getItem('imagecount')) - 1);  
-      }
-  });
+
   function errorHandler(event) {
     _("status").innerHTML = $rootScope.isDanish ? "Upload fejlede" : "Upload Failed";
   }

@@ -92,10 +92,15 @@
                       </div>
                       
                       <div class="radio radio-info white-label">
-                           <input type="radio" name="filter" id="Radios8" value="slet">
-                           <label>Slettet</label>
+                           <input type="radio" name="filter" id="Radios8" value="bureau">
+                           <label>Bureau</label>
                       </div>
                       
+                      <div class="radio radio-info white-label">
+                           <input type="radio" name="filter" id="Radios9" value="slet">
+                           <label>Slettet</label>
+                      </div>
+
                       <div class="radio radio-info white-label">
                            <input type="radio" name="filter" id="Radios9" value="all">
                            <label>Alle</label>

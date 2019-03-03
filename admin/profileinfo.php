@@ -211,9 +211,10 @@ if($value['gender_id'] == '2' && !$is_kid){
                 <?php
                   $prefix_profilenumber = substr($profile_number , 0 , 1);
                   $number_profilenumber = substr($profile_number , 1 );
-                  if(in_array(strtolower($prefix_profilenumber), array("c","y"))){ 
+                  if(in_array(strtolower($prefix_profilenumber), array("c","y","b"))){ 
                     $c_checked = (strtolower($prefix_profilenumber) == "c") ? 'checked="checked"' : '';
                     $y_checked = (strtolower($prefix_profilenumber) == "y") ? 'checked="checked"' : '';
+                    $b_checked = (strtolower($prefix_profilenumber) == "b") ? 'checked="checked"' : '';
                   ?>
 
 
@@ -226,6 +227,11 @@ if($value['gender_id'] == '2' && !$is_kid){
                     <div class="radio radio-info" style="width: 100%;">
                       <input type="radio" name="profile-number-selection" id="Radios1" value="<?php echo "Y".$number_profilenumber; ?>" profile_id=<?php echo $id; ?> <?php echo $y_checked;?>>
                       <label><?php echo "Y".$number_profilenumber; ?></label>
+                    </div>
+
+                    <div class="radio radio-info" style="width: 100%;">
+                      <input type="radio" name="profile-number-selection" id="Radios1" value="<?php echo "B".$number_profilenumber; ?>" profile_id=<?php echo $id; ?> <?php echo $b_checked;?>>
+                      <label><?php echo "B".$number_profilenumber; ?></label>
                     </div>
                   </div>
                 <?php
@@ -254,6 +260,10 @@ if($value['gender_id'] == '2' && !$is_kid){
                                     <input class="send_deactivation_email" type="checkbox"  value="send_offline">
                                     <span class="checkmark"></span>
                             </label>
+                        </div>
+                        <div class="form-row">
+                          <label style="float: left;width: 30%;" class="chek-box">Bureau</label>
+                            <input style="width: 65%;height: 35px;" type="text" class="form-input1 disabled bureau" placeholder="" value="<?php echo $value['bureau'] ;?>">
                         </div>
                       </div>
                  	  <div class="box1">
@@ -325,8 +335,10 @@ if($value['gender_id'] == '2' && !$is_kid){
                            <button class="btn_2 submit_update godkend_button">Godkend</button>
                       </div>
                       
-                 
-                 	  <a class="upload-close" href="/admin" style="background-position-y: top"></a>
+                    <?php
+                    $close_link = ($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : "/admin";
+                    ?>
+                 	  <a class="upload-close" href="<?php echo $close_link ?>" style="background-position-y: top"></a>
                  </div>
             </div>
        </div><!--close page-top-->

@@ -30,17 +30,20 @@ if($rows > 0){
   }
 }
 
-if($has_media){
+if(is_numeric($id)){
   $output = '';
   $name_query = $db->prepare("SELECT CONCAT(first_name, ' ', last_name) as name from profiles where id = $id");
   $name_query->execute();
   $name = $name_query->fetch(0)['name'];
-
+  
   $profile_number_query = $db->prepare("SELECT profile_number, profile_id from memberships where profile_id = $id");
   $profile_number_query->execute();
   $profile_number = $profile_number_query->fetch(0)['profile_number'];
   $value['profile_number'] = $profile_number;
   $value['name'] = $name;
+}
+
+if($has_media){
   switch($mediatype){
       case 'images':
         $output .= form_images_html($value, $name, $profile_number, true);

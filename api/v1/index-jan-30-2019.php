@@ -69,7 +69,9 @@ $app->get('/getprofiles',function () use ($app) {
   global $db;
   $conditional_profiles = array(
 	  0 => "AND ( m.profile_number LIKE 'C%') ",
-	  1 => "AND ( m.profile_number LIKE 'Y%') ",
+	  1 => "AND ( m.profile_number LIKE 'A%') ",
+	  2 => "AND ( m.profile_number LIKE 'J%') ",
+	  3 => "AND ( m.profile_number LIKE 'Y%') ",
   );
   $offset = (isset($_GET['offset'])) ? $_GET['offset'] : 0;
 //   $conditional_profiles = "AND ( m.profile_number LIKE 'C%' OR m.profile_number LIKE 'A%'OR m.profile_number LIKE 'J%' OR m.profile_number LIKE 'Y%' ) ";
@@ -90,8 +92,7 @@ AND m.current ='1' ".$conditional_profiles[$offset]." AND p.id IN ( SELECT profi
 // $offset = $offset * 500;
 // $limit  = " LIMIT 500 OFFSET ". $offset;
 // $sql = $sql . " ORDER BY RAND() " . $limit;
-$sql = $sql . " ORDER BY RAND() limit 5";
-// $sql = $sql . " ORDER BY RAND() ";
+$sql = $sql . " ORDER BY RAND() ";
 // $sql = $sql . " ORDER BY m.profile_group_id " . $limit;
 	  
   	if(isset($_GET['group_id']) && is_numeric($_GET['group_id']) && $_GET['group_id']>0){
@@ -113,11 +114,15 @@ $sql = $sql . " ORDER BY RAND() limit 5";
 
 		$sql = "SELECT 
 			p.*, m.profile_group_id, m.profile_number, m.profile_number_first_name_last_name, m.version, m.current, g.name 
-			as gender_name
+			as gender_name, hc.name 
+			as hair_color_name, ec.name 
+			as eye_color_name 
 			FROM profiles p 
 			INNER JOIN 
       		(select * from memberships where current = 1) m ON m.profile_id = p.id 
-			INNER JOIN genders g ON g.id = p.gender_id  
+			INNER JOIN genders g ON g.id = p.gender_id 
+			INNER JOIN hair_colors hc ON hc.id = p.hair_color_id 
+			INNER JOIN eye_colors ec ON ec.id = p.eye_color_id  
 			WHERE ( p.profile_status_id = '1' ) 
       		AND p.id IN $ids_in_group_sql";
 	}
@@ -238,28 +243,18 @@ $app->get('/getfilterprofiles',function () use ($app) {
 	}
 
 	if($search_text){
-		$search_qry .= " AND (p.first_name = '".$search_text."' 
-		OR m.profile_number = '".$search_text."'
-		OR m.profile_number like '%".$search_text."%')";		
+		$search_qry .= " AND (p.first_name = '".$search_text."'
+		OR m.profile_number like '%".$search_text."%' 
+		OR m.profile_number = '".$search_text."')";		
 	}
-	
-	$qry = "SELECT p.*, m.profile_group_id, m.profile_number, m.profile_number_first_name_last_name, m.version, m.current, g.name as gender_name FROM profiles p INNER JOIN memberships m ON m.profile_id = p.id INNER JOIN genders g ON g.id = p.gender_id  WHERE (p.profile_status_id = '1' ) AND m.current ='1' AND p.id IN (SELECT profile_id from photos WHERE published ='1' and media_slet_status != '1' GROUP by profile_id) ".$search_qry."  ORDER by case WHEN m.profile_number LIKE 'C%' THEN 1 WHEN m.profile_number LIKE 'Y%' THEN 2 ELSE 3 END ";
+	$qry = "SELECT p.*, m.profile_group_id, m.profile_number, m.profile_number_first_name_last_name, m.version, m.current, g.name as gender_name, hc.name as hair_color_name, ec.name as eye_color_name FROM profiles p INNER JOIN memberships m ON m.profile_id = p.id INNER JOIN genders g ON g.id = p.gender_id INNER JOIN hair_colors hc ON hc.id = p.hair_color_id INNER JOIN eye_colors ec ON ec.id = p.eye_color_id  WHERE (p.profile_status_id = '1' ) AND m.current ='1' AND p.id IN (SELECT profile_id from photos WHERE published ='1' and media_slet_status != '1' GROUP by profile_id) ".$search_qry."  ORDER by case WHEN m.profile_number LIKE 'CF%' THEN 1 WHEN m.profile_number LIKE 'CM%' THEN 2 WHEN m.profile_number LIKE 'A%' THEN 3 WHEN m.profile_number LIKE 'J%' THEN 4  WHEN m.profile_number LIKE 'YF%' THEN 5 WHEN m.profile_number LIKE 'YM%' THEN 6 ELSE 7 END ";
 
   $offset = (isset($_GET['offset'])) ? $_GET['offset'] : 1;
   
 	$offset = $offset * 100;
 	$limit  = " LIMIT 100 OFFSET ". $offset;
 	$qry = $qry . $limit;
-
-	$sql_check_qry = "SELECT p.*, m.profile_group_id, m.profile_number, m.profile_number_first_name_last_name, m.version, m.current, g.name as gender_name FROM profiles p INNER JOIN memberships m ON m.profile_id = p.id INNER JOIN genders g ON g.id = p.gender_id  WHERE (p.profile_status_id = '1' ) AND m.current ='1' AND p.id IN (SELECT profile_id from photos WHERE published ='1' and media_slet_status != '1' GROUP by profile_id) AND m.profile_number = '" . $search_text . "'";
-	$sql_check = $db->prepare($sql_check_qry);
-	$sql_check->execute();
-	$result_set = $sql_check->fetchAll(PDO::FETCH_ASSOC);
-	// echo '<pre>';var_dump($result_set);exit;
-	if(count($result_set)>0){
-		$qry = $sql_check_qry;
-	}
-
+	// echo $qry;exit;
 	$query = $db->prepare($qry); 
 	$query->execute();
     $rows = $query->fetchAll(PDO::FETCH_ASSOC);
@@ -348,9 +343,7 @@ Type : POST
 $app->get('/getsingleprofiles',function () use ($app) { 
     global $db;
 	$profileid = $app->request->get('profileid');
-	$current_language = $app->request->get('lang');
 	if($profileid)
-	// $query = $db->prepare("SELECT p.*, m.profile_group_id, m.profile_number, m.profile_number_first_name_last_name, m.version, m.current, g.name as gender_name FROM profiles p INNER JOIN memberships m ON m.profile_id = p.id INNER JOIN genders g ON g.id = p.gender_id  WHERE p.id='".$profileid."' AND (p.profile_status_id = '1' OR  p.profile_status_id = '2') AND m.current ='1' LIMIT 1"); 
 	$query = $db->prepare("SELECT p.*, m.profile_group_id, m.profile_number, m.profile_number_first_name_last_name, m.version, m.current, g.name as gender_name, hc.name as hair_color_name, ec.name as eye_color_name FROM profiles p INNER JOIN memberships m ON m.profile_id = p.id INNER JOIN genders g ON g.id = p.gender_id INNER JOIN hair_colors hc ON hc.id = p.hair_color_id INNER JOIN eye_colors ec ON ec.id = p.eye_color_id  WHERE p.id='".$profileid."' AND (p.profile_status_id = '1' OR  p.profile_status_id = '2') AND m.current ='1' LIMIT 1"); 
 	$query->execute();
     $rows = $query->fetchAll(PDO::FETCH_ASSOC);
@@ -414,11 +407,6 @@ $app->get('/getsingleprofiles',function () use ($app) {
 
 		$skills= '-';
 		$query_skills = $db->prepare("SELECT s.name FROM skills s JOIN profiles_skills ps ON ps.skill_id = s.id WHERE ps.profile_id = '".$row['id']."'"); 
-
-		if($current_language == 'en'){
-			$query_skills = $db->prepare("SELECT s.name_en as name FROM skills s JOIN profiles_skills ps ON ps.skill_id = s.id WHERE ps.profile_id = '".$row['id']."'"); 
-		}
-		
 		$query_skills->execute();
 		$rows_skills = $query_skills->fetchAll(PDO::FETCH_ASSOC);
 		if(count($rows_skills) > 0){
@@ -430,11 +418,6 @@ $app->get('/getsingleprofiles',function () use ($app) {
 
 		$categories= '-';
 		$query_exp = $db->prepare("SELECT c.name FROM categories c JOIN categories_profiles cp ON cp.category_id = c.id WHERE cp.profile_id = '".$row['id']."'"); 
-		
-		if($current_language == 'en'){
-			$query_exp = $db->prepare("SELECT c.name_en as name FROM categories c JOIN categories_profiles cp ON cp.category_id = c.id WHERE cp.profile_id = '".$row['id']."'"); 			
-		}
-		
 		$query_exp->execute();
 		$rows_exp = $query_exp->fetchAll(PDO::FETCH_ASSOC);
 		if(count($rows_exp) > 0){
@@ -445,13 +428,7 @@ $app->get('/getsingleprofiles',function () use ($app) {
 			$categories=  implode(", ",$expa);
 		}
 		$licenses="-";
-		
 		$query_licenses= $db->prepare("SELECT l.name FROM drivers_licenses l JOIN drivers_licenses_profiles lp ON lp.drivers_license_id = l.id WHERE lp.profile_id = '".$row['id']."'"); 
-	
-		if($current_language == 'en'){
-			$query_licenses= $db->prepare("SELECT l.name_en as name FROM drivers_licenses l JOIN drivers_licenses_profiles lp ON lp.drivers_license_id = l.id WHERE lp.profile_id = '".$row['id']."'"); 
-		}
-		
 		$query_licenses->execute();
 		$rows_licenses = $query_licenses->fetchAll(PDO::FETCH_ASSOC);
 		if(count($rows_licenses) > 0){
@@ -465,13 +442,7 @@ $app->get('/getsingleprofiles',function () use ($app) {
 
 		$lang= array();
 		//echo $row['id'];
-		
 		$query_lang = $db->prepare("SELECT lp.*, lpl.name FROM language_proficiencies lp, language_proficiency_languages lpl WHERE lpl.id = lp.language_proficiency_language_id AND lp.profile_id = '".$row['id']."' ORDER BY lp.id"); 
-		
-		if($current_language == 'en'){
-			$query_lang = $db->prepare("SELECT lp.*, lpl.name_en as name FROM language_proficiencies lp, language_proficiency_languages lpl WHERE lpl.id = lp.language_proficiency_language_id AND lp.profile_id = '".$row['id']."' ORDER BY lp.id"); 
-		}
-		
 		$query_lang->execute();
 		$rows_langs = $query_lang->fetchAll(PDO::FETCH_ASSOC);
 		if(count($rows_langs) > 0){
@@ -513,8 +484,8 @@ $app->get('/getsingleprofiles',function () use ($app) {
 								'age' 			=> $age,
 								'height' 		=> $row['height'],
 								'weight' 		=> $row['weight'],
-								'hair_color_name' 	=> isset($row['hair_color_name']) ? $row['hair_color_name'] : " - ",
-								'eye_color_name' 	=> isset($row['eye_color_name']) ? $row['eye_color_name'] : " - ",
+								'hair_color_name' 	=> $row['hair_color_name'],
+								'eye_color_name' 	=> $row['eye_color_name'],
 								'shoes' 		=> $shoes,
 								'shirt' 		=> $shirt,
 								'pants' 		=> $pants,
@@ -1863,21 +1834,6 @@ $app->get('/getlanguages', function () use ($app) {
 	echoResponse(200, $languages);
 });
 
-$app->get('/getlanguages/en', function () use ($app) { 
-	global $db;
-$query_language = $db->prepare("SELECT * FROM language_proficiency_languages order by name_en"); 
-$query_language->execute();
-$rows_language = $query_language->fetchAll(PDO::FETCH_ASSOC);
-
-	foreach($rows_language as $row) {
-	$languages[] = array('id' => $row['id'],
-						'name' => $row['name_en']
-					);
-}
-echoResponse(200, $languages);
-});
-
-
 /******************************************
 Purpose: Get rating icons for available languages
 Parameter : 
@@ -2228,8 +2184,7 @@ $app->post('/step7Create', function() use ($app){
 
 			if(isset($_SESSION['Image_file'])){
 				foreach($_SESSION['Image_file'] as $key => $image){
-					$filename = $image['name'];
-					// pp($filename);
+					$filename = $image['name'][0];
 					$location = $_SERVER['DOCUMENT_ROOT'].'/images/uploads/';
 					move_uploaded_file($image['tmp_name'][0],$location.$filename);
 					$query = "INSERT INTO `photos` (`path`,`original_path`,`profile_id`,`filename`,`published`,`position`,`phototype_id`,`image`,`created_at`,`updated_at`,`image_tmp`,`image_processing`,`image_token`) VALUES ('".$location."','".$location."','".$profile_id."','".$filename."','1','".$key."','1','".$filename."',now(),now(),'".$filename."','1','".$filename."')";
@@ -2279,7 +2234,7 @@ $app->post('/step7Create', function() use ($app){
 			unset($_SESSION['Video_file']);
 			unset($_SESSION['Video_file_location']);	
 			}
-			echoResponse(200,array('status'=>true,'msg'=>'Tak for din oprettelse. Du modtager en mail fra os inden for 2 uger, når vi har kigget din ansøgning igennem','email'=>$email, 'first_name'=>$first_name));
+			echoResponse(200,array('status'=>true,'msg'=>'Tak for din oprettelse. Du modtager en mail fra os inden for 2 uger, når vi har kigget din ansøgning igennem','email'=>$email));
 
 		}
 		else{
@@ -2532,7 +2487,6 @@ $app->post('/step7Create', function() use ($app){
 	}
 });
 
-
 /******************************************
 Purpose: Send to email id
 Parameter : form field
@@ -2571,7 +2525,6 @@ Type : POST
 ******************************************/
 $app->post('/welcome_email', function () use ($app) {
   $to_email = $app->request->post('email');
-  $first_name = $app->request->post('first_name');
   $from = 'cat@castit.dk';
   $subject  = "Velkommen til at Castit";
 
@@ -2588,7 +2541,6 @@ $app->post('/welcome_email', function () use ($app) {
 
   
 $html_body = <<< EOM
-<p>Kære $first_name,</p>
 <p>
 Tusind tak for din ansøgning. Så snart vi har kigget den igennem, modtager du en mail, med information om vi lægger din profil Online eller Offline. 
 Dette afhænger af kvaliteten på dine billeder og om du er en type vi mener at vi vil kunne skaffe jobs.
@@ -2958,7 +2910,7 @@ $app->post('/sendgroup', function () use ($app) {
 </body>
 </html>';
 
-      $subject = "Castit Lighbox : ".$group_addedon_value[0]['group_name'];
+      $subject = "Castit Lighbox";
           
       $headers = "MIME-Version: 1.0" . "\r\n";
       $headers .= "Content-type:text/html;charset=UTF-8" . "\r\n";
@@ -3560,12 +3512,8 @@ $app->post('/fileuploadparser', function () use ($app) {
   $cdnfilepath	=	'';
   $time 				=	time();  
 	if(!isset($_REQUEST["uploaded_file_type"])){
-		$fileName			= $_FILES["Image_file"]["name"];
-		$ext 					= ".".pathinfo($fileName, PATHINFO_EXTENSION);
-		$fileName			= unique_code(10).time().$ext;
-		$_FILES["Image_file"]["name"] = $fileName;
 	  $_SESSION["Image_file"][]	= $_FILES["Image_file"];
-		// $fileName     = $_FILES["Image_file"]["name"];
+	  $fileName     = $_FILES["Image_file"]["name"];
 	  $fileTmpLoc   = $_FILES["Image_file"]["tmp_name"];
 	  $fileType     = $_FILES["Image_file"]["type"];
 	  $fileSize     = $_FILES["Image_file"]["size"];

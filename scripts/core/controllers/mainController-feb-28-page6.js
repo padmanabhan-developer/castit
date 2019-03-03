@@ -202,6 +202,12 @@ main.controller('MainController', ['$scope', '$theme', '$timeout', 'progressLoad
 		$(".course_section").fadeIn("slow"); 
     };
 	
+
+		if(!$scope.isDanish){
+			alert('asd');
+			$('.black-prev').css('width','135px !important');
+		}
+
  }]);
 
 
@@ -361,7 +367,7 @@ main.controller('RegisterStep3Controller', ['$scope', '$filter', '$http', '$wind
 
 	$scope.shirt_size_from	= '-';	$scope.shirt_size_to= '-'; 	$scope.pants_size_from	= '-'; 	$scope.pants_size_to='-';
 	$scope.shoe_size_from 	= '-';	$scope.shoe_size_to	= '-';	$scope.suite_size_from 	= '-';	$scope.suite_size_to= '-';
-	$scope.children_sizes 	= '-';	$scope.eye_color_id = '-';	$scope.hair_color_id 	= '-';	$scope.bra_size 	= '-';
+	$scope.children_sizes 	= '-';	$scope.eye_color_id = '-';	$scope.hair_color_id 	= '-';	$scope.bra_size 	= '';
 	$scope.height 			= '';	$scope.weight 		= '';	 
  	$http.get('api/v1/checkstep3', {params: {limit: limit}}).success(function(reponse) {
 		if((reponse.step1status) && (reponse.step2status)){
@@ -406,7 +412,6 @@ main.controller('RegisterStep3Controller', ['$scope', '$filter', '$http', '$wind
 						height: ($scope.height) ? $scope.height : '-',
 						weight: ($scope.weight) ? $scope.weight : '-',
 						}
-						console.log(formData);
 		$http.post('api/v1/step3Create', formData).success(function(sucess) {
 			if(sucess){
 				window.location = '#/ansog-trin4' + ($rootScope.isDanish ? '/da' : '/en' );
@@ -656,9 +661,11 @@ main.controller('RegisterStep5Controller', ['$scope', '$filter', '$http', '$wind
 	$rootScope.bodylayout = 'black';
 	$rootScope.interface = 'ansog';	
 	var limit='';	 
-	$http.get('api/v1/getlanguages').success(function(languagesdropdown) {
+
+	$http.get('api/v1/getlanguages' + ($rootScope.isDanish ? '' : '/en')).success(function(languagesdropdown) {
 		$scope.languagesdropdown = languagesdropdown
 	});
+
 	$scope.languagesListDropdown = function() {
 		return this.languagesdropdown;
 	}; 
@@ -763,6 +770,8 @@ main.controller('RegisterStep5Controller', ['$scope', '$filter', '$http', '$wind
 		}
 		else{
 			var row_id = this.id.slice(-1);
+			$(".choose-level").addClass("white-color");
+			$(".choose-language").addClass("white-color");
 			if(row_id == '1'){
 				$("input[id=langrateval"+row_id+"]").val("4");
 				$("span.ratings img[id^=start_"+row_id+"]").attr("src","images/star-black.png");
@@ -784,8 +793,8 @@ main.controller('RegisterStep5Controller', ['$scope', '$filter', '$http', '$wind
 main.controller('RegisterStep6Controller',['$scope', '$http', '$rootScope', function($scope, $http, $rootScope) {
 	$rootScope.bodylayout = 'black';
 	$rootScope.interface = 'ansog';
-	if(!localStorage.getItem('imagecount') || localStorage.getItem('imagecount') == 'NaN'){
-		localStorage.setItem('imagecount','0');
+	if(!localStorage.getItem('imagecount')){
+		localStorage.setItem('imagecount',0);
 		
 	}
 	if(!localStorage.getItem('preview_html')){
@@ -794,6 +803,11 @@ main.controller('RegisterStep6Controller',['$scope', '$http', '$rootScope', func
 	}
 	$(".upload-wrap.uploader").click(function(event){
 		$('#usermedia').trigger('click');
+	});
+	$(".upload-box .remove").click(function(event){
+		console.log(this);
+		console.log($(this));
+
 	});
 
 	$("input[name=usermedia]").change(function(event){
@@ -818,7 +832,8 @@ main.controller('RegisterStep6Controller',['$scope', '$http', '$rootScope', func
     ajax.addEventListener("error", errorHandler, false);
     ajax.addEventListener("abort", abortHandler, false);
     ajax.open("POST", api_url); 
-	ajax.send(formdata);
+		ajax.send(formdata);
+		localStorage.setItem('imagecount', parseInt(localStorage.getItem('imagecount')) + 1);
 	});
 	function _(el) {
     return document.getElementById(el);
@@ -838,33 +853,61 @@ main.controller('RegisterStep6Controller',['$scope', '$http', '$rootScope', func
 		let jsonresponse = JSON.parse(event.target.response);
 
     if(event.target.status == 200  &&  jsonresponse.status_message != undefined){
-        let imagecount =  parseInt(localStorage.getItem('imagecount'));
-        $scope.cdnfilename = jsonresponse.filename;
-        let bg_img = "'" + $scope.cdnfilename + "'";
-        let bg_vdo = "'http://assets3.castit.dk"+jsonresponse.cdnfilepath+"/"+jsonresponse.thumbnail+"'";
-        let mediatype = jsonresponse.type;
-        $scope.cdnfilepath = jsonresponse.cdnfilepath;
-        // document.querySelector(".remove_this_preview_box") ? document.querySelector(".remove_this_preview_box").remove() : '';
-        let preview_html = '';
-        if(mediatype == 'image'){
-            $("div.upload-img:eq("+imagecount+")").css("background-image", "url(" + bg_img + ")");
-            localStorage.setItem('imagecount', parseInt(localStorage.getItem('imagecount')) + 1);
-        }
-        if(mediatype == 'video'){
-        
-        }
+			// event.target.inputdom.siblings().find("input").prevObject[0].value = JSON.parse(event.target.response).filename;
+			let imagecount =  parseInt(localStorage.getItem('imagecount'));
+			$scope.cdnfilename = jsonresponse.filename;
+			let bg_img = "'" + $scope.cdnfilename + "'";
+			let bg_vdo = "'http://assets3.castit.dk"+jsonresponse.cdnfilepath+"/"+jsonresponse.thumbnail+"'";
+			let mediatype = jsonresponse.type;
+			$scope.cdnfilepath = jsonresponse.cdnfilepath;
+			document.querySelector(".remove_this_preview_box") ? document.querySelector(".remove_this_preview_box").remove() : '';
+			// $scope.fieldone = $scope.cdnfilename;
+			let preview_html = '';
+			if(mediatype == 'image'){
+				 preview_html = '<div  class="upload-box" id="preview_container'+imagecount+'"><div for="uploadinput'+imagecount+'" class="upload-img" style="background-image:url('+bg_img+')"><span class="remove">X</span></div></div>';
+				$(".upload-box-row").append(preview_html);
+
+				$(".upload-box-row").children().find(".upload-img").unbind('mouseenter mouseleave');
+				$(".upload-box-row").children().find(".upload-img").on('mouseenter mouseleave', function(){
+					$(this).children().toggle();
+					$(this).children().click(function(){
+						$(this).parent().parent().remove();
+						let current_thumbs = $(".upload-box-row").children();
+						localStorage.setItem('imagecount', current_thumbs.length);
+						localStorage.setItem('preview_html', current_thumbs.prop('outerHTML'));
+					});
+				});
+				
+				if(localStorage.getItem('preview_html') == 'null'){
+					localStorage.setItem('preview_html','');
+				}
+				localStorage.setItem('preview_html', localStorage.getItem('preview_html') + preview_html);
+
+			}
+			if(mediatype == 'video'){
+				preview_html = '<div class="upload-box" id="preview_container'+imagecount+'"><label for="uploadinput'+imagecount+'" class="upload-img" style="background-image:url('+bg_vdo+')"><span class="remove ">X</span></label></div>';
+				$(".upload-box-row").append(preview_html);
+
+				$(".upload-box-row").children().find(".upload-img").unbind('mouseenter mouseleave');
+				$(".upload-box-row").children().find(".upload-img").on('mouseenter mouseleave', function(){
+					$(this).children().toggle();
+					$(this).children().click(function(){
+						$(this).parent().parent().remove();
+						let current_thumbs = $(".upload-box-row").children();
+						localStorage.setItem('imagecount', current_thumbs.length);
+						localStorage.setItem('preview_html', current_thumbs.prop('outerHTML'));
+					});
+				});
+				
+				if(localStorage.getItem('preview_html') == 'null'){
+					localStorage.setItem('preview_html','');
+				}
+
+				localStorage.setItem('preview_html', localStorage.getItem('preview_html') + preview_html);
+			}
     }
   }
-  $(".upload-img").on('mouseenter mouseleave', function(){
-      $(this).find(".remove").toggle();
-  });
-  $(".remove").click(function(){
-      if($(this).parent().css("background-image") != 'none'){
-				console.log($(this));
-        $(this).parent().css("background-image",'');
-        localStorage.setItem('imagecount', parseInt(localStorage.getItem('imagecount')) - 1);  
-      }
-  });
+
   function errorHandler(event) {
     _("status").innerHTML = $rootScope.isDanish ? "Upload fejlede" : "Upload Failed";
   }
@@ -940,7 +983,7 @@ main.controller('RegisterStep7Controller',['$scope', '$filter', '$http', '$windo
 			if(response.status != undefined){
 				$scope.ifRegistring=false;
 				
-				data = { "email": response.email };
+				data = { "email": response.email, "first_name": response.first_name };
 				if(operation == "insert"){
 					$.post("/api/v1/welcome_email", data,
 							function (data, textStatus, jqXHR) {},
@@ -2084,15 +2127,16 @@ main.controller('MyProfileController4',['$scope', '$rootScope','$http', function
   $scope.profileinfo = JSON.parse(sessionStorage.getItem('profileinfo'));
   var limit='';  
 
-  $http.get('api/v1/getcategories').success(function(categoriesdropdown) {
-    $scope.categoriesdropdown = categoriesdropdown
-  });
-  $http.get('api/v1/getskills').success(function(skillsdropdown) {
-    $scope.skillsdropdown = skillsdropdown
-  });
-  $http.get('api/v1/getlicences').success(function(licencesdropdown) {
-    $scope.licencesdropdown = licencesdropdown
-  });
+	$http.get('api/v1/getcategories' + ($rootScope.isDanish ? '' : '/en')).success(function(categoriesdropdown) {
+		$scope.categoriesdropdown = categoriesdropdown
+	});
+	$http.get('api/v1/getskills' + ($rootScope.isDanish ? '' : '/en')).success(function(skillsdropdown) {
+		$scope.skillsdropdown = skillsdropdown
+	});
+	$http.get('api/v1/getlicences' + ($rootScope.isDanish ? '' : '/en')).success(function(licencesdropdown) {
+		$scope.licencesdropdown = licencesdropdown
+	});
+
   $scope.selectedcategories = $scope.profileinfo.categories ? $scope.profileinfo.categories.toString() : '';
   $scope.selectedskills = $scope.profileinfo.skills ? $scope.profileinfo.skills.toString() : '';
   $scope.selectedlicences = $scope.profileinfo.licenses ? $scope.profileinfo.licenses.toString() : '';

@@ -118,6 +118,7 @@ var frontend = angular.module('theme.demos.dashboard', [
    $("#search_text").change(function (e) { 
       if($(this).val() == ""){
 		$(".rightbar-row").removeClass("filteractive");
+		$(".no_result_ajax").hide();
       }     
    });
 
@@ -126,8 +127,10 @@ var frontend = angular.module('theme.demos.dashboard', [
 		$http.get('api/v1/getprofiles', {params: {view: 'home'}}).success(function(homedata) {
 			$scope.hasresults = false;
 			if(homedata.success){
+				$(".no_result_ajax").hide();
 				$scope.profiles = homedata.profiles;
 			}else{
+				$(".no_result_ajax").show();
 				$scope.profiles ='';
 			}
 		 });
@@ -194,6 +197,7 @@ var frontend = angular.module('theme.demos.dashboard', [
             $scope.homedata = homedata;
             if(homedata.success === true){
 			  $scope.profiles = $scope.profiles.concat(homedata.profiles);
+			  $(".no_result_ajax").hide();
 			}
 			else{
 				if(!$scope.hasresults){
@@ -476,7 +480,7 @@ var frontend = angular.module('theme.demos.dashboard', [
 
 		$scope.IsProfileImage = true;
 		$scope.IsProfileVideo = false;
-		$scope.responsiveProfileDetail = true;
+		$scope.responsiveProfileDetail = false;
 		$('#video_nav').hide();
 		$scope.currentIndex=0;
 		document.getElementById('image_icons').style.visibility = "visible";
@@ -585,6 +589,7 @@ var frontend = angular.module('theme.demos.dashboard', [
 			$scope.homedata = homedata;
 			if(homedata.success === true){
 				$scope.profiles = homedata.profiles;
+				$(".no_result_ajax").hide();
 			}else{
 				$(".no_result_ajax").show();
 				$scope.profiles ='';
@@ -612,6 +617,7 @@ var frontend = angular.module('theme.demos.dashboard', [
 
 		$http.get('api/v1/getsingleprofiles', {params:{profileid:profileid}}).success(function(profiledata) {
 			//alert(response.success);
+			console.log(profiledata);
 			if(profiledata.success){
 				$scope.pbox_singleimage = profiledata.profile_images[0].fullpath;
 				$scope.apply;
@@ -877,6 +883,14 @@ var frontend = angular.module('theme.demos.dashboard', [
 		$("inside-popup").show();
 		$("popup-video").hide(); 
 	});
+	$(".searchmini").click(function(){
+		// $rootScope.interface = 'ansog';
+		$(".leftbar").fadeIn();
+	});
+	$(".leftbar .side-submit").click(function(){
+		// $rootScope.interface = 'home';
+		// $(".leftbar").fadeOut();
+	});
 
 	$scope.singleimage = '';
 	$scope.IsProfileImage = true;
@@ -886,8 +900,13 @@ var frontend = angular.module('theme.demos.dashboard', [
 	$scope.getSingleProfile = function (profileid){
 		$scope.IsProfileImage = true;
 		$scope.IsProfileVideo = false;
+		$scope.responsiveProfileDetail = false;
+		// console.log($window.outerWidth);
+		if($window.outerWidth >= 992){
+			$scope.responsiveProfileDetail = true;
+		}
 		var videoElement = $('video')[0];
-		console.log(videoElement);
+		// console.log(videoElement);
 		if(videoElement != undefined){
 			videoElement.pause();
 			videoElement.removeAttribute('src'); // empty source
@@ -897,7 +916,8 @@ var frontend = angular.module('theme.demos.dashboard', [
 		$scope.currVideoUrl = '';
 		$scope.pbox_profileid = profileid;
 		$scope.isGetSingleLoading=true;
-		$http.get('api/v1/getsingleprofiles', {params:{profileid:profileid}}).success(function(profiledata) {
+		let current_language = ($scope.isDanish) ? 'dk':'en';
+		$http.get('api/v1/getsingleprofiles', {params:{profileid:profileid, lang: current_language}}).success(function(profiledata) {
 			//alert(response.success);
 			// console.log(profiledata);
 			if(profiledata.success){
@@ -932,6 +952,7 @@ var frontend = angular.module('theme.demos.dashboard', [
 		$scope.IsProfileVideo = true;
 		$scope.IsProfileImage = false;
 		$scope.currVideoUrl = profilevideo;
+		$scope.singleimage = $scope.currVideoUrl; // to place link for DOWNLOAD
 		var video = $('#pro_video')[0];
 		jQuery('video').mediaelementplayer({
 			alwaysShowControls: false,
@@ -1025,7 +1046,8 @@ var frontend = angular.module('theme.demos.dashboard', [
 		$scope.mediaiconclass = 'media-iconactive';
 		$scope.infoiconclass = 'info-icon';
 		$('#video_nav').show();
-		if($scope.profile_videos){
+		console.log($scope.profile_videos);
+		if($scope.profile_videos.length){
 			$scope.currVideoUrl = $scope.profile_videos[0].fullpath;
 			var video = $('#pro_video')[0];
 			$('video').mediaelementplayer({
@@ -1036,10 +1058,21 @@ var frontend = angular.module('theme.demos.dashboard', [
 			});
 			video.load();
 			video.play();
-
+			// playVideo();
+		}
+		return false;
+	}
+/*
+	async function playVideo(){
+		console.log('lkjas');
+		try{
+			$('#pro_video')[0].play();
+		}
+		catch{
+			alert('video load issue. try refresh');
 		}
 	}
-
+*/
 	$scope.changeToDetailView = changeToDetailView;
 	function changeToDetailView() {
 		$scope.responsiveProfileDetail = true;

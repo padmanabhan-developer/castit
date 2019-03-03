@@ -116,6 +116,6 @@ echo "<option value='".$i."' ".$selected.">".$i."''</option>";
 <label class="ansog_select_label">BH str</label>
 <div class="">
 <!-- bra size / BH str-->
-<input type="text" class="form-input1 weight bra_size" placeholder="BH str" value="<?php echo $value['bra_size'];?>" >
+<input type="text" class="form-input1 bra_size" placeholder="BH str" value="<?php echo $value['bra_size'];?>" >
 </div>
 </div>

@@ -2,6 +2,8 @@
  
 <div id="content" class="main_content">
   <div class="leftbar">
+               <!-- <div class="leftbar-logo"><img src="images/logo-white.png" alt=""></div> 
+               <a href="#" class="close-leftbar"></a> -->
                <div class="leftbox">
                   <h2>{{ isDanish ? 'Navn/Nr' : 'NAME/NO' }}</h2>
                     <span class="side-searchbox"><input name="search_text" ng-model="search_text" id="search_text" type="text" value="{{search_text}}" class="side-input"><input name="" type="button" class="side-search"></span>
@@ -18,13 +20,13 @@
                </div><!--close leftbox-->
                
                <div class="leftbox2">
-                  <h2>{{ isDanish ? 'ALDER' : 'AGE' }}</h2>
+                  <h2>{{ isDanish ? 'Alder' : 'Age' }}</h2>
                     <div class="side-form">
                         <span class="form-span"><input name="age_from" ng-model="age_from" id="age_from" value="{{age_from}}" type="text" class="side-input2" placeholder="{{ isDanish ? 'Fra' : 'From' }}"></span>
                         <span class="form-devider"></span>
                         <span class="form-span"><input name="age_to" ng-model="age_to" id="age_to" type="text"  value="{{age_to}}" class="side-input2" placeholder="{{ isDanish ? 'Til' : 'To' }}"></span>
                         
-                        <span class="form-text">{{ isDanish ? 'År' : 'Year' }}</span>
+                        <span class="form-text">{{ isDanish ? 'År' : 'Years' }}</span>
                     </div>
                </div><!--close leftbox-->
               
@@ -47,7 +49,7 @@
                             </div>
                               <div class="detail">
                                    <p>{{x.first_name}} {{x.profile_number}}
-                                   <strong>{{x.age}} {{ isDanish ? 'År' : 'Year' }}</strong>
+                                   <strong>{{x.age}} {{ isDanish ? 'År' : 'Years' }}</strong>
                                    </p>
                                    
                               </div>
@@ -96,23 +98,23 @@
                <a href="javascript:void(0);" class="poup-close2">{{ isDanish ? 'luk' : 'Close' }}</a>
                <div class="row" ng-if="isDanish">
                     <div class="col-md-4 col-lg-4">
-                       <p>Castit er et bureau som har specialiseret sig i at finde personer til medvirken på fotos og i reklamefilm. Karakterer, som man husker og som har den helt rigtige personlighed og udseende. Vi finder både skuespillere, amatører og street caster. Vi har altid et bredt udvalg og kan levere karakterer til alle typer roller og behov. </p>
+                       <p>Castit er et bureau som har specialiseret sig i at finde personer til medvirken på fotos og i reklamefilm. Karakterer som man husker og som har den helt rigtige personlighed og udseende. Vi finder både skuespillere, amatører og street caster. Vi har altid et bredt udvalg og kan levere karakterer til alle typer roller og behov. </p>
                     </div><!--close information-inside-cal-->
                     
                     <div class="col-md-4 col-lg-4">
-                         <p>Hvis du, som kunde, har travlt og ved hvad du præcis vil have, er du altid velkommen til at starte med at søge i vores store online kartotek og vælge dem ud, som du kan lide. Vi opdaterer hyppigt dette kartotek og hjælper hele vejen. Vi har også et stort offline kartotek, som vi meget gerne sender forslag fra. </p>
+                         <p>Hvis du, som kunde, har travlt og ved, hvad du præcis vil have, er du altid velkommen til at starte med at søge i vores store online kartotek og vælge dem ud, som du kan lide. Vi opdaterer hyppigt dette kartotek og hjælper hele vejen. Vi har også et stort offline kartotek, som vi meget gerne sender forslag fra. </p>
                     </div><!--close information-inside-cal-->
                     
                     <div class="col-md-4 col-lg-4">
-                         <p>Hvis du ønsker at være en del af vores kartotek, enten skuespiller, model eller blot en god karakter, er du altid meget velkommen til at kontakte os eller ansøge med foto her på sitet. </p>
+                         <p>Hvis du ønsker at være en del af vores kartotek, enten som skuespiller, model eller blot en god karakter, er du altid meget velkommen til at kontakte os eller ansøge med foto her på sitet. </p>
                     </div><!--close information-inside-cal-->
                     
                     <div class="col-md-4 col-lg-4">
-                         <p>Hos Castit gør vi altid vores bedste. Når vi caster stopper vi ikke før den helt rigtige person er fundet – og selvfølgelig skal du ikke betale ekstra, hvis vi bruger mere tid end først aftalt. Du betaler kun ekstra hvis casting briefen bliver ændret undervejs. </p>
+                         <p>Hos Castit gør vi altid vores bedste. Vores priser er altid fair og lette at forstå. </p>
                     </div><!--close information-inside-cal-->
                     
                     <div class="col-md-4 col-lg-4  about-castit">
-                         <p>Vores priser er altid fair og lette at forstå.</p>
+                         <br/>
                          <p>Cathrine Hovmand</p>
                          <p>Castit.</p>
                          <br>
@@ -146,7 +148,7 @@
                            <br>
                       </div>
                       <div class="col-md-12 col-lg-12">
-                           <p style="float:none; clear: both">* Castit was founded by Cathrine Hovmand in 2000 in Copenhagen. The agency has customers throughout most of the world and has contributed to thousands of advertisements. Both commercials and photos shoots. Castit was the first online and offline casting agency in Scandinavia, and is still among the largest and most sought after.</p>
+                           <p style="float:none; clear: both">* Castit was founded by Cathrine Hovmand in 2000 in Copenhagen. The agency has customers throughout most of the world and has contributed to thousands of advertisements. Both commercials and photos shoots. Castit was the first online and offline casting agency in Scandinavia, and is still among the largest and most sought after</p>
                       </div>
                       
                  </div><!--close information-inside-row-->
@@ -155,30 +157,23 @@
      </div>
 
 <div id="content-white1"  class="course_section" style="display:none;">
-  <div class="information-inside">
+  <div class="information-inside castit-workshop">
        <h2>Castit Workshop</h2>
        <a href="javascript:void(0);" class="poup-close2"> {{ isDanish ? 'luk' : 'Close' }}</a>
        <div class="information-inside-row2">
                 <div class="information-inside-left">
                 <div ng-if="isDanish" class="listscroll">
                          <p><strong>ReFocusMethod – At være overbevisende foran et kamera.</strong></p>
-  
                          <p>Lær, hvordan du leverer en overbevisende og kraftfuld optræden med en kort forberedelsestid.</p>
-                          
                          <p>For at du kan blive den bedste udgave af dig selv som model eller skuespiller, samarbejder vi med Tony Grahn.
-                         Tony har mange års international erfaring med at uddanne professionelle og amatører i, hvordan man forbliver afslappet og nærværende foran et kamera.</p>
-                          
+                                   Tony har mange års international erfaring med at uddanne professionelle og amatører i, hvordan man forbliver afslappet og nærværende foran et kamera.</p>
                          <p>På denne workshop vil du få praktiske og effektive værktøjer, som hjælper dig med at komme hurtigt ind i den rigtige følelse og stemning til både castinger og på optagelse.</p>
-                          
                          <p><strong>Lær hvordan du holder fokus når du står foran en større gruppe af mennesker.</strong></p>
-                          
                          <p><strong>Lær hvordan du hurtigt kommer ind i forskellige stemninger.</strong></p>
-                          
                          <p><strong>Lær hvordan du præsenterer dig selv på den bedste måde.</strong></p>
                          <p>Næste workshop afholdes d. xxxxx hos Castit i København.
                          Max 8 deltagere. Varighed 2 dage af 8 timer. Frokost og drikke inkluderet.</p>
                          <p>For yderligere information, kontakt venligst Tony Grahn på nedenstående knap.</p>
-                         
                <!-- <p class="login_box5"><input name="" class="login_button5" value="Spørgsmål" type="button"></p> -->
                <!-- <p class="login_box5"><input name="" class="login_button3" value="Tilmeld" type="button"></p> -->
                
@@ -365,7 +360,7 @@
  <div class="video_section1 poup-close3">
       <div class="logo2"><img src="images/logo2.png" alt=""></div>
       <a href="{{singleimage}}" target="_blank" class="video_download">download</a>
-      <a href="javascript:void(0);" ng-click="getProfileBox(pbox_profileid)" class="video_upload">{{ isDanish ? 'TILFØJ' : 'ADD' }} </a>
+      <a href="javascript:void(0);" ng-click="getProfileBox(pbox_profileid)" class="video_upload">{{ isDanish ? 'Lightbox' : 'Lightbox' }} </a>
       <a href="javascript:void(0);" class="poup-closeno">{{ isDanish ? 'luk' : 'CLOSE' }}</a>
 
  </div><!--close video_section1-->
@@ -464,7 +459,7 @@
                                <h3>{{singleprofile.name}}. <strong>{{singleprofile.profile_number}}</strong> <span class="user-icon"><img src="images/icon11.png" alt=""></span></h3>
                                <h4>{{categories}}</h4>
                                <ul class="list">
-                                    <li><span class="list_span1">{{ isDanish ? 'Alder' : 'AGE' }}</span><span class="list_span2">{{singleprofile.age}}<span class="list_san3"> {{ isDanish ? 'År' : 'Year' }}</span></span></li>
+                                    <li><span class="list_span1">{{ isDanish ? 'Alder' : 'Age' }}</span><span class="list_span2">{{singleprofile.age}}<span class="list_san3"> {{ isDanish ? 'År' : 'Years' }}</span></span></li>
                                     <li><span class="list_span1">{{ isDanish ? 'Højde' : 'Height' }}</span><span class="list_span2">{{singleprofile.height}}<span class="list_san3"> cm</span></span></li>
                                     <li><span class="list_span1">{{ isDanish ? 'Vægt' : 'Weight' }}</span><span class="list_span2">{{singleprofile.weight}}<span class="list_san3"> kg</span></span></li>
                                     <li><span class="list_span1">{{ isDanish ? 'Øjenfarve' : 'Eye color' }}</span><span class="list_span2">{{singleprofile.eye_color_name}}</span></li>
@@ -477,7 +472,7 @@
                                <!-- <h5>Beskæftigelse</h5>
                                <p>{{singleprofile.experience}}</p> -->
                                
-                               <h5>{{ isDanish ? 'Fritid' : 'Hobby' }}</h5>
+                               <h5>{{ isDanish ? 'Hobby' : 'Hobbies' }}</h5>
                                <p>{{singleprofile.sports_hobby}}</p>
                                
                                <h5>{{ isDanish ? 'Erfaring' : 'Experience' }}</h5>
@@ -802,14 +797,23 @@
                              <h2>{{ isDanish ? 'TILFØJ TIL LIGHTBOX' : 'ADD TO LIGHTBOX' }}</h2>
                                   
                               <div class="form-box1">
-                               <input type="hidden" name="pbox_profileid" id="pbox_profileid" ng-model="pbox_profileid" value="" />
-                                            <textarea name="profile_notes" id="profile_notes" ng-model="profile_notes" cols="" rows="" placeholder="{{ isDanish ? 'Skriv note...':'Note' }}" class="textarea"></textarea>
-                                            <a href="javascript:void(0);" class="edit2"></a>
-                                       </div>
-                                       <div class="form-box2">
-                                            <input name="" class="send2" value="{{ isDanish ? 'Tilføj' : 'Add' }}" type="submit">
-                                            <input name="" class="cancel2" value="{{ isDanish ? 'Annullere' : 'Cancel' }}" type="button">
-                                       </div>
+                                   <input type="hidden" name="pbox_profileid" id="pbox_profileid" ng-model="pbox_profileid" value="" />
+                                   <textarea name="profile_notes" id="profile_notes" ng-model="profile_notes" cols="" rows="" placeholder="{{ isDanish ? 'Skriv note...':'Note' }}" class="textarea"></textarea>
+                                   <a href="javascript:void(0);" class="edit2"></a>
+                              </div>
+                              
+                              <div class="form-box1">
+                                   <input name="new_group_name" id="new_group_name" ng-model="new_group_name" type="text" placeholder="{{ isDanish ? 'tilføj ny gruppe' : 'Add new group' }}" class="input">
+                                   <a javascript:void(0); class="plus" style="cursor:pointer;" ng-click="add_new_group()"></a>
+                              </div>
+                                   
+                              <div class="form-box3">
+                                   <button class="button" id="groupingbut{{grouping.id}}" style="cursor:pointer;" ng-repeat="grouping in groupings" ng-click="checkuncheckgrouping(grouping.id)">{{grouping.name}}</button>
+                              </div>
+                              <div class="form-box2">
+                                   <input name="" class="send2" value="{{ isDanish ? 'Tilføj' : 'Add' }}" type="submit">
+                                   <input name="" class="cancel2" value="{{ isDanish ? 'Annullere' : 'Cancel' }}" type="button">
+                              </div>
                         </div>
                    </div>
               
