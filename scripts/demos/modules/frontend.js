@@ -617,7 +617,6 @@ var frontend = angular.module('theme.demos.dashboard', [
 
 		$http.get('api/v1/getsingleprofiles', {params:{profileid:profileid}}).success(function(profiledata) {
 			//alert(response.success);
-			console.log(profiledata);
 			if(profiledata.success){
 				$scope.pbox_singleimage = profiledata.profile_images[0].fullpath;
 				$scope.apply;
@@ -901,12 +900,12 @@ var frontend = angular.module('theme.demos.dashboard', [
 		$scope.IsProfileImage = true;
 		$scope.IsProfileVideo = false;
 		$scope.responsiveProfileDetail = false;
-		// console.log($window.outerWidth);
+		console.log($window.outerWidth);
 		if($window.outerWidth >= 992){
 			$scope.responsiveProfileDetail = true;
 		}
 		var videoElement = $('video')[0];
-		// console.log(videoElement);
+		console.log(videoElement);
 		if(videoElement != undefined){
 			videoElement.pause();
 			videoElement.removeAttribute('src'); // empty source
@@ -952,7 +951,7 @@ var frontend = angular.module('theme.demos.dashboard', [
 		$scope.IsProfileVideo = true;
 		$scope.IsProfileImage = false;
 		$scope.currVideoUrl = profilevideo;
-		$scope.singleimage = $scope.currVideoUrl; // to place link for DOWNLOAD
+		$scope.singleimage = $scope.currVideoUrl;
 		var video = $('#pro_video')[0];
 		jQuery('video').mediaelementplayer({
 			alwaysShowControls: false,
@@ -1046,8 +1045,7 @@ var frontend = angular.module('theme.demos.dashboard', [
 		$scope.mediaiconclass = 'media-iconactive';
 		$scope.infoiconclass = 'info-icon';
 		$('#video_nav').show();
-		console.log($scope.profile_videos);
-		if($scope.profile_videos.length){
+		if($scope.profile_videos){
 			$scope.currVideoUrl = $scope.profile_videos[0].fullpath;
 			var video = $('#pro_video')[0];
 			$('video').mediaelementplayer({
@@ -1058,21 +1056,10 @@ var frontend = angular.module('theme.demos.dashboard', [
 			});
 			video.load();
 			video.play();
-			// playVideo();
-		}
-		return false;
-	}
-/*
-	async function playVideo(){
-		console.log('lkjas');
-		try{
-			$('#pro_video')[0].play();
-		}
-		catch{
-			alert('video load issue. try refresh');
+
 		}
 	}
-*/
+
 	$scope.changeToDetailView = changeToDetailView;
 	function changeToDetailView() {
 		$scope.responsiveProfileDetail = true;
