@@ -336,7 +336,7 @@ if($value['gender_id'] == '2' && !$is_kid){
                       </div>
                       
                     <?php
-                    $close_link = ($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : "/admin";
+                    $close_link = isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : "/admin";
                     ?>
                  	  <a class="upload-close" href="<?php echo $close_link ?>" style="background-position-y: top"></a>
                  </div>

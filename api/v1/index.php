@@ -90,7 +90,7 @@ AND m.current ='1' ".$conditional_profiles[$offset]." AND p.id IN ( SELECT profi
 // $offset = $offset * 500;
 // $limit  = " LIMIT 500 OFFSET ". $offset;
 // $sql = $sql . " ORDER BY RAND() " . $limit;
-// $sql = $sql . " ORDER BY RAND() limit 5";
+// $sql = $sql . " ORDER BY RAND() limit 2";
 $sql = $sql . " ORDER BY RAND() ";
 // $sql = $sql . " ORDER BY m.profile_group_id " . $limit;
 	  
@@ -351,9 +351,12 @@ $app->get('/getsingleprofiles',function () use ($app) {
 	$current_language = $app->request->get('lang');
 	if($profileid)
 	// $query = $db->prepare("SELECT p.*, m.profile_group_id, m.profile_number, m.profile_number_first_name_last_name, m.version, m.current, g.name as gender_name FROM profiles p INNER JOIN memberships m ON m.profile_id = p.id INNER JOIN genders g ON g.id = p.gender_id  WHERE p.id='".$profileid."' AND (p.profile_status_id = '1' OR  p.profile_status_id = '2') AND m.current ='1' LIMIT 1"); 
-	$query = $db->prepare("SELECT p.*, m.profile_group_id, m.profile_number, m.profile_number_first_name_last_name, m.version, m.current, g.name as gender_name, hc.name as hair_color_name, ec.name as eye_color_name FROM profiles p INNER JOIN memberships m ON m.profile_id = p.id INNER JOIN genders g ON g.id = p.gender_id INNER JOIN hair_colors hc ON hc.id = p.hair_color_id INNER JOIN eye_colors ec ON ec.id = p.eye_color_id  WHERE p.id='".$profileid."' AND (p.profile_status_id = '1' OR  p.profile_status_id = '2') AND m.current ='1' LIMIT 1"); 
+	$query = $db->prepare("SELECT p.*, m.profile_group_id, m.profile_number, m.profile_number_first_name_last_name, m.version, m.current, g.name as gender_name FROM profiles p INNER JOIN memberships m ON m.profile_id = p.id INNER JOIN genders g ON g.id = p.gender_id  WHERE p.id='".$profileid."' AND (p.profile_status_id = '1' OR  p.profile_status_id = '2') AND m.current ='1' LIMIT 1"); 
 	$query->execute();
-    $rows = $query->fetchAll(PDO::FETCH_ASSOC);
+		$rows = $query->fetchAll(PDO::FETCH_ASSOC);
+		// INNER JOIN hair_colors hc ON hc.id = p.hair_color_id INNER JOIN eye_colors ec ON ec.id = p.eye_color_id 
+		// , hc.name as hair_color_name, ec.name as eye_color_name
+
     //echo 'sdsds';die;
 //	print_r($rows[0]);exit;
     $profile_data = array();
@@ -362,6 +365,13 @@ $app->get('/getsingleprofiles',function () use ($app) {
 		$birthdate = new DateTime($row['birthday']);
 		$today   = new DateTime('today');
 		$age = $birthdate->diff($today)->y;
+
+		$hair_eye_color_query = $db->prepare("SELECT hc.name as hair_color_name, ec.name as eye_color_name from profiles p INNER JOIN hair_colors hc ON hc.id = p.hair_color_id INNER JOIN eye_colors ec ON ec.id = p.eye_color_id where p.id = '".$profileid."' ");
+		$hair_eye_color_query->execute();
+		$hair_eye_colors = $hair_eye_color_query->fetchAll(PDO::FETCH_ASSOC);
+
+		$row['eye_color_name'] = isset($hair_eye_colors[0]['eye_color_name']) ? $hair_eye_colors[0]['eye_color_name'] : " - ";
+		$row['hair_color_name'] = isset($hair_eye_colors[0]['hair_color_name']) ? $hair_eye_colors[0]['hair_color_name'] : " - ";
 
 		// Profile Image
 		$profile_images = array();
