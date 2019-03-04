@@ -90,8 +90,8 @@ AND m.current ='1' ".$conditional_profiles[$offset]." AND p.id IN ( SELECT profi
 // $offset = $offset * 500;
 // $limit  = " LIMIT 500 OFFSET ". $offset;
 // $sql = $sql . " ORDER BY RAND() " . $limit;
-$sql = $sql . " ORDER BY RAND() limit 5";
-// $sql = $sql . " ORDER BY RAND() ";
+// $sql = $sql . " ORDER BY RAND() limit 5";
+$sql = $sql . " ORDER BY RAND() ";
 // $sql = $sql . " ORDER BY m.profile_group_id " . $limit;
 	  
   	if(isset($_GET['group_id']) && is_numeric($_GET['group_id']) && $_GET['group_id']>0){
@@ -1550,19 +1550,19 @@ $app->post('/step3Create',function () use ($app) {
 
 	$_SESSION["step3"]["status"] 			= 1;
 	$_SESSION["step3"]["shirt_size_from"]	= isset($data['shirt_size_from']) ? $data['shirt_size_from'] : '-';
-	$_SESSION["step3"]["shirt_size_to"]		= isset($data['shirt_size_to']) ? $data['shirt_size_from'] : '-';
-	$_SESSION["step3"]["pants_size_from"]	= isset($data['pants_size_from']) ? $data['shirt_size_from'] : '-';
-	$_SESSION["step3"]["pants_size_to"]		= isset($data['pants_size_to']) ? $data['shirt_size_from'] : '-';
-	$_SESSION["step3"]["shoe_size_from"]	= isset($data['shoe_size_from']) ? $data['shirt_size_from'] : '-';
-	$_SESSION["step3"]["shoe_size_to"]		= isset($data['shoe_size_to']) ? $data['shirt_size_from'] : '-';
-	$_SESSION["step3"]["suite_size_from"]	= isset($data['suite_size_from']) ? $data['shirt_size_from'] : '-';
-	$_SESSION["step3"]["suite_size_to"]		= isset($data['suite_size_to']) ? $data['shirt_size_from'] : '-';
-	$_SESSION["step3"]["children_sizes"]	= isset($data['children_sizes']) ? $data['shirt_size_from'] : '-';
-	$_SESSION["step3"]["eye_color_id"]		= isset($data['eye_color_id']) ? $data['shirt_size_from'] : '-';
-	$_SESSION["step3"]["hair_color_id"]		= isset($data['hair_color_id']) ? $data['shirt_size_from'] : '-';
-	$_SESSION["step3"]["bra_size"]			= isset($data['bra_size']) ? $data['shirt_size_from'] : '-';
-	$_SESSION["step3"]["height"]			= isset($data['height']) ? $data['shirt_size_from'] : '-';
-	$_SESSION["step3"]["weight"]			= isset($data['weight']) ? $data['shirt_size_from'] : '-';
+	$_SESSION["step3"]["shirt_size_to"]		= isset($data['shirt_size_to']) ? $data['shirt_size_to'] : '-';
+	$_SESSION["step3"]["pants_size_from"]	= isset($data['pants_size_from']) ? $data['pants_size_from'] : '-';
+	$_SESSION["step3"]["pants_size_to"]		= isset($data['pants_size_to']) ? $data['pants_size_to'] : '-';
+	$_SESSION["step3"]["shoe_size_from"]	= isset($data['shoe_size_from']) ? $data['shoe_size_from'] : '-';
+	$_SESSION["step3"]["shoe_size_to"]		= isset($data['shoe_size_to']) ? $data['shoe_size_to'] : '-';
+	$_SESSION["step3"]["suite_size_from"]	= isset($data['suite_size_from']) ? $data['suite_size_from'] : '-';
+	$_SESSION["step3"]["suite_size_to"]		= isset($data['suite_size_to']) ? $data['suite_size_to'] : '-';
+	$_SESSION["step3"]["children_sizes"]	= isset($data['children_sizes']) ? $data['children_sizes'] : '-';
+	$_SESSION["step3"]["eye_color_id"]		= isset($data['eye_color_id']) ? $data['eye_color_id'] : '-';
+	$_SESSION["step3"]["hair_color_id"]		= isset($data['hair_color_id']) ? $data['hair_color_id'] : '-';
+	$_SESSION["step3"]["bra_size"]			= isset($data['bra_size']) ? $data['bra_size'] : '-';
+	$_SESSION["step3"]["height"]			= isset($data['height']) ? $data['height'] : '-';
+	$_SESSION["step3"]["weight"]			= isset($data['weight']) ? $data['weight'] : '-';
 
 	$response = array('success' => true);
 			
@@ -2153,7 +2153,7 @@ $app->post('/step7Create', function() use ($app){
 	$agreed_to_these_terms=1;
 
 	if($operation == 'insert'){
-		$q_chip = "INSERT INTO `profiles` ( `first_name`, `last_name`, `gender_id`, `hair_color_id`,`eye_color_id`, `birthday`, `height`, `weight`, `shoe_size_from`, `shoe_size_to`, 	`shirt_size_from`,`shirt_size_to`,`pants_size_from`,`pants_size_to`,`bra_size`,`children_sizes`,`address`,`zipcode`,`city`,`country_id`,`phone`,`phone_at_work`,`email`,`job`,`notes`,`agreed_to_these_terms`,`password`,`hashed_password`,`created_at`,`updated_at`,`suite_size_from`,`suite_size_to`,`sports_hobby`,`ethnic_origin`) VALUES ('".$first_name."', '".$last_name."','".$gender_id."',".$hair_color_id.",".$eye_color_id.",'".$birthday."',".$height.",".$weight.",".$shoe_size_from.",".$shoe_size_to.",".$shirt_size_from.",".$shirt_size_to.",".$pants_size_from.",".$pants_size_from.",".$bra_size.",".$children_sizes.",'".$address."','".$zipcode."','".$city."','".$country_id."','".$phone."','".$phone_at_work."','".$email."','".$job."','".$notes."','".$agreed_to_these_terms."','".$password."','".$hashed_password."',now(),now(),".$suite_size_from.",".$suite_size_to.",'".$sports_hobby."','".$ethnic_origin."')";
+		$q_chip = "INSERT INTO `profiles` ( `first_name`, `last_name`, `gender_id`, `hair_color_id`,`eye_color_id`, `birthday`, `height`, `weight`, `shoe_size_from`, `shoe_size_to`, 	`shirt_size_from`,`shirt_size_to`,`pants_size_from`,`pants_size_to`,`bra_size`,`children_sizes`,`address`,`zipcode`,`city`,`country_id`,`phone`,`phone_at_work`,`email`,`job`,`notes`,`agreed_to_these_terms`,`password`,`hashed_password`,`created_at`,`updated_at`,`suite_size_from`,`suite_size_to`,`sports_hobby`,`ethnic_origin`) VALUES ('".$first_name."', '".$last_name."','".$gender_id."',".$hair_color_id.",".$eye_color_id.",'".$birthday."',".$height.",".$weight.",".$shoe_size_from.",".$shoe_size_to.",".$shirt_size_from.",".$shirt_size_to.",".$pants_size_from.",".$pants_size_to.",".$bra_size.",".$children_sizes.",'".$address."','".$zipcode."','".$city."','".$country_id."','".$phone."','".$phone_at_work."','".$email."','".$job."','".$notes."','".$agreed_to_these_terms."','".$password."','".$hashed_password."',now(),now(),".$suite_size_from.",".$suite_size_to.",'".$sports_hobby."','".$ethnic_origin."')";
 
 		$profile_id = $db->exec($q_chip);
 		$user_profile_id = $profile_id;
