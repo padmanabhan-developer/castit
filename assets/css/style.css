@@ -1653,7 +1653,10 @@ padding: 0px;
 }
   .lngname{color:#dcdde0;font-style:normal;}
   .lngname span{cursor: pointer;}
-  .lngname .active {color:#17181b !important; font-size:13px !important; font-weight:bold !important;}
+  .lngname .active {
+    color:#17181b !important; 
+    /* font-size:13px !important;  */
+    font-weight:bold !important;}
   /* .lngname{color:#17181b !important; font-size:13px !important; font-weight:bold !important;}
   .lngname em{color:#dcdde0 !important; font-style:normal !important;} */
   
