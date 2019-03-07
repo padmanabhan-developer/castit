@@ -91,10 +91,18 @@ AND m.current ='1' ".$conditional_profiles[$offset]." AND p.id IN ( SELECT profi
 // $limit  = " LIMIT 500 OFFSET ". $offset;
 // $sql = $sql . " ORDER BY RAND() " . $limit;
 // $sql = $sql . " ORDER BY RAND() limit 2";
-$sql = $sql . " ORDER BY RAND() ";
+
+
+if($_SERVER['HTTP_HOST'] == 'castit.local'){
+	$sql = $sql . " ORDER BY RAND() limit 2";
+}
+else{
+	$sql = $sql . " ORDER BY RAND() ";
+}
+
 // $sql = $sql . " ORDER BY m.profile_group_id " . $limit;
 	  
-  	if(isset($_GET['group_id']) && is_numeric($_GET['group_id']) && $_GET['group_id']>0){
+	if(isset($_GET['group_id']) && is_numeric($_GET['group_id']) && $_GET['group_id']>0){
 		$group_id = $_GET['group_id'];
 		$group_profiles_query = $db->prepare("SELECT distinct(profile_id), profile_notes from profile_grouping where group_id = $group_id");
 		$group_profiles_query->execute();
@@ -525,19 +533,19 @@ $app->get('/getsingleprofiles',function () use ($app) {
 								'weight' 		=> $row['weight'],
 								'hair_color_name' 	=> isset($row['hair_color_name']) ? $row['hair_color_name'] : " - ",
 								'eye_color_name' 	=> isset($row['eye_color_name']) ? $row['eye_color_name'] : " - ",
-								'shoes' 		=> $shoes,
-								'shirt' 		=> $shirt,
-								'pants' 		=> $pants,
-								'bra' 			=> $bra,
-								'children' 		=> $children,
+								'shoes' 		=> ($shoes != '') ? $shoes : ' - ' ,
+								'shirt' 		=> ($shirt != '') ? $shirt : ' - ',
+								'pants' 		=> ($pants != '') ? $pants : ' - ',
+								'bra' 			=> ($bra != '') ? $bra : ' - ',
+								'children' 		=> ($children != '') ? $children : ' - ',
 								/*'address' 		=> $row['address'],
 								'zipcode' 		=> $row['zipcode'],
 								'city' 			=> $row['city'],
 								'phone' 		=> $row['phone'],
 								'cellphone' 	=> $row['cellphone'],
 								'email' 		=> $row['email'],*/
-								'experience' 			=> $row['job'],
-								'sports_hobby'			=> $row['sports_hobby']
+								'experience' 			=> ($row['job'] != '') ? $row['job'] : ' - ',
+								'sports_hobby'			=> ($row['sports_hobby']) ? $row['sports_hobby'] : ' - '
 
 							);
 		
@@ -624,7 +632,7 @@ $app->get('/updatelightboxprofiles', function () use ($app) {
 			$query_check_gp->execute();
 			$rows_gp = $query_check_gp->fetchAll(PDO::FETCH_ASSOC);
 			if(count($rows_gp)>0) {
-				
+				echo 'ssposdpofsdf';
 			}else{
 				$q_insert_profilegp = "INSERT INTO `profile_grouping` ( `profile_id`, `group_id`, `profile_notes`) VALUES ('".$profileid."', '".$gidval."', '".$profile_note."')"; 
 				//echo $q; 
@@ -2235,61 +2243,8 @@ $app->post('/step7Create', function() use ($app){
 					$db->exec($query);
 				}
 			}
-
-			if(isset($_SESSION['Image_file'])){
-				foreach($_SESSION['Image_file'] as $key => $image){
-					$filename = $image['name'];
-					// pp($filename);
-					$location = $_SERVER['DOCUMENT_ROOT'].'/images/uploads/';
-					move_uploaded_file($image['tmp_name'][0],$location.$filename);
-					$query = "INSERT INTO `photos` (`path`,`original_path`,`profile_id`,`filename`,`published`,`position`,`phototype_id`,`image`,`created_at`,`updated_at`,`image_tmp`,`image_processing`,`image_token`) VALUES ('".$location."','".$location."','".$profile_id."','".$filename."','1','".$key."','1','".$filename."',now(),now(),'".$filename."','1','".$filename."')";
-					$db->exec($query);
-				}
-			unset($_SESSION['Image_file']);
-			unset($_SESSION['Image_file_location']);
-			}
-
-			if(isset($_SESSION['Video_file'])){
-				foreach($_SESSION['Video_file'] as $key=>$video){
-					$filename = $video['cdnfilename'];
-					$location = $video['cdnfilepath'];
-					$thumbnail = $video['thumbnail'];
-					$cloud_orig_path = str_replace('/videos',"", $location);
-						$query = "INSERT INTO `videos` (
-								`profile_id`,
-								`path`,
-								`uploaded_as_filename`,
-								`filename`,
-								`video_original_path`,
-								`video_original_filename`,
-								`video_original_file_basename`,
-								`thumbnail_original_photo_path`,
-								`thumbnail_photo_path`,
-								`thumbnail_photo_filename`,
-								`thumbnail_at_time`,
-								`published`,
-								`position`) 
-							VALUES (
-								'".$user_profile_id."',
-								'".$location."',
-								'".$video["name"][0]."',
-								'".$filename."',
-								'".$cloud_orig_path."',
-								'".$filename."',
-								'".$filename."',
-								'".$location."',
-								'".$location."',
-								'".$thumbnail."',
-								'3',
-								'1',
-								'".$key."')";
-					$query_prepared = $db->prepare($query);
-					$query_prepared->execute();
-				}
-			unset($_SESSION['Video_file']);
-			unset($_SESSION['Video_file_location']);	
-			}
-			echoResponse(200,array('status'=>true,'msg'=>'Tak for din oprettelse. Du modtager en mail fra os inden for 2 uger, når vi har kigget din ansøgning igennem','email'=>$email, 'first_name'=>$first_name));
+			
+			echoResponse(200,array('status'=>true,'msg'=>'Tak for din oprettelse. Du modtager en mail fra os inden for 2 uger, når vi har kigget din ansøgning igennem','email'=>$email, 'first_name'=>$first_name, 'last_name'=>$last_name, 'profile_number'=>$profile_number, 'profile_id'=> $profile_id));
 
 		}
 		else{
@@ -3559,23 +3514,81 @@ Parameter : null
 Type : GET
 ******************************************/
 $app->get('/getgrouptoken',function () use ($app) { 
-    global $db;
+  global $db;
 	$group_token = generate_uuid();
 	$response = array( 'success' => true, 'grouptoken' => $group_token);
 	echoResponse(200, $response);
 });
 
-$app->post('/fileuploadparser', function () use ($app) {
+$app->get('/getmediadata', function () use ($app) {
+	global $db;
+	$profile_id = isset($_REQUEST['profile_id']) ? $_REQUEST['profile_id'] : '';
 
+	$image_sql = "select * from photos where profile_id='".$profile_id."'";
+	$image_query = $db->prepare($image_sql);
+	$image_query->execute();
+	$images = $image_query->fetchAll(PDO::FETCH_ASSOC);
+
+	$video_sql = "select * from videos where profile_id='".$profile_id."'";
+	$video_query = $db->prepare($video_sql);
+	$video_query->execute();
+	$videos = $video_query->fetchAll(PDO::FETCH_ASSOC);
+
+	echo json_encode(['images'=>$images, 'videos'=>$videos]);
+
+});
+
+$app->post('/clearsessions', function () use ($app) {
+	unset($_SESSION['step1']);
+	unset($_SESSION['step2']);
+	unset($_SESSION['step3']);
+	unset($_SESSION['step4']);
+	unset($_SESSION['step5']);
+});
+
+$app->post('/mediafiledelete', function () use ($app) {
+	global $db;
+	$type = isset($_REQUEST['type']) ? $_REQUEST['type'] : '';
+	$profile_id = isset($_REQUEST['profile_id']) ? $_REQUEST['profile_id'] : '';
+	$position = isset($_REQUEST['position']) ? $_REQUEST['position'] : '';
+
+	if($type != '' && $profile_id != '' && $position != ''){
+		switch($type){
+			case 'image':
+				$sql = "delete from photos where profile_id = '".$profile_id."' AND position = '".$position."'";
+				$query = $db->prepare($sql);
+				$query->execute();
+				break;
+
+				case 'video':
+				$sql = "delete from videos where profile_id = '".$profile_id."' AND position = '".$position."'";
+				$query = $db->prepare($sql);
+				$query->execute();
+				break;
+
+			default:
+				break;
+		}
+
+		echo json_encode(['status_message'=>'deleted', 'position'=>$position, 'type'=>$type]);
+	}
+	else{
+		echo json_encode(['status_message'=>'insufficient data']);
+	}
+});
+
+$app->post('/fileuploadparser', function () use ($app) {
+	global $db;
+	$profile_id = isset($_REQUEST['profile_id']) ? $_REQUEST['profile_id'] : '';
+	$position = isset($_REQUEST['position']) ? $_REQUEST['position'] : '1';
   $cdnfilepath	=	'';
   $time 				=	time();  
 	if(!isset($_REQUEST["uploaded_file_type"])){
 		$fileName			= $_FILES["Image_file"]["name"];
 		$ext 					= ".".pathinfo($fileName, PATHINFO_EXTENSION);
 		$fileName			= unique_code(10).time().$ext;
+		
 		$_FILES["Image_file"]["name"] = $fileName;
-	  $_SESSION["Image_file"][]	= $_FILES["Image_file"];
-		// $fileName     = $_FILES["Image_file"]["name"];
 	  $fileTmpLoc   = $_FILES["Image_file"]["tmp_name"];
 	  $fileType     = $_FILES["Image_file"]["type"];
 	  $fileSize     = $_FILES["Image_file"]["size"];
@@ -3586,8 +3599,14 @@ $app->post('/fileuploadparser', function () use ($app) {
 	      echo "ERROR: Please browse for a file before clicking the upload button.";
 	      exit();
 	  }
-	  if(move_uploaded_file($fileTmpLoc, $location.$fileName)){
-	    echo json_encode(['status_message'=>'file upload success', 'type'=>'image', 'filename'=>"/images/uploads/".$fileName]);
+	  if(move_uploaded_file($fileTmpLoc, $location.$fileName)){			
+
+			$query = "INSERT INTO `photos` (`path`,`original_path`,`profile_id`,`filename`,`published`,`position`,`phototype_id`,`image`,`created_at`,`updated_at`,`image_tmp`,`image_processing`,`image_token`) VALUES ('".$location."','".$location."','".$profile_id."','".$fileName."','0','".$position."','1','".$fileName."',now(),now(),'".$fileName."','1','".$fileName."')";
+			$db->exec($query);
+			echo json_encode(['status_message'=>'file upload success', 'filename'=>$fileName, 'imgpath'=>'/images/uploads/'.$fileName, 'position'=>$position, 'type'=>'image']);
+
+			
+	    // echo json_encode(['status_message'=>'file upload success', 'type'=>'image', 'filename'=>"/images/uploads/".$fileName]);
 	  } 
 	  else {
 	    echo "move_uploaded_file function failed";
@@ -3654,8 +3673,44 @@ $app->post('/fileuploadparser', function () use ($app) {
       'Zencoder-Api-Key: 9477541a57e1eb2471b1ff256ca4b92c'
     ));
 
-    $response = curl_exec( $ch );
-    echo json_encode(['status_message'=>'file upload success', 'type'=>'video', 'filename'=>$fileName, 'cdnfilepath'=>$cdnfilepath, 't'=>$time, 'thumbnail'=>$thumbnail, 'zencoder_input'=>$zencoder_input,'zencoder_output'=>$zencoder_output]);
+		$response = curl_exec( $ch );
+		
+		$filename = $cdnfilename;
+		$location = $cdnfilepath;
+		$thumbnail = $thumbnail;
+					$cloud_orig_path = str_replace('/videos',"", $location);
+						$query = "INSERT INTO `videos` (
+							`profile_id`,
+							`path`,
+							`uploaded_as_filename`,
+							`filename`,
+							`video_original_path`,
+							`video_original_filename`,
+							`video_original_file_basename`,
+							`thumbnail_original_photo_path`,
+							`thumbnail_photo_path`,
+							`thumbnail_photo_filename`,
+							`thumbnail_at_time`,
+							`published`,
+							`position`) 
+						VALUES (
+							'".$profile_id."',
+							'".$location."',
+							'".$fileName."',
+							'".$filename."',
+							'".$cloud_orig_path."',
+							'".$filename."',
+							'".$filename."',
+							'".$location."',
+							'".$location."',
+							'".$thumbnail."',
+							'3',
+							'0',
+							'".$position."')";
+					$query_prepared = $db->prepare($query);
+					$query_prepared->execute();
+
+    echo json_encode(['status_message'=>'file upload success', 'type'=>'video', 'filename'=>$fileName, 'cdnfilepath'=>$cdnfilepath, 't'=>$time, 'thumbnail'=>$thumbnail, 'zencoder_input'=>$zencoder_input,'zencoder_output'=>$zencoder_output, 'position'=>$position ]);
   }
 });
 

@@ -1,225 +1,800 @@
-<div ng-controller="RegisterStep6Controller" class="ansog1">
-  <div id="content" class="wrap2">
-    <div class="page-black livetitle">
-      <div class="section-top">
-          <h2>{{ profileinfo.first_name }} {{ profileinfo.last_name }} - {{ profileinfo.profile_number }}</h2>
-        <div class="black-right">
-          <!-- <a href="#" class="black-edit"></a> -->
-          <a href="#/index{{isDanish ? '/da' : '/en'}}" class="black-close">{{ isDanish ? 'luk' : 'Close' }}</a>
-        </div>
-      </div>
-      <!--close section-top-->
-      <form name="profile_ansog_form6" id="profile_ansog_form6" ng-submit="step6Create()">
-        <div class="section-middle">
-          <div class="black-section">
-            <div class="black-row">
-              <div class="black-leftbar">
-                  <p ng-if="isDanish">For at opdatere din profil bedes du udfylde felterne og klikke videre til næste side.</p>
-                  <p ng-if="!isDanish">To update your profile please fill out the fields and continue to the next page.</p>
-              </div>
-              <!--close black-leftbar-->
-              <div class="black-rightbar livetitle blackcontainer">
-                <div class="black-row black-seperate">
-                  <div class="black-cal4">
-                    <div class="upload_section">
-                      <span class="upload-title">UPLOAD</span>
-                      <span class="upload-subtitle">{{ isDanish ? 'Upload min. 3 fotos af dig selv' : 'Upload at least 3 pictures of yourself' }}*</span>
-                      <span class="upload-icon">
-                        <img src="images/img-icon.png" />
-                      </span>
-                    </div>
-                    
-                    <div class="form_box form_box5 black-placeholder">
-                      <input id="ansigt_text_field" name="" type="text" class="input2" placeholder="{{ isDanish ? 'Ansigt' : 'Face' }}*">
-                      <label for="ansigt" class="upload1"></label>
-                      <input custom-on-change="uploadFile" type="file" name="file1" id="ansigt" class="input2" placeholder="{{ isDanish ? 'Ansigt' : 'Face' }}*" style="display:none">
-                      <progress ng-non-bindable id="progress" value="0" max="100"></progress>
-                      <!-- <input ng-file-model="files[0]"  id="ansigt" name="" type="file" class="input2" placeholder="Ansigt*" style="display:none"> -->
-                    </div>
-                    <div class="form_box form_box5 black-placeholder">
-                      <input id="profil_text_field" name="" type="text" class="input2" placeholder="{{ isDanish ? 'Profil' : 'Profile' }}*" >
-                      <label for="profil" class="upload1"></label>
-                      <input custom-on-change="uploadFile" type="file" name="file1" id="profil" class="input2" placeholder="{{ isDanish ? 'Ansigt' : 'Face' }}*" style="display:none">
-                      <progress ng-non-bindable id="progress" value="0" max="100" ></progress>
-
-                      <!-- <input id="profil" ng-file-model="files[1]"  name="" type="file" class="input2" placeholder="Ansigt*" style="display:none"> -->
-                    </div>
-                    <div class="form_box form_box5 black-placeholder">
-                      <input id="helfigur_text_field" name="" type="text" class="input2" placeholder="{{ isDanish ? 'Helfigur' : 'Full-figure' }}*" >
-                      <label for="helfigur" class="upload1"></label>
-                      <input custom-on-change="uploadFile" type="file" name="file1" id="helfigur" class="input2" placeholder="{{ isDanish ? 'Ansigt' : 'Face' }}*" style="display:none">
-                      <progress ng-non-bindable id="progress" value="0" max="100" ></progress>
-                      <!-- <input id="helfigur" ng-file-model="files[2]" name="" type="file" class="input2" placeholder="Ansigt*" style="display:none"> -->
-                    </div>
-                    <div class="form_box form_box5">
-                      <input id="ekstra_text_field" name="" type="text" class="input2" placeholder="{{ isDanish ? 'Ekstra' : 'Extra' }}" >
-                      <label for="ekstra" class="upload2"></label>
-                      <input custom-on-change="uploadFile" type="file" name="file1" id="ekstra" class="input2" placeholder="{{ isDanish ? 'Ansigt' : 'Face' }}*" style="display:none">
-                      <progress ng-non-bindable id="progress" value="0" max="100" ></progress>
-                      <!-- <input id="ekstra" ng-file-model="files[3]" name="" type="file" class="input2" placeholder="Ansigt*" style="display:none"> -->
-                    </div>
-                    <div class="form_box form_box5">
-                      <input id="ekstra1_text_field" name="" type="text" class="input2" placeholder="{{ isDanish ? 'Ekstra' : 'Extra' }}" >
-                      <label for="ekstra1" class="upload2"></label>
-                      <input custom-on-change="uploadFile" type="file" name="file1" id="ekstra1" class="input2" placeholder="{{ isDanish ? 'Ansigt' : 'Face' }}*" style="display:none">
-                      <progress ng-non-bindable id="progress" value="0" max="100" ></progress>
-                      <!-- <input id="ekstra1" name="" ng-file-model="files[4]" type="file" class="input2" placeholder="Ansigt*" style="display:none"> -->
-                    </div>
-                    <div class="form_box form_box5">
-                      <input id="ekstra2_text_field" name="" type="text" class="input2" placeholder="{{ isDanish ? 'Ekstra' : 'Extra' }}" >
-                      <label for="ekstra2" class="upload2"></label>
-                      <input custom-on-change="uploadFile" type="file" name="file1" id="ekstra2" class="input2" placeholder="{{ isDanish ? 'Ansigt' : 'Face' }}*" style="display:none">
-                      <progress ng-non-bindable id="progress" value="0" max="100" ></progress>
-                      <!-- <input id="ekstra2" ng-file-model="files[5]" name="" type="file" class="input2" placeholder="Ansigt*" style="display:none"> -->
-                    </div>
-                    
-                    <!--<div class="form_box form_box5">
-                      <a href="#" class="add-row"></a>
-                    </div>-->
-                  </div>
-                  <!--close black-cal4-->
-                  <div class="black-cal4 middle-box">
-                    <div class="form_box">
-                      <label>{{ isDanish ? 'Hvis du har pæne hænder' : 'If you have nice hands' }}</label>
-                      <input id="hand_text_field" name="" type="text" class="input2" placeholder="{{ isDanish ? 'Foto af hænder' : 'Picture of hands' }}">
-                      <label for="hænder" class="upload2" style="top:18px !important"></label>
-                      <input custom-on-change="uploadFile" type="file" name="file1" id="hænder" class="input2" placeholder="{{ isDanish ? 'Ansigt' : 'Face' }}*" style="display:none">
-                      <progress ng-non-bindable id="progress" value="0" max="100" ></progress>
-                      <!-- <input id="hænder" ng-file-model="files[6]" name="" type="file" class="input2" placeholder="Ansigt*" style="display:none"> -->
-                    </div>
-                    <div class="form_box">
-                      <label>{{ isDanish ? 'Hvis du har pæne fødder' : 'If you have nice feet' }}</label>
-                      <input id="foot_text_field" name="" type="text" class="input2" placeholder="{{ isDanish ? 'Foto af fødder' : 'Picture of feet' }}">
-                      <label for="fødder" class="upload2" style="top:18px !important"></label>
-                      <input custom-on-change="uploadFile" type="file" name="file1" id="fødder" class="input2" placeholder="{{ isDanish ? 'Ansigt' : 'Face' }}*" style="display:none">
-                      <progress ng-non-bindable id="progress" value="0" max="100" ></progress>
-                      <!-- <input id="fødder"  ng-file-model="files[7]" name="" type="file" class="input2" placeholder="Ansigt*" style="display:none"> -->
-                    </div>
-                    <div class="form_box">
-                      <label>{{ isDanish ? 'Hvis I gerne vil stille op som familie' : 'If you would like to join as a family' }}</label>
-                      <input id="family_text_field" name="" type="text" class="input2" placeholder="{{ isDanish ? 'Foto af familie' : 'Picture of family' }}">
-                      <label for="familie" class="upload2" style="top:18px !important"></label>
-                      <input custom-on-change="uploadFile" type="file" name="file1" id="familie" class="input2" placeholder="{{ isDanish ? 'Ansigt' : 'Face' }}*" style="display:none">
-                      <progress ng-non-bindable id="progress" value="0" max="100" ></progress>
-                      <!-- <input id="familie" ng-file-model="files[8]" name="" type="file" class="input2" placeholder="Ansigt*" style="display:none"> -->
-                    </div>
-                    <div class="form_box">
-                      <label>{{ isDanish ? 'Hvis du har en enægget tvilling' : 'If you have an identical twin' }}</label>
-                      <input id="tvilling_text_field" name="" type="text" class="input2" placeholder="{{ isDanish ? 'Foto af tvilling' : 'Picture of twin' }}">
-                      <label for="tvilling" class="upload2" style="top:18px !important"></label>
-                      <input custom-on-change="uploadFile" type="file" name="file1" id="tvilling" class="input2" placeholder="{{ isDanish ? 'Ansigt' : 'Face' }}*" style="display:none">
-                      <progress ng-non-bindable id="progress" value="0" max="100" ></progress>
-                      <!-- <input id="tvilling"  ng-file-model="files[9]" name="" type="file" class="input2" placeholder="Ansigt*" style="display:none"> -->
-                    </div>
-                  </div>
-                  <div class="black-cal4">
-                    <div class="upload_section">
-                      <span class="upload-title">VIDEO</span>
-                      <span class="upload-subtitle">{{ isDanish ? 'Valgfrit' : 'Optional' }}</span>
-                      <span class="upload-icon">
-                        <img src="images/video-icon2.png" />
-                      </span>
-                    </div>
-                    
-                    <div class="form_box form_box5">
-                      <input id="video1_text_field" ng-model="videos[0].name" name="" type="text" class="input2" placeholder="Upload">
-                      <label for="video1" class="upload2"></label>
-                      <input custom-on-change="uploadFile_video" type="file" name="file1" id="video1" class="input2" placeholder="{{ isDanish ? 'Ansigt' : 'Face' }}*" style="display:none">
-                      <progress ng-non-bindable id="progress" value="0" max="100" ></progress>
-                      <!-- <input id="video1" ng-file-model="videos[0]" name="" type="file" class="input2" placeholder="Ansigt*" style="display:none"> -->
-                    </div>
-                    <div class="form_box form_box5">
-                      <input id="video2_text_field" ng-model="videos[1].name" name="" type="text" class="input2" placeholder="Upload">
-                      <input custom-on-change="uploadFile_video" type="file" name="file1" id="video2" class="input2" placeholder="{{ isDanish ? 'Ansigt' : 'Face' }}*" style="display:none">
-                      <progress ng-non-bindable id="progress" value="0" max="100" ></progress>
-                      <label for="video2" class="upload2"></label>
-                      <!-- <input id="video2" ng-file-model="videos[1]" name="" type="file" class="input" placeholder="Ansigt*" style="display:none"> -->
-                    </div>
-                    <div class="form_box form_box5">
-                      <input id="video3_text_field" ng-model="videos[2].name" name="" type="text" class="input2" placeholder="Upload">
-                      <label for="video3" class="upload2"></label>
-                      <input custom-on-change="uploadFile_video" type="file" name="file1" id="video3" class="input2" placeholder="{{ isDanish ? 'Ansigt' : 'Face' }}*" style="display:none">
-                      <progress ng-non-bindable id="progress" value="0" max="100" ></progress>
-                      <!-- <input id="video3" ng-file-model="videos[2]" name="" type="file" class="input2" placeholder="Ansigt*" style="display:none"> -->
-                    </div>
-                    <div class="form_box form_box5">
-                      <input id="video4_text_field" ng-model="videos[3].name" name="" type="text" class="input2" placeholder="Upload">
-                      <label for="video4" class="upload2"></label>
-                      <input custom-on-change="uploadFile_video" type="file" name="file1" id="video4" class="input2" placeholder="{{ isDanish ? 'Ansigt' : 'Face' }}*" style="display:none">
-                      <progress ng-non-bindable id="progress" value="0" max="100" ></progress>
-                      <!-- <input id="video4" ng-file-model="videos[3]" name="" type="file" class="input2" placeholder="Ansigt*" style="display:none"> -->
-                    </div>
-                    <!-- <div class="form_box form_box5">
-                      <a href="#" class="add-row"></a>
-                    </div> -->
-                  </div>
-                  <!--close black-cal4-->
-                </div>
-                <!--close black-row-->
-              </div>
-              <!--close black-rightbar-->
+<style>
+  .reg-success-popup {
+       display: block;
+       position: fixed;
+       top: 0;
+       bottom: 0;
+       left: 0;
+       right: 0;
+       background: rgba(34,35,39,0.98);
+     z-index: 2;
+       
+  }
+  .reg-caption{
+       position: absolute;
+       top: 33%;
+       text-align: center;
+     width: 50%;
+     left: 25%;
+  }
+  .upper{
+       text-transform: uppercase;
+       font-weight: bold;
+       font-family: helvetica;
+       font-size: 30px;
+  }
+  .remarks{
+       font-weight: bold;
+       font-family: helvetica;
+       font-size: 15px;
+  }
+  .remarks span{
+    font-size: 13px;
+    font-style: italic;
+  }
+  .text-center { 
+    text-align:center;
+  }
+  .video_upload_notify{
+    background-image: url("/images/eclipse_loader.svg");
+    text-align: center;
+    vertical-align: middle;
+    font-size: 80%;
+    padding: 2px;
+  }
+  .black-cal8 {
+    float: left;
+      width: 66.666667%;
+      padding: 0 10px;
+  }
+  .upload-container {
+    float:left;
+    width:100%;
+  }
+  .black-col-wrap {
+      padding: 0 20px;
+  }
+  .upload-wrap {
+    background:#fff;
+    border-radius:10px;
+    position:relative;
+    text-align:center;
+    height: 265px;
+    padding: 20px;
+    box-sizing:border-box;
+    overflow:hidden;
+  }
+  .placeholder-text, .upload-placeholder {
+    position:relative;
+    top: 50%;
+    -webkit-transform: translateY(-50%);
+    -moz-transform: translateY(-50%);
+    -ms-transform: translateY(-50%);
+    -o-transform: translateY(-50%);
+    transform: translateY(-50%);
+    color: #d2d2d2;
+    text-align:center;
+  }
+  #filePhoto, #usermedia{
+      position:absolute;
+      width:100%;
+      height:100%;
+      top:0;
+      left:0;
+      z-index:1;
+      opacity:0;
+      cursor:pointer;
+  }
+  .uploader img{
+      position:absolute;
+      width:100%;
+      height:100%;
+      top:0px;
+      left:0px;
+      z-index:1;
+      border:none;
+    display:none;
+  }
+  .placeholder-text h2 {
+    color:#000;
+    font-size:30px;
+    margin-bottom:10px;
+  }
+  .upload-box-row {
+    margin: 0 0 0 -10px;
+  }
+  .upload-box-col-20 {
+    width:20%;
+    padding: 0px 5px;
+    float:left;
+    margin-bottom:10px;
+    float:left;
+    width:20%;
+  }
+  .upload-box {
+    overflow:hidden;
+    height:140px;
+    border:2px dashed #222229;
+    position:relative;
+    border-radius: 10px;
+    float: left;
+      width: calc( 20% - 10px);
+      margin: 0 0px 10px 10px;
+  }
+  .upload-box .upload-number {
+    color:#222229;
+    position:absolute;
+    bottom:10px;
+    left:10px;
+  }
+  .uploaded.imgupload {
+    border: 2px solid #4f6ec3;
+  }
+  .uploaded.videoupload {
+    border: 2px solid #fff;
+  }
+  .upload-img {
+    position:absolute;
+    top:0px;
+    bottom:0px;
+    left:0px;
+    right:0px;
+    background-repeat:no-repeat;
+    background-size:cover;
+    background-position:top center;
+  }
+  span.remove {
+    position:absolute;
+    right:5px;
+    top: 5px;
+    background:#fff;
+    color:#000;
+    font-weight:bold;
+    height:26px;
+    width:26px;
+    border-radius:50%;
+    text-align:center;
+    line-height:26px;
+    cursor:pointer;
+    z-index:123;
+    display:none;
+  }
+  .upload-img.file-ok span.remove{
+    display: block;
+  }
+  .upload-img.file-ok span.upload-number{
+    display: none;
+  }
+  .upload-placeholder span{
+    padding: 10px 0px;
+    display:block;
+  }
+  span.addmore {
+      color: #2c2c33;
+      font-size: 34px;
+      font-weight: bold;
+      width: 50px;
+      height: 64px;
+      display: inline-block;
+      line-height: 64px;
+    cursor:pointer;
+  }
+  .uploadinput {
+      position: absolute;
+      opacity: 0;
+      height: 100%;
+      width: 100%;
+    z-index:-1;
+  }
+  @media (min-width: 1200px) and (max-width: 1500px) {
+    .black-leftbar, .black-rightbar {
+      width: 100%;
+      margin-bottom:40px;
+    }
+  }
+  @media (min-width: 768px) and (max-width: 1199px) {
+    .black-cal8, .black-leftbar, .black-rightbar {
+      width: 100%;
+    }
+    .black-cal4 {
+      width: 100%;
+    }
+    .black-col-wrap {
+      padding: 40px 0 0 0;
+    }
+    .upload-box-col-20 {
+      width: 33.33333%;
+      padding: 0px 5px;
+      float: left;
+      margin-bottom: 10px;
+    }
+    .section-top h2 {
+      font-size: 20px;
+    }
+    .black-close {
+        margin: 4px 0 0 20px;
+    }
+  }
+  @media (min-width: 901px) and (max-width: 1000px) { 
+    .upload-box {
+      height: 160px;
+      width: calc( 33.3333% - 10px);
+    }
+  }
+  @media (min-width: 801px) and (max-width: 900px) { 
+    .upload-box {
+      width: calc( 33.3333% - 10px);
+    }
+  }
+  @media (min-width: 768px) and (max-width: 800px) { 
+    .upload-box {
+      height: 160px;
+      width: calc( 50% - 10px);
+    }
+  }
+  @media (max-width: 767px) {
+    .logo {
+      float: none;
+      width: auto;
+      padding: 20px 0 0 0;
+      text-align: center;
+    }
+    #header {
+      margin: 0px 0 40px 0;
+    }
+    .menu ul li {
+      font-size: 12px;
+    }
+    .menu ul li+li {
+      margin: 0 0 0 15px;
+    }
+    #wrapper {
+      padding: 0 15px;
+    }
+    .page-black {
+      padding: 0;
+    }
+    .black-cal8, .black-leftbar, .black-rightbar {
+      width: 100%;
+    }
+    .black-cal4 {
+      width: 100%;
+    }
+    .black-col-wrap {
+      padding: 40px 0 0 0;
+    }
+    .upload-box-col-20 {
+      width: 33.33333%;
+      padding: 0px 5px;
+      float: left;
+      margin-bottom: 10px;
+    }
+    .section-top h2 {
+      font-size: 20px;
+    }
+    .black-close {
+        margin: 4px 0 0 20px;
+    }
+  }
+  .upload-list-text {
+    margin-top:30px;
+    color: #32333c;
+      font-size: 16px;
+      font-family: Arial, Helvetica, sans-serif;
+      line-height: 24px;
+  }
+  .upload-list-text .upload-title{
+    margin-bottom:30px;
+  }
+  .upload-list { 
+    list-style:decimal; 
+    padding-left: 18px;
+  }
+  .upload-list li {
+    color: #32333c;
+      font-size: 16px;
+      font-family: Arial, Helvetica, sans-serif;
+      line-height: 24px;
+  }
+  .text-center { 
+    text-align:center;
+  }
+  .black-cal8 {
+    float: left;
+      width: 66.666667%;
+      padding: 0 10px;
+  }
+  .upload-container {
+    float:left;
+    width:100%;
+  }
+  .black-col-wrap {
+      padding: 0 20px;
+  }
+  .upload-wrap {
+    background:#fff;
+    border-radius:10px;
+    position:relative;
+    text-align:center;
+    height: 276px;
+    /* height: 295px; */
+    /* height: auto; */
+    padding: 20px;
+    box-sizing:border-box;
+    overflow:hidden;
+  }
+  .placeholder-text {
+    position:relative;
+    top: 49%;
+    -webkit-transform: translateY(-50%);
+    -moz-transform: translateY(-50%);
+    -ms-transform: translateY(-50%);
+    -o-transform: translateY(-50%);
+    transform: translateY(-50%);
+    color: #d2d2d2;
+    text-align:center;
+  }
+  #filePhoto, #usermedia{
+      position:absolute;
+      width:100%;
+      height:100%;
+      top:0;
+      left:0;
+      z-index:1;
+      opacity:0;
+      cursor:pointer;
+  }
+  
+  .placeholder-text h2 {
+    color:#000;
+    font-size:16px;
+    margin-bottom:10px;
+  }
+  .upload-box-row {
+    margin: 0 0 0 -10px;
+  }
+  .rightbar{
+    margin-bottom: 20px;
+  }
+  .upload-box-col-20 {
+    width:20%;
+    padding: 0px 5px;
+    float:left;
+    margin-bottom:10px;
+    float:left;
+    width:20%;
+  }
+  .upload-placeholder, .upload-box {
+    overflow:hidden;
+    height: 90px;
+    /* height:140px; */
+    /* border:2px dashed #222229; */
+    position:relative;
+    border-radius: 10px;
+    float: left;
+    width: 90px;
+      /* width: calc( 20% - 10px); */
+      /* margin: 0 0px 10px 10px; */
+  }
+  .upload-box .upload-number {
+    color:#222229;
+    position:absolute;
+    bottom:10px;
+    left:10px;
+  }
+  .upload-box.imgupload {
+    border: 2px solid #4f6ec3;
+  }
+  .upload-placeholder {
+    /* border: 2px solid #fff; */
+    display: flex;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      flex-direction: column;
+      color: #fff;
+      width: 100%;
+  }
+  .upload-img {
+    position:absolute;
+    top:0px;
+    bottom:0px;
+    left:0px;
+    right:0px;
+    background-repeat:no-repeat;
+    background-size:cover;
+    background-position:top center;
+  }
+  span.remove {
+    position:absolute;
+    right:5px;
+    top: 5px;
+    background:#fff;
+    color:#000;
+    font-weight:bold;
+    height:26px;
+    width:26px;
+    border-radius:50%;
+    text-align:center;
+    line-height:26px;
+    cursor:pointer;
+    z-index:123;
+    display:none;
+  }
+  .upload-img.file-ok span.remove{
+    display: block;
+  }
+  .upload-img.file-ok span.upload-number{
+    display: none;
+  }
+  .imgContainer {
+    overflow:hidden;
+    float: left;
+    width: calc( 20% - 10px);
+    height:140px;
+    border:2px solid #4f6ec3;
+    position:relative;
+    border-radius: 10px;
+      margin: 0 0px 10px 10px;
+  }
+  
+  .imgContainer img{
+      position:absolute;
+      width:100%;
+      height:100%;
+      top:0px;
+      left:0px;
+      z-index:1;
+      border:none;
+  }
+  .imgContainer p {
+    position: absolute;
+      bottom: 0px;
+      left: 0px;
+    right: 0px;
+      z-index: 12;
+    text-align:center;
+    color:#fff;
+    white-space: nowrap;
+      width: 100%;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      padding: 10px 5px;
+  }
+  .upload-placeholder span{
+    padding: 10px 0px;
+    display:block;
+  }
+  span.addmore {
+      color: #2c2c33;
+      font-size: 34px;
+      font-weight: bold;
+      width: 50px;
+      height: 64px;
+      display: inline-block;
+      line-height: 64px;
+    cursor:pointer;
+  }
+  .uploadinput {
+      position: absolute;
+      opacity: 0;
+      height: 100%;
+      width: 100%;
+    z-index:-1;
+  }
+  @media (min-width: 1200px) and (max-width: 1500px) {
+    .black-leftbar, .black-rightbar {
+      width: 100%;
+      margin-bottom:40px;
+    }
+  }
+  @media (min-width: 768px) and (max-width: 1199px) {
+    .black-cal8, .black-leftbar, .black-rightbar {
+      width: 100%;
+    }
+    .black-cal4 {
+      width: 100%;
+    }
+    .black-col-wrap {
+      padding: 40px 0 0 0;
+    }
+    .upload-box-col-20 {
+      width: 33.33333%;
+      padding: 0px 5px;
+      float: left;
+      margin-bottom: 10px;
+    }
+    .section-top h2 {
+      font-size: 20px;
+    }
+    .black-close {
+        margin: 4px 0 0 20px;
+    }
+  }
+  @media (min-width: 901px) and (max-width: 1000px) { 
+    .upload-box, .upload-placeholder, .imgContainer {
+      height: 160px;
+      width: calc( 33.3333% - 10px);
+    }
+  }
+  @media (min-width: 801px) and (max-width: 900px) { 
+    .upload-box, .upload-placeholder, .imgContainer {
+      width: calc( 33.3333% - 10px);
+    }
+  }
+  @media (min-width: 768px) and (max-width: 800px) { 
+    .upload-box, .upload-placeholder, .imgContainer {
+      height: 160px;
+      width: calc( 50% - 10px);
+    }
+  }
+  @media (max-width: 767px) {
+    .logo {
+      float: none;
+      width: auto;
+      padding: 20px 0 0 0;
+      text-align: center;
+    }
+    #header {
+      margin: 0px 0 40px 0;
+    }
+    .menu ul li {
+      font-size: 12px;
+    }
+    .menu ul li+li {
+      margin: 0 0 0 15px;
+    }
+    #wrapper {
+      padding: 0 15px;
+    }
+    .page-black {
+      padding: 0;
+    }
+    .black-cal8, .black-leftbar, .black-rightbar {
+      width: 100%;
+    }
+    .black-cal4 {
+      width: 100%;
+    }
+    .black-col-wrap {
+      padding: 40px 0 0 0;
+    }
+    .upload-box-col-20 {
+      width: 33.33333%;
+      padding: 0px 5px;
+      float: left;
+      margin-bottom: 10px;
+    }
+    .section-top h2 {
+      font-size: 20px;
+    }
+    .black-close {
+        margin: 4px 0 0 20px;
+    }
+    .imgContainer, .upload-placeholder {
+      width: calc( 25% - 10px);
+    }
+  }
+  @media (max-width: 500px) {
+    .imgContainer, .upload-placeholder {
+      width: calc( 33.33% - 10px);
+    }
+  }
+  </style>
+  <div ng-controller="mediaUploadController" class="ansog1">
+    <div id="wrapper" class="black-wrap">
+      <div id="content" class="wrap2">
+        <div class="page-black livetitle">
+          <div class="section-top">
+            <h2>{{ isDanish ? 'Ansøgningsskema' : 'Application form' }}</h2>
+            <!-- <h2>{{ registered_user_data.first_name }} {{ registered_user_data.last_name }} - {{ registered_user_data.profile_number }}</h2> -->
+            <div class="black-right">
+              <!-- <a href="#" class="black-edit"></a> -->
+              <a href="#/index{{isDanish ? '/da' : '/en'}}" class="black-close">luk</a>
             </div>
-            <!--close black-row-->
           </div>
-          <!--close black-section-->
-          <div class="black-section">
-            <div class="black-row">
-              <div class="black-leftbar">
-                <p class="active">{{ isDanish ? 'For at sende din ansøgning, bede du klikke på feltet med "ansøg"' : 'To submit your application please click on ”apply”' }}.</p>
-              </div>
-              <!--close black-leftbar-->
-              <div class="black-rightbar livetitle ">
-                
-                
-                <div class="black-row">
-                  <div class="black-cal6">
-                    <h3>
-                    <strong>{{ isDanish ? 'AFSLUT ANSØGNING' : 'Finish Application' }}</strong>
-                    </h3>
-                    <div class="checkbox_box">
-                      <span class="box15">
-                        <input type="checkbox" required ng-model="agree" value="1" name="genre" id="check-1" />
-                        <label for="check-1">{{ isDanish ? 'Juridiske betingelser' : 'Terms & Conditions' }}*</label>
-                      </span></div>
-                      <input name="" ng-disabled="profile_ansog_form6.$invalid" type="submit" value="{{ isDanish ? 'Ansøg' : 'Apply' }}" class="submit">
-                      <p ng-show="ifRegistring" style="color:#FFF; margin-top: 8%; margin-left: 40%" align="left"><img height="7%" width="7%" alt="loading" src="assets/loader/3.gif" /><br/><span style="margin-left: -2%; font-size: 11px;">{{ isDanish ? 'vent venligst' : 'Please Wait'}}...</span></p>
-                      <div class="text">
-                        <p>{{ isDanish ? 'BEMÆRK' : 'Remark' }}
-                          <br>
-                          <em ng-if="isDanish">Ingen profiler offentliggøres på vores hjemmeside før den
-                            er gennemset af en medarbejder. Når din profil godkendes
-                            eller afvises hører du fra os pr mail.</em>
-                            <em ng-if="!isDanish">Profiles will not be published on our website before the application is reviewed by an employee. When your profile is approved or rejected, you will hear from us via mail.</em>
-                        </p>
+          <!--close section-top-->
+          <form name="profile_ansog_form6" id="profile_ansog_form6" ng-submit="showSuccessPopup()">
+          <div class="section-middle">
+  
+            <div class="black-section">
+              <div class="black-row">
+  
+                <div class="leftbar">
+                  <p style="padding: 0; font-size:12px">
+                    For at sende din ansøgning bedes du uploaded min. 3 billeder og klikke på "Ansøg".
+                  </p>
+                  <div class="upload-list-text">
+                      <h5 class="upload-title" style="padding: 0; font-size:12px">Ekstra - upload foto hvis du:</h5>
+                      <ol class="upload-list">
+                          <li style="padding: 0; font-size:12px"> Har paene haender </li>
+                          <li style="padding: 0; font-size:12px"> Har paene fødder </li>
+                          <li style="padding: 0; font-size:12px"> Vil stille op som familie </li>
+                          <li style="padding: 0; font-size:12px"> Har en enaegget tvilling </li>
+                      </ol>
+                  </div>
+                </div>
+                <!--close black-leftbar-->
+  
+                <div class="rightbar livetitle blackcontainer">
+                  <div class="black-row black-seperate">
+  
+                    <div class="black-cal6">
+                      <div class="black-col-wrap">
+                        <div class="upload_section text-center" style="padding-right:0px;">
+                          <span class="drag-icon"><img src="images/upload-icon.png"></span>
+                        </div>
+                        <div class="upload-container">
+                          <div class="upload-wrap uploader">
+                            <div class="placeholder-text">
+                              <h2>Place image/video</h2>
+                              <span>Click or insert image/video file here</span>
+                            </div>
+                            <div class="placeholder-svg" style="display:none">
+                              <!-- <img src="/images/reload.svg"> -->
+                              <img src="/images/eclipse_loader.svg">
+                            </div>
+                            <img src="" class="usermediaImg" />
+                            <input type="file" name="usermedia" id="usermedia" fileinput="file" filepreview="filepreview"/>
+                            <div class="col-6">
+                              <img ng-src="{{filepreview}}" class="img-responsive" ng-show="filepreview"/>
+                           </div>
+                            <!-- <span class="remove">X</span> -->
+                          </div>
+                        </div>
                       </div>
                     </div>
-                    <!--close black-cal6-->
+                    <!--close black-col-->
+  
+                    <div class="black-cal6">
+                      <div class="black-col-wrap" style="padding-right:0px;">
+                        <div class="upload_section" style="padding-right:0px;">
+                          <span class="upload-title">UPLOAD FOTOS & VIDEOS</span>
+                          <span class="upload-subtitle">Upload min. 3 fotos af dig selv* video materiale er valgfrit</span>
+                        </div>
+                        <div class="upload-container imagefiles">
+                            <span class="upload-title">{{ isDanish ? 'FOTOS' : 'PHOTOS' }}</span>
+                          <div class="upload-box-row" id="upload-box-row">
+                            <div class="upload-box">
+                            <input type="hidden" name="uploadinput1" class="uploadinput" id="uploadinput1">
+                            <label for="uploadinput1" class="upload-img uploadinput1">
+                              <!-- <span class="remove">X</span> -->
+                            </label>
+                            </div>
+                            <div class="upload-box">
+                            <input type="hidden" name="uploadinput2" class="uploadinput" id="uploadinput2">
+                            <label for="uploadinput2" class="upload-img uploadinput2">
+                              <!-- <span class="remove">X</span> -->
+                            </label>
+                            </div>
+                            <div class="upload-box">
+                            <input type="hidden" name="uploadinput3" class="uploadinput" id="uploadinput3">
+                            <label for="uploadinput3" class="upload-img uploadinput3">
+                              <!-- <span class="remove">X</span> -->
+                            </label>
+                            </div>
+                          </div>
+                          <div class="upload-box-row" id="upload-box-row">
+                            <div class="upload-box">
+                            <input type="hidden" name="uploadinput4" class="uploadinput" id="uploadinput4">
+                            <label for="uploadinput4" class="upload-img uploadinput4">
+                              <!-- <span class="remove">X</span> -->
+                            </label>
+                            </div>
+                            <div class="upload-box">
+                            <input type="hidden" name="uploadinput5" class="uploadinput" id="uploadinput5">
+                            <label for="uploadinput5" class="upload-img uploadinput5">
+                              <!-- <span class="remove">X</span> -->
+                            </label>
+                            </div>
+                            <div class="upload-box">
+                            <input type="hidden" name="uploadinput6" class="uploadinput" id="uploadinput6">
+                            <label for="uploadinput6" class="upload-img uploadinput6">
+                              <!-- <span class="remove">X</span> -->
+                            </label>
+                            </div>
+                          </div>
+                          <div class="upload-box-row" id="upload-box-row">
+                            <div class="upload-box">
+                            <input type="hidden" name="uploadinput7" class="uploadinput" id="uploadinput7">
+                            <label for="uploadinput7" class="upload-img uploadinput7">
+                              <!-- <span class="remove">X</span> -->
+                            </label>
+                            </div>
+                            <div class="upload-box">
+                            <input type="hidden" name="uploadinput8" class="uploadinput" id="uploadinput8">
+                            <label for="uploadinput8" class="upload-img uploadinput8">
+                              <!-- <span class="remove">X</span> -->
+                            </label>
+                            </div>
+                            <div class="upload-box">
+                            <input type="hidden" name="uploadinput9" class="uploadinput" id="uploadinput9">
+                            <label for="uploadinput9" class="upload-img uploadinput9">
+                              <!-- <span class="remove">X</span> -->
+                            </label>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="upload-container videofiles">
+                          <span class="upload-title">{{ isDanish ? 'VIDEOER' : 'VIDEOS' }}</span>
+                          <div class="upload-box-row" id="upload-box-row">
+                            <div class="upload-box">
+                            <input type="hidden" name="uploadinput1" class="uploadinput" id="uploadinput1">
+                            <label for="uploadinput1" class="upload-img uploadinput1">
+                              <!-- <span class="remove">X</span> -->
+                            </label>
+                            </div>
+                            <div class="upload-box">
+                            <input type="hidden" name="uploadinput2" class="uploadinput" id="uploadinput2">
+                            <label for="uploadinput2" class="upload-img uploadinput2">
+                              <!-- <span class="remove">X</span> -->
+                            </label>
+                            </div>
+                            <div class="upload-box">
+                            <input type="hidden" name="uploadinput3" class="uploadinput" id="uploadinput3">
+                            <label for="uploadinput3" class="upload-img uploadinput3">
+                              <!-- <span class="remove">X</span> -->
+                            </label>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="checkbox_box" style="padding: 0 0 0 20px;width: auto;margin-top: 30px;"><span class="box15"><input type="checkbox" required name="genre" id="check-1" value="action" /><label for="check-1"></label></span><a style="color: white;" target="_blank" href="./brugerbetingelser.pdf" >{{ isDanish ? 'Juridiske betingelser' : 'Terms & Conditions'}} *</a></div>
+                        <input style="float: right;margin-top: 30px;margin-bottom: 10px;" name="" type="submit" value="{{ isDanish ? 'Gem' : 'Save' }}" class="submit">
+                        <div style="clear: both"></div>
+                      </div>
+                    </div>
+                    <!--close black-col-->
+  
                   </div>
                   <!--close black-row-->
+                  
                 </div>
                 <!--close black-rightbar-->
+  
               </div>
               <!--close black-row-->
             </div>
             <!--close black-section-->
-            <div class="black-numbers">
-              <span class="span3">
-              <em>06</em>/06</span>
-            </div>
+  
+            <!-- <div class="black-numbers"><span class="span3"><em>06</em>/07</span></div> -->
           </div>
           <!--close section-middle-->
-        </form>
-        <div class="section-bottom">
-          <div class="blackpage-controller">
-            <a href="#/my-profile_5{{isDanish ? '/da' : '/en'}}" class="black-prev">{{ isDanish ? 'FORRIGE SIDE' : 'PREVIOUS PAGE' }}</a>
+          
+  
+          <div class="section-bottom">
+            <div class="blackpage-controller">
+              <!-- <span class="controller-title">NÆSTE STEP</span> -->
+              <!-- <a href="http://134.213.29.220/Ansogning step5.html" class="black-prev"></a> -->
+        <!-- <a href="http://134.213.29.220/Ansogning step7.html" class="black-next"></a> -->
+        <a href="#/my-profile_5{{isDanish ? '/da' : '/en'}}" class="black-prev">{{ isDanish ? 'FORRIGE SIDE' : 'PREVIOUS PAGE' }}</a>
+        <!-- <button ng-disabled="profile_ansog_form6.$touched" type="submit" class="black-next">{{ isDanish ? 'GEM' : 'SAVE' }}</button> -->
+            </div>
           </div>
+          </form>
           <!--close section-bottom-->
         </div>
         <!--close page-black-->
+  
       </div>
       <!--close content-->
+  
     </div>
-    <input type="hidden" name="" class="operation" value="update">
     <!--close wrapper-->
-  </body>
-</html>
+    <input type="hidden" name="" class="operation" value="insert">
+    <div class="reg-success-popup" style="color: white; display: none">
+        <div class="reg-caption">
+           <p class="upper">{{ isDanish ? 'Tak for din oprettelse!' : 'Thank you for submitting your application' }}</p> 
+           <br>
+           <p class="remarks">{{ isDanish ? 'En bekræftigelse er sendt til din mail.' : 'You will receive an email from us within 2 weeks.' }}</p>
+           <br><br>
+          <p class="remarks">{{ isDanish ? 'BEMÆRK: ' : 'Remark: ' }}
+                <span ng-if="isDanish">Ingen profiler offentliggøres på vores hjemmeside før den er gennemset af en medarbejder. Når din profil godkendes eller afvises, hører du fra os pr. mail</span>
+                <span ng-if="!isDanish">No profiles are published on our website before it is reviewed by an employee. When your profile is approved or rejected, you get to know from us via email.</span>
+              </p>
+        </div>
+       
+       </div>
+  
+    </body>
+  
+    </html>

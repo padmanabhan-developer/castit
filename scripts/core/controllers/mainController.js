@@ -773,6 +773,7 @@ main.controller('RegisterStep5Controller', ['$scope', '$filter', '$http', '$wind
 			$(".choose-level").addClass("white-color");
 			$(".choose-language").addClass("white-color");
 			if(row_id == '1'){
+				$scope.langrateval1 = "4";
 				$("input[id=langrateval"+row_id+"]").val("4");
 				$("span.ratings img[id^=start_"+row_id+"]").attr("src","images/star-black.png");
 				$("span.ratings img[id^=start_"+row_id+"_1]").attr("src","images/star-white.png");
@@ -783,174 +784,28 @@ main.controller('RegisterStep5Controller', ['$scope', '$filter', '$http', '$wind
 			else{
 				$("input[id=langrateval"+row_id+"]").val("1");
       	$("span.ratings img[id^=start_"+row_id+"]").attr("src","images/star-black.png");
-      	$("span.ratings img[id^=start_"+row_id+"_1]").attr("src","images/star-white.png");
+				$("span.ratings img[id^=start_"+row_id+"_1]").attr("src","images/star-white.png");
+				switch (row_id) {
+					case 2:
+						$scope.langrateval2 = "1";
+						break;
+					case 3:
+						$scope.langrateval3 = "1";
+						break;
+					case 4:
+						$scope.langrateval4 = "1";
+						break;
+				
+					default:
+						break;
+				}
 			}
 		}
   });
 	  
 }]);
 
-main.controller('RegisterStep6Controller',['$scope', '$http', '$rootScope', function($scope, $http, $rootScope) {
-	$rootScope.bodylayout = 'black';
-	$rootScope.interface = 'ansog';
-	if(!localStorage.getItem('imagecount')){
-		localStorage.setItem('imagecount',0);
-		
-	}
-	if(!localStorage.getItem('preview_html')){
-		localStorage.setItem('preview_html',null);
-		// $(".upload-box-row").html(localStorage.getItem('preview_html'));
-	}
-	$(".upload-wrap.uploader").click(function(event){
-		$('#usermedia').trigger('click');
-	});
-	$(".upload-box .remove").click(function(event){
-		console.log(this);
-		console.log($(this));
-
-	});
-
-	$("input[name=usermedia]").change(function(event){
-		$(".placeholder-text").hide();
-		$(".placeholder-svg, .placeholder-svg img").show();
-		$("input[name=usermedia]").attr('disabled',true);
-		var file = $(this)[0].files[0];
-		let isImage = (file) => file['type'].includes('image');
-		let isVideo = (file) => file['type'].includes('video');
-
-		let api_url = '';
-		api_url = (isImage(file)) ? 'api/v1/fileuploadparser' : api_url;
-		api_url = (isVideo(file)) ? 'api/v1/fileuploadparser?uploaded_file_type=video' : api_url;
-		var formdata = new FormData();
-    (isImage(file)) ? formdata.append("Image_file", file) : '';
-    (isVideo(file)) ? formdata.append("Video_file", file) : '';
-    var ajax = new XMLHttpRequest();
-    ajax.inputdom = $(this);
-    ajax.upload.inputdom = $(this);
-    ajax.upload.addEventListener("progress", progressHandler, false);
-    ajax.addEventListener("load", completeHandler, false);
-    ajax.addEventListener("error", errorHandler, false);
-    ajax.addEventListener("abort", abortHandler, false);
-    ajax.open("POST", api_url); 
-		ajax.send(formdata);
-		localStorage.setItem('imagecount', parseInt(localStorage.getItem('imagecount')) + 1);
-	});
-	function _(el) {
-    return document.getElementById(el);
-  }
-
-  function progressHandler(event) {
-    var percent = (event.loaded / event.total) * 50;
-    // event.target.inputdom.siblings("progress")[0].style.display = "table-row";
-    // event.target.inputdom.siblings("progress")[0].value = Math.round(percent);
-  }
-
-  function completeHandler(event) {
-		// alert('aaa');
-		$(".placeholder-text").show();
-		$(".placeholder-svg, .placeholder-svg img").hide();
-		$("input[name=usermedia]").attr('disabled', false);
-		let jsonresponse = JSON.parse(event.target.response);
-
-    if(event.target.status == 200  &&  jsonresponse.status_message != undefined){
-			// event.target.inputdom.siblings().find("input").prevObject[0].value = JSON.parse(event.target.response).filename;
-			let imagecount =  parseInt(localStorage.getItem('imagecount'));
-			$scope.cdnfilename = jsonresponse.filename;
-			let bg_img = "'" + $scope.cdnfilename + "'";
-			let bg_vdo = "'http://assets3.castit.dk"+jsonresponse.cdnfilepath+"/"+jsonresponse.thumbnail+"'";
-			let mediatype = jsonresponse.type;
-			$scope.cdnfilepath = jsonresponse.cdnfilepath;
-			document.querySelector(".remove_this_preview_box") ? document.querySelector(".remove_this_preview_box").remove() : '';
-			// $scope.fieldone = $scope.cdnfilename;
-			let preview_html = '';
-			if(mediatype == 'image'){
-				 preview_html = '<div  class="upload-box" id="preview_container'+imagecount+'"><div for="uploadinput'+imagecount+'" class="upload-img" style="background-image:url('+bg_img+')"><span class="remove">X</span></div></div>';
-				$(".upload-box-row").append(preview_html);
-
-				$(".upload-box-row").children().find(".upload-img").unbind('mouseenter mouseleave');
-				$(".upload-box-row").children().find(".upload-img").on('mouseenter mouseleave', function(){
-					$(this).children().toggle();
-					$(this).children().click(function(){
-						$(this).parent().parent().remove();
-						let current_thumbs = $(".upload-box-row").children();
-						localStorage.setItem('imagecount', current_thumbs.length);
-						localStorage.setItem('preview_html', current_thumbs.prop('outerHTML'));
-					});
-				});
-				
-				if(localStorage.getItem('preview_html') == 'null'){
-					localStorage.setItem('preview_html','');
-				}
-				localStorage.setItem('preview_html', localStorage.getItem('preview_html') + preview_html);
-
-			}
-			if(mediatype == 'video'){
-				preview_html = '<div class="upload-box" id="preview_container'+imagecount+'"><label for="uploadinput'+imagecount+'" class="upload-img" style="background-image:url('+bg_vdo+')"><span class="remove ">X</span></label></div>';
-				$(".upload-box-row").append(preview_html);
-
-				$(".upload-box-row").children().find(".upload-img").unbind('mouseenter mouseleave');
-				$(".upload-box-row").children().find(".upload-img").on('mouseenter mouseleave', function(){
-					$(this).children().toggle();
-					$(this).children().click(function(){
-						$(this).parent().parent().remove();
-						let current_thumbs = $(".upload-box-row").children();
-						localStorage.setItem('imagecount', current_thumbs.length);
-						localStorage.setItem('preview_html', current_thumbs.prop('outerHTML'));
-					});
-				});
-				
-				if(localStorage.getItem('preview_html') == 'null'){
-					localStorage.setItem('preview_html','');
-				}
-
-				localStorage.setItem('preview_html', localStorage.getItem('preview_html') + preview_html);
-			}
-    }
-  }
-
-  function errorHandler(event) {
-    _("status").innerHTML = $rootScope.isDanish ? "Upload fejlede" : "Upload Failed";
-  }
-
-  function abortHandler(event) {
-		_("status").innerHTML = $rootScope.isDanish ? "Upload afbrudt" : "Upload Aborted";
-		$(".placeholder-text").show();
-		$(".placeholder-svg").hide();
-	}
-	
-	$scope.step6Create = step6Create;
-	function step6Create() {  
-		$scope.ifRegistring=true;
-		
-		var fd = new FormData();
-		angular.forEach($scope.files,function(file){
-		  fd.append('Image_file[]',file._file);
-		});
-		angular.forEach($scope.videos,function(video){
-      fd.append('Video_file["cdnfilename"]', $scope.cdnfilename);
-			fd.append('Video_file["cdnfilepath"]', $scope.cdnfilepath);
-			fd.append('Video_file["thumbnail"]', $scope.thumbnail);
-	  	});
-	
-		$http.post('api/v1/step6Create',  fd, 
-					{
-						transformRequest: angular.identity,
-						headers: {'Content-Type': undefined,'Process-Data': false}
-					}
-					).success(function(response) {
-							window.location = '#/ansog-trin7' + ($rootScope.isDanish ? '/da' : '/en' );
-						}
-					
-			
-			).error(function(error){
-				alert('Something went wrong, Please try again later'); 
-				window.location = '#/index' + ($rootScope.isDanish ? '/da' : '/en' );
-			});				
-	  }
-
-}]);
-
-main.controller('RegisterStep7Controller',['$scope', '$filter', '$http', '$window', '$rootScope', '$routeParams', 'FlashService', function($scope, $filter, $http, $window, $rootScope, $routeParams, FlashService) {
+main.controller('profileCreateController',['$scope', '$filter', '$http', '$window', '$rootScope', '$routeParams', 'FlashService', function($scope, $filter, $http, $window, $rootScope, $routeParams, FlashService) {
 	var operation = '';
 	$rootScope.bodylayout = 'black';
 	$rootScope.interface = 'ansog';
@@ -983,28 +838,364 @@ main.controller('RegisterStep7Controller',['$scope', '$filter', '$http', '$windo
 			if(response.status != undefined){
 				$scope.ifRegistring=false;
 				
-				data = { "email": response.email, "first_name": response.first_name };
+				data = { "email": response.email, "first_name": response.first_name, "last_name": response.last_name, "profile_number": response.profile_number, "profile_id": response.profile_id };
+
+				sessionStorage.setItem('registered_user_profile_id', data.profile_id);
+				sessionStorage.setItem('registered_user_profile_number', data.profile_number);
+				sessionStorage.setItem('registered_user_first_name', data.first_name);
+				sessionStorage.setItem('registered_user_last_name', data.last_name);
+
 				if(operation == "insert"){
 					$.post("/api/v1/welcome_email", data,
 							function (data, textStatus, jqXHR) {},
 					);
 				}
-				
-				$(".reg-success-popup").fadeIn();
-				setTimeout(function(){
-					$(".reg-success-popup").fadeOut();
-					window.location = '#/index' + ($rootScope.isDanish ? '/da' : '/en' );
-				}, 5000);
+				window.location = '#/mediaupload' + ($rootScope.isDanish ? '/da' : '/en' );
+
 			}
 			else{
 				alert($rootScope.isDanish ? "Ikke registreret, venligst prøv igen" : "Couldn't Register, Please Try again later");
-				window.location = '#/index' + ($rootScope.isDanish ? '/da' : '/en' );
+				window.location = '#/ansog-trin1' + ($rootScope.isDanish ? '/da' : '/en' );
 			}
 		}).error(function(error){
 			alert('Something went wrong, Please try again later'); 
-			window.location = '#/index' + ($rootScope.isDanish ? '/da' : '/en' );
+			window.location = '#/ansog-trin1' + ($rootScope.isDanish ? '/da' : '/en' );
 		});	
 	}
+}]);
+
+
+
+main.controller('mediaUploadController',['$scope', '$http', '$rootScope', function($scope, $http, $rootScope) {
+	let profile_id 					= sessionStorage.getItem('registered_user_profile_id');
+	let loggedin_user_email	= sessionStorage.getItem('loginemail');
+	let loggedin_user_info 	= sessionStorage.getItem('profileinfo');
+
+	if(profile_id == undefined && loggedin_user_email == undefined && loggedin_user_info == undefined){
+		window.location = '#/ansog-trin5' + ($rootScope.isDanish ? '/da' : '/en' );
+	}else{
+		if(loggedin_user_email != '' && loggedin_user_info != '' && profile_id == undefined){
+			profile_id = JSON.parse(loggedin_user_info).id;
+			$rootScope.interface = 'login';
+		}
+		if(loggedin_user_email == undefined && loggedin_user_info == undefined && profile_id != '')
+		{
+			$rootScope.interface = 'ansog';
+		}
+		$rootScope.bodylayout = 'black';
+		
+		let loadProfileMediaAjax = new XMLHttpRequest();
+		loadProfileMediaAjax.addEventListener("load", loadProfileMedia);
+		loadProfileMediaAjax.open("GET", "api/v1/getmediadata?profile_id="+profile_id);
+		loadProfileMediaAjax.send();
+	
+		let profile_number 	= sessionStorage.getItem('registered_user_profile_number');
+		let first_name 			= sessionStorage.getItem('registered_user_first_name');
+		let last_name 			= sessionStorage.getItem('registered_user_last_name');
+	
+		let position = '';
+	
+		$(".reg-success-popup").click(function(event){
+			$(this).fadeOut('fast');
+			window.location = '#/index' + ($rootScope.isDanish ? '/da' : '/en' );
+		});
+		$(".imagefiles").on('click',".remove",function(event){
+			let position = $(this).parent()[0].classList[1].replace('uploadinput','');
+			let api_url = 'api/v1/mediafiledelete?type=image&profile_id='+profile_id+'&position='+position ;
+			let formdata = {};
+			let deleteAjax = new XMLHttpRequest();
+			deleteAjax.inputdom = $(this);
+			deleteAjax.addEventListener("load", deleteHandler, false);
+			deleteAjax.addEventListener("error", errorHandler, false);
+			deleteAjax.addEventListener("abort", abortHandler, false);
+			deleteAjax.open("POST", api_url); 
+			deleteAjax.send(formdata);
+	
+		});
+		$(".videofiles").on('click',".remove",function(event){
+			let position = $(this).parent()[0].classList[1].replace('uploadinput','');
+			let api_url = 'api/v1/mediafiledelete?type=video&profile_id='+profile_id+'&position='+position ;
+			let formdata = {};
+			let deleteAjax = new XMLHttpRequest();
+			deleteAjax.inputdom = $(this);
+			deleteAjax.addEventListener("load", deleteHandler, false);
+			deleteAjax.addEventListener("error", errorHandler, false);
+			deleteAjax.addEventListener("abort", abortHandler, false);
+			deleteAjax.open("POST", api_url); 
+			deleteAjax.send(formdata);
+		});
+	
+	
+		$("input[name=usermedia]").change(function(event){
+			$(".placeholder-text").hide();
+			$(".placeholder-svg, .placeholder-svg img").show();
+			$("input[name=usermedia]").attr('disabled',true);
+			for(let i = 1; i<50; i++){
+				if($(".imagefiles #uploadinput"+(i+1)).length > 0){
+					let image_fileplace = $(".imagefiles #uploadinput"+i).val();
+					if(image_fileplace == ''){
+						imagePosition = i;
+						break;
+					}
+				}
+				else{
+					let image_fileplace = $(".imagefiles #uploadinput"+i).val();
+					if(image_fileplace == ''){
+						imagePosition = i;
+					}
+					let newHTML = generateThumbnailHTML(i);
+					$(".imagefiles").append(newHTML);
+					$(".imagefiles .remove").bind('click');
+					break;
+				}
+			}
+	
+			for(let i = 1; i<50; i++){
+				if($(".videofiles #uploadinput"+(i+1)).length > 0){
+					let video_fileplace = $(".videofiles #uploadinput"+i).val();
+					if(video_fileplace == ''){
+						videoPosition = i;
+						break;
+					}
+				}
+				else{
+					let video_fileplace = $(".videofiles #uploadinput"+i).val();
+					if(video_fileplace == ''){
+						videoPosition = i;
+					}
+					let newHTML = generateThumbnailHTML(i);
+					$(".videofiles").append(newHTML);
+					$(".videofiles .remove").bind('click');
+					break;
+				}
+			}
+	
+			var file = $(this)[0].files[0];
+			let isImage = (file) => file['type'].includes('image');
+			let isVideo = (file) => file['type'].includes('video');
+			let api_url = '';
+	
+			if(isImage(file)){
+				position = imagePosition;
+				api_url = 'api/v1/fileuploadparser?profile_id='+profile_id+'&position='+position ;
+				$(".imagefiles input#uploadinput"+position).val($(this).val());
+			}
+			if(isVideo(file)){
+				position = videoPosition;
+				api_url = 'api/v1/fileuploadparser?uploaded_file_type=video&profile_id='+profile_id+'&position='+position ;
+				$(".videofiles input#uploadinput"+position).val($(this).val());
+			}
+	
+			var formdata = new FormData();
+			(isImage(file)) ? formdata.append("Image_file", file) : '';
+			(isVideo(file)) ? formdata.append("Video_file", file) : '';
+			var ajax = new XMLHttpRequest();
+			ajax.inputdom = $(this);
+			ajax.upload.inputdom = $(this);
+			ajax.upload.addEventListener("progress", progressHandler, false);
+			ajax.addEventListener("load", completeHandler, false);
+			ajax.addEventListener("error", errorHandler, false);
+			ajax.addEventListener("abort", abortHandler, false);
+			ajax.open("POST", api_url); 
+			ajax.send(formdata);
+		});
+		function _(el) {
+			return document.getElementById(el);
+		}
+	
+		function progressHandler(event) {
+			var percent = (event.loaded / event.total) * 50;
+		}
+		function loadProfileMedia(event){
+			let jsonresponse 	= JSON.parse(event.target.response);
+			let imagesObject 	= jsonresponse.images;
+			let videoObject		= jsonresponse.videos;
+
+			if(imagesObject.length > 0){
+				let img_slots_count = imagesObject.length;
+				let img_fraction = img_slots_count / 3;
+				let img_slot_rows = Math.floor(img_fraction); 
+				if(img_fraction > Math.floor(img_fraction)){
+					img_slot_rows = Math.floor(img_fraction) + 1;
+				}
+
+				for(let i = 4; i <= img_slot_rows; i++){
+					let newHTML = generateThumbnailHTML((i-1)*3);
+						$(".imagefiles").append(newHTML);
+				}
+
+				for(let image of imagesObject){
+					$(".imagefiles input#uploadinput"+image.position).val(image.filename);
+					let bg_img = "url('/images/uploads/" + image.filename + "')";
+					let imageThumb = $(".imagefiles").find('.upload-img.uploadinput'+image.position);
+					imageThumb.css('background-image',bg_img);
+					imageThumb.unbind('mouseenter mouseleave');
+					imageThumb.on('mouseenter mouseleave', function(){
+						$(this).children().toggle();
+					});
+				}
+			}
+			if(videoObject.length > 0){
+				console.log(videoObject);
+				let img_slots_count = videoObject.length;
+				let img_fraction = img_slots_count / 3;
+				let img_slot_rows = Math.floor(img_fraction); 
+				if(img_fraction > Math.floor(img_fraction)){
+					img_slot_rows = Math.floor(img_fraction) + 1;
+				}
+
+				for(let i = 2; i <= img_slot_rows; i++){
+					let newHTML = generateThumbnailHTML((i-1)*3);
+						$(".videofiles").append(newHTML);
+				}
+
+				for(let image of videoObject){
+					$(".videofiles input#uploadinput"+image.position).val(image.filename);
+					let bg_img = "'http://assets3.castit.dk"+image.thumbnail_photo_path+"/"+image.thumbnail_photo_filename+"'";
+					// $thumbpath = 'http://assets3.castit.dk'.$row_video['thumbnail_photo_path']."/".$row_video['thumbnail_photo_filename'];
+					let imageThumb = $(".videofiles").find('.upload-img.uploadinput'+image.position);
+					imageThumb.css('background-image',bg_img);
+					imageThumb.unbind('mouseenter mouseleave');
+					imageThumb.on('mouseenter mouseleave', function(){
+						$(this).children().toggle();
+					});
+				}
+			}
+
+			// console.log(jsonresponse);
+		}
+		function deleteHandler(event){
+			let jsonresponse = JSON.parse(event.target.response);
+			if(event.target.status == 200  &&  jsonresponse.status_message != undefined){
+				let imageThumb = $("."+jsonresponse.type+"files").find('.upload-img.uploadinput'+jsonresponse.position);
+				imageThumb.css('background-image','');
+				imageThumb.removeClass("video_upload_notify");
+				imageThumb.unbind('mouseenter mouseleave');
+				imageThumb.children().hide();
+				$("."+jsonresponse.type+"files #uploadinput"+jsonresponse.position).val("");
+			}
+		}
+		function completeHandler(event) {
+			$(".placeholder-text").show();
+			$(".placeholder-svg, .placeholder-svg img").hide();
+			$("input[name=usermedia]").attr('disabled', false);
+			console.log(event.target.response);
+			let jsonresponse = JSON.parse(event.target.response);
+			console.log(jsonresponse);
+			if(event.target.status == 200  &&  jsonresponse.status_message != undefined){
+	
+				$scope.cdnfilename = jsonresponse.filename;
+				let bg_img = "url('/images/uploads/" + $scope.cdnfilename + "')";
+				let bg_temp_vdo = "url('/images/eclipse_loader.svg')";
+				let bg_vdo = "'http://assets3.castit.dk"+jsonresponse.cdnfilepath+"/"+jsonresponse.thumbnail+"'";
+				let mediatype = jsonresponse.type;
+				$scope.cdnfilepath = jsonresponse.cdnfilepath;
+	
+				if(mediatype == 'image'){
+					// console.log(bg_img);
+					let imageThumb = $(".imagefiles").find('.upload-img.uploadinput'+jsonresponse.position);
+					imageThumb.css('background-image',bg_img);
+					imageThumb.unbind('mouseenter mouseleave');
+					imageThumb.on('mouseenter mouseleave', function(){
+						$(this).children().toggle();
+					});
+	
+				}
+				if(mediatype == 'video'){
+					// '/images/eclipse_loader.svg';
+					let imageThumb = $(".videofiles").find('.upload-img.uploadinput'+jsonresponse.position);
+					// imageThumb.addClass('video_upload_notify');
+					imageThumb.css('background-image',bg_vdo);
+					imageThumb.unbind('mouseenter mouseleave');
+					imageThumb.on('mouseenter mouseleave', function(){
+						$(this).children().toggle();
+					});
+				}
+			}
+		}
+		$scope.showSuccessPopup = showSuccessPopup;
+		function showSuccessPopup(){
+			$(".reg-success-popup").fadeIn();
+			sessionStorage.removeItem('registered_user_profile_id');
+			sessionStorage.removeItem('registered_user_profile_number');
+			sessionStorage.removeItem('registered_user_first_name');
+			sessionStorage.removeItem('registered_user_last_name');
+			sessionStorage.removeItem('profileinfo');
+			sessionStorage.removeItem('loginemail');
+
+			$http.post('api/v1/clearsessions');
+			setTimeout(function(){
+				$(".reg-success-popup").fadeOut();
+				window.location = '#/index' + ($rootScope.isDanish ? '/da' : '/en' );
+			}, 10000);
+		}
+	
+		function errorHandler(event) {
+			_("status").innerHTML = $rootScope.isDanish ? "Upload fejlede" : "Upload Failed";
+		}
+	
+		function abortHandler(event) {
+			_("status").innerHTML = $rootScope.isDanish ? "Upload afbrudt" : "Upload Aborted";
+			$(".placeholder-text").show();
+			$(".placeholder-svg").hide();
+		}
+		
+		$scope.step6Create = step6Create;
+		function step6Create() {  
+			$scope.ifRegistring=true;
+			
+			var fd = new FormData();
+			angular.forEach($scope.files,function(file){
+				fd.append('Image_file[]',file._file);
+			});
+			angular.forEach($scope.videos,function(video){
+				fd.append('Video_file["cdnfilename"]', $scope.cdnfilename);
+				fd.append('Video_file["cdnfilepath"]', $scope.cdnfilepath);
+				fd.append('Video_file["thumbnail"]', $scope.thumbnail);
+				});
+		
+			$http.post('api/v1/step6Create',  fd, 
+						{
+							transformRequest: angular.identity,
+							headers: {'Content-Type': undefined,'Process-Data': false}
+						}
+						).success(function(response) {
+								window.location = '#/ansog-trin7' + ($rootScope.isDanish ? '/da' : '/en' );
+							}
+						
+				
+				).error(function(error){
+					alert('Something went wrong, Please try again later'); 
+					window.location = '#/index' + ($rootScope.isDanish ? '/da' : '/en' );
+				});				
+			}
+			
+			function generateThumbnailHTML(offset){
+				let html_string = `<div class="upload-box-row" id="upload-box-row">
+				<div class="upload-box">
+				<input type="hidden" name="uploadinput${offset + 1}" class="uploadinput" id="uploadinput${offset + 1}">
+				<label for="uploadinput${offset + 1}" class="upload-img uploadinput${offset + 1}">
+					<span class="remove">X</span>
+				</label>
+				</div>
+				<div class="upload-box">
+				<input type="hidden" name="uploadinput${offset + 2}" class="uploadinput" id="uploadinput${offset + 2}">
+				<label for="uploadinput${offset + 2}" class="upload-img uploadinput${offset + 2}">
+					<span class="remove">X</span>
+				</label>
+				</div>
+				<div class="upload-box">
+				<input type="hidden" name="uploadinput${offset + 3}" class="uploadinput" id="uploadinput${offset + 3}">
+				<label for="uploadinput${offset + 3}" class="upload-img uploadinput${offset + 3}">
+					<span class="remove">X</span>
+				</label>
+				</div>
+			</div>`
+				return html_string;
+			}
+	
+	}
+	
 }]);
 
 // Regsiter Step 6

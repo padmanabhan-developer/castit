@@ -900,7 +900,7 @@ var frontend = angular.module('theme.demos.dashboard', [
 		$scope.IsProfileImage = true;
 		$scope.IsProfileVideo = false;
 		$scope.responsiveProfileDetail = false;
-		console.log($window.outerWidth);
+		// console.log($window.outerWidth);
 		if($window.outerWidth >= 992){
 			$scope.responsiveProfileDetail = true;
 		}
@@ -1047,15 +1047,16 @@ var frontend = angular.module('theme.demos.dashboard', [
 		$('#video_nav').show();
 		if($scope.profile_videos){
 			$scope.currVideoUrl = $scope.profile_videos[0].fullpath;
-			var video = $('#pro_video')[0];
-			$('video').mediaelementplayer({
-				alwaysShowControls: false,
-				videoVolume: 'horizontal',
-				usePluginFullScreen : false,
-				features: ['playpause','progress', 'fullscreen']
-			});
-			video.load();
-			video.play();
+			changeSingleVideoBig($scope.currVideoUrl);
+			// var video = $('#pro_video')[0];
+			// $('video').mediaelementplayer({
+			// 	alwaysShowControls: false,
+			// 	videoVolume: 'horizontal',
+			// 	usePluginFullScreen : false,
+			// 	features: ['playpause','progress', 'fullscreen']
+			// });
+			// video.load();
+			// video.play();
 
 		}
 	}
