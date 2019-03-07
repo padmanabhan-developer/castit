@@ -346,7 +346,7 @@ span.addmore {
 }
 
 .placeholder-text h2 {
-	color:#000;
+	color:#d2d2d2;
 	font-size:16px;
 	margin-bottom:10px;
 }
@@ -602,17 +602,18 @@ span.addmore {
 
 							<div class="leftbar">
                 <p style="padding: 0; font-size:12px">
-                  For at sende din ansøgning bedes du uploaded min. 3 billeder og klikke på "Ansøg".
-                </p>
-                <div class="upload-list-text">
-                    <h5 class="upload-title" style="padding: 0; font-size:12px">Ekstra - upload foto hvis du:</h5>
-                    <ol class="upload-list">
-                        <li style="padding: 0; font-size:12px"> Har paene haender </li>
-                        <li style="padding: 0; font-size:12px"> Har paene fødder </li>
-                        <li style="padding: 0; font-size:12px"> Vil stille op som familie </li>
-                        <li style="padding: 0; font-size:12px"> Har en enaegget tvilling </li>
-                    </ol>
-                </div>
+                      {{ isDanish ? 'For at sende din ansøgning bedes du uploaded min. 3 billeder og klikke på "Ansøg"' : 'To send your application please upload min. 3 pictures and click on “Apply”.' }}.
+                  </p>
+                  <div class="upload-list-text">
+                      <h5 class="upload-title" style="padding: 0; font-size:12px">{{ isDanish ? 'Ekstra - upload foto hvis du:' : 'Extra – Upload photo if you:' }} </h5>
+                      <ol class="upload-list">
+                          <li style="padding: 0; font-size:12px">{{ isDanish ? 'Har du pæne hænder' : 'Have nice hands'}}</li>
+                          <li style="padding: 0; font-size:12px">{{ isDanish ? 'Har pæne fødder' : 'Have nice feet'}}</li>
+                          <li style="padding: 0; font-size:12px">{{ isDanish ? 'Vil stille op som familie' : 'Will participate as a family'}} </li>
+                          <li style="padding: 0; font-size:12px">{{ isDanish ? 'Har en enægget tvilling'  : 'Have an identical twin'}}</li>
+                          <li style="padding: 0; font-size:12px">{{ isDanish ? 'Filtyper: .png, .jpeg, .jpg' : 'File formats: .png, .jpeg, .jpg' }}  </li>
+                      </ol>
+                  </div>
 							</div>
 							<!--close black-leftbar-->
 
@@ -627,8 +628,8 @@ span.addmore {
 											<div class="upload-container">
 												<div class="upload-wrap uploader">
 													<div class="placeholder-text">
-														<h2>Place image/video</h2>
-														<span>Click or insert image/video file here</span>
+															<h2> {{ isDanish ? 'Placer billed/Video' : 'Place image/video'}}</h2>
+														<!-- <span>Click or insert image/video file here</span> -->
                           </div>
                           <div class="placeholder-svg" style="display:none">
                             <!-- <img src="/images/reload.svg"> -->
@@ -649,27 +650,27 @@ span.addmore {
 									<div class="black-cal6">
 										<div class="black-col-wrap" style="padding-right:0px;">
 											<div class="upload_section" style="padding-right:0px;">
-												<span class="upload-title">UPLOAD FOTOS & VIDEOS</span>
-												<span class="upload-subtitle">Upload min. 3 fotos af dig selv* video materiale er valgfrit</span>
+												<span class="upload-title"> {{ isDanish ? 'UPLOAD FOTO OG VIDEO' : 'UPLOAD PHOTOS AND VIDEOS' }}</span>
+												<span class="upload-subtitle">{{ isDanish ? 'Upload min. 3 fotos af dig selv* video materiale er valgfrit' : 'Upload at least 3 pictures of yourself. Video material is optional' }}</span>
 											</div>
 											<div class="upload-container imagefiles">
-													<span class="upload-title">{{ isDanish ? 'FOTOS' : 'PHOTOS' }}</span>
+													<span class="upload-title">{{ isDanish ? 'FOTO' : 'PHOTOS' }}</span>
 												<div class="upload-box-row" id="upload-box-row">
-													<div class="upload-box">
+													<div class="upload-box" style="border: 2px solid white;">
 													<input type="hidden" name="uploadinput1" class="uploadinput" id="uploadinput1">
-													<label for="uploadinput1" class="upload-img uploadinput1">
+													<label for="uploadinput1" class="upload-img uploadinput1" style="color: white;text-transform: uppercase;top: 45%;text-align: center;font-size: 10px;font-family: helvetica;">{{ isDanish ? 'Portræt' : 'Portrait'}} *
 														<span class="remove">X</span>
 													</label>
 													</div>
-													<div class="upload-box">
+													<div class="upload-box" style="border: 2px solid white;">
 													<input type="hidden" name="uploadinput2" class="uploadinput" id="uploadinput2">
-													<label for="uploadinput2" class="upload-img uploadinput2">
+													<label for="uploadinput2" class="upload-img uploadinput2" style="color: white;text-transform: uppercase;top: 45%;text-align: center;font-size: 10px;font-family: helvetica;">{{ isDanish ? 'Profil' : 'Profile'}} *
 														<span class="remove">X</span>
 													</label>
 													</div>
-													<div class="upload-box">
+													<div class="upload-box" style="border: 2px solid white;">
 													<input type="hidden" name="uploadinput3" class="uploadinput" id="uploadinput3">
-													<label for="uploadinput3" class="upload-img uploadinput3">
+													<label for="uploadinput3" class="upload-img uploadinput3" style="color: white;text-transform: uppercase;top: 45%;text-align: center;font-size: 10px;font-family: helvetica;">{{ isDanish ? 'Helfigur' : 'Full-figure'}} *
 														<span class="remove">X</span>
 													</label>
 													</div>
@@ -716,7 +717,7 @@ span.addmore {
 												</div>
 											</div>
 											<div class="upload-container videofiles">
-												<span class="upload-title">{{ isDanish ? 'VIDEOER' : 'VIDEOS' }}</span>
+												<span class="upload-title">{{ isDanish ? 'VIDEO' : 'VIDEOS' }}</span>
 												<div class="upload-box-row" id="upload-box-row">
 													<div class="upload-box">
 													<input type="hidden" name="uploadinput1" class="uploadinput" id="uploadinput1">

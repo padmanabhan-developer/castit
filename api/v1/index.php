@@ -2126,9 +2126,9 @@ $app->post('/step7Create', function() use ($app){
 	$children_sizes=$_SESSION["step3"]["children_sizes"]!=''?(int)$_SESSION["step3"]["children_sizes"]:'NULL';
 	$eye_color_id=$_SESSION["step3"]["eye_color_id"]!=''?$_SESSION["step3"]["eye_color_id"]:'NULL';
 	$hair_color_id=$_SESSION["step3"]["hair_color_id"]!=''?$_SESSION["step3"]["hair_color_id"]:'NULL';
-	$bra_size=$_SESSION["step3"]["bra_size"]!=''?$_SESSION["step3"]["bra_size"]:'NULL';
-	$height=$_SESSION["step3"]["height"]!=''?$_SESSION["step3"]["height"]:'NULL';
-	$weight=$_SESSION["step3"]["weight"]!=''?$_SESSION["step3"]["weight"]:'NULL';
+	$bra_size=$_SESSION["step3"]["bra_size"]!=''?(string)$_SESSION["step3"]["bra_size"]:'NULL';
+	$height=$_SESSION["step3"]["height"]!=''?(string)$_SESSION["step3"]["height"]:'NULL';
+	$weight=$_SESSION["step3"]["weight"]!=''?(string)$_SESSION["step3"]["weight"]:'NULL';
 
 	$notes=$_SESSION["step4"]["notes"];
 	$sports_hobby=$_SESSION["step4"]["sports_hobby"];
@@ -2177,7 +2177,7 @@ $app->post('/step7Create', function() use ($app){
 
 
 	if($operation == 'insert'){
-		$q_chip = "INSERT INTO `profiles` ( `first_name`, `last_name`, `gender_id`, `hair_color_id`,`eye_color_id`, `birthday`, `height`, `weight`, `shoe_size_from`, `shoe_size_to`, 	`shirt_size_from`,`shirt_size_to`,`pants_size_from`,`pants_size_to`,`bra_size`,`children_sizes`,`address`,`zipcode`,`city`,`country_id`,`phone`,`phone_at_work`,`email`,`job`,`notes`,`agreed_to_these_terms`,`password`,`hashed_password`,`created_at`,`updated_at`,`suite_size_from`,`suite_size_to`,`sports_hobby`,`ethnic_origin`,`dealekter1`,`dealekter2`,`dealekter3`) VALUES ('".$first_name."', '".$last_name."','".$gender_id."',".$hair_color_id.",".$eye_color_id.",'".$birthday."',".$height.",".$weight.",".$shoe_size_from.",".$shoe_size_to.",".$shirt_size_from.",".$shirt_size_to.",".$pants_size_from.",".$pants_size_to.",".$bra_size.",".$children_sizes.",'".$address."','".$zipcode."','".$city."','".$country_id."','".$phone."','".$phone_at_work."','".$email."','".$job."','".$notes."','".$agreed_to_these_terms."','".$password."','".$hashed_password."',now(),now(),".$suite_size_from.",".$suite_size_to.",'".$sports_hobby."','".$ethnic_origin."','".$dealekter1."','".$dealekter2."','".$dealekter3."')";
+		$q_chip = "INSERT INTO `profiles` ( `first_name`, `last_name`, `gender_id`, `hair_color_id`,`eye_color_id`, `birthday`, `height`, `weight`, `shoe_size_from`, `shoe_size_to`, 	`shirt_size_from`,`shirt_size_to`,`pants_size_from`,`pants_size_to`,`bra_size`,`children_sizes`,`address`,`zipcode`,`city`,`country_id`,`phone`,`phone_at_work`,`email`,`job`,`notes`,`agreed_to_these_terms`,`password`,`hashed_password`,`created_at`,`updated_at`,`suite_size_from`,`suite_size_to`,`sports_hobby`,`ethnic_origin`,`dealekter1`,`dealekter2`,`dealekter3`) VALUES ('".$first_name."', '".$last_name."','".$gender_id."',".$hair_color_id.",".$eye_color_id.",'".$birthday."',".$height.",".$weight.",".$shoe_size_from.",".$shoe_size_to.",".$shirt_size_from.",".$shirt_size_to.",".$pants_size_from.",".$pants_size_to.",'".$bra_size."',".$children_sizes.",'".$address."','".$zipcode."','".$city."','".$country_id."','".$phone."','".$phone_at_work."','".$email."','".$job."','".$notes."','".$agreed_to_these_terms."','".$password."','".$hashed_password."',now(),now(),".$suite_size_from.",".$suite_size_to.",'".$sports_hobby."','".$ethnic_origin."','".$dealekter1."','".$dealekter2."','".$dealekter3."')";
 
 		$profile_id = $db->exec($q_chip);
 		$user_profile_id = $profile_id;
@@ -2217,9 +2217,9 @@ $app->post('/step7Create', function() use ($app){
 			$activation = $db->prepare($membership_table_query);
 			$activation->execute();
 
-
+// var_dump($selectedcategories);
 			if($selectedcategories!=''){
-				$cat_arr= explode(",",$selectedcategories);
+				$cat_arr= explode(",",$selectedcategories[0]);
 				foreach($cat_arr as $cat){
 					$query = "INSERT INTO `categories_profiles` (`profile_id`,`category_id`) VALUES ('".$profile_id."','".$cat."')";
 					$db->exec($query);
@@ -2227,7 +2227,7 @@ $app->post('/step7Create', function() use ($app){
 			}
 
 			if($selectedskills!=''){
-				$skill_arr= explode(",",$selectedskills);
+				$skill_arr= explode(",",$selectedskills[0]);
 				foreach($skill_arr as $skill){
 					$query = "INSERT INTO `profiles_skills` (`profile_id`,`skill_id`) VALUES ('".$profile_id."','".$skill."')";
 					$db->exec($query);
@@ -2235,7 +2235,7 @@ $app->post('/step7Create', function() use ($app){
 			}
 
 			if($selectedlicences){
-				$license_arr= explode(",",$selectedlicences);
+				$license_arr= explode(",",$selectedlicences[0]);
 				foreach($license_arr as $license){
 				$query = "INSERT INTO `drivers_licenses_profiles` (`profile_id`,`drivers_license_id`) VALUES ('".$profile_id."','".$license."')";
 				$db->exec($query);

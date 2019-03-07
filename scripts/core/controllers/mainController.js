@@ -895,10 +895,10 @@ main.controller('mediaUploadController',['$scope', '$http', '$rootScope', functi
 		loadProfileMediaAjax.open("GET", "api/v1/getmediadata?profile_id="+profile_id);
 		loadProfileMediaAjax.send();
 	
-		let profile_number 	= sessionStorage.getItem('registered_user_profile_number');
-		let first_name 			= sessionStorage.getItem('registered_user_first_name');
-		let last_name 			= sessionStorage.getItem('registered_user_last_name');
-	
+		// $scope.profile_number 	= sessionStorage.getItem('registered_user_profile_number');
+		// $scope.first_name 			= sessionStorage.getItem('registered_user_first_name');
+		// $scope.last_name 			= sessionStorage.getItem('registered_user_last_name');
+		$scope.profileinfo = JSON.parse(loggedin_user_info);
 		let position = '';
 	
 		$(".reg-success-popup").click(function(event){

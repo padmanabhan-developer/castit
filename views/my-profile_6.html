@@ -346,7 +346,7 @@
   }
   
   .placeholder-text h2 {
-    color:#000;
+    color:#d2d2d2;
     font-size:16px;
     margin-bottom:10px;
   }
@@ -586,7 +586,7 @@
       <div id="content" class="wrap2">
         <div class="page-black livetitle">
           <div class="section-top">
-            <h2>{{ isDanish ? 'Ansøgningsskema' : 'Application form' }}</h2>
+              <h2>{{ profileinfo.first_name }} {{ profileinfo.last_name }} - {{ profileinfo.profile_number }}</h2>
             <!-- <h2>{{ registered_user_data.first_name }} {{ registered_user_data.last_name }} - {{ registered_user_data.profile_number }}</h2> -->
             <div class="black-right">
               <!-- <a href="#" class="black-edit"></a> -->
@@ -602,17 +602,18 @@
   
                 <div class="leftbar">
                   <p style="padding: 0; font-size:12px">
-                    For at sende din ansøgning bedes du uploaded min. 3 billeder og klikke på "Ansøg".
+                      {{ isDanish ? 'Her kan du uploade nye billeder og film. Du kan ikke slette de eksisterend' : 'Here you can upload  new pictures and film. You are not able to delite old material.' }}.
                   </p>
-                  <div class="upload-list-text">
-                      <h5 class="upload-title" style="padding: 0; font-size:12px">Ekstra - upload foto hvis du:</h5>
+                  <!-- <div class="upload-list-text">
+                      <h5 class="upload-title" style="padding: 0; font-size:12px">{{ isDanish ? 'Ekstra - upload foto hvis du:' : 'Extra – Upload photo if you:' }} </h5>
                       <ol class="upload-list">
-                          <li style="padding: 0; font-size:12px"> Har paene haender </li>
-                          <li style="padding: 0; font-size:12px"> Har paene fødder </li>
-                          <li style="padding: 0; font-size:12px"> Vil stille op som familie </li>
-                          <li style="padding: 0; font-size:12px"> Har en enaegget tvilling </li>
+                          <li style="padding: 0; font-size:12px">{{ isDanish ? 'Har du pæne hænder' : 'Have nice hands'}}</li>
+                          <li style="padding: 0; font-size:12px">{{ isDanish ? 'Har pæne fødder' : 'Have nice feet'}}</li>
+                          <li style="padding: 0; font-size:12px">{{ isDanish ? 'Vil stille op som familie' : 'Will participate as a family'}} </li>
+                          <li style="padding: 0; font-size:12px">{{ isDanish ? 'Har en enægget tvilling'  : 'Have an identical twin'}}</li>
+                          <li style="padding: 0; font-size:12px">{{ isDanish ? 'Filtyper: .png, .jpeg, .jpg' : 'File formats: .png, .jpeg, .jpg' }}  </li>
                       </ol>
-                  </div>
+                  </div> -->
                 </div>
                 <!--close black-leftbar-->
   
@@ -627,8 +628,8 @@
                         <div class="upload-container">
                           <div class="upload-wrap uploader">
                             <div class="placeholder-text">
-                              <h2>Place image/video</h2>
-                              <span>Click or insert image/video file here</span>
+                              <h2> {{ isDanish ? 'Placer billed/Video' : 'Place image/video'}}</h2>
+                              <!-- <span>Click or insert image/video file here</span> -->
                             </div>
                             <div class="placeholder-svg" style="display:none">
                               <!-- <img src="/images/reload.svg"> -->
@@ -649,8 +650,8 @@
                     <div class="black-cal6">
                       <div class="black-col-wrap" style="padding-right:0px;">
                         <div class="upload_section" style="padding-right:0px;">
-                          <span class="upload-title">UPLOAD FOTOS & VIDEOS</span>
-                          <span class="upload-subtitle">Upload min. 3 fotos af dig selv* video materiale er valgfrit</span>
+                            <span class="upload-title"> {{ isDanish ? 'UPLOAD FOTO OG VIDEO' : 'UPLOAD PHOTOS AND VIDEOS' }}</span>
+                            <!-- <span class="upload-subtitle">{{ isDanish ? 'Upload min. 3 fotos af dig selv* video materiale er valgfrit' : 'Upload at least 3 pictures of yourself. Video material is optional'</span> -->
                         </div>
                         <div class="upload-container imagefiles">
                             <span class="upload-title">{{ isDanish ? 'FOTOS' : 'PHOTOS' }}</span>
@@ -783,9 +784,9 @@
     <input type="hidden" name="" class="operation" value="insert">
     <div class="reg-success-popup" style="color: white; display: none">
         <div class="reg-caption">
-           <p class="upper">{{ isDanish ? 'Tak for din opdatering!' : 'THANK YOU FOR UPDATING YOUR PROFILE' }}</p> 
+           <p class="upper">{{ isDanish ? 'TAK FOR DIN OPDATERING!' : 'THANK YOU FOR UPDATING YOUR PROFILE!' }}</p> 
            <br>
-           <p class="remarks">{{ isDanish ? 'Inden for de næste 14 dage vil vi gennemse din profil.' : 'You will receive an email from us within 2 weeks.' }}</p>
+           <p class="remarks">{{ isDanish ? 'Inden for de næste 14 dage vil vi gennemse din profil.' : 'we will look through your new material within 14 days.' }}</p>
            <br><br>
         </div>
        
