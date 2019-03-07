@@ -52,10 +52,10 @@ angular
             if(currentPathArray.length > 2) {
               currentPath = '/' + currentPathArray[1];
             }
-            var restrictedPage = $.inArray(currentPath, ['/mediaupload','/landing','/profiles', '/index', '/about-us', '/contact', '/ansog-trin1', '/ansog-trin2', '/ansog-trin3', '/ansog-trin4', '/ansog-trin5', '/login', '/ansog-trin6', '/ansog-trin7', '/reset-password']) === -1;
+            var restrictedPage = $.inArray(currentPath, ['/my-profile_6','/mediaupload','/landing','/profiles', '/index', '/about-us', '/contact', '/ansog-trin1', '/ansog-trin2', '/ansog-trin3', '/ansog-trin4', '/ansog-trin5', '/login', '/ansog-trin6', '/ansog-trin7', '/reset-password']) === -1;
             var loggedIn = $rootScope.globals.currentUser;
             if (restrictedPage && !loggedIn) {
-                $location.path('/landing');
+                $location.path('/index/da');
             }
         });
   }]);

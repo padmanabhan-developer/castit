@@ -392,7 +392,12 @@ main.controller('RegisterStep3Controller', ['$scope', '$filter', '$http', '$wind
 			window.location = '#/ansog-trin2' + ($rootScope.isDanish ? '/da' : '/en' );
 		}
      });
-
+		 if($scope.suite_size_from == ''){
+			$scope.suite_size_from = $("#suite_size_from").val();
+		 }
+		 if($scope.suite_size_till == ''){
+			$scope.suite_size_till = $("#suite_size_till").val();
+		 }
 	$scope.step3Create = step3Create;
 	
 	function step3Create() {  
@@ -870,18 +875,19 @@ main.controller('mediaUploadController',['$scope', '$http', '$rootScope', functi
 	let profile_id 					= sessionStorage.getItem('registered_user_profile_id');
 	let loggedin_user_email	= sessionStorage.getItem('loginemail');
 	let loggedin_user_info 	= sessionStorage.getItem('profileinfo');
+	let mediaupload_source 	= sessionStorage.getItem('mediaupload_source');
 
 	if(profile_id == undefined && loggedin_user_email == undefined && loggedin_user_info == undefined){
 		window.location = '#/ansog-trin5' + ($rootScope.isDanish ? '/da' : '/en' );
 	}else{
-		if(loggedin_user_email != '' && loggedin_user_info != '' && profile_id == undefined){
+		if(mediaupload_source == 'update'){
 			profile_id = JSON.parse(loggedin_user_info).id;
 			$rootScope.interface = 'login';
 		}
-		if(loggedin_user_email == undefined && loggedin_user_info == undefined && profile_id != '')
-		{
+		else{
 			$rootScope.interface = 'ansog';
 		}
+
 		$rootScope.bodylayout = 'black';
 		
 		let loadProfileMediaAjax = new XMLHttpRequest();
@@ -1021,6 +1027,7 @@ main.controller('mediaUploadController',['$scope', '$http', '$rootScope', functi
 
 				for(let i = 4; i <= img_slot_rows; i++){
 					let newHTML = generateThumbnailHTML((i-1)*3);
+					newHTML.replace('<span class="remove">X</span>','');
 						$(".imagefiles").append(newHTML);
 				}
 
@@ -1079,9 +1086,9 @@ main.controller('mediaUploadController',['$scope', '$http', '$rootScope', functi
 			$(".placeholder-text").show();
 			$(".placeholder-svg, .placeholder-svg img").hide();
 			$("input[name=usermedia]").attr('disabled', false);
-			console.log(event.target.response);
+			
 			let jsonresponse = JSON.parse(event.target.response);
-			console.log(jsonresponse);
+			
 			if(event.target.status == 200  &&  jsonresponse.status_message != undefined){
 	
 				$scope.cdnfilename = jsonresponse.filename;
@@ -2242,7 +2249,9 @@ main.controller('MyProfileController2',['$scope', '$rootScope','$http', function
 }]);
 
 main.controller('MyProfileController3',['$scope', '$rootScope','$http', function($scope, $rootScope, $http, $cookies){
-  $scope.profileinfo = JSON.parse(sessionStorage.getItem('profileinfo'));
+	$scope.profileinfo = JSON.parse(sessionStorage.getItem('profileinfo'));
+	
+	let loaded_info = $scope.profileinfo;
   $scope.gender_id = $scope.profileinfo.gender_id;
   
   var birthday = +new Date($scope.profileinfo.birthday);
@@ -2254,6 +2263,7 @@ main.controller('MyProfileController3',['$scope', '$rootScope','$http', function
     $scope.hair_colors=response.hair_colors;
   });
 
+	/*
   // $("#hair_color_id option[value='"+$scope.profileinfo.hair_color_id+"']").attr("selected","selected");
 	$("#hair_color_id").val($scope.profileinfo.hair_color_id);
 
@@ -2286,9 +2296,16 @@ main.controller('MyProfileController3',['$scope', '$rootScope','$http', function
   
   // $("#bra_size option[value='"+$scope.profileinfo.bra_size+"']").attr("selected","selected");
 	$("#bra_size").val($scope.profileinfo.bra_size);
-  
+	
+	*/
+
   $scope.step3Update = step3Update;
   function step3Update() {
+		let updated_info = $scope.profileinfo;
+		let information_to_be_saved = {...loaded_info, ...updated_info};
+		information_to_be_saved = JSON.stringify(information_to_be_saved);
+		sessionStorage.setItem('profileinfo', information_to_be_saved);
+
     var formData = {
             shirt_size_from: $scope.profileinfo.shirt_size_from,
             shirt_size_to: $scope.profileinfo.shirt_size_to,
@@ -2304,7 +2321,8 @@ main.controller('MyProfileController3',['$scope', '$rootScope','$http', function
             bra_size: $scope.profileinfo.bra_size,
             height: $scope.profileinfo.height,
             weight: $scope.profileinfo.weight,
-        }
+				}
+				
     $http.post('api/v1/step3Create', formData).success(function(response) {
       if(response.success){
         window.location = '#/my-profile_4' + ($rootScope.isDanish ? '/da' : '/en' );
@@ -2315,9 +2333,10 @@ main.controller('MyProfileController3',['$scope', '$rootScope','$http', function
 
 
 main.controller('MyProfileController4',['$scope', '$rootScope','$http', function($scope, $rootScope, $http, $cookies){
-  $scope.profileinfo = JSON.parse(sessionStorage.getItem('profileinfo'));
+	$scope.profileinfo = JSON.parse(sessionStorage.getItem('profileinfo'));
+	// console.log('loaded data',$scope.profileinfo);
   var limit='';  
-
+	let loaded_info = $scope.profileinfo;
 	$http.get('api/v1/getcategories' + ($rootScope.isDanish ? '' : '/en')).success(function(categoriesdropdown) {
 		$scope.categoriesdropdown = categoriesdropdown
 	});
@@ -2332,7 +2351,9 @@ main.controller('MyProfileController4',['$scope', '$rootScope','$http', function
   $scope.selectedskills = $scope.profileinfo.skills ? $scope.profileinfo.skills.toString() : '';
   $scope.selectedlicences = $scope.profileinfo.licenses ? $scope.profileinfo.licenses.toString() : '';
 
-  $scope.$on('ngRepeatFinished', function(ngRepeatFinishedEvent) {
+	console.log($scope.selectedcategories, $scope.selectedskills, $scope.selectedlicences);
+
+	$scope.$on('ngRepeatFinished', function(ngRepeatFinishedEvent) {
 		if($scope.profileinfo.categories) {
 			for (var c of $scope.profileinfo.categories) {
 				$(".form_box span#catbut"+c).removeClass('button1');
@@ -2343,18 +2364,18 @@ main.controller('MyProfileController4',['$scope', '$rootScope','$http', function
 		}
 		if($scope.profileinfo.skills) {
 			for (var s of $scope.profileinfo.skills) {
-				$(".form_box span#skillbut"+c).removeClass('button1');
-				$(".form_box span#skillbut"+c).addClass('button2');
-				$(".form_box span#skillspan"+c).removeClass('plus-icon');
-				$(".form_box span#skillspan"+c).addClass('close-icon');
+				$(".form_box span#skillbut"+s).removeClass('button1');
+				$(".form_box span#skillbut"+s).addClass('button2');
+				$(".form_box span#skillspan"+s).removeClass('plus-icon');
+				$(".form_box span#skillspan"+s).addClass('close-icon');
 			};
 		}
 		if($scope.profileinfo.licenses) {
 			for (var s of $scope.profileinfo.licenses) {
-				$(".form_box span#licbut"+c).removeClass('button1');
-				$(".form_box span#licbut"+c).addClass('button2');
-				$(".form_box span#licspan"+c).removeClass('plus-icon');
-				$(".form_box span#licspan"+c).addClass('close-icon');
+				$(".form_box span#licbut"+s).removeClass('button1');
+				$(".form_box span#licbut"+s).addClass('button2');
+				$(".form_box span#licspan"+s).removeClass('plus-icon');
+				$(".form_box span#licspan"+s).addClass('close-icon');
 			};
 		}
   });
@@ -2429,13 +2450,24 @@ main.controller('MyProfileController4',['$scope', '$rootScope','$http', function
   
   $scope.step4Update = step4Update;
   function step4Update() {
+		let updated_info = {
+			'categories':$scope.selectedcategories.split(','), 
+			'skills':$scope.selectedskills.split(','), 
+			'licenses':$scope.selectedlicences.split(',')
+		};
+		let information_to_be_saved = {...loaded_info, ...updated_info};
+		information_to_be_saved = JSON.stringify(information_to_be_saved);
+		sessionStorage.setItem('profileinfo', information_to_be_saved);
+		$scope.profileinfo = JSON.parse(sessionStorage.getItem('profileinfo'));
+
     var formData = {
           notes: $scope.profileinfo.notes,
           sportshobby: ($scope.profileinfo.sports_hobby) ? $scope.profileinfo.sports_hobby : ' ',
           selectedcategories: $scope.profileinfo.categories,
           selectedskills: $scope.profileinfo.skills,
           selectedlicences: $scope.profileinfo.licenses
-        }
+				}
+
     $http.post('api/v1/step4Create', formData).success(function(response) {
       if(response.success){
         window.location = '#/my-profile_5' + ($rootScope.isDanish ? '/da' : '/en' );
@@ -2446,7 +2478,7 @@ main.controller('MyProfileController4',['$scope', '$rootScope','$http', function
 
 main.controller('MyProfileController5',['$scope', '$rootScope','$http', function($scope, $rootScope, $http, $cookies){
   $scope.profileinfo = JSON.parse(sessionStorage.getItem('profileinfo'));
-
+	let loaded_info = $scope.profileinfo;
   $http.get('api/v1/getlanguages').success(function(languagesdropdown) {
     $scope.languagesdropdown = languagesdropdown
   });
@@ -2511,6 +2543,12 @@ main.controller('MyProfileController5',['$scope', '$rootScope','$http', function
 
   $scope.step5Update = step5Update;
   function step5Update() {
+		let updated_info = $scope.profileinfo;
+		console.log(updated_info);
+		let information_to_be_saved = {...loaded_info, ...updated_info};
+		information_to_be_saved = JSON.stringify(information_to_be_saved);
+		sessionStorage.setItem('profileinfo', information_to_be_saved);
+
     var formData = {
           lang1: $scope.lang1,
           lang2: $scope.lang2,
@@ -2520,9 +2558,9 @@ main.controller('MyProfileController5',['$scope', '$rootScope','$http', function
           langrateval2: $('#langrateval2').val(),
           langrateval3: $('#langrateval3').val(),
           langrateval4: $('#langrateval4').val(),
-          dealekter1: $scope.dealekter1,
-          dealekter2: $scope.dealekter2,
-          dealekter3: $scope.dealekter3,
+          dealekter1: $scope.profileinfo.dealekter1,
+          dealekter2: $scope.profileinfo.dealekter2,
+          dealekter3: $scope.profileinfo.dealekter3,
           user_profile_id: $scope.profileinfo.id,
           operation: 'update',
           lng_pro_id1: ($scope.profileinfo.languages[0] != undefined) ? $scope.profileinfo.languages[0].lng_pro_id : "",
@@ -2532,6 +2570,51 @@ main.controller('MyProfileController5',['$scope', '$rootScope','$http', function
         }
     $http.post('api/v1/step5Create', formData).success(function(response) {
       if(response.success){
+				operation = 'update';
+				sessionStorage.setItem('mediaupload_source','update');
+				$scope.step7Create = step7Create;
+				step7Create();
+
+				function step7Create() {
+					$scope.ifRegistring=true;		
+					var fd = new FormData();
+					localStorage.removeItem('imagecount');
+					localStorage.removeItem('preview_html');
+					$http.post('api/v1/step7Create',  fd, 
+					{
+						transformRequest: angular.identity,
+						operation: operation,
+						headers: {'Content-Type': undefined,'Process-Data': false}
+					}
+					).success(function(response) {
+						if(response.status != undefined){
+							$scope.ifRegistring=false;
+							
+							data = { "email": response.email, "first_name": response.first_name, "last_name": response.last_name, "profile_number": response.profile_number, "profile_id": response.profile_id };
+
+							sessionStorage.setItem('registered_user_profile_id', data.profile_id);
+							sessionStorage.setItem('registered_user_profile_number', data.profile_number);
+							sessionStorage.setItem('registered_user_first_name', data.first_name);
+							sessionStorage.setItem('registered_user_last_name', data.last_name);
+
+							if(operation == "insert"){
+								$.post("/api/v1/welcome_email", data,
+										function (data, textStatus, jqXHR) {},
+								);
+							}
+							// window.location = '#/mediaupload' + ($rootScope.isDanish ? '/da' : '/en' );
+
+						}
+						else{
+							alert($rootScope.isDanish ? "Ikke registreret, venligst prøv igen" : "Couldn't Register, Please Try again later");
+							window.location = '#/index' + ($rootScope.isDanish ? '/da' : '/en' );
+						}
+					}).error(function(error){
+						alert('Something went wrong, Please try again later'); 
+						window.location = '#/index' + ($rootScope.isDanish ? '/da' : '/en' );
+					});	
+				}
+
         window.location = '#/my-profile_6' + ($rootScope.isDanish ? '/da' : '/en' );
       }
     });       

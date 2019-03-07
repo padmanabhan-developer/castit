@@ -2090,6 +2090,7 @@ $app->post('/step6Create',function () use ($app) {
 $app->post('/step7Create', function() use ($app){
 	// echo '<pre>';
 	// var_dump($_SESSION);
+	// exit;
 	$operation = (isset($_SESSION['operation'])) ? $_SESSION['operation'] : 'insert';
 	$user_profile_id = (isset($_SESSION['user_profile_id'])) ? $_SESSION['user_profile_id'] : '';
 	global $db;
@@ -2123,11 +2124,11 @@ $app->post('/step7Create', function() use ($app){
 	$suite_size_from=$_SESSION["step3"]["suite_size_from"]!=''?(int)$_SESSION["step3"]["suite_size_from"]:'NULL';
 	$suite_size_to=$_SESSION["step3"]["suite_size_to"]!=''?(int)$_SESSION["step3"]["suite_size_to"]:'NULL';
 	$children_sizes=$_SESSION["step3"]["children_sizes"]!=''?(int)$_SESSION["step3"]["children_sizes"]:'NULL';
-	$eye_color_id=$_SESSION["step3"]["eye_color_id"]!=''?(int)$_SESSION["step3"]["eye_color_id"]:'NULL';
-	$hair_color_id=$_SESSION["step3"]["hair_color_id"]!=''?(int)$_SESSION["step3"]["hair_color_id"]:'NULL';
-	$bra_size=$_SESSION["step3"]["bra_size"]!=''?(int)$_SESSION["step3"]["bra_size"]:'NULL';
-	$height=$_SESSION["step3"]["height"]!=''?(int)$_SESSION["step3"]["height"]:'NULL';
-	$weight=$_SESSION["step3"]["weight"]!=''?(int)$_SESSION["step3"]["weight"]:'NULL';
+	$eye_color_id=$_SESSION["step3"]["eye_color_id"]!=''?$_SESSION["step3"]["eye_color_id"]:'NULL';
+	$hair_color_id=$_SESSION["step3"]["hair_color_id"]!=''?$_SESSION["step3"]["hair_color_id"]:'NULL';
+	$bra_size=$_SESSION["step3"]["bra_size"]!=''?$_SESSION["step3"]["bra_size"]:'NULL';
+	$height=$_SESSION["step3"]["height"]!=''?$_SESSION["step3"]["height"]:'NULL';
+	$weight=$_SESSION["step3"]["weight"]!=''?$_SESSION["step3"]["weight"]:'NULL';
 
 	$notes=$_SESSION["step4"]["notes"];
 	$sports_hobby=$_SESSION["step4"]["sports_hobby"];
@@ -2162,6 +2163,10 @@ $app->post('/step7Create', function() use ($app){
 	if(isset($_SESSION["step5"]["lng_pro_id4"]) && $_SESSION["step5"]["lng_pro_id4"]!='')
 		$languages[3]['lng_pro_id']=$_SESSION["step5"]["lng_pro_id4"];
 
+		$dealekter1 = '';
+		$dealekter2 = '';
+		$dealekter3 = '';
+
 	if(isset($_SESSION["step5"]["dealekter1"]) && $_SESSION["step5"]["dealekter1"]!='')
 		$dealekter1=$_SESSION["step5"]["dealekter1"];
 	if(isset($_SESSION["step5"]["dealekter2"]) && $_SESSION["step5"]["dealekter2"]!='')
@@ -2170,8 +2175,9 @@ $app->post('/step7Create', function() use ($app){
 		$dealekter3=$_SESSION["step5"]["dealekter3"];
 	$agreed_to_these_terms=1;
 
+
 	if($operation == 'insert'){
-		$q_chip = "INSERT INTO `profiles` ( `first_name`, `last_name`, `gender_id`, `hair_color_id`,`eye_color_id`, `birthday`, `height`, `weight`, `shoe_size_from`, `shoe_size_to`, 	`shirt_size_from`,`shirt_size_to`,`pants_size_from`,`pants_size_to`,`bra_size`,`children_sizes`,`address`,`zipcode`,`city`,`country_id`,`phone`,`phone_at_work`,`email`,`job`,`notes`,`agreed_to_these_terms`,`password`,`hashed_password`,`created_at`,`updated_at`,`suite_size_from`,`suite_size_to`,`sports_hobby`,`ethnic_origin`) VALUES ('".$first_name."', '".$last_name."','".$gender_id."',".$hair_color_id.",".$eye_color_id.",'".$birthday."',".$height.",".$weight.",".$shoe_size_from.",".$shoe_size_to.",".$shirt_size_from.",".$shirt_size_to.",".$pants_size_from.",".$pants_size_to.",".$bra_size.",".$children_sizes.",'".$address."','".$zipcode."','".$city."','".$country_id."','".$phone."','".$phone_at_work."','".$email."','".$job."','".$notes."','".$agreed_to_these_terms."','".$password."','".$hashed_password."',now(),now(),".$suite_size_from.",".$suite_size_to.",'".$sports_hobby."','".$ethnic_origin."')";
+		$q_chip = "INSERT INTO `profiles` ( `first_name`, `last_name`, `gender_id`, `hair_color_id`,`eye_color_id`, `birthday`, `height`, `weight`, `shoe_size_from`, `shoe_size_to`, 	`shirt_size_from`,`shirt_size_to`,`pants_size_from`,`pants_size_to`,`bra_size`,`children_sizes`,`address`,`zipcode`,`city`,`country_id`,`phone`,`phone_at_work`,`email`,`job`,`notes`,`agreed_to_these_terms`,`password`,`hashed_password`,`created_at`,`updated_at`,`suite_size_from`,`suite_size_to`,`sports_hobby`,`ethnic_origin`,`dealekter1`,`dealekter2`,`dealekter3`) VALUES ('".$first_name."', '".$last_name."','".$gender_id."',".$hair_color_id.",".$eye_color_id.",'".$birthday."',".$height.",".$weight.",".$shoe_size_from.",".$shoe_size_to.",".$shirt_size_from.",".$shirt_size_to.",".$pants_size_from.",".$pants_size_to.",".$bra_size.",".$children_sizes.",'".$address."','".$zipcode."','".$city."','".$country_id."','".$phone."','".$phone_at_work."','".$email."','".$job."','".$notes."','".$agreed_to_these_terms."','".$password."','".$hashed_password."',now(),now(),".$suite_size_from.",".$suite_size_to.",'".$sports_hobby."','".$ethnic_origin."','".$dealekter1."','".$dealekter2."','".$dealekter3."')";
 
 		$profile_id = $db->exec($q_chip);
 		$user_profile_id = $profile_id;
@@ -2287,8 +2293,13 @@ $app->post('/step7Create', function() use ($app){
 									suite_size_from = $suite_size_from,
 									suite_size_to = $suite_size_to,
 									ethnic_origin = '$ethnic_origin',
-									sports_hobby = '$sports_hobby'
+									sports_hobby = '$sports_hobby',
+									dealekter1 = '$dealekter1',
+									dealekter2 = '$dealekter2',
+									dealekter3 = '$dealekter3'
 								WHERE id = $user_profile_id";
+								// echo $q_chip;
+								// exit;
 					$query_prepared = $db->prepare($q_chip);
 					$query_prepared->execute();
 			}
@@ -2342,8 +2353,11 @@ $app->post('/step7Create', function() use ($app){
 					$cat_arr= $selectedcategories;
 				}
 				
+				$clear_existance_query = $db->prepare("delete from categories_profiles where profile_id = ".$user_profile_id);
+				$clear_existance_query->execute();
+
 				foreach($cat_arr as $cat){
-					$query = "UPDATE categories_profiles SET category_id = $cat WHERE profile_id = $user_profile_id";
+					$query = "INSERT INTO `categories_profiles` (`profile_id`,`category_id`) VALUES ('".$user_profile_id."','".$cat."')";
 					$query_prepared = $db->prepare($query);
 					$query_prepared->execute();
 				}
@@ -2356,8 +2370,12 @@ $app->post('/step7Create', function() use ($app){
 				else{
 					$skill_arr= $selectedskills;
 				}
+				
+				$clear_existance_query = $db->prepare("delete from profiles_skills where profile_id = ".$user_profile_id);
+				$clear_existance_query->execute();
+
 				foreach($skill_arr as $skill){
-					$query = "UPDATE profiles_skills SET skill_id = $skill WHERE profile_id = $user_profile_id";
+					$query = "INSERT INTO `profiles_skills` (`profile_id`,`skill_id`) VALUES ('".$user_profile_id."','".$skill."')";
 					$query_prepared = $db->prepare($query);
 					$query_prepared->execute();
 				}
@@ -2370,10 +2388,13 @@ $app->post('/step7Create', function() use ($app){
 				else{
 					$license_arr= $selectedlicences;
 				}
+
+				$clear_existance_query = $db->prepare("delete from drivers_licenses_profiles where profile_id = ".$user_profile_id);
+    		$clear_existance_query->execute();
 				foreach($license_arr as $license){
-					$query = "UPDATE drivers_licenses_profiles SET drivers_license_id = $license WHERE profile_id = $user_profile_id";
-					$query_prepared = $db->prepare($query);
-					$query_prepared->execute();
+					$sql_query = "INSERT INTO `drivers_licenses_profiles` (`profile_id`,`drivers_license_id`) VALUES ('".$user_profile_id."','".$license."')";
+					$prepared_query = $db->prepare($sql_query);
+					$prepared_query->execute();
 				}
 			}
 
@@ -2391,7 +2412,7 @@ $app->post('/step7Create', function() use ($app){
 					$query_prepared->execute();
 				}
 			}
-
+			/*
 			if(isset($_SESSION['Image_file'])){
 				foreach($_SESSION['Image_file'] as $key => $image){
 					$filename = $image['name'][0];
@@ -2493,6 +2514,7 @@ $app->post('/step7Create', function() use ($app){
 			unset($_SESSION['Video_file']);
 			unset($_SESSION['Video_file_location']);	
 			}
+			*/
 			echoResponse(200,array('status'=>true,'msg'=>'Updated Sucessfully'));
 	}
 });
