@@ -27,7 +27,7 @@
                         <div class="form_box2">
                         </div>
                         <div class="form_box2">
-                            <label class="ansog_select_label">{{ isDanish ? 'SKJORTE FRA' : 'Shirt size from' }}</label>
+                            <label class="ansog_select_label">{{ isDanish ? 'SKJORTE FRA' : 'Shirt from' }}</label>
                           <div class="select-style">
                             <select ng-style="{'color':shirt_size_from==''?'#dadada':''}" name="shirt_size_from" class="input2" id="shirt_size_from" ng-model="profileinfo.shirt_size_from" >
                               <!-- <option value="">{{ isDanish ? 'Skjorte fra' : 'Shirt from' }}</option> -->
@@ -77,7 +77,7 @@
                           </div>
                         </div>
                         <div class="form_box2">
-                            <label class="ansog_select_label">{{ isDanish ? 'Skjorte til' : 'Shirt size to' }}</label>
+                            <label class="ansog_select_label">{{ isDanish ? 'Skjorte til' : 'Shirt to' }}</label>
                           <div class="select-style">
                             <select ng-style="{'color':profileinfo.shirt_size_to==''?'#dadada':''}" name="shirt_size_to" class="input2" id="shirt_size_to" ng-model="profileinfo.shirt_size_to" >
                               <!-- <option value="">{{ isDanish ? 'Skjorte til' : 'Shirt to' }}</option> -->
@@ -131,7 +131,7 @@
                     <div class="form_box">
                       <div class="black-row">
                         <div class="form_box2">
-                            <label class="ansog_select_label">{{ isDanish ? 'Bukser str.' : 'Trouser size' }}</label>
+                            <label class="ansog_select_label">{{ isDanish ? 'Bukser fra' : 'Pants from' }}</label>
                           <div class="select-style">
                             <select ng-style="{'color':profileinfo.pants_size_from==''?'#dadada':''}" name="pants_size_from" class="input2" id="pants_size_from" ng-model="profileinfo.pants_size_from" >
                               <!-- <option style="color:black" value="">{{ isDanish ? 'Bukser fra' : 'Trouser size from' }}</option> -->
@@ -182,7 +182,7 @@
                           </div>
                         </div>
                         <div class="form_box2">
-                            <label class="ansog_select_label">{{ isDanish ? 'Bukser til' : 'Trouser size to' }}</label>
+                            <label class="ansog_select_label">{{ isDanish ? 'Bukser til' : 'Pants to' }}</label>
                           <div class="select-style">
                             <select ng-style="{'color':profileinfo.pants_size_to==''?'#dadada':''}"  name="pants_size_to" class="input2" id="pants_size_to" ng-model="profileinfo.pants_size_to" >
                               <!-- <option style="color:black" value="">{{ isDanish ? 'Bukser til' : 'Trouser size to' }}</option> -->
@@ -236,7 +236,7 @@
                     <div class="form_box">
                       <div class="black-row">
                         <div class="form_box2">
-                            <label class="ansog_select_label">{{ isDanish ? 'Sko str.' : 'Shoe size' }}</label>
+                            <label class="ansog_select_label">{{ isDanish ? 'Sko fra' : 'Shoe from' }}</label>
                           <div class="select-style">
                             <select ng-style="{'color':profileinfo.shoe_size_from==''?'#dadada':''}" name="shoe_size_from" class="input2" id="shoe_size_from" ng-model="profileinfo.shoe_size_from" >
                               <!-- <option value="">{{ isDanish ? 'Sko fra' : 'Shoe size from' }}</option> -->
@@ -284,7 +284,7 @@
                           </div>
                         </div>
                         <div class="form_box2">
-                            <label class="ansog_select_label">__</label>
+                            <label class="ansog_select_label">{{ isDanish ? 'Sko fra' : 'Shoe from' }}</label>
                           <div class="select-style">
                             <select ng-style="{'color':profileinfo.shoe_size_to==''?'#dadada':''}" name="shoe_size_to" class="input2" id="shoe_size_to" ng-model="profileinfo.shoe_size_to" >
                               <!-- <option style="color:black" value="">{{ isDanish ? 'Sko til' : 'Shoe size to' }}</option> -->
@@ -345,7 +345,7 @@
                     <div class="form_box" ng-if="gender_id==1 && age>14">
                       <div class="black-row">
                         <div class="form_box2">
-                            <label class="ansog_select_label">{{ isDanish ? 'Jakkesæt str.' : 'Suit size' }}</label>
+                            <label class="ansog_select_label">{{ isDanish ? 'Jakkesæt fra' : 'Suit size from' }}</label>
                           <div class="select-style">
                             <select ng-style="{'color':profileinfo.suite_size_from==''?'#dadada':''}" name="suite_size_from" class="input2" id="suite_size_from" ng-model="profileinfo.suite_size_from" >
                               <!-- <option style="color:black" value="">{{ isDanish ? 'Jakkesæt fra.' : 'Suit size from' }}</option> -->
@@ -364,7 +364,7 @@
                           </div>
                         </div>
                         <div class="form_box2">
-                            <label class="ansog_select_label">__</label>
+                            <label class="ansog_select_label">{{ isDanish ? 'Jakkesæt til' : 'Suit size to' }}</label>
                           <div class="select-style">
                             <select ng-style="{'color':profileinfo.suite_size_to==''?'#dadada':''}" name="suite_size_to" class="input2" id="suite_size_to" ng-model="profileinfo.suite_size_to" >
                               <!-- <option style="color:black" value="">{{ isDanish ? 'Jakkesæt til' : 'Suit size to' }}</option> -->
@@ -437,7 +437,7 @@
                         </div>
                       </div>
                     </div>
-                    <div class="form_box">
+                    <!-- <div class="form_box">
                       <div class="black-row">
                         <div class="form_box2" ng-if="age<=14">
                             <label class="ansog_select_label">{{ isDanish ? 'Børne str.' : 'Kids size' }}</label>
@@ -451,7 +451,7 @@
                           </div>
                         </div>
                       </div>
-                    </div>
+                    </div> -->
                   </div>
                   <!--close black-cal4-->
                 </div>

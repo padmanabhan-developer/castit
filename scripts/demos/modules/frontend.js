@@ -474,10 +474,12 @@ var frontend = angular.module('theme.demos.dashboard', [
 	function closeProfileboxpopup() {
 		$("#profilebox").fadeOut('slow');
 	}
-		 
+	
+	$(".poup-close3 .video_download").click(function(e){
+		e.stopPropagation();
+	});
+
 	$(".poup-close3").click(function(){
-
-
 		$scope.IsProfileImage = true;
 		$scope.IsProfileVideo = false;
 		$scope.responsiveProfileDetail = false;

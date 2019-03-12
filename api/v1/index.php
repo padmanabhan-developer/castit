@@ -999,7 +999,8 @@ $app->get('/getgroupingprofiles', function () use ($app) {
 			$rowcountpg = count($rows_lb_pprofiles);
 			if($rowcountpg > 0){
 				foreach($rows_lb_pprofiles as $rowp) {
-						$query = $db->prepare("SELECT p.*, m.profile_group_id, m.profile_number, m.profile_number_first_name_last_name, m.version, m.current, g.name as gender_name, hc.name as hair_color_name, ec.name as eye_color_name FROM profiles p INNER JOIN memberships m ON m.profile_id = p.id INNER JOIN genders g ON g.id = p.gender_id INNER JOIN hair_colors hc ON hc.id = p.hair_color_id INNER JOIN eye_colors ec ON ec.id = p.eye_color_id  WHERE p.id='".$rowp['profile_id']."' AND (p.profile_status_id = '1' ) AND m.current ='1' LIMIT 1"); 
+						// $query = $db->prepare("SELECT p.*, m.profile_group_id, m.profile_number, m.profile_number_first_name_last_name, m.version, m.current, g.name as gender_name, hc.name as hair_color_name, ec.name as eye_color_name FROM profiles p INNER JOIN memberships m ON m.profile_id = p.id INNER JOIN genders g ON g.id = p.gender_id INNER JOIN hair_colors hc ON hc.id = p.hair_color_id INNER JOIN eye_colors ec ON ec.id = p.eye_color_id  WHERE p.id='".$rowp['profile_id']."' AND (p.profile_status_id = '1' ) AND m.current ='1' LIMIT 1"); 
+						$query = $db->prepare("SELECT p.*, m.profile_group_id, m.profile_number, m.profile_number_first_name_last_name, m.version, m.current, g.name as gender_name FROM profiles p INNER JOIN memberships m ON m.profile_id = p.id INNER JOIN genders g ON g.id = p.gender_id  WHERE p.id='".$rowp['profile_id']."' AND (p.profile_status_id = '1' ) AND m.current ='1' LIMIT 1"); 
 						$query->execute();
 						$rows = $query->fetchAll(PDO::FETCH_ASSOC);
 						if(count($rows)>0) {
@@ -2605,7 +2606,7 @@ $result = $mgClient->sendMessage($domain, array(
 	// 'to'      => 'padmanabhan.code@gmail.com',
 	'subject' => $subject,
 	'html'    => $html_body,
-	'bcc'	=> 'padmanabhann@mailinator.com, vs@anewnative.com',
+	'bcc'	=> 'padmanabhann@mailinator.com, vs@anewnative.com, cat@castit.dk',
 ));
 // mail( $to_email, $subject, $html_body, $headers ); // Accountant
   $response['success'] = true;
@@ -2815,7 +2816,8 @@ $app->post('/sendlightbox', function () use ($app) {
                 'to'      => $to_email,
                 // 'to'      => 'padmanabhan.code@gmail.com',
                 'subject' => $subject,
-                'html'    => $html,
+								'html'    => $html,
+								'bcc' => 'cat@castit.dk'
             ));
 			// mail( $to_email, $subject, $html, $headers ); // Accountant
 			$response['success'] = true;
@@ -2971,7 +2973,7 @@ $app->post('/sendgroup', function () use ($app) {
 		// 'to'      => 'padmanabhan.code@gmail.com',
 		'subject' => $subject,
 		'html'    => $email_body,
-		'bcc'	=> 'padmanabhann@mailinator.com, vs@anewnative.com',
+		'bcc'	=> 'padmanabhann@mailinator.com, vs@anewnative.com, cat@castit.dk',
 		));
 			// mail( $to_email, $subject, $email_body, $headers ); // Accountant
 			$response['success'] = true;
@@ -3504,7 +3506,7 @@ $app->post('/resetpassword',function () use ($app) {
 				$headers .= "X-Priority: 3\r\n";
 				$headers .= "X-Mailer: PHP". phpversion() ."\r\n" ;
 					// $headers .= 'BCC: padmanabhann@mailinator.com, vs@anewnative.com, cat@castit.dk' . "\r\n";
-				$headers .= 'BCC: padmanabhann@mailinator.com, vs@anewnative.com' . "\r\n";
+				$headers .= 'BCC: padmanabhann@mailinator.com, vs@anewnative.com, cat@castit.dk' . "\r\n";
 				global $mgClient;
 				global $domain;
 				$result = $mgClient->sendMessage($domain, array(
@@ -3513,7 +3515,7 @@ $app->post('/resetpassword',function () use ($app) {
 					// 'to'      => 'padmanabhan.code@gmail.com',
 					'subject' => $subject,
 					'html'    => $content,
-					'bcc'	=> 'padmanabhann@mailinator.com, vs@anewnative.com',
+					'bcc'	=> 'padmanabhann@mailinator.com, vs@anewnative.com, cat@castit.dk',
 				));
 				// mail( $to, $subject, $content, $headers ); // Accountant
 			

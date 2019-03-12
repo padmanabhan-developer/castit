@@ -32,7 +32,43 @@ Vi sætter stor pris på din interesse.</p>
 <p># 0045 3135 3579</p>
 <p>E: pernille@castit.dk</p>
 
-<a href="http://134.213.29.220">www.castit.dk</a>
+<a href="http://134.213.29.220">Castit.dk</a>
+
+-------------------------------------------------------------------------------------------------------
+
+
+
+<p>Dear $first_name</p>
+<br/>Thank you for your application as a profile at Castit. We appreciate your interest.</p>
+<p>We are happy to tell you that your profile is now online and we hope that you will continue to update it with new pictures and information in the future.</p>
+<p>Unfortunately, we cannot guarantee you jobs, but we will contact you if we get something interesting that fits you.</p>
+<br/><br/>
+<p>If you are interested!</p>
+<p>We organize workshops for amateurs and new profiles together with Tony Grahn. We have great success in educating our profiles. That makes it easier to access jobs and our profiles get a lot of personal gains as well. Look at our website under "Workshops" or contact us directly.</p>
+<br/><br/>
+<p>PLEASE NOTE: If you are with other agencies, we would like to know.</p>
+<br/><br/>
+<p>We look forward to hopefully soon talking to you.</p>
+<br/>
+<p>Very best</p>
+<br/>
+<p>Cathrine & Pernille</p>
+<br/>
+<p><img style="width:150px; height:30px" src="/admin/images/logo.png"/></p>
+<p>Rosenvængets Allè 11, 1st floor</p>
+<p>2100 Copenhagen East</p>
+<br/>
+<p>Cathrine Hovmand</p>
+<p># 0045 2128 5825</p>
+<p>E: cat@castit.dk</p>
+<br/>
+<p>Pernille Marco:</p>
+<p># 0045 3135 3579</p>
+<p>E: pernille@castit.dk</p>
+<br/>
+<a href="http://134.213.29.220">Castit.dk</a>
+
+
 
 EOM;
 ?>

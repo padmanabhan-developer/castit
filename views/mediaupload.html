@@ -605,7 +605,8 @@ span.addmore {
                       {{ isDanish ? 'For at sende din ansøgning bedes du uploaded min. 3 billeder og klikke på "Ansøg"' : 'To send your application please upload min. 3 pictures and click on “Apply”.' }}.
                   </p>
                   <div class="upload-list-text">
-                      <h5 class="upload-title" style="padding: 0; font-size:12px">{{ isDanish ? 'Ekstra - upload foto hvis du:' : 'Extra – Upload photo if you:' }} </h5>
+					  <h5 class="upload-title" style="padding: 0; font-size:12px">{{ isDanish ? 'Ekstra - upload foto hvis du:' : 'Extra – Upload photo if you:' }} </h5>
+					  <br />
                       <ol class="upload-list">
                           <li style="padding: 0; font-size:12px">{{ isDanish ? 'Har du pæne hænder' : 'Have nice hands'}}</li>
                           <li style="padding: 0; font-size:12px">{{ isDanish ? 'Har pæne fødder' : 'Have nice feet'}}</li>
@@ -628,7 +629,7 @@ span.addmore {
 											<div class="upload-container">
 												<div class="upload-wrap uploader">
 													<div class="placeholder-text">
-															<h2> {{ isDanish ? 'Placer billed/Video' : 'Place image/video'}}</h2>
+															<h2> {{ isDanish ? 'Placer billede/video' : 'Place image/video'}}</h2>
 														<!-- <span>Click or insert image/video file here</span> -->
                           </div>
                           <div class="placeholder-svg" style="display:none">
@@ -658,19 +659,24 @@ span.addmore {
 												<div class="upload-box-row" id="upload-box-row">
 													<div class="upload-box" style="border: 2px solid white;">
 													<input type="hidden" name="uploadinput1" class="uploadinput" id="uploadinput1">
-													<label for="uploadinput1" class="upload-img uploadinput1" style="color: white;text-transform: uppercase;top: 45%;text-align: center;font-size: 10px;font-family: helvetica;">{{ isDanish ? 'Portræt' : 'Portrait'}} *
+													<label style="color: white;text-transform: uppercase;top: 45%;text-align: center;font-size: 10px;font-family: helvetica;position: absolute; left: 0; right: 0">{{ isDanish ? 'Portræt' : 'Portrait'}} * </label>
+													<label for="uploadinput1" class="upload-img uploadinput1">
 														<span class="remove">X</span>
 													</label>
 													</div>
 													<div class="upload-box" style="border: 2px solid white;">
 													<input type="hidden" name="uploadinput2" class="uploadinput" id="uploadinput2">
-													<label for="uploadinput2" class="upload-img uploadinput2" style="color: white;text-transform: uppercase;top: 45%;text-align: center;font-size: 10px;font-family: helvetica;">{{ isDanish ? 'Profil' : 'Profile'}} *
+													<label style="color: white;text-transform: uppercase;top: 45%;text-align: center;font-size: 10px;font-family: helvetica;position: absolute; left: 0; right: 0">{{ isDanish ? 'Profil' : 'Profile'}} * </label>
+
+													<label for="uploadinput2" class="upload-img uploadinput2">
 														<span class="remove">X</span>
 													</label>
 													</div>
 													<div class="upload-box" style="border: 2px solid white;">
 													<input type="hidden" name="uploadinput3" class="uploadinput" id="uploadinput3">
-													<label for="uploadinput3" class="upload-img uploadinput3" style="color: white;text-transform: uppercase;top: 45%;text-align: center;font-size: 10px;font-family: helvetica;">{{ isDanish ? 'Helfigur' : 'Full-figure'}} *
+													<label style="color: white;text-transform: uppercase;top: 45%;text-align: center;font-size: 10px;font-family: helvetica;position: absolute; left: 0; right: 0">{{ isDanish ? 'Helfigur' : 'Full-Figure'}} * </label>
+
+													<label for="uploadinput3" class="upload-img uploadinput3">
 														<span class="remove">X</span>
 													</label>
 													</div>
