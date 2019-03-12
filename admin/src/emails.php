@@ -37,7 +37,7 @@ if($type != ''){
             // $headers .= 'BCC: padmanabhann@mailinator.com, vs@anewnative.com, cat@castit.dk' . "\r\n";
             // $headers .= 'BCC: padmanabhann@mailinator.com, vs@anewnative.com' . "\r\n";
             $subject = "Castit - Profile Activation Notification from Castit-Admin";
-            $subject = "Svar fra Castit!";
+            $subject = "Svar fra Castit! / Response from Castit! ";
             
             include_once("activation_email.php");
             $html = $activation_email;
@@ -71,7 +71,7 @@ if($type != ''){
             // $headers .= 'BCC: padmanabhann@mailinator.com, vs@anewnative.com, cat@castit.dk' . "\r\n";
             // $headers .= 'BCC: padmanabhann@mailinator.com, vs@anewnative.com' . "\r\n";
             $subject = "Castit - Profile Deactivation Notification from Castit-Admin";
-            $subject = "Svar fra Castit!";
+            $subject = "Svar fra Castit! / Response from Castit! ";
             include_once("deactivation_email.php");
             $html = $deactivation_email;
             $result = $mgClient->sendMessage($domain, array(
