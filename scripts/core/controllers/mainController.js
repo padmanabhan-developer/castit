@@ -374,16 +374,23 @@ main.controller('RegisterStep3Controller', ['$scope', '$filter', '$http', '$wind
 			if(reponse.step3status){
 				$scope.shirt_size_from 	= reponse.step3.shirt_size_from;
 				$scope.shirt_size_to 	= reponse.step3.shirt_size_to;
+				
 				$scope.pants_size_from 	= reponse.step3.pants_size_from;
 				$scope.pants_size_to 	= reponse.step3.pants_size_to;
+				
 				$scope.shoe_size_from 	= reponse.step3.shoe_size_from;
 				$scope.shoe_size_to 	= reponse.step3.shoe_size_to;
+				
 				$scope.suite_size_from 	= reponse.step3.suite_size_from;
 				$scope.suite_size_to 	= reponse.step3.suite_size_to;
+				
 				$scope.children_sizes 	= reponse.step3.children_sizes;
+				
 				$scope.eye_color_id 	= reponse.step3.eye_color_id;
 				$scope.hair_color_id 	= reponse.step3.hair_color_id;
+				
 				$scope.bra_size 		= reponse.step3.bra_size;
+				
 				$scope.height 			= reponse.step3.height;
 				$scope.weight 			= reponse.step3.weight;
 			}
@@ -392,15 +399,14 @@ main.controller('RegisterStep3Controller', ['$scope', '$filter', '$http', '$wind
 			window.location = '#/ansog-trin2' + ($rootScope.isDanish ? '/da' : '/en' );
 		}
      });
-		 if($scope.suite_size_from == ''){
-			$scope.suite_size_from = $("#suite_size_from").val();
-		 }
-		 if($scope.suite_size_till == ''){
-			$scope.suite_size_till = $("#suite_size_till").val();
-		 }
+		 
 	$scope.step3Create = step3Create;
 	
-	function step3Create() {  
+	function step3Create() { 
+		$scope.suite_size_from = $("#suite_size_from").val();
+		$scope.suite_size_to = $("#suite_size_to").val();
+		$scope.bra_size = $("#bra_size").val();
+
 		var formData = {
             shirt_size_from: $scope.shirt_size_from,
 						shirt_size_to: $scope.shirt_size_to,
@@ -2074,7 +2080,7 @@ main.controller('AngularLoginController', ['$scope', '$filter', '$http', '$windo
 			$("#login_email").addClass("blue-login");
 
 			$("input[type=submit].login_button1").addClass("blue-login");
-			$("input[type=submit].login_button1").val("Send eMail");
+			$("input[type=submit].login_button1").val("Send Email");
 			$("input[type=submit].login_button1").attr("type","button");
 
 			$("input[type=button].blue-login").click(function(){
@@ -2087,7 +2093,12 @@ main.controller('AngularLoginController', ['$scope', '$filter', '$http', '$windo
 						headers: {'Content-Type': 'application/x-www-form-urlencoded'}
 					})
 					.success(function(data) {
-						$(".login-error-message").html(data.message);
+						if($rootScope.isDanish){
+							$(".login-error-message").html(data.message);
+						}
+						else{
+							$(".login-error-message").html(data.message_en);
+						}
 						setTimeout(function(){
 							location.reload();
 						}, 10000);     
@@ -2103,7 +2114,7 @@ main.controller('AngularLoginController', ['$scope', '$filter', '$http', '$windo
 			$("#login_email").addClass("blue-login");
 
 			$("input[type=submit].login_button1").addClass("blue-login");
-			$("input[type=submit].login_button1").val("Send eMail");
+			$("input[type=submit].login_button1").val("Send Email");
 			$("input[type=submit].login_button1").attr("type","button");
 
 			$("input[type=button].blue-login").click(function(){

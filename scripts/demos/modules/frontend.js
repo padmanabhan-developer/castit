@@ -79,10 +79,10 @@ var frontend = angular.module('theme.demos.dashboard', [
 		$scope.group_username = $location.search().username;
 		$scope.group_shared_name = $location.search().groupname;
 		if($scope.isDanish){
-			$scope.group_share_text = "<p>LIGHTBOX:</p><p>"+$scope.group_shared_name+"</p><br><p>Lavet af:</p><p>"+$scope.group_username+"</p><br><p>Du kan slette profiler og rette i tekst ved at klikke på gruppe symbolet til højre. Brug piletasterne til at navigerer i grupperne.</p><span class='side-icon3' id='tab_group1' style='border: none;padding: 0 0 10px 20px;'></span><br><p>Når du er færdig med at redigere, klik på send</p>";
+			$scope.group_share_text = "<p>LIGHTBOX: </p><p>"+$scope.group_shared_name+"</p><br><p>Oprettet af: </p><p>"+$scope.group_username+"</p><br><p>Du kan slette profiler og rette i tekst ved at klikke på gruppe symbolet til højre. Brug piletasterne til at navigerer i grupperne.</p><span class='side-icon3' id='tab_group1' style='border: none;padding: 0 0 10px 20px;'></span><br><p>Når du er færdig med at redigere, klik send</p>";
 		}
 		else{
-			$scope.group_share_text = "<p>THIS IS A LIGHTBOX FOR:</p><p>"+$scope.group_shared_name+"</p><br><p>CREATED BY:</p><p>"+$scope.group_username+"</p><br><p>You can delete persons and edit text by clicking the group symbol on the right side menu.</p><span class='side-icon3' id='tab_group1' style='border: none;padding: 0 0 10px 20px;'></span><br><p>When you are done editing, just click Send</p>";
+			$scope.group_share_text = "<p>LIGHTBOX: </p><p>"+$scope.group_shared_name+"</p><br><p>Created by: </p><p>"+$scope.group_username+"</p><br><p>You can delete profiles and correct text by clicking the group symbol in the right side menu. Use the arrow keys to navigatethe groups.</p><span class='side-icon3' id='tab_group1' style='border: none;padding: 0 0 10px 20px;'></span><br><p>When you have finished editing, click on send</p>";
 		}
 	}
 	$http.get('api/v1/getprofiles', argument_data).success(function(homedata) {
@@ -188,7 +188,7 @@ var frontend = angular.module('theme.demos.dashboard', [
 				})
 			}
 		}
-        if(($(this).scrollTop() >= (this.scrollHeight - $(this).height() - 1)) && ($scope.profiles.length > 18) ){
+        if(($(this).scrollTop() >= (this.scrollHeight - $(this).height() - 1)) && ($scope.profiles.length > 18) && !('group' in $location.search())){
         getprofiles_offset = getprofiles_offset + 1;
         if($(".rightbar-row").hasClass("filteractive")) {
           $http.get('api/v1/getfilterprofiles', {params:{search_text: $scope.search_text,age_from: $scope.age_from,age_to: $scope.age_to,genderval: $scope.genderval,purchase_name: $scope.purchase_name,submittype: $scope.submittype, offset: getprofiles_offset}}).success(function(homedata) {
@@ -907,7 +907,7 @@ var frontend = angular.module('theme.demos.dashboard', [
 			$scope.responsiveProfileDetail = true;
 		}
 		var videoElement = $('video')[0];
-		console.log(videoElement);
+		// console.log(videoElement);
 		if(videoElement != undefined){
 			videoElement.pause();
 			videoElement.removeAttribute('src'); // empty source
@@ -953,16 +953,18 @@ var frontend = angular.module('theme.demos.dashboard', [
 		$scope.IsProfileVideo = true;
 		$scope.IsProfileImage = false;
 		$scope.currVideoUrl = profilevideo;
-		$scope.singleimage = $scope.currVideoUrl;
+		// console.log($scope.currVideoUrl);
+		// $scope.singleimage = $scope.currVideoUrl;
 		var video = $('#pro_video')[0];
 		jQuery('video').mediaelementplayer({
-			alwaysShowControls: false,
+			alwaysShowControls: true,
 			videoVolume: 'horizontal',
 			usePluginFullScreen : false,
 			features: ['playpause','progress', 'fullscreen']
 		});
 		video.load();
-		video.play();
+		// video.play();
+		// video.pause();
 	};
 	$scope.selectedThumb=0;
 	$scope.changeSingleImageBig = changeSingleImageBig;
@@ -1049,7 +1051,24 @@ var frontend = angular.module('theme.demos.dashboard', [
 		$('#video_nav').show();
 		if($scope.profile_videos){
 			$scope.currVideoUrl = $scope.profile_videos[0].fullpath;
-			changeSingleVideoBig($scope.currVideoUrl);
+			// console.log($scope.currVideoUrl);
+			// changeSingleVideoBig($scope.currVideoUrl);
+
+			// jQuery('#video_nav').show();
+			$scope.IsProfileVideo = true;
+			$scope.IsProfileImage = false;
+			// $scope.currVideoUrl = profilevideo;
+			// console.log($scope.currVideoUrl);
+			// $scope.singleimage = $scope.currVideoUrl;
+			var video = $('#pro_video')[0];
+			/*jQuery('video').mediaelementplayer({
+				alwaysShowControls: true,
+				videoVolume: 'horizontal',
+				usePluginFullScreen : false,
+				features: ['playpause','progress', 'fullscreen']
+			});*/
+			video.load();
+
 			// var video = $('#pro_video')[0];
 			// $('video').mediaelementplayer({
 			// 	alwaysShowControls: false,

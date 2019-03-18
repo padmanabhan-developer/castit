@@ -427,7 +427,7 @@ $(document).ready(function () {
             }
             
             if( (update_value == 2) && ($(".send_deactivation_email")[0].checked) ) {
-              email_data = { type: "deactivation", first_name: profile.last_name, email: profile.email };
+              email_data = { type: "deactivation", first_name: profile.first_name, email: profile.email };
               $.post("/admin/src/emails", email_data,
                 function (data, textStatus, jqXHR) {
                   email_sent = true;

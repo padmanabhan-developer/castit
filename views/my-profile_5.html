@@ -76,41 +76,44 @@
                   <div class="black-cal4">
                     <h3>&nbsp;</h3>
                     <div class="form_box4">
-                      {{ isDanish ? 'Begynder' : 'Beginner' }}
-                      <span class="ratings2">
-                        <img src="images/star-white.png" />
-                        <img src="images/star-black.png" />
-                        <img src="images/star-black.png" />
-                        <img src="images/star-black.png" />
-                      </span>
-                    </div>
-                    <div class="form_box4">
-                      {{ isDanish ? 'Begynder' : 'Beginner' }}
-                      <span class="ratings2">
-                        <img src="images/star-white.png" />
-                        <img src="images/star-white.png" />
-                        <img src="images/star-black.png" />
-                        <img src="images/star-black.png" />
-                      </span>
-                    </div>
-                    <div class="form_box4">
-                      {{ isDanish ? 'Begynder' : 'Beginner' }}
-                      <span class="ratings2">
-                        <img src="images/star-white.png" />
-                        <img src="images/star-white.png" />
-                        <img src="images/star-white.png" />
-                        <img src="images/star-black.png" />
-                      </span>
-                    </div>
-                    <div class="form_box4">
-                      {{ isDanish ? 'Perfekt' : 'Perfect' }}
-                      <span class="ratings2">
-                        <img src="images/star-white.png" />
-                        <img src="images/star-white.png" />
-                        <img src="images/star-white.png" />
-                        <img src="images/star-white.png" />
-                      </span>
-                    </div>
+                        {{ isDanish ? 'Begynder' : 'Beginner' }}
+                        <span class="ratings2">
+                              <img src="images/star-white.png" />
+                              <img src="images/star-black.png" />
+                              <img src="images/star-black.png" />
+                              <img src="images/star-black.png" />
+                        </span>
+                  </div>
+
+                  <div class="form_box4">
+                        {{ isDanish ? 'Mellem' : 'Intermediate' }}
+                        <span class="ratings2">
+                              <img src="images/star-white.png" />
+                              <img src="images/star-white.png" />
+                              <img src="images/star-black.png" />
+                              <img src="images/star-black.png" />
+                        </span>
+                  </div>
+
+                  <div class="form_box4">
+                        {{ isDanish ? 'Flydende' : 'Fluent' }}
+                        <span class="ratings2">
+                              <img src="images/star-white.png" />
+                              <img src="images/star-white.png" />
+                              <img src="images/star-white.png" />
+                              <img src="images/star-black.png" />
+                        </span>
+                  </div>
+
+                  <div class="form_box4">
+                        {{ isDanish ? 'Perfekt' : 'Perfect' }}
+                        <span class="ratings2">
+                              <img src="images/star-white.png" />
+                              <img src="images/star-white.png" />
+                              <img src="images/star-white.png" />
+                              <img src="images/star-white.png" />
+                        </span>
+                  </div>
                     <h4 class="white-color">{{ isDanish ? 'Dialekter' : 'Dialects' }}</h4>
                     <div class="form_box">
                       <input value="{{profileinfo.dealekter1}}" name="dealekter1" id="dealekter1" ng-model="profileinfo.dealekter1" type="text" class="input2" placeholder="{{ isDanish ? 'Skriv her' : 'Write here' }}">

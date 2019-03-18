@@ -71,7 +71,10 @@ $app->get('/getprofiles',function () use ($app) {
 	  0 => "AND ( m.profile_number LIKE 'C%') ",
 	  1 => "AND ( m.profile_number LIKE 'Y%') ",
   );
-  $offset = (isset($_GET['offset'])) ? $_GET['offset'] : 0;
+	$offset = (isset($_GET['offset'])) ? $_GET['offset'] : 0;
+	if(!isset($conditional_profiles[$offset])){
+		$conditional_profiles[$offset] = "";
+	}
 //   $conditional_profiles = "AND ( m.profile_number LIKE 'C%' OR m.profile_number LIKE 'A%'OR m.profile_number LIKE 'J%' OR m.profile_number LIKE 'Y%' ) ";
 
   $sql = "SELECT 
@@ -94,7 +97,7 @@ AND m.current ='1' ".$conditional_profiles[$offset]." AND p.id IN ( SELECT profi
 
 
 if($_SERVER['HTTP_HOST'] == 'castit.local'){
-	$sql = $sql . " ORDER BY RAND() limit 2";
+	$sql = $sql . " ORDER BY RAND() limit 20";
 }
 else{
 	$sql = $sql . " ORDER BY RAND() ";
@@ -632,7 +635,7 @@ $app->get('/updatelightboxprofiles', function () use ($app) {
 			$query_check_gp->execute();
 			$rows_gp = $query_check_gp->fetchAll(PDO::FETCH_ASSOC);
 			if(count($rows_gp)>0) {
-				echo 'ssposdpofsdf';
+				// echo 'ssposdpofsdf';
 			}else{
 				$q_insert_profilegp = "INSERT INTO `profile_grouping` ( `profile_id`, `group_id`, `profile_notes`) VALUES ('".$profileid."', '".$gidval."', '".$profile_note."')"; 
 				//echo $q; 
@@ -2172,13 +2175,89 @@ $app->post('/step7Create', function() use ($app){
 		$dealekter1=$_SESSION["step5"]["dealekter1"];
 	if(isset($_SESSION["step5"]["dealekter2"]) && $_SESSION["step5"]["dealekter2"]!='')
 		$dealekter2=$_SESSION["step5"]["dealekter2"];
-	if(isset($data['dealekter3']) && $_SESSION["step5"]["dealekter3"]!='')
+	if(isset($_SESSION["step5"]["dealekter3"]) && $_SESSION["step5"]["dealekter3"]!='')
 		$dealekter3=$_SESSION["step5"]["dealekter3"];
 	$agreed_to_these_terms=1;
 
 
 	if($operation == 'insert'){
-		$q_chip = "INSERT INTO `profiles` ( `first_name`, `last_name`, `gender_id`, `hair_color_id`,`eye_color_id`, `birthday`, `height`, `weight`, `shoe_size_from`, `shoe_size_to`, 	`shirt_size_from`,`shirt_size_to`,`pants_size_from`,`pants_size_to`,`bra_size`,`children_sizes`,`address`,`zipcode`,`city`,`country_id`,`phone`,`phone_at_work`,`email`,`job`,`notes`,`agreed_to_these_terms`,`password`,`hashed_password`,`created_at`,`updated_at`,`suite_size_from`,`suite_size_to`,`sports_hobby`,`ethnic_origin`,`dealekter1`,`dealekter2`,`dealekter3`) VALUES ('".$first_name."', '".$last_name."','".$gender_id."',".$hair_color_id.",".$eye_color_id.",'".$birthday."',".$height.",".$weight.",".$shoe_size_from.",".$shoe_size_to.",".$shirt_size_from.",".$shirt_size_to.",".$pants_size_from.",".$pants_size_to.",'".$bra_size."',".$children_sizes.",'".$address."','".$zipcode."','".$city."','".$country_id."','".$phone."','".$phone_at_work."','".$email."','".$job."','".$notes."','".$agreed_to_these_terms."','".$password."','".$hashed_password."',now(),now(),".$suite_size_from.",".$suite_size_to.",'".$sports_hobby."','".$ethnic_origin."','".$dealekter1."','".$dealekter2."','".$dealekter3."')";
+		$q_chip = "INSERT INTO `profiles` ( 
+			`first_name`, 
+			`last_name`, 
+			`gender_id`, 
+			`hair_color_id`,
+			`eye_color_id`, 
+			`birthday`, 
+			`height`, 
+			`weight`, 
+			`shoe_size_from`, 
+			`shoe_size_to`, 
+			`shirt_size_from`,
+			`shirt_size_to`,
+			`pants_size_from`,
+			`pants_size_to`,
+			`bra_size`,
+			`children_sizes`,
+			`address`,
+			`zipcode`,
+			`city`,
+			`country_id`,
+			`phone`,
+			`phone_at_work`,
+			`email`,
+			`job`,
+			`notes`,
+			`agreed_to_these_terms`,
+			`password`,
+			`hashed_password`,
+			`created_at`,
+			`updated_at`,
+			`suite_size_from`,
+			`suite_size_to`,
+			`sports_hobby`,
+			`ethnic_origin`,
+			`dealekter1`,
+			`dealekter2`,
+			`dealekter3`) 
+			VALUES (
+				'".$first_name."',
+				'".$last_name."',
+				'".$gender_id."',
+				'".$hair_color_id."',
+				'".$eye_color_id."',
+				'".$birthday."',
+				'".$height."',
+				'".$weight."',
+				".$shoe_size_from.",
+				".$shoe_size_to.",
+				".$shirt_size_from.",
+				".$shirt_size_to.",
+				".$pants_size_from.",
+				".$pants_size_to.",
+				'".$bra_size."',
+				".$children_sizes.",
+				'".$address."',
+				'".$zipcode."',
+				'".$city."',
+				'".$country_id."',
+				'".$phone."',
+				'".$phone_at_work."',
+				'".$email."',
+				'".$job."',
+				'".$notes."',
+				'".$agreed_to_these_terms."',
+				'".$password."',
+				'".$hashed_password."',
+				now(),
+				now(),
+				".$suite_size_from.",
+				".$suite_size_to.",
+				'".$sports_hobby."',
+				'".$ethnic_origin."',
+				'".$dealekter1."',
+				'".$dealekter2."',
+				'".$dealekter3."'
+				)";
 
 		$profile_id = $db->exec($q_chip);
 		$user_profile_id = $profile_id;
@@ -2218,9 +2297,9 @@ $app->post('/step7Create', function() use ($app){
 			$activation = $db->prepare($membership_table_query);
 			$activation->execute();
 
-// var_dump($selectedcategories);
+
 			if($selectedcategories!=''){
-				$cat_arr= explode(",",$selectedcategories[0]);
+				$cat_arr= explode(",",$selectedcategories);
 				foreach($cat_arr as $cat){
 					$query = "INSERT INTO `categories_profiles` (`profile_id`,`category_id`) VALUES ('".$profile_id."','".$cat."')";
 					$db->exec($query);
@@ -2228,7 +2307,7 @@ $app->post('/step7Create', function() use ($app){
 			}
 
 			if($selectedskills!=''){
-				$skill_arr= explode(",",$selectedskills[0]);
+				$skill_arr= explode(",",$selectedskills);
 				foreach($skill_arr as $skill){
 					$query = "INSERT INTO `profiles_skills` (`profile_id`,`skill_id`) VALUES ('".$profile_id."','".$skill."')";
 					$db->exec($query);
@@ -2236,7 +2315,7 @@ $app->post('/step7Create', function() use ($app){
 			}
 
 			if($selectedlicences){
-				$license_arr= explode(",",$selectedlicences[0]);
+				$license_arr= explode(",",$selectedlicences);
 				foreach($license_arr as $license){
 				$query = "INSERT INTO `drivers_licenses_profiles` (`profile_id`,`drivers_license_id`) VALUES ('".$profile_id."','".$license."')";
 				$db->exec($query);
@@ -2268,8 +2347,8 @@ $app->post('/step7Create', function() use ($app){
 									hair_color_id = $hair_color_id,
 									eye_color_id = $eye_color_id, 
 									birthday = '$birthday',
-									height = $height, 
-									weight = $weight, 
+									height = '$height', 
+									weight = '$weight', 
 									shoe_size_from = $shoe_size_from, 
 									shoe_size_to = $shoe_size_to,
 									shirt_size_from = $shirt_size_from,
@@ -2561,7 +2640,7 @@ $app->post('/welcome_email', function () use ($app) {
   $to_email = $app->request->post('email');
   $first_name = $app->request->post('first_name');
   $from = 'cat@castit.dk';
-  $subject  = "Velkommen til at Castit";
+  $subject  = "Tak for din ansøgning!  /  Thank you for your application!";
 
   $headers = "MIME-Version: 1.0" . "\r\n";
   $headers .= "Content-type:text/html;charset=UTF-8" . "\r\n";
@@ -2578,24 +2657,57 @@ $app->post('/welcome_email', function () use ($app) {
 $html_body = <<< EOM
 <p>Kære $first_name,</p>
 <p>
-Tusind tak for din ansøgning. Så snart vi har kigget den igennem, modtager du en mail, med information om vi lægger din profil Online eller Offline. 
-Dette afhænger af kvaliteten på dine billeder og om du er en type vi mener at vi vil kunne skaffe jobs.
+Tusind tak for din ansøgning. Så snart vi har kigget den igennem modtager du en mail, med information om vi lægger din profil Online eller Offline.
 </p>
 <p>
-Vi bestræber os på at svare inden for Max. 10 hverdage.
+Vi bestræber os på at svare inden 14 dage.
 </p>
 <p>
 De bedste hilsner
 </p>
-<p>Castit ApS </p>
-<p>Rosenvængets Alle 11, 2. Sal</p>
-<p>2100 København Ø</p>
+<p>Cathrine & Pernille</p>
 <br/>
-<p>Tlf.: +45 33 14 58 25</p>
-<p>Cell: +45 21 28 58 25</p>
-<p>Info@castit.dk</p>
+<p><img style="width:150px; height:30px" src="http://134.213.29.220/admin/images/logo.png"/></p>
+<p>Rosenvængets Allè 11, 1. Sal</p>
+<p>2100 København Ø</p>
 
-<a href="http://134.213.29.220">www.castit.dk</a>
+
+<p>Cathrine Hovmand</p>
+<p># 0045 2128 5825</p>
+<p>E: cat@castit.dk</p>
+
+<p>Pernille Marco: </p>
+<p># 0045 3135 3579</p>
+<p>E: pernille@castit.dk</p>
+
+<a href="http://134.213.29.220">Castit.dk</a>
+<br/>
+------------------------------------------------------------------
+<br/>
+
+<p>Dear $first_name,</p>
+<p>
+Thank you for your application. As soon as we have looked it through, you will receive an email with information about whether we will add your profile Online or Offline.  We strive to respond within 14 days
+</p>
+<p>
+Very best
+</p>
+<p>Cathrine & Pernille</p>
+<br/>
+<p><img style="width:150px; height:30px" src="http://134.213.29.220/admin/images/logo.png"/></p>
+<p>Rosenvængets Allè 11, 1. Sal</p>
+<p>2100 København Ø</p>
+
+
+<p>Cathrine Hovmand</p>
+<p># 0045 2128 5825</p>
+<p>E: cat@castit.dk</p>
+
+<p>Pernille Marco: </p>
+<p># 0045 3135 3579</p>
+<p>E: pernille@castit.dk</p>
+
+<a href="http://134.213.29.220">Castit.dk</a>
 
 EOM;
 global $mgClient;
@@ -3478,16 +3590,27 @@ $app->post('/resetpassword',function () use ($app) {
 								padding:8px 0 4px;"><img src="http://134.213.29.220/images/logo.png" 
 								width="90px"/> </div>
 								<div style="padding:0 30px;">';
-					$content .= '<h5 style="color: #646e78;font-size: 16px;padding:0;margin: 0; text-align:left;">Kære '.ucfirst($rows[0]['first_name']).' '.ucfirst($rows[0]['last_name']).',</h5>';
-					$reset_link = '<a href="http://134.213.29.220/#/reset-password?email='.$email.'&resethash='.$randompass.'">Nulstille kodeord</a>';
+					$content_sal_dk = '<h5 style="color: #646e78;font-size: 16px;padding:0;margin: 0; text-align:left;">Kære '.ucfirst($rows[0]['first_name']).' '.ucfirst($rows[0]['last_name']).',</h5>';
+					$content_sal_en = '<h5 style="color: #646e78;font-size: 16px;padding:0;margin: 0; text-align:left;">Dear '.ucfirst($rows[0]['first_name']).' '.ucfirst($rows[0]['last_name']).',</h5>';
+					$reset_link_dk = '<a href="http://134.213.29.220/#/reset-password?email='.$email.'&resethash='.$randompass.'">Nulstil kodeord</a>';
+					$reset_link_en = '<a href="http://134.213.29.220/#/reset-password?email='.$email.'&resethash='.$randompass.'">Reset Password</a>';
 					// $content .= '<p style="color: #646e78;font-size: 16px;text-align:left;">Din nye adgangskode er,</p>';
-					$content .= '<p style="color: #646e78;font-size: 16px;padding:0; line-height:18px; text-align:left; 
-					">Klik venligst på linket og skift adgangskoden.<br/></p><p style="color: #646e78;font-size: 16px;padding:0; line-height:18px; text-align:left; 
-								">'.$reset_link.'<br/></p>';
-					$content .= '<p style="color: #646e78;text-align:left;font-size: 16px;padding:0 0 45px 0; margin:51px 0 0; 
-								line-height:20px; text-align:left;font-family:Calibri">Tak skal du have!<br><br>Med venlig hilsen,<br>Castit</p>
+					$content_sign_dk = '<p style="color: #646e78;text-align:left;font-size: 16px;padding:0 0 45px 0; margin:51px 0 0; 
+								line-height:20px; text-align:left;font-family:Calibri"><br><br>Med venlig hilsen,<br>Castit</p>
 								<div style="float:left; width:100%; margin:40px 0 0 0; border-top:solid 1px #dddddd; 	
 								padding:20px 0 0 0;">';
+					$content_sign_en = '<p style="color: #646e78;text-align:left;font-size: 16px;padding:0 0 45px 0; margin:51px 0 0; 
+								line-height:20px; text-align:left;font-family:Calibri"><br><br>Yours sincerely,<br>Castit</p>
+								<div style="float:left; width:100%; margin:40px 0 0 0; border-top:solid 1px #dddddd; 	
+								padding:20px 0 0 0;">';
+
+					$content .= $content_sal_dk.'<p style="color: #646e78;font-size: 16px;padding:0; line-height:18px; text-align:left; 
+					">Klik på linket og skift din adgangskode.<br/></p><p style="color: #646e78;font-size: 16px;padding:0; line-height:18px; text-align:left; 
+								">'.$reset_link_dk.'</p>'.$content_sign_dk.'<br>
+								'.$content_sal_en.'<p style="color: #646e78;font-size: 16px;padding:0; line-height:18px; text-align:left;" >
+								Click on the link and change your password '.$reset_link_en.'
+								</p>'.$content_sign_en;
+					
 					$content.= '</div></div></div></div></div></body></html>';	
 				//echo 	$content;	
 				$to = $email;
@@ -3519,7 +3642,7 @@ $app->post('/resetpassword',function () use ($app) {
 				));
 				// mail( $to, $subject, $content, $headers ); // Accountant
 			
-			$response = array( 'success' => true, 'message' => 'Din nye adgangskode er blevet sendt til dit email-id. Tjek venligst din email.');
+			$response = array( 'success' => true, 'message' => 'Din nye adgangskode er blevet sendt til din email.', 'message_en' => 'Your new password has been send to you email.');
 		}
 		else{
 			$response = array( 'success' => false, 'message' => 'Din konto er i inaktiv status. Kontakt venligst administrator');

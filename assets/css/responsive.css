@@ -657,7 +657,8 @@ color: transparent !important;
 }
 .video_controller {
     margin:0 !important;
-	position: absolute; z-index: 99999; bottom:auto; top:50%;
+	/* position: absolute; z-index: 99999; bottom:auto; top:50%; */
+	position: absolute; z-index: 99999; bottom:35%;
 }
 .vide_prev {
     margin: 0 110px 0 0 !important;
