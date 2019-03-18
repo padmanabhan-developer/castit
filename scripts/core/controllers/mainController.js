@@ -1032,7 +1032,7 @@ main.controller('mediaUploadController',['$scope', '$http', '$rootScope', functi
 				}
 
 				for(let i = 4; i <= img_slot_rows; i++){
-					let newHTML = generateThumbnailHTML((i-1)*3);
+					let newHTML = generateThumbnailHTML((i-1)*3 , 'login');
 					newHTML.replace('<span class="remove">X</span>','');
 						$(".imagefiles").append(newHTML);
 				}
@@ -1058,7 +1058,7 @@ main.controller('mediaUploadController',['$scope', '$http', '$rootScope', functi
 				}
 
 				for(let i = 2; i <= img_slot_rows; i++){
-					let newHTML = generateThumbnailHTML((i-1)*3);
+					let newHTML = generateThumbnailHTML((i-1)*3 , 'login');
 						$(".videofiles").append(newHTML);
 				}
 
@@ -1118,7 +1118,15 @@ main.controller('mediaUploadController',['$scope', '$http', '$rootScope', functi
 					// '/images/eclipse_loader.svg';
 					let imageThumb = $(".videofiles").find('.upload-img.uploadinput'+jsonresponse.position);
 					// imageThumb.addClass('video_upload_notify');
-					imageThumb.css('background-image',bg_vdo);
+					// imageThumb.css('background-image',bg_vdo);
+					console.log(imageThumb);
+					let label_text = '';
+					label_text = ($rootScope.isDanish) ? "Fortsæt! - video uploader" : "Continue! - Video is uploading";
+					imageThumb.text(label_text);
+					// imageThumb.append(label_text);
+					imageThumb.css("top","25%");
+					imageThumb.css("color","#aaa");
+					imageThumb.css("text-align","center");
 					imageThumb.unbind('mouseenter mouseleave');
 					imageThumb.on('mouseenter mouseleave', function(){
 						$(this).children().toggle();
@@ -1183,7 +1191,7 @@ main.controller('mediaUploadController',['$scope', '$http', '$rootScope', functi
 				});				
 			}
 			
-			function generateThumbnailHTML(offset){
+			function generateThumbnailHTML(offset, mode = ''){				
 				let html_string = `<div class="upload-box-row" id="upload-box-row">
 				<div class="upload-box">
 				<input type="hidden" name="uploadinput${offset + 1}" class="uploadinput" id="uploadinput${offset + 1}">
@@ -1203,7 +1211,26 @@ main.controller('mediaUploadController',['$scope', '$http', '$rootScope', functi
 					<span class="remove">X</span>
 				</label>
 				</div>
-			</div>`
+			</div>`;
+			if(mode == 'login'){
+				html_string = `<div class="upload-box-row" id="upload-box-row">
+				<div class="upload-box">
+				<input type="hidden" name="uploadinput${offset + 1}" class="uploadinput" id="uploadinput${offset + 1}">
+				<label for="uploadinput${offset + 1}" class="upload-img uploadinput${offset + 1}">
+				</label>
+				</div>
+				<div class="upload-box">
+				<input type="hidden" name="uploadinput${offset + 2}" class="uploadinput" id="uploadinput${offset + 2}">
+				<label for="uploadinput${offset + 2}" class="upload-img uploadinput${offset + 2}">
+				</label>
+				</div>
+				<div class="upload-box">
+				<input type="hidden" name="uploadinput${offset + 3}" class="uploadinput" id="uploadinput${offset + 3}">
+				<label for="uploadinput${offset + 3}" class="upload-img uploadinput${offset + 3}">
+				</label>
+				</div>
+			</div>`;
+			}
 				return html_string;
 			}
 	

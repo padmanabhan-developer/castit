@@ -2299,7 +2299,13 @@ $app->post('/step7Create', function() use ($app){
 
 
 			if($selectedcategories!=''){
-				$cat_arr= explode(",",$selectedcategories);
+				if(!(is_array($selectedcategories))){
+					$cat_arr= explode(",",$selectedcategories);
+				}
+				else{
+					$cat_arr= $selectedcategories;
+				}
+
 				foreach($cat_arr as $cat){
 					$query = "INSERT INTO `categories_profiles` (`profile_id`,`category_id`) VALUES ('".$profile_id."','".$cat."')";
 					$db->exec($query);
@@ -2307,7 +2313,12 @@ $app->post('/step7Create', function() use ($app){
 			}
 
 			if($selectedskills!=''){
-				$skill_arr= explode(",",$selectedskills);
+				if(!(is_array($selectedskills))){
+					$skill_arr= explode(",",$selectedskills);
+				}
+				else{
+					$skill_arr= $selectedskills;
+				}
 				foreach($skill_arr as $skill){
 					$query = "INSERT INTO `profiles_skills` (`profile_id`,`skill_id`) VALUES ('".$profile_id."','".$skill."')";
 					$db->exec($query);
@@ -2315,7 +2326,12 @@ $app->post('/step7Create', function() use ($app){
 			}
 
 			if($selectedlicences){
-				$license_arr= explode(",",$selectedlicences);
+				if(!(is_array($selectedlicences))){
+					$license_arr= explode(",",$selectedlicences);
+				}
+				else{
+					$license_arr= $selectedlicences;
+				}
 				foreach($license_arr as $license){
 				$query = "INSERT INTO `drivers_licenses_profiles` (`profile_id`,`drivers_license_id`) VALUES ('".$profile_id."','".$license."')";
 				$db->exec($query);
