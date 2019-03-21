@@ -39,7 +39,7 @@
                <div class="rightbar_inner">
                <div class="rightbar-row">
                   <!-- <div class="col" ng-repeat="x in profiles | filter:q | startFrom:currentPage*pageSize | limitTo:pageSize"> -->
-                  <div class="col" ng-repeat="x in profiles | filter:q " ng-class="{wrapPM{{$index}}  : !($index % 18)}">
+                  <div class="col" ng-repeat="x in profiles | filter:q " ng-class="{wrapPM{{$index}}  : !($index % scroll_counter_number)}">
                        <div class="col-inner" profileid={{x.id}} ng-mouseover="hoverInLb()" ng-mouseleave="hoverOutLb()">
                             <!-- <div class="thumb"  data-thisproid={{x.id}} ng-click="getSingleProfile(x.id)" ng-style="{'background-image':'url({{x.profile_image}})'}" style="background-image: url('{{x.profile_image}}')"> -->
                             <div class="thumb"  data-thisproid={{x.id}} ng-click="getSingleProfile(x.id)"  style="background-image: url('{{x.profile_image}}')">

@@ -29,7 +29,15 @@ var frontend = angular.module('theme.demos.dashboard', [
 	$scope.infoiconclass='info-icon';
   $scope.q = '';
   $scope.loading = 'Indlaeser';
-  $scope.enableNotesBox = false;
+	$scope.enableNotesBox = false;
+	
+	if($( window ).width() <= 860){
+		$scope.scroll_counter_number = 9;
+	}
+	else{
+		$scope.scroll_counter_number = 18;
+	}
+	
 
 	function removeDuplicates (json_all) {
 		var arr = [],
@@ -151,7 +159,7 @@ var frontend = angular.module('theme.demos.dashboard', [
 
    $scope.scroll_counter = 0;
    $('.scroll-down').click(function(){
-	   $scope.scroll_counter = $scope.scroll_counter + 18;
+	   $scope.scroll_counter = $scope.scroll_counter + $scope.scroll_counter_number;
 	   var nextElement = document.getElementsByClassName('wrapPM'+$scope.scroll_counter);
 	   var nextTopPos = nextElement[0].offsetTop;
 	   $('.rightbar-row').animate({
@@ -162,7 +170,8 @@ var frontend = angular.module('theme.demos.dashboard', [
    });
    $('.scroll-up').click(function(){
 	   if($scope.scroll_counter > 0){
-		   $scope.scroll_counter = $scope.scroll_counter - 18;
+			 $scope.scroll_counter = $scope.scroll_counter - $scope.scroll_counter_number;
+			 console.log($scope.scroll_counter);
 		   var prevElement = document.getElementsByClassName('wrapPM'+$scope.scroll_counter);
 		   var prevTopPos = prevElement[0].offsetTop;
 			 $('.rightbar-row').animate({
@@ -1002,6 +1011,7 @@ var frontend = angular.module('theme.demos.dashboard', [
 	$scope.next_video=function(){
 		//alert($scope.profile_images.length);
 		$scope.currentIndexVideo < $scope.profile_videos.length-1 ? $scope.currentIndexVideo++ : $scope.currentIndexVideo=0;
+		
 	};
 	$scope.prev_video=function(){
 		//alert($scope.currentIndexVideo);
@@ -1012,14 +1022,14 @@ var frontend = angular.module('theme.demos.dashboard', [
 		if($scope.profile_videos){
 			$scope.currVideoUrl = $scope.profile_videos[$scope.currentIndexVideo].fullpath;
 			var video = $('#pro_video')[0];
-			$('video').mediaelementplayer({
+			/*$('video').mediaelementplayer({
 				alwaysShowControls: false,
 				videoVolume: 'horizontal',
 				usePluginFullScreen : false,
 				features: ['playpause','progress', 'fullscreen']
-			});
+			});*/
 			video.load();
-			video.play();
+			// video.play();
 
 		}
 	});
@@ -1050,7 +1060,7 @@ var frontend = angular.module('theme.demos.dashboard', [
 		$scope.infoiconclass = 'info-icon';
 		$('#video_nav').show();
 		if($scope.profile_videos){
-			$scope.currVideoUrl = $scope.profile_videos[0].fullpath;
+			$scope.currVideoUrl = $scope.profile_videos[$scope.currentIndexVideo].fullpath;
 			// console.log($scope.currVideoUrl);
 			// changeSingleVideoBig($scope.currVideoUrl);
 
@@ -1060,8 +1070,9 @@ var frontend = angular.module('theme.demos.dashboard', [
 			// $scope.currVideoUrl = profilevideo;
 			// console.log($scope.currVideoUrl);
 			// $scope.singleimage = $scope.currVideoUrl;
-			var video = $('#pro_video')[0];
-			/*jQuery('video').mediaelementplayer({
+			var video = $('video');
+			/*
+			jQuery('video').mediaelementplayer({
 				alwaysShowControls: true,
 				videoVolume: 'horizontal',
 				usePluginFullScreen : false,

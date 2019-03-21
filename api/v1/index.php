@@ -89,7 +89,7 @@ FROM profiles p
   INNER JOIN eye_colors ec ON ec.id = p.eye_color_id  
 WHERE ( p.profile_status_id = '1') 
 
-AND m.current ='1' ".$conditional_profiles[$offset]." AND p.id IN ( SELECT profile_id from photos WHERE published ='1' and media_slet_status != '1' GROUP by profile_id ) ";
+AND m.current ='1' AND p.id IN ( SELECT profile_id from photos WHERE published ='1' and media_slet_status != '1' GROUP by profile_id ) ";
 // $offset = $offset * 500;
 // $limit  = " LIMIT 500 OFFSET ". $offset;
 // $sql = $sql . " ORDER BY RAND() " . $limit;
@@ -97,15 +97,19 @@ AND m.current ='1' ".$conditional_profiles[$offset]." AND p.id IN ( SELECT profi
 
 
 if($_SERVER['HTTP_HOST'] == 'castit.local'){
-	$sql = $sql . " ORDER BY RAND() limit 20";
+	$sql = $sql . " ORDER BY m.profile_number ASC";
 }
 else{
-	$sql = $sql . " ORDER BY RAND() ";
+	// $sql = $sql . " ORDER BY RAND() ";
+	$sql = $sql . " ORDER BY m.profile_number ASC";
 }
 
 // $sql = $sql . " ORDER BY m.profile_group_id " . $limit;
 	  
 	if(isset($_GET['group_id']) && is_numeric($_GET['group_id']) && $_GET['group_id']>0){
+		unset($_SESSION['all_profiles']);
+		unset($_SESSION['c_profiles']);
+		unset($_SESSION['y_profiles']);
 		$group_id = $_GET['group_id'];
 		$group_profiles_query = $db->prepare("SELECT distinct(profile_id), profile_notes from profile_grouping where group_id = $group_id");
 		$group_profiles_query->execute();
@@ -130,19 +134,67 @@ else{
       		(select * from memberships where current = 1) m ON m.profile_id = p.id 
 			INNER JOIN genders g ON g.id = p.gender_id  
 			WHERE ( p.profile_status_id = '1' ) 
-      		AND p.id IN $ids_in_group_sql";
+					AND p.id IN $ids_in_group_sql";
+			
+			$query = $db->prepare($sql); 
+			// echo $sql;exit;
+			// echo $query;exit;
+			$query->execute();
+			$rows_group = $query->fetchAll(PDO::FETCH_ASSOC);	
+			// echo '<pre>';
+			// print_r($rows_group);
+			// exit;
+
 	}
 
-	$query = $db->prepare($sql); 
-	// echo $sql;exit;
-	// echo $query;exit;
-	$query->execute();
-	$rows = $query->fetchAll(PDO::FETCH_ASSOC);
+	if(!isset($_GET['group_id']) && !isset($_SESSION['c_profiles'])){
+		$query = $db->prepare($sql); 
+		$query->execute();
+		$rows = $query->fetchAll(PDO::FETCH_ASSOC);
+		$_SESSION['all_profiles'] = $rows;
+	}else{
+		if(isset($_SESSION['all_profiles'] ) && !isset($_GET['group_id'])){
+			$rows = $_SESSION['all_profiles'];
+		}
+		if(isset($_GET['group_id']) && is_numeric($_GET['group_id']) && $_GET['group_id']>0){
+			$rows = $rows_group;
+		}
+	}
+
 	// echo 'sdsds';die;
 	// print_r($rows[0]);exit;
 	$profiles = array();
+
+	$c_profiles = array();
+	$y_profiles = array();
+	// unset($_SESSION['c_profiles']);
+	if(count($rows)>0 && !isset($_GET['group_id']) && !isset($_SESSION['c_profiles'])) {
+		foreach($rows as $item){
+			$current_prefix = substr($item['profile_number'], 0, 1);
+			if($current_prefix == "C"){
+				$c_profiles[]=$item;
+			}
+			if($current_prefix == "Y"){
+				$y_profiles[]=$item;
+			}
+		}
+		// shuffle($c_profiles);
+		// shuffle($y_profiles);
+		$_SESSION['c_profiles'] = $c_profiles;
+		$_SESSION['y_profiles'] = $y_profiles;
+	}
+
 	if(count($rows)>0) {
-		foreach($rows as $row){
+		if(isset($_SESSION['c_profiles'])){
+			$rows_temp = array_merge($_SESSION['c_profiles'], $_SESSION['y_profiles']);
+			$rows_new = array_slice($rows_temp, $offset*54, 54, true);
+		}else{
+			$rows_new = $rows;
+		}
+					// echo '<pre>';
+			// print_r($rows_new);
+			// exit;
+		foreach($rows_new as $row){
 			$birthdate = new DateTime($row['birthday']);
         	$today   = new DateTime('today');
         	$age = $birthdate->diff($today)->y;
