@@ -462,18 +462,52 @@ var frontend = angular.module('theme.demos.dashboard', [
 		$(this).toggleClass("active");
 		$(".kon-dropdown").toggle("slow"); 
 	});
-		 
-	
-	$(".res-menu").unbind("click").click(function(){
-		$(".res_menu ul li").fadeToggle("slow"); 
-	});
-	
-	$(".res_menu ul li").unbind('click').click(function(){
-		$(".res_menu ul li").hide();
+
+	$timeout(function(){
+		$(document).ready(function(){
+
+			$(".res-menu").unbind("click").click(function(){
+				$(".res_menu ul li").fadeToggle("slow");
+		
+				// set menu active indicator
+				$("#main-menu-context").toggleClass('active');
+			});
+
+			$(".res_menu ul li").unbind('click').click(function(){
+				$(".res_menu ul li").hide();
+			});
+
+			$(".res_menu li.menu-item a").each(function(){
+				$(this).unbind("click").click(function(){
+					// remove active class from menu-context if exist.
+					$("#main-menu-context").removeClass('active');
+					$(".information-inside .poup-close2").trigger('click');
+				});
+			});
+
+			$(".res_menu li").each(function(){
+				$(this).unbind("click").click(function(){
+
+					return true;
+					// remove active class from menu-context if exist.
+					// $("#main-menu-context").removeClass('active');
+					// $(".information-inside .poup-close2").trigger('click');
+				});
+			});
+		});
 	});
 
+	$scope.hideMenu = function(){
+		$("#main-menu-context").removeClass('active');
+	};
+	
+	
+
 	$(".information-inside .poup-close2").click(function(){
-		$(".res_menu ul li").fadeOut("slow"); 
+		$(".res_menu ul li").fadeOut("slow");
+		
+		// remove active class from menu-context if exist.
+		$("#main-menu-context").removeClass('active');
 	});
 
 		$("#lightboxsubmit").click(function(){

@@ -1020,7 +1020,7 @@ padding: 0px;
       content: ' ';
       text-align: center; }
   .video_text h4{color:#fff; font-size:11px; text-transform:uppercase; padding:0 0 10px 0;}
-  .video_text h5{color:#a9a9a9; font-size:18px; text-transform:uppercase; font-weight:bold; padding:5px 0 3px 0;}
+  .video_text h5{color:#a9a9a9; font-size:18px; text-transform:uppercase; font-weight:bold; padding:5px 0 3px 0; clear:both;}
   .video_text p{color:#fff; font-size:11px; line-height:18px; padding:0 0 10px 0;text-transform: none;}
   
   .list{margin:0 0 10px 0; padding:0;}
@@ -1217,6 +1217,7 @@ padding: 0px;
     position: relative;
     top: 40%;
     transform: translateY(-50%);
+    background-color: #000;
   }
   .listscroll{ width: 100%;
     height: 100%;
@@ -1937,3 +1938,57 @@ div.ng-binding{float: left;
 
 .close-leftbar{background:url(images/close.png) no-repeat center center; width:30px; height:30px; float:right;}
 .leftbar-logo{float:left; width:250px;}
+
+footer#header-toolbar{
+    display: none;
+}
+
+@media (max-width:768px) {
+    .slider-controller{
+        display: none;
+    }
+
+    .home #header{
+        height: auto !important;
+        margin-bottom: 0px !important;
+    }
+
+    footer#header-toolbar{
+        float: left;
+        margin-bottom: 12px;
+        display: inline-flex;
+        width: 100%;
+        position: relative;
+        top: -15px;
+    }
+
+    footer#header-toolbar > .footer_left{
+        height: 57px;
+    }
+
+    footer#header-toolbar > .footer_left img{
+        width: 81px !important;
+        max-width: min-content;
+        position: relative;
+        top: -8px;
+    }
+
+    footer#header-toolbar.non-home-footer{
+        display: none !important;
+    }
+
+    .landing-wrapper > footer#footer{
+        display: none;
+    }
+
+    /* make the menu as fullwidth in mobile */
+    #main-menu-context.active{
+        float: left;
+        position: fixed;
+        padding: 0px 24px;
+        height: 100vh;
+        width: 100vw;
+        left: 0px;
+        background: #fff;
+    }
+}
