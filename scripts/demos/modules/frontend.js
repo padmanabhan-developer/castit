@@ -1021,7 +1021,7 @@ var frontend = angular.module('theme.demos.dashboard', [
 		// alert($scope.currentIndexVideo);
 		if($scope.profile_videos){
 			$scope.currVideoUrl = $scope.profile_videos[$scope.currentIndexVideo].fullpath;
-			var video = $('#pro_video')[0];
+			var video = $('video#pro_video')[0];
 			/*$('video').mediaelementplayer({
 				alwaysShowControls: false,
 				videoVolume: 'horizontal',
