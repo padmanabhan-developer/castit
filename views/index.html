@@ -438,7 +438,7 @@
                           <div  ng-show = "IsProfileVideo" class="videobig_thumb video_margin" >
                           
                           
-                              <video controls ng-src=" {{ currVideoUrl | trusted}} " id="pro_video"  style="width:100%;max-width:100%;">
+                              <video controls playsinline ng-src=" {{ currVideoUrl | trusted}} " id="pro_video"  style="width:100%;max-width:100%;">
                                     <source ng-src=" {{ currVideoUrl | trusted}} " type="video/mp4">
                                       
                             </video>
