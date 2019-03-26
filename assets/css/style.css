@@ -1943,6 +1943,10 @@ footer#header-toolbar{
     display: none;
 }
 
+.show-xs{
+    display: none;
+}
+
 @media (max-width:768px) {
     .slider-controller{
         display: none;
@@ -1955,7 +1959,7 @@ footer#header-toolbar{
 
     footer#header-toolbar{
         float: left;
-        margin-bottom: 12px;
+        margin-bottom: 0px;
         display: inline-flex;
         width: 100%;
         position: relative;
@@ -1990,5 +1994,108 @@ footer#header-toolbar{
         width: 100vw;
         left: 0px;
         background: #fff;
+    }
+
+    #main-menu-context.active > ul li{
+        display: block;
+    }
+
+    .full-width-page, .full-screen-xs{
+        position: fixed !important;
+        top: 0px !important;
+        left: 0;
+        height: 100%;
+    }
+
+    .full-screen-xs.full-screen-white-box{
+        background: #fff;
+        z-index: 1000;
+        padding: 16px !important;
+        left: 0;
+    }
+
+    #content-white.full-screen-white-box, #content-white1.full-screen-white-box{
+        padding: 16px !important;
+        overflow: scroll;
+        max-height: 100vh;
+        height: 100vh;
+    }
+
+    .full-screen-black-box{
+        background: #000;
+        padding: 16px;
+    }
+
+    .show-xs{
+        display: block !important;
+    }
+
+    .popup-header{
+        float: left;
+        width: 100%;
+        padding-bottom: 32px;
+        padding-top: 8px;
+    }
+
+    .popup-close-btn{
+        float: right;
+        position: relative;
+        padding-right: 0px;
+        padding: 0px 4px;
+    }
+
+    .popup-close-btn img{
+        height: 16px;
+    }
+
+    .popup-header span{
+        color: #fff;
+        font-size: 18px;
+    }
+
+    #header{ z-index: 0 !important; }
+
+    .landing-wrapper.menu-active{
+        display: none;
+    }
+
+    .hide-xs{
+        display: none !important;
+    }
+
+    .main-menu-header{
+        display: none;
+        margin-bottom: 24px;
+        margin-top: 16px;
+    }
+
+    .res_menu .main-menu-header{
+        display: none !important;
+    }
+    .res_menu.active .main-menu-header{
+        display: block !important;
+    }
+
+    .res_menu.active > .main-menu-header{
+        margin-top: 32px;
+        margin-bottom: 24px;
+        display: block;
+    }
+
+    div.video_section1{
+        height: 80px !important;
+    }
+
+    div.video_section2{
+        margin-bottom: 0px !important;
+    }
+
+    div.video_controller{
+        bottom: 50% !important;
+    }
+
+    div.black-numbers{
+        top: initial !important;
+        bottom: 26px !important;
     }
 }

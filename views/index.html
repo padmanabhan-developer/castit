@@ -1,45 +1,81 @@
-<div ng-controller="FrontendController">
- 
+<div ng-controller="FrontendController" class="landing-wrapper">
+<footer 
+     id="header-toolbar" 
+     class="home-header-actions"
+     ng-class="{'non-home-footer': interface != 'home'}">
+     <div class="footer_left">
+          <span class="span1">
+               <a 
+                    style="color:#000" 
+                    href="https://www.facebook.com/castitdenmark" 
+                    target="_blank">Facebook</a>
+          </span>
+          <img src="images/searchmini.png" class="searchmini" />
+     </div>
+     <div class="footer_right"><span class="footer-line"></span>
+          <img src="images/tabnew.png" id="tabnewblack" class="tabnew" />
+     </div>
+</footer>
 <div id="content" class="main_content">
-  <div class="leftbar">
-               <div class="leftbox">
-                  <h2>{{ isDanish ? 'Navn/Nr' : 'NAME/NO' }}</h2>
-                    <span class="side-searchbox"><input name="search_text" ng-model="search_text" id="search_text" type="text" value="{{search_text}}" class="side-input"><input name="" type="button" class="side-search"></span>
-               </div><!--close leftbox-->
-               
-               <div class="leftbox leftboxheight">
-                  <h2>{{ isDanish ? 'Køn' : 'GENDER' }}</h2>
-                    <ul class="ul-style1">
-                    <input type="hidden" name="gender" id="gender"  ng-model="gender" value="{{genderval}}" />
-                      <li><a class="gender_select" id="gender1" gender="1" ng-click='set_gender(1)'> {{ isDanish ? 'Mand' : 'Man' }}</a></li>
-                        <li><a  class="gender_select" id="gender2" gender="2" ng-click='set_gender(2)'>{{ isDanish ? 'Kvinde' : 'Woman' }}</a></li>
-                        
-                    </ul>
-               </div><!--close leftbox-->
-               
-               <div class="leftbox2">
-                  <h2>{{ isDanish ? 'Alder' : 'Age' }}</h2>
-                    <div class="side-form">
-                        <span class="form-span"><input name="age_from" ng-model="age_from" id="age_from" value="{{age_from}}" type="text" class="side-input2" placeholder="{{ isDanish ? 'Fra' : 'From' }}"></span>
-                        <span class="form-devider"></span>
-                        <span class="form-span"><input name="age_to" ng-model="age_to" id="age_to" type="text"  value="{{age_to}}" class="side-input2" placeholder="{{ isDanish ? 'Til' : 'To' }}"></span>
-                        
-                        <span class="form-text">{{ isDanish ? 'År' : 'Years' }}</span>
-                    </div>
-               </div><!--close leftbox-->
-              
-                  <div class="side-bottom" style="margin-top: 110px;"><input name="" type="submit" id="mybtnse" class="side-submit" value="{{ isDanish ? 'SØG' : 'SEARCH' }}" style="cursor:pointer;" ng-click='filterProfiles()'></div>
+     <div class="leftbar full-screen-xs">
 
-                  <!--<span style="margin-top: 65px;">a</span>-->
-          </div><!--close leftbar-->
+          <div class="popup-header">
+               <span>Search</span>
+               <a href class="poup-close2 popup-close-btn">
+                    <img src="images/close.png" />
+               </a>
+          </div>
 
-
-          
-    <div class="rightbar">
+          <div class="leftbox">
+               <h2>{{ isDanish ? 'Navn/Nr' : 'NAME/NO' }}</h2>
+               <span class="side-searchbox">
+                    <input 
+                         name="search_text" 
+                         ng-model="search_text" 
+                         id="search_text" 
+                         type="text" 
+                         value="{{search_text}}" 
+                         class="side-input">
+                    <input name="" type="button" class="side-search">
+               </span>
+          </div>
+          <div class="leftbox leftboxheight">
+               <h2>{{ isDanish ? 'Køn' : 'GENDER' }}</h2>
+               <ul class="ul-style1">
+               <input type="hidden" name="gender" id="gender"  ng-model="gender" value="{{genderval}}" />
+                    <li><a class="gender_select" id="gender1" gender="1" ng-click='set_gender(1)'> {{ isDanish ? 'Mand' : 'Man' }}</a></li>
+                    <li><a  class="gender_select" id="gender2" gender="2" ng-click='set_gender(2)'>{{ isDanish ? 'Kvinde' : 'Woman' }}</a></li>
+                    
+               </ul>
+          </div>
+          <div class="leftbox2">
+               <h2>{{ isDanish ? 'Alder' : 'Age' }}</h2>
+               <div class="side-form">
+                    <span class="form-span"><input name="age_from" ng-model="age_from" id="age_from" value="{{age_from}}" type="text" class="side-input2" placeholder="{{ isDanish ? 'Fra' : 'From' }}"></span>
+                    <span class="form-devider"></span>
+                    <span class="form-span"><input name="age_to" ng-model="age_to" id="age_to" type="text"  value="{{age_to}}" class="side-input2" placeholder="{{ isDanish ? 'Til' : 'To' }}"></span>
+                    
+                    <span class="form-text">{{ isDanish ? 'År' : 'Years' }}</span>
+               </div>
+          </div>
+          <div 
+               class="side-bottom" 
+               style="margin-top: 110px;">
+               <input 
+                    name="" 
+                    type="submit" 
+                    id="mybtnse" 
+                    class="side-submit" 
+                    value="{{ isDanish ? 'SØG' : 'SEARCH' }}" 
+                    style="cursor:pointer;" 
+                    ng-click='filterProfiles()'>
+          </div>
+     </div><!--close leftbar-->
+     <div class="rightbar">
                <div class="rightbar_inner">
                <div class="rightbar-row">
                   <!-- <div class="col" ng-repeat="x in profiles | filter:q | startFrom:currentPage*pageSize | limitTo:pageSize"> -->
-                  <div class="col" ng-repeat="x in profiles | filter:q " ng-class="{wrapPM{{$index}}  : !($index % scroll_counter_number)}">
+                  <div class="col" ng-repeat="x in profiles | filter:q " ng-class="{wrapPM{{$index}}  : !($index % 18)}">
                        <div class="col-inner" profileid={{x.id}} ng-mouseover="hoverInLb()" ng-mouseleave="hoverOutLb()">
                             <!-- <div class="thumb"  data-thisproid={{x.id}} ng-click="getSingleProfile(x.id)" ng-style="{'background-image':'url({{x.profile_image}})'}" style="background-image: url('{{x.profile_image}}')"> -->
                             <div class="thumb"  data-thisproid={{x.id}} ng-click="getSingleProfile(x.id)"  style="background-image: url('{{x.profile_image}}')">
@@ -89,11 +125,17 @@
  </div><!--close slider-controller-->
 
 
-<div id="content-white" class="contact_section" style="display:none;">
+<div id="content-white" class="contact_section full-width-page full-screen-white-box" style="display:none;">
         
           <div class="information-inside">
+               <div class="show-xs main-menu-header show-xs">
+                    <img src="images/logo.png" height="30" />
+                    <a 
+                         href="/#/index{{ isDanish ? '/da' : '/en'}}"
+                         class="poup-close2 popup-close-btn">{{ isDanish ? 'LUK' : 'CLOSE' }}</a>
+               </div>
                <h2>Castit</h2>
-               <a href="javascript:void(0);" class="poup-close2">{{ isDanish ? 'luk' : 'Close' }}</a>
+               <a href="javascript:void(0);" class="poup-close2 hide-xs">{{ isDanish ? 'luk' : 'Close' }}</a>
                <div class="row" ng-if="isDanish">
                     <div class="col-md-4 col-lg-4">
                        <p>Castit er et bureau som har specialiseret sig i at finde personer til medvirken på fotos og i reklamefilm. Karakterer som man husker og som har den helt rigtige personlighed og udseende. Vi finder både skuespillere, amatører og street caster. Vi har altid et bredt udvalg og kan levere karakterer til alle typer roller og behov. </p>
@@ -127,7 +169,7 @@
                     </div>
                     
                </div>
-               <div class="row" ng-if="!isDanish">
+               <div class="" ng-if="!isDanish">
                     <div class="row">
                     <div class="col-md-4 col-lg-4">
                          <p>Castit is an agency that specializes in finding people for photo shoots and commercials. Characters that you remember and that have the exact right personality and appearance. We find both actors, amateurs and do street casting. We always have a wide selection and can deliver characters to all types of roles and needs.</p>
@@ -169,10 +211,18 @@
           
      </div>
 
-<div id="content-white1"  class="course_section" style="display:none;">
+<div id="content-white1"  class="course_section full-width-page full-screen-white-box" style="display:none;">
   <div class="information-inside castit-workshop">
+
+     <div class="show-xs main-menu-header show-xs">
+          <img src="images/logo.png" height="30" />
+          <a 
+               href="/#/index{{ isDanish ? '/da' : '/en'}}"
+               class="poup-close2 popup-close-btn">{{ isDanish ? 'LUK' : 'CLOSE' }}</a>
+     </div>
+
        <h2>Castit Workshop</h2>
-       <a href="javascript:void(0);" class="poup-close2"> {{ isDanish ? 'luk' : 'Close' }}</a>
+       <a href="javascript:void(0);" class="poup-close2 hide-xs"> {{ isDanish ? 'luk' : 'Close' }}</a>
        <div class="information-inside-row2">
                 <div class="information-inside-left">
                 <div ng-if="isDanish" class="listscroll">
@@ -370,7 +420,7 @@
       <a href="javascript:void(0);" class="poup-closeno">{{ isDanish ? 'luk' : 'CLOSE' }}</a>
 
  </div><!--close video_section1-->
- <p ng-show="isGetSingleLoading" style="color:#FFF; margin-top: 20%; margin-left: 50%" align="left"><img height="7%" width="7%" alt="loading" src="assets/loader/3.gif" /><br/><span style="margin-left: -2%; font-size: 11px;">{{ isDanish ? 'vent venligst' : 'Please Wait'}}...</span></p>
+ <p ng-show="isGetSingleLoading" style="color:#FFF; margin-top: 50%; margin-left: 50%" align="left"><img height="7%" width="7%" alt="loading" src="assets/loader/3.gif" /><br/><span style="margin-left: -2%; font-size: 11px;">{{ isDanish ? 'vent venligst' : 'Please Wait'}}...</span></p>
  <div class="video_section2" ng-show="!isGetSingleLoading" >
   
   
@@ -438,10 +488,9 @@
                           <div  ng-show = "IsProfileVideo" class="videobig_thumb video_margin" >
                           
                           
-                              <video controls playsinline ng-src=" {{ currVideoUrl | trusted}} " id="pro_video"  style="width:100%;max-width:100%;">
-                                    <source ng-src=" {{ currVideoUrl | trusted}} " type="video/mp4">
-                                      
-                            </video>
+                         <video controls playsinline ng-src=" {{ currVideoUrl | trusted}} " id="pro_video"  style="width:100%;max-width:100%;">
+                              <source ng-src=" {{ currVideoUrl | trusted}} " type="video/mp4">                       
+                         </video>
                             
                           </div>
                           <div id="photo_nav"  ng-show="IsProfileImage">
@@ -509,10 +558,10 @@
       
  <div class="video_section3">
            <div class="rightbar-row">
-                <div class="video_call4">
+                <div class="video_call4 hide-in-mobile-portrait">
                      &nbsp;
                 </div>
-                <div class="video_call4">
+                <div class="video_call4 hide-in-mobile-portrait">
                   &nbsp;
                 </div>
                 <!-- <div id="photo_nav" class="video_call4" ng-show="IsProfileImage">

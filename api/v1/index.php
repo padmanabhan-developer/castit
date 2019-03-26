@@ -178,8 +178,8 @@ else{
 				$y_profiles[]=$item;
 			}
 		}
-		// shuffle($c_profiles);
-		// shuffle($y_profiles);
+		shuffle($c_profiles);
+		shuffle($y_profiles);
 		$_SESSION['c_profiles'] = $c_profiles;
 		$_SESSION['y_profiles'] = $y_profiles;
 	}
@@ -223,7 +223,8 @@ else{
 				$path = $rows_image[$random_index]['create_year']."/".$rows_image[$random_index]['create_month']."/".$rows_image[$random_index]['create_date']."/".$rows_image[$random_index]['id']."/big_";
 				$profile_image = 'http://134.213.29.220/profile_images/'.$path.$rows_image[$random_index]['image'];
 			}
-
+			// http://134.213.29.220/profile_images/2008/09/30/13879/big_yekaterinaA0049-EEwVuYZVxtD7EquIPNlq7g.jpg
+			// http://assets3.castit.dk/profile_images/2008/09/30/13879/big_yekaterinaA0049-EEwVuYZVxtD7EquIPNlq7g.jpg
 		}
 			$profiles[] = array('id' 			=> $row['id'],
 								'bureau' 		=> $row['bureau'],

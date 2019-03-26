@@ -38,7 +38,20 @@ main.controller('MainController', ['$scope', '$theme', '$timeout', 'progressLoad
       'zoomInLeft',
       'zoomInRight',
       'zoomInUp'
-    ];
+		];
+		
+		$(document).ready(function(){
+			$('.main-menu-trigger').click(function(){
+				$('.landing-wrapper').toggleClass('menu-active');
+			});
+
+			$('.popup-close-btn').click(function(){
+				$('.landing-wrapper').removeClass('menu-active');
+				$('.res_menu').removeClass('active');
+				$(".res_menu ul li").fadeOut("slow");
+			});
+		});
+
     $scope.layoutLoading = true;
     $scope.getLayoutOption = function(key) {
       return $theme.get(key);
@@ -49,7 +62,7 @@ main.controller('MainController', ['$scope', '$theme', '$timeout', 'progressLoad
 				var currentPathArray = $location.path().split('/');
 				$location.path('/' + currentPathArray[1] + (isDanish ? '/da' : '/en'));
 	//     });
-	  }
+	  };
     $scope.setNavbarClass = function(classname, $event) {
       $event.preventDefault();
       $event.stopPropagation();
@@ -191,16 +204,48 @@ main.controller('MainController', ['$scope', '$theme', '$timeout', 'progressLoad
 		$rootScope.isMaincontent = false;
 		$rootScope.interface = 'aboutus';
 		$(".main_content").fadeOut(); 
-		$(".course_section").fadeOut(); 
+		$(".course_section").fadeOut();
+		
+		// close menu-section
+		closeMenuSection();
+
 		$(".contact_section").fadeIn("slow"); 
-    };
+	};
 	$scope.show_course = function() {
 		$rootScope.isMaincontent = false;
 		$rootScope.interface = 'course';
 		$(".main_content").fadeOut(); 
-		$(".contact_section").fadeOut(); 
+		$(".contact_section").fadeOut();
+		
+		closeMenuSection();
+		
 		$(".course_section").fadeIn("slow"); 
-    };
+	};
+
+	$scope.toggleMenu = function(){
+		$("#main-menu-context").toggleClass('active');
+		$('.landing-wrapper').addClass('menu-active');
+	};
+
+	$scope.goto = function(path){
+
+		$('#main-menu-context').removeClass('active');
+
+		$location.path(path);
+	};
+
+	$scope.hideMenu = function(){
+		$("#main-menu-context").removeClass('active');
+	};
+
+	// $("#main-menu-context li").click(function(){
+	// 	$("#main-menu-context").removeClass('active');
+	// });
+
+	function closeMenuSection(){
+		$('#main-menu-context').removeClass('active');
+		$('.landing-wrapper').removeClass('menu-active');
+	}
 	
 
 		if(!$scope.isDanish){
@@ -2076,6 +2121,19 @@ main.controller('UserPasswordResetController', ['$scope', '$filter', '$http', '$
 }]);
 
 main.controller('AngularLoginController', ['$scope', '$filter', '$http', '$window', '$rootScope', 'FlashService', '$cookies', function($scope, $filter, $http, $window, $rootScope, FlashService, $cookies) { 
+	
+	$(document).ready(function(){
+		$('.main-menu-trigger').click(function(){
+			$('.landing-wrapper').toggleClass('menu-active');
+		});
+
+		$('.popup-close-btn').click(function(){
+			$('.landing-wrapper').removeClass('menu-active');
+			$('.res_menu').removeClass('active');
+			$(".res_menu ul li").fadeOut("slow");
+		});
+	});
+
 	this.loginForm = function() {
 
 	var user_data = {

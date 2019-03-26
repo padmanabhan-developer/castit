@@ -334,11 +334,11 @@ var frontend = angular.module('theme.demos.dashboard', [
 	$(".poup-close2").click(function(){
 		$rootScope.interface = 'home';
 		$rootScope.isMaincontent = true;
-		$rootScope.$apply()
+		$rootScope.$apply();
 		$(".contact_section").fadeOut(); 
 		$(".course_section").fadeOut(); 
 		$(".main_content").fadeIn("slow"); 
-	  });
+	});
 	 
 	$("#event1").click(function(){
 	    $(".title1").addClass("active");
@@ -466,42 +466,67 @@ var frontend = angular.module('theme.demos.dashboard', [
 	$timeout(function(){
 		$(document).ready(function(){
 
-			$(".res-menu").unbind("click").click(function(){
-				$(".res_menu ul li").fadeToggle("slow");
+			// $('.res-menu img[alt=responsivemenu]').click(function(){
+			// 	$("#main-menu-context").toggleClass('active');
+			// });
+
+			// $(".res-menu").unbind("click").click(function(){
+			// 	$(".res_menu ul li").fadeToggle("slow");
 		
-				// set menu active indicator
-				$("#main-menu-context").toggleClass('active');
-			});
+			// 	// set menu active indicator
+			// 	$("#main-menu-context").toggleClass('active');
+			// });
 
-			$(".res_menu ul li").unbind('click').click(function(){
-				$(".res_menu ul li").hide();
-			});
+			// $(".res_menu ul li").unbind('click').click(function(){
+			// 	$(".res_menu ul li").hide();
+			// });
 
-			$(".res_menu li.menu-item a").each(function(){
-				$(this).unbind("click").click(function(){
-					// remove active class from menu-context if exist.
-					$("#main-menu-context").removeClass('active');
-					$(".information-inside .poup-close2").trigger('click');
-				});
-			});
+			// $(".res_menu li.menu-item a").each(function(){
 
-			$(".res_menu li").each(function(){
-				$(this).unbind("click").click(function(){
+			// 	var ngClick = $(this).attr('ng-click');
 
-					return true;
-					// remove active class from menu-context if exist.
-					// $("#main-menu-context").removeClass('active');
-					// $(".information-inside .poup-close2").trigger('click');
-				});
-			});
+			// 	// skip click registration if already ng-click is active.
+			// 	if(!ngClick){
+			// 		return false;	
+			// 	}
+
+			// 	$(this).unbind("click").click(function(){
+			// 		// remove active class from menu-context if exist.
+			// 		$("#main-menu-context").removeClass('active');
+			// 		$(".information-inside .poup-close2").trigger('click');
+			// 	});
+			// });
+
+			// $(".res_menu li").each(function(){
+			// 	$(this).unbind("click").click(function(){
+
+			// 		var childClick = $(this).find('a')[0].getAttribute('ng-click');
+			// 		var childHref = $(this).find('a')[0].getAttribute('href');
+
+			// 		if(childClick || childHref){
+
+			// 			var children = $(this).find('a');
+
+			// 			if(children.length){
+			// 				$(children[0]).trigger('click');
+			// 			}
+			// 		}
+			// 	});
+			// });
+
+			// add a generic popup close trigger.
+			$(".popup-close-btn").click(closeDialog);
+
+			function closeDialog(){
+				$(".leftbar").fadeOut();
+			}
+
 		});
 	});
 
 	$scope.hideMenu = function(){
 		$("#main-menu-context").removeClass('active');
 	};
-	
-	
 
 	$(".information-inside .poup-close2").click(function(){
 		$(".res_menu ul li").fadeOut("slow");
@@ -1055,7 +1080,7 @@ var frontend = angular.module('theme.demos.dashboard', [
 		// alert($scope.currentIndexVideo);
 		if($scope.profile_videos){
 			$scope.currVideoUrl = $scope.profile_videos[$scope.currentIndexVideo].fullpath;
-			var video = $('video#pro_video')[0];
+			var video = $('#pro_video')[0];
 			/*$('video').mediaelementplayer({
 				alwaysShowControls: false,
 				videoVolume: 'horizontal',
