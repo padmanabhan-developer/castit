@@ -1,17 +1,23 @@
 <style>
 
 </style>
-<div ng-controller="profileCreateController"   class="ansog1">
+<div ng-controller="profileCreateController" class="ansog1 full-width-page full-screen-black-box">
      <div id="content" class="wrap2">
      	  
           <div class="page-black livetitle">
-          	   <div class="section-top">
+               
+               <div class="show-xs main-menu-header show-xs">
+                    <img src="images/logo2.png" height="30" />
+                    <a href="/#/index{{ isDanish ? '/da' : '/en'}}"
+                              class="poup-close2 popup-close-btn">{{ isDanish ? 'LUK' : 'CLOSE' }}</a>
+               </div>
+               <div class="section-top">
                		<h2>{{ isDanish ? 'Ansøgningsskema' : 'Application form' }}</h2>
-                    <div class="black-right">
-                    	 <!-- <a href="#" class="black-edit"></a> -->
+                    <div class="black-right hide-xs">
                           <a href="#/index{{isDanish ? '/da' : '/en'}}" class="black-close">{{ isDanish ? 'luk' : 'Close' }}</a>
                     </div>
-               </div><!--close section-top-->
+               </div>
+
                <form name="profile_ansog_form7" id="profile_ansog_form7" ng-submit="step7Create()">
                <div class="section-middle">
                		
@@ -50,16 +56,17 @@
                          </div><!--close black-row-->
                     </div><!--close black-section-->
                     
-                    <div class="black-numbers"><span class="span3"><em>06</em>/07</span></div>
+                    <div class="black-numbers hide-xs"><span class="span3"><em>06</em>/07</span></div>
                </div><!--close section-middle-->
                
-               <div class="section-bottom">
-               		<div class="blackpage-controller">
-                    	 <!-- <span class="controller-title">{{ isDanish ? 'Færdig' : 'Done' }}</span> -->
-                               <!-- <a href="#/ansog-trin6{{isDanish ? '/da' : '/en'}}" class="black-prev"></a> -->
-                               <a href="#/ansog-trin5{{isDanish ? '/da' : '/en'}}" class="black-prev">{{ isDanish ? 'FORRIGE SIDE' : 'PREVIOUS PAGE' }}</a>
+               <div class="section-bottom flex-footer">
+                    <div class="black-numbers mobile-pager show-xs"><span class="span3"><em>06</em>/07</span></div>
+                    <div class="blackpage-controller">
+                         <!-- <span class="controller-title">{{ isDanish ? 'Færdig' : 'Done' }}</span> -->
+                         <!-- <a href="#/ansog-trin6{{isDanish ? '/da' : '/en'}}" class="black-prev"></a> -->
+                         <a href="#/ansog-trin5{{isDanish ? '/da' : '/en'}}" class="black-prev">{{ isDanish ? 'FORRIGE SIDE' : 'PREVIOUS PAGE' }}</a>
                          <!-- <button ng-disabled="profile_ansog_form7.$touched" type="submit" class="black-next"></button>  -->
-                         </div>
+                    </div>
                </div><!--close section-bottom-->
                </form>
           </div><!--close page-black-->

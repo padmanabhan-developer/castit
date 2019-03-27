@@ -1,16 +1,20 @@
-<div ng-controller="RegisterStep3Controller" class="ansog1">
+<div ng-controller="RegisterStep3Controller" class="ansog1 full-width-page full-screen-black-box">
 
     <div id="content" class="wrap2">
         <form name="profile_ansog_form3" id="profile_ansog_form3" ng-submit="step3Create()">
             <div class="page-black livetitle">
+                
+                <div class="show-xs main-menu-header show-xs">
+                    <img src="images/logo2.png" height="30" />
+                    <a href="/#/index{{ isDanish ? '/da' : '/en'}}"
+                            class="poup-close2 popup-close-btn">{{ isDanish ? 'LUK' : 'CLOSE' }}</a>
+                </div>
                 <div class="section-top">
                     <h2>{{ isDanish ? 'Ansøgningsskema' : 'Application form' }}</h2>
-                    <div class="black-right">
-                        <!-- <a href="#" class="black-edit"></a> -->
+                    <div class="black-right hide-xs">
                         <a href="#/index{{isDanish ? '/da' : '/en'}}" class="black-close">{{ isDanish ? 'luk' : 'Close' }}</a>
                     </div>
                 </div>
-                <!--close section-top-->
 
                 <div class="section-middle">
 
@@ -463,20 +467,20 @@
                         <!--close black-row-->
                     </div>
                     <!--close black-section-->
-                    <div class="black-numbers">
+                    <div class="black-numbers hide-xs">
                         <span class="span3">
-                            <em>03</em>/07</span>
+                        <em>03</em>/07</span>
                     </div>
                 </div>
                 <!--close section-middle-->
 
-                <div class="section-bottom">
+                <div class="section-bottom flex-footer">
+                    <div class="black-numbers mobile-pager show-xs"><span class="span3"><em>03</em>/07</span></span></div>
                     <div class="blackpage-controller">
-                     
                       <a href="#/ansog-trin2{{isDanish ? '/da' : '/en'}}" class="black-prev">{{ isDanish ? 'FORRIGE SIDE' : 'PREVIOUS PAGE' }}</a>
                       <button ng-disabled="profile_ansog_form3.$touched" type="submit" class="black-next">{{ isDanish ? 'NÆSTE SIDE' : 'NEXT PAGE' }}</button>
-                 </div>
-            </div>
+                    </div>
+                </div>
                 <!--close section-bottom-->
             </div>
             <!--close page-black-->
