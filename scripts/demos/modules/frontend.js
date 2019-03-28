@@ -639,6 +639,7 @@ var frontend = angular.module('theme.demos.dashboard', [
 	
 	$scope.filterProfiles = filterProfiles;
 	function filterProfiles() {
+		$(".leftbar").fadeOut();
     $scope.currentPage = 0;
     $scope.pageSize = 40;
     $scope.profiles = [];
@@ -723,7 +724,9 @@ var frontend = angular.module('theme.demos.dashboard', [
 	$scope.selectedgroupings = '';
 	$scope.checkuncheckgrouping = checkuncheckgrouping;
 	function checkuncheckgrouping(groupingid) {
-    var myElBut = angular.element( document.querySelector( '#groupingbut'+groupingid ) );
+		// var myElBut = angular.element( document.querySelector( '#groupingbut'+groupingid ) );
+		var myElBut = $("#groupingbut"+groupingid);
+		console.log(myElBut);
 		myElBut.toggleClass('button').toggleClass('button2');
     var selgroupings = new Array();
 
@@ -1022,7 +1025,7 @@ var frontend = angular.module('theme.demos.dashboard', [
 		$scope.IsProfileImage = false;
 		$scope.currVideoUrl = profilevideo;
 		// console.log($scope.currVideoUrl);
-		// $scope.singleimage = $scope.currVideoUrl;
+		$scope.singleimage = $scope.currVideoUrl;
 		var video = $('#pro_video')[0];
 		jQuery('video').mediaelementplayer({
 			alwaysShowControls: true,
@@ -1128,7 +1131,7 @@ var frontend = angular.module('theme.demos.dashboard', [
 			$scope.IsProfileImage = false;
 			// $scope.currVideoUrl = profilevideo;
 			// console.log($scope.currVideoUrl);
-			// $scope.singleimage = $scope.currVideoUrl;
+			$scope.singleimage = $scope.currVideoUrl;
 			var video = $('video');
 			/*
 			jQuery('video').mediaelementplayer({

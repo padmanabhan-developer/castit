@@ -187,7 +187,7 @@ else{
 	if(count($rows)>0) {
 		if(isset($_SESSION['c_profiles'])){
 			$rows_temp = array_merge($_SESSION['c_profiles'], $_SESSION['y_profiles']);
-			$rows_new = array_slice($rows_temp, $offset*54, 54, true);
+			$rows_new = array_slice($rows_temp, $offset*180, 180, true);
 		}else{
 			$rows_new = $rows;
 		}
@@ -223,8 +223,7 @@ else{
 				$path = $rows_image[$random_index]['create_year']."/".$rows_image[$random_index]['create_month']."/".$rows_image[$random_index]['create_date']."/".$rows_image[$random_index]['id']."/big_";
 				$profile_image = 'http://134.213.29.220/profile_images/'.$path.$rows_image[$random_index]['image'];
 			}
-			// http://134.213.29.220/profile_images/2008/09/30/13879/big_yekaterinaA0049-EEwVuYZVxtD7EquIPNlq7g.jpg
-			// http://assets3.castit.dk/profile_images/2008/09/30/13879/big_yekaterinaA0049-EEwVuYZVxtD7EquIPNlq7g.jpg
+
 		}
 			$profiles[] = array('id' 			=> $row['id'],
 								'bureau' 		=> $row['bureau'],
@@ -1372,8 +1371,11 @@ $app->get('/countries', function () use ($app) {
 		$countries[] = array('id' => $row['id'],
 						  'name' => $row['name_dk']
 						);
-	}
-	echoResponse(200, $countries);
+		}
+		$sorted_countries = array_sort($countries, 'name', SORT_ASC);
+		// echo '<pre>';
+		// print_r($countries);
+	echoResponse(200, $sorted_countries);
 });
 
 $app->get('/countries/en', function () use ($app) { 
@@ -1387,7 +1389,10 @@ $app->get('/countries/en', function () use ($app) {
 						  'name' => $row['name']
 						);
 	}
-	echoResponse(200, $countries);
+	$sorted_countries = array_sort($countries, 'name', SORT_ASC);
+	// echo '<pre>';
+	// print_r($countries);
+echoResponse(200, $sorted_countries);
 });
 
 
@@ -2726,7 +2731,7 @@ $app->post('/welcome_email', function () use ($app) {
 $html_body = <<< EOM
 <p>Kære $first_name,</p>
 <p>
-Tusind tak for din ansøgning. Så snart vi har kigget den igennem modtager du en mail, med information om vi lægger din profil Online eller Offline.
+Tusind tak for din ansøgning. Så snart vi har kigget den igennem, modtager du en mail med information om vi lægger din profil Online eller Offline.
 </p>
 <p>
 Vi bestræber os på at svare inden 14 dage.
@@ -2736,7 +2741,7 @@ De bedste hilsner
 </p>
 <p>Cathrine & Pernille</p>
 <br/>
-<p><img style="width:150px; height:30px" src="http://134.213.29.220/admin/images/logo.png"/></p>
+<p><img style="width:150px; height:30px" src="http://134.213.29.220/images/logo-email.png"/></p>
 <p>Rosenvængets Allè 11, 1. Sal</p>
 <p>2100 København Ø</p>
 
@@ -2756,14 +2761,14 @@ De bedste hilsner
 
 <p>Dear $first_name,</p>
 <p>
-Thank you for your application. As soon as we have looked it through, you will receive an email with information about whether we will add your profile Online or Offline.  We strive to respond within 14 days
+Thank you for your application. As soon as we have looked it through, you will receive an email with information about whether we will add your profile Online or Offline.  We strive to respond within 14 days.
 </p>
 <p>
 Very best
 </p>
 <p>Cathrine & Pernille</p>
 <br/>
-<p><img style="width:150px; height:30px" src="http://134.213.29.220/admin/images/logo.png"/></p>
+<p><img style="width:150px; height:30px" src="http://134.213.29.220/images/logo-email.png"/></p>
 <p>Rosenvængets Allè 11, 1. Sal</p>
 <p>2100 København Ø</p>
 
@@ -3821,7 +3826,9 @@ $app->post('/fileuploadparser', function () use ($app) {
 			$db->exec($query);
 			echo json_encode(['status_message'=>'file upload success', 'filename'=>$fileName, 'imgpath'=>'/images/uploads/'.$fileName, 'position'=>$position, 'type'=>'image']);
 
-			
+			$recently_updated = "update profiles set recently_updated = 'true' where id = '".$profile_id."'";
+					$query_prepared = $db->prepare($recently_updated);
+					$query_prepared->execute();
 	    // echo json_encode(['status_message'=>'file upload success', 'type'=>'image', 'filename'=>"/images/uploads/".$fileName]);
 	  } 
 	  else {
@@ -3926,6 +3933,11 @@ $app->post('/fileuploadparser', function () use ($app) {
 					$query_prepared = $db->prepare($query);
 					$query_prepared->execute();
 
+					$recently_updated = "update profiles set recently_updated = 'true' where id = '".$profile_id."'";
+					$query_prepared = $db->prepare($recently_updated);
+					$query_prepared->execute();
+					// $db->exec($recently_updated);
+
     echo json_encode(['status_message'=>'file upload success', 'type'=>'video', 'filename'=>$fileName, 'cdnfilepath'=>$cdnfilepath, 't'=>$time, 'thumbnail'=>$thumbnail, 'zencoder_input'=>$zencoder_input,'zencoder_output'=>$zencoder_output, 'position'=>$position ]);
   }
 });
@@ -4005,4 +4017,41 @@ function unique_code($limit)
 {
   return substr(base_convert(sha1(uniqid(mt_rand())), 16, 36), 0, $limit);
 }
+
+function array_sort($array, $on, $order=SORT_ASC)
+{
+    $new_array = array();
+    $sortable_array = array();
+
+    if (count($array) > 0) {
+        foreach ($array as $k => $v) {
+            if (is_array($v)) {
+                foreach ($v as $k2 => $v2) {
+                    if ($k2 == $on) {
+                        $sortable_array[$k] = $v2;
+                    }
+                }
+            } else {
+                $sortable_array[$k] = $v;
+            }
+        }
+
+        switch ($order) {
+            case SORT_ASC:
+                asort($sortable_array);
+            break;
+            case SORT_DESC:
+                arsort($sortable_array);
+            break;
+        }
+
+        foreach ($sortable_array as $k => $v) {
+            $new_array[$k] = $array[$k];
+        }
+    }
+
+    return $new_array;
+}
+
+
 ?>

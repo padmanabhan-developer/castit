@@ -1422,7 +1422,8 @@ position: absolute;    right: 0;
         display: none;
     }
     .ansog1 .blackpage-controller{
-        margin: 10px 0 !important;
+        /* margin: 10px 0 !important; */
+        margin: 0px 0 !important;
     }
 }
 

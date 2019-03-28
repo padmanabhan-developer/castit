@@ -129,6 +129,12 @@ img {
     float: left;
     width: 100%;
 }
+.recently_updated{
+    color: green
+}
+.recently_updated strong{
+    text-shadow: 1px 1px 1px yellow;
+}
 @media screen and (min-width:1200px) {
     .container {
         width: 1230px;

@@ -88,7 +88,10 @@
       else{
         $info['profile_id'] = $profile_id;
       }
-
+      $info['recently_updated'] = '';
+      if($value['recently_updated'] == 'true'){
+        $info['recently_updated'] = " recently_updated ";
+      }
       $profile_number = $db->prepare("SELECT profile_number from memberships where profile_id = ".$profile_id." order by version desc limit 1 ");
       $profile_number->execute();
       // pp($profile_number);exit;
@@ -156,7 +159,7 @@
         }
 
         $html_data .= '<tr>
-        <td class="td1"><p><strong>'. $info['name'] .'</strong></p></td>
+        <td class="td1"><p class="'.$info['recently_updated'].'"><strong>'. $info['name'] .'</strong></p></td>
         <td class="td2"><p>'. $info['profile_number'] .'</p></td>
         <td class="td3"><p>'. $info['created_at'] .'</p></td>
         <td class="td4"><p>'. $info['valid_till'] .'</p></td>
