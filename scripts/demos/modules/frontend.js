@@ -639,7 +639,9 @@ var frontend = angular.module('theme.demos.dashboard', [
 	
 	$scope.filterProfiles = filterProfiles;
 	function filterProfiles() {
-		$(".leftbar").fadeOut();
+		if(window.outerWidth <= 990){
+			$(".leftbar").fadeOut();
+		}
     $scope.currentPage = 0;
     $scope.pageSize = 40;
     $scope.profiles = [];

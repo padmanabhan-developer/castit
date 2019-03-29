@@ -1375,6 +1375,8 @@ margin: 0 30px 0 0 !important;
 .black-rightbar {
     width: 100% !important;
     margin: 0px 0 0 0 !important;
+    padding-right: 10px;
+    padding-left: 10px;
 }
 .livetitle .section-top h2 {
     color: #fefefe !important;
@@ -1425,8 +1427,30 @@ position: absolute;    right: 0;
         /* margin: 10px 0 !important; */
         margin: 0px 0 !important;
     }
-}
+    .black-cal4.language_dropdown{
+        width: 60% !important;
+        float: left;
+    }
+    .black-cal4.language_star{
+        width: 39% !important;
+        text-align: right;
+    }
+    .black-cal4.language_rating_info{
+        margin-top: 30px;
+    }
 
+    .page-black .section-bottom{
+        margin-bottom: 30px;
+    }
+
+}
+footer#header-toolbar > .footer_left img.searchmini{
+    width: 80px !important;
+    height: 40px !important;
+    top: 0 !important;
+    position: absolute;
+    max-width: none;
+}
 
 @media only screen and (max-width: 767px) and (orientation: landscape) {
     .full-screen-black-box{
@@ -1451,7 +1475,15 @@ position: absolute;    right: 0;
 .col-inner {
     height:250px;
 }
-
+#main-menu-context.active{
+    float: left;
+    position: absolute;
+    padding: 0px 24px;
+    height: 100vh;
+    width: 93vw;
+    left: 0px;
+    background: #fff;
+}
 }
 
 
@@ -1574,7 +1606,8 @@ position: absolute;    right: 0;
     position: absolute;
 }
 .wrap2 .page-black {
-    padding: 0 15px 0 15px !important;
+    /* padding: 0 15px 0 15px !important; */
+    padding: 0 !important;
 }
 .information-inside-left {
     width: 100% !important;

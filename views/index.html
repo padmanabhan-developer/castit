@@ -10,7 +10,7 @@
                     href="https://www.facebook.com/castitdenmark" 
                     target="_blank">Facebook</a>
           </span>
-          <img src="images/svgs/sog.svg" class="searchmini" />
+          <img src="images/svgs/search1.svg" class="searchmini" />
      </div>
      <div class="footer_right"><span class="footer-line"></span>
           <img src="images/tabnew.png" id="tabnewblack" class="tabnew" />
@@ -90,7 +90,7 @@
                               
                               <div  ng-show="hoverAddtoLb" id="add_to_lb_{{x.id}}" class="icon animate-show" ng-click="getProfileBox(x.id)"><img src="images/icon5.png" alt=""></div>
                               
-                              <div ng-show="x.marked_as_new == 1" class="icon animate-show new-splash"><img src="images/icon6.png" alt=""></div>
+                              <div ng-show="x.marked_as_new == 1" class="icon animate-show new-splash"><img src="{{ isDanish ? 'images/svgs/ny1.svg' : 'images/svgs/new1.svg' }}" alt=""></div>
                               
                          </div>
                     </div><!--close col-->
@@ -132,7 +132,7 @@
                     <img src="images/logo.png" height="30" />
                     <a 
                          href="/#/index{{ isDanish ? '/da' : '/en'}}"
-                         class="poup-close2 popup-close-btn">{{ isDanish ? 'LUK' : 'CLOSE' }}</a>
+                         class="poup-close2 popup-close-btn" style="background:none !important">{{ isDanish ? 'LUK' : 'CLOSE' }} <img src="images/svgs/lukb1.svg" alt=""> </a>
                </div>
                <h2>Castit</h2>
                <a href="javascript:void(0);" class="poup-close2 hide-xs">{{ isDanish ? 'luk' : 'Close' }}</a>
@@ -343,7 +343,7 @@
                               <ul class="side-tool">
                                   <li><a href="javascript:void(0);" ng-click="removeGroup(gpprofile.group_id)">{{ isDanish ? 'Slet' : 'Delete' }}</a></li>
                                   <li><a href="javascript:void(0);" ng-click="showSendGroupPopup(gpprofile.group_id);">Send</a></li>
-                                  <li><a href="javascript:void(0);" class="div-close group-view-toggle" ng-click="togglegrouping_top($event)"></a></li>
+                                  <li><a href="javascript:void(0);" class="div-close group-view-toggle" style="background: none !important" ng-click="togglegrouping_top($event)"><img src="images/svgs/down1.svg" alt=""></a></li>
                               </ul>
                          </div>
                         <div class="sidebar1_box2_middle group-list">
@@ -380,7 +380,7 @@
                         </div>
                         <div class="sidebar1_box2_bottom">
                         <span class="title4">{{gpprofile.addedon}}</span>
-                          <a href="javascript:void(0);" class="div-close group-view-toggle" ng-click="togglegrouping($event)"></a>
+                          <a href="javascript:void(0);" class="div-close group-view-toggle" ng-click="togglegrouping($event)" style="background: none !important"><img src="images/svgs/down1.svg" alt=""></a>
                         </div>
                 </div><!--close sidebar1_box2-->
  
@@ -414,10 +414,12 @@
  <div class="video_popup">
  
  <div class="video_section1 poup-close3">
-      <div class="logo2"><img src="images/CASTIT_LOGO_RGB_white.svg" alt="" style="height: 12vh; position: absolute; top: 0;"></div>
+      <div class="logo2">
+           <img src="images/CASTIT_LOGO_RGB_white.svg" alt="" style="height: 80px; top: 0px;margin-top: -25px;">
+          </div>
       <a href="{{singleimage}}" target="_blank" class="video_download">download</a>
       <a href="javascript:void(0);" ng-click="getProfileBox(pbox_profileid)" class="video_upload">{{ isDanish ? 'Lightbox' : 'Lightbox' }} </a>
-      <a href="javascript:void(0);" class="poup-closeno">{{ isDanish ? 'luk' : 'CLOSE' }}</a>
+      <a href="javascript:void(0);" class="poup-closeno" style="padding:0; background: none !important">{{ isDanish ? 'luk' : 'CLOSE' }}&nbsp;&nbsp;<img src="images/svgs/lukw1.svg" alt="" style="width: 18px"></a>
 
  </div><!--close video_section1-->
  <p ng-show="isGetSingleLoading" style="color:#FFF; margin-top: 50%; margin-left: 50%" align="left"><img height="7%" width="7%" alt="loading" src="assets/loader/3.gif" /><br/><span style="margin-left: -2%; font-size: 11px;">{{ isDanish ? 'vent venligst' : 'Please Wait'}}...</span></p>
@@ -495,15 +497,15 @@
                           </div>
                           <div id="photo_nav"  ng-show="IsProfileImage">
                             <div class="video_controller">
-                             <a href="javascript:void(0);" ng-click="prev()" class="vide_prev" style="display: inline-block; width: 12px; height: 17px; background: none !important ; margin: 0 44px 0 0; font-size: 25px; color: #fff; font-weight: bold;">&lt;</a>
-                             <a href="javascript:void(0);"  ng-click="next()" class="vide_next" style="display: inline-block; width: 12px; height: 17px; background: none !important ; margin: 0 0 0 44px; font-size: 25px; color: #fff; font-weight: bold;">&gt;</a>
+                             <a href="javascript:void(0);" ng-click="prev()" class="vide_prev" style="display: inline-block; width: 12px; height: 17px; background: none !important ; margin: 0 44px 0 0; font-size: 25px; color: #fff; font-weight: bold;"><img src="images/svgs/left1.svg" alt=""></a>
+                             <a href="javascript:void(0);"  ng-click="next()" class="vide_next" style="display: inline-block; width: 12px; height: 17px; background: none !important ; margin: 0 0 0 44px; font-size: 25px; color: #fff; font-weight: bold;"><img src="images/svgs/right1.svg" alt=""></a>
                             </div>
                             <span class="span3"><em>{{currentIndex+1}}</em>/{{profile_images.length}}</span>
                        </div>
                        <div id="video_nav"  style="display:none;" ng-show="profile_videos.length > 1 && IsProfileVideo">
                             <div class="video_controller">
-                             <a href="javascript:void(0);"  ng-click="prev_video()" class="vide_prev" style="display: inline-block; width: 12px; height: 17px; background: none !important ; margin: 0 44px 0 0; font-size: 25px; color: #fff; font-weight: bold;">&lt;</a>
-                             <a href="javascript:void(0);"  ng-click="next_video()" class="vide_next" style="display: inline-block; width: 12px; height: 17px; background: none !important ; margin: 0 0 0 44px; font-size: 25px; color: #fff; font-weight: bold;">&gt;</a>
+                             <a href="javascript:void(0);"  ng-click="prev_video()" class="vide_prev" style="display: inline-block; width: 12px; height: 17px; background: none !important ; margin: 0 44px 0 0; font-size: 25px; color: #fff; font-weight: bold;"><img src="images/svgs/left1.svg" alt=""></a>
+                             <a href="javascript:void(0);"  ng-click="next_video()" class="vide_next" style="display: inline-block; width: 12px; height: 17px; background: none !important ; margin: 0 0 0 44px; font-size: 25px; color: #fff; font-weight: bold;"><img src="images/svgs/right1.svg" alt=""></a>
                             </div>
                              <span class="span3"><em>{{currentIndexVideo+1}}</em>/{{profile_videos.length}}</span>
                        </div>
@@ -583,9 +585,9 @@
                      
                
       <div class="footer_left">
-            <div class="res-profile" ng-class="photoiconclass" ng-click="changeToImageView()" ></div>
-            <div class="res-profile" ng-class="mediaiconclass" ng-click="changeToVideoView()" ></div>
-            <div class="res-profile" ng-class="infoiconclass" ng-click="changeToDetailView()" ></div>
+            <div class="res-profile" ng-class="photoiconclass" ng-click="changeToImageView()" style="background: none !important"><img src="images/svgs/galleri1.svg" style="width:30px; height: 30px"></div>
+            <div class="res-profile" ng-class="mediaiconclass" ng-click="changeToVideoView()" style="background: none !important"><img src="images/svgs/video1.svg" style="width:30px; height: 30px"></div>
+            <div class="res-profile" ng-class="infoiconclass" ng-click="changeToDetailView()" style="background: none !important"><img src="images/svgs/info1.svg" style="width:30px; height: 35px"></div>
       </div>
       
       <div class="footer_center">
@@ -913,7 +915,7 @@
                
                <span class="span1"><a style="color:#000" href="https://www.facebook.com/castitdenmark" target="_blank">Facebook</a></span>
                
-                <img src="images/svgs/sog.svg" class="searchmini" />
+                <img src="images/svgs/search1.svg" class="searchmini" />
           </div>
           
           <!-- <div ng-show="isMaincontent" class="footer_center">
