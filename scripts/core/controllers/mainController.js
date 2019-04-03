@@ -2154,7 +2154,7 @@ main.controller('AngularLoginController', ['$scope', '$filter', '$http', '$windo
 			}
 			else {
 			$scope.errorMsg = $rootScope.isDanish ? "Forkert email/password" : "Invalid Email/Password";
-			$(".login-error-message").html($rootScope.isDanish ? "Brugernavn og/eller adgangskode kan ikke genkendes." : "username or password is not recognized.");
+			$(".login-error-message").html($rootScope.isDanish ? "Brugernavn og/eller adgangskode kan ikke genkendes." : "Username or password is not recognized.");
 		}
 	}
 	);

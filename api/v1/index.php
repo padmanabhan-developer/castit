@@ -513,7 +513,9 @@ $app->get('/getsingleprofiles',function () use ($app) {
 		if(count($rows_exp) > 0){
 			$expa=array();
 			foreach($rows_exp as $row_exp){
-				$expa[] = $row_exp['name'];
+				if(!in_array($row_exp['name'], $expa)){
+					$expa[] = $row_exp['name'];
+				}
 			}
 			$categories=  implode(", ",$expa);
 		}
@@ -1372,27 +1374,27 @@ $app->get('/countries', function () use ($app) {
 						  'name' => $row['name_dk']
 						);
 		}
-		$sorted_countries = array_sort($countries, 'name', SORT_ASC);
-		// echo '<pre>';
-		// print_r($countries);
-	echoResponse(200, $sorted_countries);
+		// sort alphabetically by name
+		usort($countries, 'compare_country_name');
+		echoResponse(200, $countries);
 });
 
+function compare_country_name($a, $b){
+		return strnatcmp($a['name'], $b['name']);
+}
+
 $app->get('/countries/en', function () use ($app) { 
-    global $db;
+  global $db;
 	$query_country = $db->prepare("SELECT * FROM countries order by name"); 
 	$query_country->execute();
 	$rows_countries = $query_country->fetchAll(PDO::FETCH_ASSOC);
-	
-    foreach($rows_countries as $row) {
+  foreach($rows_countries as $row) {
 		$countries[] = array('id' => $row['id'],
-						  'name' => $row['name']
-						);
+			'name' => $row['name']
+		);
 	}
-	$sorted_countries = array_sort($countries, 'name', SORT_ASC);
-	// echo '<pre>';
-	// print_r($countries);
-echoResponse(200, $sorted_countries);
+	usort($countries, 'compare_country_name');
+	echoResponse(200, $countries);
 });
 
 
@@ -1940,9 +1942,12 @@ $app->get('/getlanguages', function () use ($app) {
 						  'name' => $row['name']
 						);
 	}
+	usort($languages, 'compare_language_name');
 	echoResponse(200, $languages);
 });
-
+function compare_language_name($a, $b){
+	return strnatcmp($a['name'], $b['name']);
+}
 $app->get('/getlanguages/en', function () use ($app) { 
 	global $db;
 $query_language = $db->prepare("SELECT * FROM language_proficiency_languages order by name_en"); 
@@ -1954,6 +1959,7 @@ $rows_language = $query_language->fetchAll(PDO::FETCH_ASSOC);
 						'name' => $row['name_en']
 					);
 }
+usort($languages, 'compare_language_name');
 echoResponse(200, $languages);
 });
 
@@ -2741,7 +2747,7 @@ De bedste hilsner
 </p>
 <p>Cathrine & Pernille</p>
 <br/>
-<p><img style="width:150px; height:30px" src="http://134.213.29.220/images/logo-email.png"/></p>
+<p><img style="width:150px; height:30px" src="http://134.213.29.220/images/logo-b.svg"/></p>
 <p>Rosenvængets Allè 11, 1. Sal</p>
 <p>2100 København Ø</p>
 
@@ -2768,7 +2774,7 @@ Very best
 </p>
 <p>Cathrine & Pernille</p>
 <br/>
-<p><img style="width:150px; height:30px" src="http://134.213.29.220/images/logo-email.png"/></p>
+<p><img style="width:150px; height:30px" src="http://134.213.29.220/images/logo-b.svg"/></p>
 <p>Rosenvængets Allè 11, 1. Sal</p>
 <p>2100 København Ø</p>
 

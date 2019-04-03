@@ -418,7 +418,7 @@ input:focus {
     outline: none !important;
 }
 .radio {
-    padding-right: 28px;
+    padding-right: 22px;
 }
 .radio label {
     display: inline-block;

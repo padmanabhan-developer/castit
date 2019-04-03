@@ -102,8 +102,13 @@
                       </div>
 
                       <div class="radio radio-info white-label">
-                           <input type="radio" name="filter" id="Radios9" value="all">
+                           <input type="radio" name="filter" id="Radios10" value="all">
                            <label>Alle</label>
+                      </div>
+                      
+                      <div class="radio radio-info">
+                           <input type="radio" name="filter" id="Radios11" value="recent">
+                           <label>Recently Updated</label>
                       </div>
                       
                       <div class="right-small-txt"></div>

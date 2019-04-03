@@ -666,9 +666,9 @@ color: transparent !important;
     bottom:35%;
 }
 #video_nav .video_controller {
-    margin:0 !important;
+    margin:-15px 0 0 0 !important;
 	/* position: absolute; z-index: 99999; bottom:auto; top:50%; */
-    position: absolute; 
+    position: relative; 
     z-index: 99; 
     /* z-index: 99999;  */
     bottom:25% !important;
@@ -690,10 +690,10 @@ background: url(images/prev1.png) no-repeat 0 0 !important;
 	top: 40px !important;
 }
 .video_download{
-	display:none;
+	display:none !important;
 }
 .video_upload{
-	display:none;
+	display:none !important; 
 }
 .video_section1 {
     height: 150px !important;

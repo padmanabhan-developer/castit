@@ -492,7 +492,7 @@ padding: 0px;
   }
   .black-right{position:absolute; top:20px; right:0;}
   .black-edit{float:left; width:21px; height:24px; background:url(images/edit3.png) no-repeat 0 0;}
-  .black-close{float:left; margin:4px 0 0 48px; color:#fefefe !important; font-size:12px; font-family:Arial, Helvetica, sans-serif; text-transform:uppercase; background:url(images/close.png) no-repeat right 0; line-height:15px; padding:0 20px 0 0; text-decoration:none !important;}
+  .black-close{float:left; margin:4px 0 0 48px; color:#fefefe !important; font-size:12px; font-family:Arial, Helvetica, sans-serif; text-transform:uppercase; line-height:15px; padding:0 20px 0 0; text-decoration:none !important;}
   
   .black-section{float:left; width:100%;}
   .black-row{margin:0 -10px;}
@@ -1039,7 +1039,7 @@ padding: 0px;
   .video_section2{float:left; width:100%;margin-bottom: 30px;}
   .logo2{float:left; margin:30px 0 0 0;}
   .video_download{float:left; color:#fff; font-size:14px;  height:50px; line-height:40px; padding:0 0 0 50px; text-decoration:none; background:url(images/download-video.png) no-repeat 0 0; margin:20px 0 0 75px; text-transform:uppercase;}
-  .video_upload{float:left; color:#fff !important; font-size:14px;  height:50px; line-height:40px; padding:0 0 0 50px; text-decoration:none !important; background:url(images/upload-video.png) no-repeat 0 0; margin:20px 0 0 40px;text-transform:uppercase;}
+  .video_upload{float:left; color:#fff !important; font-size:14px;  height:50px; line-height:40px; padding:0 0 0 50px; text-decoration:none !important; background:url(images/svgs/addgroupw1.svg) no-repeat 0 0; margin:20px 0 0 40px;text-transform:uppercase;}
   
   .popup-video{position:fixed !important; overflow-y:auto;}
   .video_controller{float:left; width:100%; text-align:center; margin:0 0 0 0;position: relative;bottom: 10px; left: 0;margin-top:20px;}
@@ -1542,9 +1542,7 @@ padding: 0px;
   .black .res_menu .information-inside h2 {
       color: white !important;
   }
-  .black  .poup-close2 {
-      background: url(images/close22.png) no-repeat right center;
-  }
+  /* .black  .poup-close2 {background: url(images/close22.png) no-repeat right center;} */
   .col-inner .icon{ cursor:pointer;}
   .animate-show {
       -webkit-transition: all linear 0.5s;
@@ -1586,8 +1584,9 @@ padding: 0px;
   #des-popup1{ visibility:visible;}
   .video_call4 .span3{ display:none;}
   .res-lightbox1{ background-color:#17181b; width:100%; height:50px; line-height:50px; vertical-align:middle; margin-bottom:15px; display:none; }
-  .res-boxicon{ position:relative; float:left; left:15px;width: 30px; height: 30px;background: url(images/icon2.png) no-repeat; top: 11px;}
-  .res-close{ position:relative; float: right; right:8px; width: 20px; height: 20px;background: url(images/close.png) no-repeat; top: 14px;}
+  /* .res-boxicon{ position:relative; float:left; left:15px;width: 30px; height: 30px;background: url(images/icon2.png) no-repeat; top: 11px;} */
+  .res-boxicon{ position:relative; float:left; left:15px;width: 30px; height: 30px;background: none; top: 11px;}
+  .res-close{position: relative; float: right; right: 15px; width: 20px; height: 20px; background: none; top: 10px;}
   .photo-icon{background: url(images/imagepop1.png) no-repeat;width: 35px; height: 35px;position:absolute;float:left; left:15px; }
   .media-icon{background: url(images/videopop.png) no-repeat;width: 35px; height: 35px;position:absolute;float:left;left:60px;  }
   .info-icon{background: url(images/messagepop.png) no-repeat;width: 35px; height: 35px;position:absolute;float:left;left:105px;  }
@@ -1774,7 +1773,7 @@ padding: 0px;
     font-family: Arial, Helvetica, sans-serif;}
 
 .login-error-message {
-    color: #FFF;
+    color: #D00;
     /* float: none; */
     clear: both;
     padding-top: 15px;

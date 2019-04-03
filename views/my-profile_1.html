@@ -5,15 +5,15 @@
         
         <div class="show-xs main-menu-header show-xs">
           <img src="images/CASTIT_LOGO_RGB_white.svg" style="width:40%"/>
-            <a 
-              href="/#/index{{ isDanish ? '/da' : '/en'}}"
-              class="poup-close2 popup-close-btn">{{ isDanish ? 'LUK' : 'CLOSE' }}</a>
+          <a style=" padding-right: 0; line-height: 20px; display: inline-flex; " href="/#/index{{ isDanish ? '/da' : '/en'}}"
+               class="poup-close2 popup-close-btn">{{ isDanish ? 'LUK' : 'CLOSE' }} <img style=" width: 20px; height: 15px; " src="images/svgs/lukw1.svg" alt=""></a>
         </div>
+        
         <div class="section-top">
-          <h2>{{ profileinfo.first_name }} {{ profileinfo.last_name }} - {{ profileinfo.profile_number }}</h2>
-          <div class="black-right hide-xs">
-            <a href="#/index{{isDanish ? '/da' : '/en'}}" class="black-close">{{ isDanish ? 'luk' : 'Close' }}</a>
-          </div>
+              <h2>{{ isDanish ? 'Ansøgningsskema' : 'Application form' }}</h2>
+              <div class="black-right hide-xs">
+                  <a style=" padding-right: 0; line-height: 20px; display: inline-flex; " href="#/index{{isDanish ? '/da' : '/en'}}" class="black-close">{{ isDanish ? 'luk' : 'Close' }} <img style=" width: 20px; height: 15px; " src="images/svgs/lukw1.svg" alt=""></a>
+              </div>
         </div>
 
         <div class="section-middle">

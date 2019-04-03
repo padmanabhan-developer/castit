@@ -587,17 +587,17 @@ span.addmore {
 			<div class="page-black livetitle">
 				
 				<div class="show-xs main-menu-header show-xs">
-					<img src="images/CASTIT_LOGO_RGB_white.svg" style="width:40%"/>
-					<a 
-							href="/#/index{{ isDanish ? '/da' : '/en'}}"
-							class="poup-close2 popup-close-btn">{{ isDanish ? 'LUK' : 'CLOSE' }}</a>
-				</div>
-				<div class="section-top">
-					<h2>{{ isDanish ? 'Ansøgningsskema' : 'Application form' }}</h2>
-					<div class="black-right hide-xs">
-						<a href="#/index{{isDanish ? '/da' : '/en'}}" class="black-close">luk</a>
-					</div>
-				</div>
+                    <img src="images/CASTIT_LOGO_RGB_white.svg" style="width:40%"/>
+                    <a style=" padding-right: 0; line-height: 20px; display: inline-flex; " href="/#/index{{ isDanish ? '/da' : '/en'}}"
+                         class="poup-close2 popup-close-btn">{{ isDanish ? 'LUK' : 'CLOSE' }} <img style=" width: 20px; height: 15px; " src="images/svgs/lukw1.svg" alt=""></a>
+               </div>
+               
+               <div class="section-top">
+                    <h2>{{ isDanish ? 'Ansøgningsskema' : 'Application form' }}</h2>
+                    <div class="black-right hide-xs">
+                         <a style=" padding-right: 0; line-height: 20px; display: inline-flex; " href="#/index{{isDanish ? '/da' : '/en'}}" class="black-close">{{ isDanish ? 'luk' : 'Close' }} <img style=" width: 20px; height: 15px; " src="images/svgs/lukw1.svg" alt=""></a>
+                    </div>
+               </div>
 
 				<!--close section-top-->
         <form name="profile_ansog_form6" id="profile_ansog_form6" ng-submit="showSuccessPopup()">
