@@ -11,7 +11,7 @@ $deactivation_email = <<< EOM
 
 <p>Cathrine & Pernille</p>
 
-<p><img style="width:150px; height:30px" src="http://134.213.29.220/admin/images/logo.png"/></p>
+<p><img style="width:150px; height:30px" src="https://castit.dk/admin/images/logo.png"/></p>
 <p>Rosenvængets Allè 11, 1. Sal</p>
 <p>2100 København Ø</p>
 
@@ -24,7 +24,7 @@ $deactivation_email = <<< EOM
 <p># 0045 3135 3579</p>
 <p>E: pernille@castit.dk</p>
 
-<p><a href="http://134.213.29.220">castit.dk</a></p>
+<p><a href="https://castit.dk">castit.dk</a></p>
 
 -------------------------------------------------------------------------------------------------------
 
@@ -39,7 +39,7 @@ $deactivation_email = <<< EOM
 
 <p>Cathrine & Pernille</p>
 
-<p><img style="width:150px; height:30px" src="http://134.213.29.220/admin/images/logo.png"/></p>
+<p><img style="width:150px; height:30px" src="https://castit.dk/admin/images/logo.png"/></p>
 <p>Rosenvængets Allè 11, 1st floor</p>
 <p>2100 Copenhagen Ø</p>
 
@@ -51,6 +51,6 @@ $deactivation_email = <<< EOM
 <p># 0045 3135 3579</p>
 <p>E: pernille@castit.dk</p>
 
-<p><a href="http://134.213.29.220">www.castit.dk</a></p>
+<p><a href="https://castit.dk">www.castit.dk</a></p>
 EOM;
 ?>

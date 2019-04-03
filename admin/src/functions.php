@@ -96,7 +96,7 @@ function form_images_html($value = array('pics'=>'') , $name, $profile_number, $
     if(isset($value['pics']) && count($value['pics']) > 0){
       foreach ($value['pics'] as $key=>$pic){
         $new_img_file = $_SERVER['DOCUMENT_ROOT'] . '/images/uploads/' . $pic["image"];
-        // $new_img_file = 'http://134.213.29.220/images/uploads/' . $pic["image"];
+        // $new_img_file = 'https://castit.dk/images/uploads/' . $pic["image"];
         // pp($new_img_file);
         if(file_exists($new_img_file)){
           $img_src = '/images/uploads/' . $pic["image"];
@@ -108,7 +108,7 @@ function form_images_html($value = array('pics'=>'') , $name, $profile_number, $
           $img_day    = date('d', $img_timestamp);
           $img_id     = $pic['id'];
           // $img_src = 'http://' . $_SERVER['SERVER_NAME'] . '/profile_images/' . $img_year . '/' . $img_month . '/' . $img_day . '/' . $img_id . '/big_' . $pic['image'];
-          $img_src = 'http://134.213.29.220/profile_images/' . $img_year . '/' . $img_month . '/' . $img_day . '/' . $img_id . '/big_' . $pic['image'];
+          $img_src = 'https://castit.dk/profile_images/' . $img_year . '/' . $img_month . '/' . $img_day . '/' . $img_id . '/big_' . $pic['image'];
           // if(file_exists($old_img_file)){
           //   $img_src = $old_img_file;
           // }

@@ -19,7 +19,7 @@ Vi sætter stor pris på din interesse.</p>
 
 <p>Cathrine & Pernille</p>
 
-<p><img style="width:150px; height:30px" src="http://134.213.29.220/admin/images/logo.png"/></p>
+<p><img style="width:150px; height:30px" src="https://castit.dk/admin/images/logo.png"/></p>
 <p>Rosenvængets Allè 11, 1. Sal</p>
 <p>2100 København Ø</p>
 
@@ -32,7 +32,7 @@ Vi sætter stor pris på din interesse.</p>
 <p># 0045 3135 3579</p>
 <p>E: pernille@castit.dk</p>
 
-<a href="http://134.213.29.220">Castit.dk</a>
+<a href="https://castit.dk">Castit.dk</a>
 <br/>
 -------------------------------------------------------------------------------------------------------
 
@@ -56,7 +56,7 @@ Vi sætter stor pris på din interesse.</p>
 <br/>
 <p>Cathrine & Pernille</p>
 <br/>
-<p><img style="width:150px; height:30px" src="http://134.213.29.220/admin/images/logo.png"/></p>
+<p><img style="width:150px; height:30px" src="https://castit.dk/admin/images/logo.png"/></p>
 <p>Rosenvængets Allè 11, 1st floor</p>
 <p>2100 Copenhagen East</p>
 <br/>
@@ -68,7 +68,7 @@ Vi sætter stor pris på din interesse.</p>
 <p># 0045 3135 3579</p>
 <p>E: pernille@castit.dk</p>
 <br/>
-<a href="http://134.213.29.220">Castit.dk</a>
+<a href="https://castit.dk">Castit.dk</a>
 
 
 
