@@ -82,7 +82,7 @@ $app->get('/getprofiles',function () use ($app) {
     $rows_image = $query_image->fetchAll(PDO::FETCH_ASSOC);
 	if(count($rows_image) > 0){
 		$path = $rows_image[0]['create_year']."/".$rows_image[0]['create_month']."/".$rows_image[0]['create_date']."/".$rows_image[0]['id']."/big_";
-		$profile_image = 'http://134.213.29.220/profile_images/'.$path.$rows_image[0]['image'];
+		$profile_image = 'https://castit.dk/profile_images/'.$path.$rows_image[0]['image'];
 		//$profile_image = 'http://castit.dk/assets/profile_images/'.$path.$rows_image[0]['image'];
 		
 		
@@ -185,7 +185,7 @@ $app->get('/getfilterprofiles',function () use ($app) {
     $rows_image = $query_image->fetchAll(PDO::FETCH_ASSOC);
 	if(count($rows_image) > 0){
 		$path = $rows_image[0]['create_year']."/".$rows_image[0]['create_month']."/".$rows_image[0]['create_date']."/".$rows_image[0]['id']."/big_";
-		$profile_image = 'http://134.213.29.220/profile_images/'.$path.$rows_image[0]['image'];
+		$profile_image = 'https://castit.dk/profile_images/'.$path.$rows_image[0]['image'];
 		
 		}
 		$name = $row['first_name'];
@@ -263,7 +263,7 @@ $app->get('/getsingleprofiles',function () use ($app) {
 		if(count($rows_image) > 0){
 			foreach($rows_image as $row_image){
 				$path = $row_image['create_year']."/".$row_image['create_month']."/".$row_image['create_date']."/".$row_image['id']."/big_";
-				$profile_images[] = array('imgcnt' => $imgc, 'urloriginal' =>$row_image['image'], 'fullpath'=>'http://134.213.29.220/profile_images/'.$path.$row_image['image']);
+				$profile_images[] = array('imgcnt' => $imgc, 'urloriginal' =>$row_image['image'], 'fullpath'=>'https://castit.dk/profile_images/'.$path.$row_image['image']);
 				$imgc++;
 			}
 		}
@@ -487,7 +487,7 @@ $app->get('/updatelightboxprofiles', function () use ($app) {
 						$rows_image = $query_image->fetchAll(PDO::FETCH_ASSOC);
 						if(count($rows_image) > 0){
 							$path = $rows_image[0]['create_year']."/".$rows_image[0]['create_month']."/".$rows_image[0]['create_date']."/".$rows_image[0]['id']."/thumb_";
-							$profile_image = 'http://134.213.29.220/profile_images/'.$path.$rows_image[0]['image'];
+							$profile_image = 'https://castit.dk/profile_images/'.$path.$rows_image[0]['image'];
 							
 							}
 								$lb_note = isset($_SESSION["lb_notes"][$row['id']]) ? $_SESSION["lb_notes"][$row['id']]: '' ;
@@ -598,7 +598,7 @@ $app->get('/removelightboxprofiles', function () use ($app) {
 						$rows_image = $query_image->fetchAll(PDO::FETCH_ASSOC);
 						if(count($rows_image) > 0){
 							$path = $rows_image[0]['create_year']."/".$rows_image[0]['create_month']."/".$rows_image[0]['create_date']."/".$rows_image[0]['id']."/thumb_";
-							$profile_image = 'http://134.213.29.220/profile_images/'.$path.$rows_image[0]['image'];
+							$profile_image = 'https://castit.dk/profile_images/'.$path.$rows_image[0]['image'];
 							
 							}
 								$lb_note = isset($_SESSION["lb_notes"][$row['id']]) ? $_SESSION["lb_notes"][$row['id']]: '' ;
@@ -710,7 +710,7 @@ $app->get('/getlightboxprofiles', function () use ($app) {
 				$rows_image = $query_image->fetchAll(PDO::FETCH_ASSOC);
 				if(count($rows_image) > 0){
 					$path = $rows_image[0]['create_year']."/".$rows_image[0]['create_month']."/".$rows_image[0]['create_date']."/".$rows_image[0]['id']."/thumb_";
-					$profile_image = 'http://134.213.29.220/profile_images/'.$path.$rows_image[0]['image'];
+					$profile_image = 'https://castit.dk/profile_images/'.$path.$rows_image[0]['image'];
 					
 					}
 				$groupnamear = array();
@@ -806,7 +806,7 @@ $app->get('/getgroupingprofiles', function () use ($app) {
 						$rows_image = $query_image->fetchAll(PDO::FETCH_ASSOC);
 						if(count($rows_image) > 0){
 							$path = $rows_image[0]['create_year']."/".$rows_image[0]['create_month']."/".$rows_image[0]['create_date']."/".$rows_image[0]['id']."/thumb_";
-							$profile_image = 'http://134.213.29.220/profile_images/'.$path.$rows_image[0]['image'];
+							$profile_image = 'https://castit.dk/profile_images/'.$path.$rows_image[0]['image'];
 							
 							}
 						$lb_note = isset($_SESSION["lb_notes"][$row['id']]) ? $_SESSION["lb_notes"][$row['id']]: '' ;
@@ -912,7 +912,7 @@ $app->get('/removegroupfromgrouping', function () use ($app) {
 						$rows_image = $query_image->fetchAll(PDO::FETCH_ASSOC);
 						if(count($rows_image) > 0){
 							$path = $rows_image[0]['create_year']."/".$rows_image[0]['create_month']."/".$rows_image[0]['create_date']."/".$rows_image[0]['id']."/thumb_";
-							$profile_image = 'http://134.213.29.220/profile_images/'.$path.$rows_image[0]['image'];
+							$profile_image = 'https://castit.dk/profile_images/'.$path.$rows_image[0]['image'];
 							
 							}
 						$lb_note = isset($_SESSION["lb_notes"][$row['id']]) ? $_SESSION["lb_notes"][$row['id']]: '' ;
@@ -1971,7 +1971,7 @@ $app->post('/sendlightbox', function () use ($app) {
 							<tbody>
 							<tr>';
 						$html .= '<td style="height:230px;width:139px" valign="top">
-							<a href="http://134.213.29.220/?l='.$lbid.'" target="_blank">
+							<a href="https://castit.dk/?l='.$lbid.'" target="_blank">
 							<img src="'.$profile_image.'" alt="'.$row['first_name'].'">
 							</a>
 							<span style="display:block;background-color:Black;width:131px;color:#ffffff;font-weight:bold;font-size:11px;margin-left:1px">
@@ -2091,7 +2091,7 @@ $app->post('/sendgroup', function () use ($app) {
 							<tbody>
 							<tr>';
 						$html .= '<td style="height:230px;width:139px" valign="top">
-							<a href="http://134.213.29.220" target="_blank">
+							<a href="https://castit.dk" target="_blank">
 							<img src="'.$profile_image.'" alt="'.$row['first_name'].'">
 							</a>
 							<span style="display:block;background-color:Black;width:131px;color:#ffffff;font-weight:bold;font-size:11px;margin-left:1px">
@@ -2215,7 +2215,7 @@ $app->post('/sendgroup', function () use ($app) {
 							<tbody>
 							<tr>';
 						$html .= '<td style="height:230px;width:139px" valign="top">
-							<a href="http://134.213.29.220/?l='.$lbid.'" target="_blank">
+							<a href="https://castit.dk/?l='.$lbid.'" target="_blank">
 							<img src="'.$profile_image.'" alt="'.$row['first_name'].'">
 							</a>
 							<span style="display:block;background-color:Black;width:131px;color:#ffffff;font-weight:bold;font-size:11px;margin-left:1px">

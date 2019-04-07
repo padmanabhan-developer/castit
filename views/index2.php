@@ -18,7 +18,7 @@
      <div class="home-table">
         <div class="home-td">
                <div class="home-logo"><img src="images/home-logo.png" alt="" /></div>
-               <a href="http://134.213.29.220/#/index" class="enter-site">Enter</a>
+               <a href="https://castit.dk/#/index" class="enter-site">Enter</a>
           </div>
      </div>
      
@@ -65,7 +65,7 @@
         <div class="home-table">
         <div class="home-td">
                <div class="home-logo"><img src="images/home-logo.png" alt="" /></div>
-               <a href="http://134.213.29.220/#/index" class="enter-site">Enter</a>
+               <a href="https://castit.dk/#/index" class="enter-site">Enter</a>
           </div>
      </div>
             

@@ -52,7 +52,7 @@ if($has_media){
         $output .= $wrap_begin;
         foreach ($value['pics'] as $key=>$pic){
           // $new_img_file = 'http://' . $_SERVER['SERVER_ADDR'] . '/images/uploads/' . $pic["image"];
-          $new_img_file = 'http://134.213.29.220/images/uploads/' . $pic["image"];
+          $new_img_file = 'https://castit.dk/images/uploads/' . $pic["image"];
           if(file_exists($new_img_file)){
             $img_src = $new_img_file;
           }
@@ -63,7 +63,7 @@ if($has_media){
             $img_day    = date('d', $img_timestamp);
             $img_id     = $pic['id'];
             // $img_src = 'http://' . $_SERVER['SERVER_ADDR'] . '/profile_images/' . $img_year . '/' . $img_month . '/' . $img_day . '/' . $img_id . '/big_' . $pic['image'];
-            $img_src = 'http://134.213.29.220/profile_images/' . $img_year . '/' . $img_month . '/' . $img_day . '/' . $img_id . '/big_' . $pic['image'];
+            $img_src = 'https://castit.dk/profile_images/' . $img_year . '/' . $img_month . '/' . $img_day . '/' . $img_id . '/big_' . $pic['image'];
             // if(file_exists($old_img_file)){
             //   $img_src = $old_img_file;
             // }

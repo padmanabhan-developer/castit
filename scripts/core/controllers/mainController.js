@@ -2478,6 +2478,14 @@ main.controller('MyProfileController4',['$scope', '$rootScope','$http', function
 
   $scope.checkuncheckcategory = checkuncheckcategory;
   function checkuncheckcategory(catid) {  
+		if(catid != '9'){
+			let nilButton = angular.element( document.querySelector( '#catbut9') );
+			let nilSpan = angular.element( document.querySelector( '#catspan9') );
+
+			nilButton.removeClass('button2').addClass('button1');
+			nilSpan.removeClass('close-icon').addClass('plus-icon');
+		}
+
     var myElBut = angular.element( document.querySelector( '#catbut'+catid ) );
     var myElSpan = angular.element( document.querySelector( '#catspan'+catid ) );
     myElBut.toggleClass('button1').toggleClass('button2');
@@ -2496,11 +2504,27 @@ main.controller('MyProfileController4',['$scope', '$rootScope','$http', function
       if(myElBut.hasClass('button2'))
          selcats.push(catid);
     }
-    $scope.selectedcategories = selcats.toString();
+		$scope.selectedcategories = selcats.toString();
+		
+		if($scope.selectedcategories != '9'){
+			$scope.selectedcategories = $scope.selectedcategories.replace('9,','');
+		}
+
+		if($scope.selectedcategories == ""){
+			checkuncheckcategory('9');
+		}
+
   };
   
   $scope.checkuncheckskill = checkuncheckskill;
   function checkuncheckskill(skillid) {  
+		if(skillid != '16'){
+			let nilButton = angular.element( document.querySelector( '#skillbut16') );
+			let nilSpan = angular.element( document.querySelector( '#skillspan16') );
+
+			nilButton.removeClass('button2').addClass('button1');
+			nilSpan.removeClass('close-icon').addClass('plus-icon');
+		}
     var myElBut = angular.element( document.querySelector( '#skillbut'+skillid ) );
     var myElSpan = angular.element( document.querySelector( '#skillspan'+skillid ) );
     myElBut.toggleClass('button1').toggleClass('button2');
@@ -2518,12 +2542,26 @@ main.controller('MyProfileController4',['$scope', '$rootScope','$http', function
       if(myElBut.hasClass('button2'))
          selskills.push(skillid);
     }
-    $scope.selectedskills = selskills.toString();
+		$scope.selectedskills = selskills.toString();
+		if($scope.selectedskills != '16'){
+			$scope.selectedskills = $scope.selectedskills.replace('16,','');
+		}
+
+		if($scope.selectedskills == ""){
+			checkuncheckskill('16');
+		}
     
   };
   
   $scope.checkunchecklicence = checkunchecklicence;
   function checkunchecklicence(licid) {  
+		if(licid != '5'){
+			let nilButton = angular.element( document.querySelector( '#licbut5') );
+			let nilSpan = angular.element( document.querySelector( '#licspan5') );
+
+			nilButton.removeClass('button2').addClass('button1');
+			nilSpan.removeClass('close-icon').addClass('plus-icon');
+		} 
     var myElBut = angular.element( document.querySelector( '#licbut'+licid ) );
     var myElSpan = angular.element( document.querySelector( '#licspan'+licid ) );
     myElBut.toggleClass('button1').toggleClass('button2');
@@ -2541,7 +2579,14 @@ main.controller('MyProfileController4',['$scope', '$rootScope','$http', function
       if(myElBut.hasClass('button2'))
          sellics.push(licid);
     }
-    $scope.selectedlicences = sellics.toString();
+		$scope.selectedlicences = sellics.toString();
+		if($scope.selectedlicences != '5'){
+			$scope.selectedlicences = $scope.selectedlicences.replace('5,','');
+		}
+
+		if($scope.selectedlicences == ""){
+			checkunchecklicence('5');
+		}
   };
   
   $scope.step4Update = step4Update;

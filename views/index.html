@@ -265,7 +265,7 @@
            <div class="side-tabs">
               <ul>
                   <!-- <li><a href="javascript:void(0);" id="tab_ligtbox" class="tab1 tabactive"></a></li> -->
-                  <li><a href="javascript:void(0);" id="tab_group" class="tab2"></a></li>
+                  <li><a href="javascript:void(0);" id="tab_group" class="tab2" style="background: none !important;display: inline-block;text-align: center;"><img style=" width: 30px; height: auto; " src="images/svgs/lightbox_iconw1.svg" alt=""></a></li>
                 </ul>
            </div>
       </div><!--close sidebar1-left-->
@@ -397,7 +397,7 @@
            <p>{{lbprofilecount}}</p>
         </span> -->
         <span class="side-span">
-             <span class="side-icon3" id="tab_group1" style="cursor:pointer;"></span>
+             <div class="side-icon3" id="tab_group1" style="cursor:pointer;background: none !important"><img src="images/svgs/lightbox_iconw1.svg" alt=""></div>
            <p>{{gpprofilecount}}</p>
         </span>
     </div>
@@ -614,7 +614,7 @@
 
 <div id="lightbox_popup" class="popup popup-video">
    
-     <a href="javascript:void(0);" id="close_lightbox" class="poup-close">{{ isDanish ? 'luk' : ' Close' }}</a>
+     <a href="javascript:void(0);" id="close_lightbox" class="poup-close" style="background: none !important">{{ isDanish ? 'luk ' : 'Close ' }}<img style=" width: 15px; height: 15px;" src="images/svgs/lukw1.svg" /></a>
      
    <div class="popup-table">
         <div class="popup-td">
@@ -753,7 +753,7 @@
 
 <div id="lightbox_popup" class="email popup popup-video" style="display: none;">
    
-     <a href="javascript:void(0);" id="close_lightbox" class="poup-close" ng-click="cancelEmailPopup()">{{ isDanish ? 'luk' : ' Close' }}</a>
+     <a href="javascript:void(0);" id="close_lightbox" class="poup-close" ng-click="cancelEmailPopup()" style="background: none !important">{{ isDanish ? 'luk ' : 'Close ' }}<img style=" width: 15px; height: 15px;" src="images/svgs/lukw1.svg" /></a>
      
    <div class="popup-table">
         <div class="popup-td">

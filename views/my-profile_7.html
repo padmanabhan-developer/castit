@@ -10,7 +10,8 @@
                          class="poup-close2 popup-close-btn">{{ isDanish ? 'LUK' : 'CLOSE' }}</a>
                </div>
                <div class="section-top">
-                    <h2>{{ isDanish ? 'Ansøgningsskema' : 'Application form' }}</h2>
+                    <!-- <h2>{{ isDanish ? 'Ansøgningsskema' : 'Application form' }}</h2> -->
+                    <h2>{{ profileinfo.first_name }} {{ profileinfo.last_name }} - {{ profileinfo.profile_number }}</h2>
                     <div class="black-right hide-xs">
                     	 <a href="#" class="black-edit"></a>
                           <a href="#/index{{isDanish ? '/da' : '/en'}}" class="black-close">{{ isDanish ? 'luk' : 'Close' }}</a>

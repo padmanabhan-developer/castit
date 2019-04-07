@@ -145,7 +145,7 @@ $sql = $sql . " ORDER BY RAND() limit 12";
     	$rows_image = $query_image->fetchAll(PDO::FETCH_ASSOC);
 		if(count($rows_image) > 0){
 			// $path = $rows_image[0]['create_year']."/".$rows_image[0]['create_month']."/".$rows_image[0]['create_date']."/".$rows_image[0]['id']."/big_";
-			// $profile_image = 'http://134.213.29.220/profile_images/'.$path.$rows_image[0]['image'];
+			// $profile_image = 'https://castit.dk/profile_images/'.$path.$rows_image[0]['image'];
 			//$profile_image = 'http://castit.dk/assets/profile_images/'.$path.$rows_image[0]['image'];
 			
 			$min = 0;
@@ -155,11 +155,11 @@ $sql = $sql . " ORDER BY RAND() limit 12";
 			$random_index = 0;
 			if (strpos($rows_image[$random_index]['path'], 'vhost') !== false) {
 				$path = $rows_image[$random_index]['path'];
-				$profile_image = 'http://134.213.29.220/images/uploads/'.$rows_image[$random_index]['image'];
+				$profile_image = 'https://castit.dk/images/uploads/'.$rows_image[$random_index]['image'];
 			}
 			else{
 				$path = $rows_image[$random_index]['create_year']."/".$rows_image[$random_index]['create_month']."/".$rows_image[$random_index]['create_date']."/".$rows_image[$random_index]['id']."/big_";
-				$profile_image = 'http://134.213.29.220/profile_images/'.$path.$rows_image[$random_index]['image'];
+				$profile_image = 'https://castit.dk/profile_images/'.$path.$rows_image[$random_index]['image'];
 			}
 
 		}
@@ -278,11 +278,11 @@ $app->get('/getfilterprofiles',function () use ($app) {
 		$random_index = 0;
 		if (strpos($rows_image[$random_index]['path'], 'vhost') !== false) {
 			$path = $rows_image[$random_index]['path'];
-			$profile_image = 'http://134.213.29.220/images/uploads/'.$rows_image[$random_index]['image'];
+			$profile_image = 'https://castit.dk/images/uploads/'.$rows_image[$random_index]['image'];
 		}
 		else{
 			$path = $rows_image[$random_index]['create_year']."/".$rows_image[$random_index]['create_month']."/".$rows_image[$random_index]['create_date']."/".$rows_image[$random_index]['id']."/big_";
-			$profile_image = 'http://134.213.29.220/profile_images/'.$path.$rows_image[$random_index]['image'];
+			$profile_image = 'https://castit.dk/profile_images/'.$path.$rows_image[$random_index]['image'];
 		}
 		
 		}
@@ -363,11 +363,11 @@ $app->get('/getsingleprofiles',function () use ($app) {
 		if(count($rows_image) > 0){
 			foreach($rows_image as $row_image){
 				if (strpos($row_image['path'], 'vhost') !== false) {
-					$fullpath = 'http://134.213.29.220/images/uploads/'.$row_image['image'];
+					$fullpath = 'https://castit.dk/images/uploads/'.$row_image['image'];
 				}
 				else{
 					$path = $row_image['create_year']."/".$row_image['create_month']."/".$row_image['create_date']."/".$row_image['id']."/big_";
-					$fullpath = 'http://134.213.29.220/profile_images/'.$path.$row_image['image'];
+					$fullpath = 'https://castit.dk/profile_images/'.$path.$row_image['image'];
 				}
 				
 				$profile_images[] = array('imgcnt' => $imgc, 'urloriginal' =>$row_image['image'], 'fullpath'=>$fullpath);
@@ -387,8 +387,8 @@ $app->get('/getsingleprofiles',function () use ($app) {
 			foreach($rows_video as $row_video){
 				/*
 				if (strpos($row_video['path'], 'vhost') !== false) {
-					$vpath = 'http://134.213.29.220/images/uploads/'.$row_video['filename'];
-					$thumbpath = 'http://134.213.29.220/images/uploads/'.$row_video['filename'];
+					$vpath = 'https://castit.dk/images/uploads/'.$row_video['filename'];
+					$thumbpath = 'https://castit.dk/images/uploads/'.$row_video['filename'];
 				}
 				else{
 					$vpath = 'http://assets3.castit.dk'.$row_video['path']."/".$row_video['filename'];
@@ -625,11 +625,11 @@ $app->get('/updatelightboxprofiles', function () use ($app) {
 						$rows_image = $query_image->fetchAll(PDO::FETCH_ASSOC);
 						if(count($rows_image) > 0){
 							if (strpos($rows_image[0]['path'], 'vhost') !== false) {
-								$profile_image = 'http://134.213.29.220/images/uploads/'.$rows_image[0]['image'];
+								$profile_image = 'https://castit.dk/images/uploads/'.$rows_image[0]['image'];
 							}
 							else{
 								$path = $rows_image[0]['create_year']."/".$rows_image[0]['create_month']."/".$rows_image[0]['create_date']."/".$rows_image[0]['id']."/thumb_";
-								$profile_image = 'http://134.213.29.220/profile_images/'.$path.$rows_image[0]['image'];
+								$profile_image = 'https://castit.dk/profile_images/'.$path.$rows_image[0]['image'];
 							}
 							
 							}
@@ -744,11 +744,11 @@ $app->get('/removelightboxprofiles', function () use ($app) {
 						$rows_image = $query_image->fetchAll(PDO::FETCH_ASSOC);
 						if(count($rows_image) > 0){
 							if (strpos($rows_image[0]['path'], 'vhost') !== false) {
-								$profile_image = 'http://134.213.29.220/images/uploads/'.$rows_image[0]['image'];
+								$profile_image = 'https://castit.dk/images/uploads/'.$rows_image[0]['image'];
 							}
 							else{
 								$path = $rows_image[0]['create_year']."/".$rows_image[0]['create_month']."/".$rows_image[0]['create_date']."/".$rows_image[0]['id']."/thumb_";
-								$profile_image = 'http://134.213.29.220/profile_images/'.$path.$rows_image[0]['image'];
+								$profile_image = 'https://castit.dk/profile_images/'.$path.$rows_image[0]['image'];
 							}
 							
 							}
@@ -862,11 +862,11 @@ $app->get('/getlightboxprofiles', function () use ($app) {
 				$rows_image = $query_image->fetchAll(PDO::FETCH_ASSOC);
 				if(count($rows_image) > 0){
 					if (strpos($rows_image[0]['path'], 'vhost') !== false) {
-						$profile_image = 'http://134.213.29.220/images/uploads/'.$rows_image[0]['image'];
+						$profile_image = 'https://castit.dk/images/uploads/'.$rows_image[0]['image'];
 					}
 					else{
 						$path = $rows_image[0]['create_year']."/".$rows_image[0]['create_month']."/".$rows_image[0]['create_date']."/".$rows_image[0]['id']."/thumb_";
-						$profile_image = 'http://134.213.29.220/profile_images/'.$path.$rows_image[0]['image'];
+						$profile_image = 'https://castit.dk/profile_images/'.$path.$rows_image[0]['image'];
 					}
 				}
 				$groupnamear = array();
@@ -972,11 +972,11 @@ $app->get('/getgroupingprofiles', function () use ($app) {
 						$rows_image = $query_image->fetchAll(PDO::FETCH_ASSOC);
 						if(count($rows_image) > 0){
 							if (strpos($rows_image[0]['path'], 'vhost') !== false) {
-								$profile_image = 'http://134.213.29.220/images/uploads/'.$rows_image[0]['image'];
+								$profile_image = 'https://castit.dk/images/uploads/'.$rows_image[0]['image'];
 							}
 							else{
 								$path = $rows_image[0]['create_year']."/".$rows_image[0]['create_month']."/".$rows_image[0]['create_date']."/".$rows_image[0]['id']."/thumb_";
-								$profile_image = 'http://134.213.29.220/profile_images/'.$path.$rows_image[0]['image'];
+								$profile_image = 'https://castit.dk/profile_images/'.$path.$rows_image[0]['image'];
 							}
 							
 						}
@@ -1097,11 +1097,11 @@ $app->get('/removegroupfromgrouping', function () use ($app) {
 						$rows_image = $query_image->fetchAll(PDO::FETCH_ASSOC);
 						if(count($rows_image) > 0){
 							if (strpos($rows_image[0]['path'], 'vhost') !== false) {
-								$profile_image = 'http://134.213.29.220/images/uploads/'.$rows_image[0]['image'];
+								$profile_image = 'https://castit.dk/images/uploads/'.$rows_image[0]['image'];
 							}
 							else{
 								$path = $rows_image[0]['create_year']."/".$rows_image[0]['create_month']."/".$rows_image[0]['create_date']."/".$rows_image[0]['id']."/thumb_";
-								$profile_image = 'http://134.213.29.220/profile_images/'.$path.$rows_image[0]['image'];
+								$profile_image = 'https://castit.dk/profile_images/'.$path.$rows_image[0]['image'];
 							}
 						}
 						$lb_note = isset($_SESSION["lb_notes"][$row['id']]) ? $_SESSION["lb_notes"][$row['id']]: '' ;
@@ -1207,11 +1207,11 @@ $app->get('/addgroupintogrouping', function () use ($app) {
 						$rows_image = $query_image->fetchAll(PDO::FETCH_ASSOC);
 						if(count($rows_image) > 0){
 							if (strpos($rows_image[0]['path'], 'vhost') !== false) {
-								$profile_image = 'http://134.213.29.220/images/uploads/'.$rows_image[0]['image'];
+								$profile_image = 'https://castit.dk/images/uploads/'.$rows_image[0]['image'];
 							}
 							else{
 								$path = $rows_image[0]['create_year']."/".$rows_image[0]['create_month']."/".$rows_image[0]['create_date']."/".$rows_image[0]['id']."/thumb_";
-								$profile_image = 'http://134.213.29.220/profile_images/'.$path.$rows_image[0]['image'];
+								$profile_image = 'https://castit.dk/profile_images/'.$path.$rows_image[0]['image'];
 							}
 						}
 						$lb_note = isset($_SESSION["lb_notes"][$row['id']]) ? $_SESSION["lb_notes"][$row['id']]: '' ;
@@ -2564,7 +2564,7 @@ De bedste hilsner
 <p>Cell: +45 21 28 58 25</p>
 <p>Info@castit.dk</p>
 
-<a href="http://134.213.29.220">www.castit.dk</a>
+<a href="https://castit.dk">www.castit.dk</a>
 
 EOM;
 global $mgClient;
@@ -2609,7 +2609,7 @@ $app->post('/sendemail', function () use ($app) {
     <table style="width:100%" border="0">
     <tbody>
     <tr>
-    <td align="left"><img alt="Mailtoplogo" src="http://134.213.29.220/assets/mailTopLogo.png" ></td>
+    <td align="left"><img alt="Mailtoplogo" src="https://castit.dk/assets/mailTopLogo.png" ></td>
     <td style="width:270px;padding-top:18px" align="left" valign="top"><b style="color:#696969">Castit <span class="il">Lightbox</span>:</b><br>'.$mail_body.'</td>
     </tr>
     <tr>
@@ -2704,11 +2704,11 @@ $app->post('/sendlightbox', function () use ($app) {
 							<table style="width:100%" border="0">
 							<tbody>
 							<tr>
-							<td align="left"><img alt="Mailtoplogo" src="http://134.213.29.220/assets/mailTopLogo.png" ></td>
+							<td align="left"><img alt="Mailtoplogo" src="https://castit.dk/assets/mailTopLogo.png" ></td>
 							<td style="width:270px;padding-top:18px" align="left" valign="top"><b style="color:#696969">Castit <span class="il">Lightbox</span>:</b><br>'.$mail_body.'</td>
 							</tr>
 							<tr>
-							<td colspan="2"><img alt="Mailtopborder" src="http://134.213.29.220/assets/mailTopBorder.jpg"></td>
+							<td colspan="2"><img alt="Mailtopborder" src="https://castit.dk/assets/mailTopBorder.jpg"></td>
 							</tr>
 							</tbody>
 							</table>
@@ -2736,11 +2736,11 @@ $app->post('/sendlightbox', function () use ($app) {
 						$rows_image = $query_image->fetchAll(PDO::FETCH_ASSOC);
 						if(count($rows_image) > 0){
 							if (strpos($rows_image[0]['path'], 'vhost') !== false) {
-								$profile_image = 'http://134.213.29.220/images/uploads/'.$rows_image[0]['image'];
+								$profile_image = 'https://castit.dk/images/uploads/'.$rows_image[0]['image'];
 							}
 							else{
 								$path = $rows_image[0]['create_year']."/".$rows_image[0]['create_month']."/".$rows_image[0]['create_date']."/".$rows_image[0]['id']."/thumb_";
-								$profile_image = 'http://134.213.29.220/profile_images/'.$path.$rows_image[0]['image'];
+								$profile_image = 'https://castit.dk/profile_images/'.$path.$rows_image[0]['image'];
 							}
 						}
 			
@@ -2749,7 +2749,7 @@ $app->post('/sendlightbox', function () use ($app) {
 							<tbody>
 							<tr>';
 						$html .= '<td style="height:230px;width:139px" valign="top">
-							<a href="http://134.213.29.220/?l='.$lbid.'" target="_blank">
+							<a href="https://castit.dk/?l='.$lbid.'" target="_blank">
 							<img src="'.$profile_image.'" alt="'.$row['first_name'].'">
 							</a>
 							<span style="display:block;background-color:Black;width:131px;color:#ffffff;font-weight:bold;font-size:11px;margin-left:1px">
@@ -2843,18 +2843,18 @@ $app->post('/sendgroup', function () use ($app) {
         <head>
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
         <title>Castit</title>
-        <link rel="stylesheet" type="text/css" href="http://134.213.29.220/assets/css/emailstyle.css" media="all">';
+        <link rel="stylesheet" type="text/css" href="https://castit.dk/assets/css/emailstyle.css" media="all">';
 
         $html .= "
         </head>";
 
         $html .= '<body style="margin:0; padding:0; border:0; outline:0; font-size:100%; vertical-align:baseline; font-weight:normal; box-sizing:border-box;line-height:1;background:#fff; font-family:helveticaneueltstdbd; font-size:14px; overflow-x:hidden;">
-        <link itemprop="url" rel="stylesheet" type="text/css" href="http://134.213.29.220/assets/css/emailstyle.css" media="all">
+        <link itemprop="url" rel="stylesheet" type="text/css" href="https://castit.dk/assets/css/emailstyle.css" media="all">
         <div id="popup-wrapper"  style="float:left; width:100%; padding:54px 0 0 0;" >
            <div class="popup-container" style="margin: auto ; width: 730px ; padding: 0 15px ; max-width: 100%" >
                  <div class="popup-row1" style="border-bottom: solid 1px #2d2e32 ; float: left ; width: 730px; padding: 0 0 20px 0; margin: 0px 0 10px -5px;" >
-					   <div class="popup-logo" style="float:left; width:182px;" ><a href="#"><img style="max-width: 150px; margin-bottom: 15px;"  src="http://134.213.29.220/images/new_logo_black.png" alt="" /></a>
-					 	<a href="http://134.213.29.220/#/index/da?group='.$gid.'&username='.$username.'&groupname='.$group_addedon_value[0]['group_name'].'" style="background-color: blue;border-radius: 20px;padding: 7px 17px;color: #FFF;text-decoration: none;font-family: helvetica;font-size: 13px;">Open Lightbox</a>  
+					   <div class="popup-logo" style="float:left; width:182px;" ><a href="#"><img style="max-width: 150px; margin-bottom: 15px;"  src="https://castit.dk/images/new_logo_black.png" alt="" /></a>
+					 	<a href="https://castit.dk/#/index/da?group='.$gid.'&username='.$username.'&groupname='.$group_addedon_value[0]['group_name'].'" style="background-color: blue;border-radius: 20px;padding: 7px 17px;color: #FFF;text-decoration: none;font-family: helvetica;font-size: 13px;">Open Lightbox</a>  
 					   </div>
                        <div class="popup-text" style="display:block; padding:0 0 0 182px;">
                              <h4 style="padding:0;color:#000; font-size:16px; line-height:20px; font-weight:bold; font-family:Arial, Helvetica, sans-serif; margin:0 0 20px 0;" >Castit Lightbox: '.$group_addedon_value[0]['group_name'].'</h4>
@@ -2882,11 +2882,11 @@ $app->post('/sendgroup', function () use ($app) {
 						$rows_image = $query_image->fetchAll(PDO::FETCH_ASSOC);
 						if(count($rows_image) > 0){
 							if (strpos($rows_image[0]['path'], 'vhost') !== false) {
-								$profile_image = 'http://134.213.29.220/images/uploads/'.$rows_image[0]['image'];
+								$profile_image = 'https://castit.dk/images/uploads/'.$rows_image[0]['image'];
 							}
 							else{
 								$path = $rows_image[0]['create_year']."/".$rows_image[0]['create_month']."/".$rows_image[0]['create_date']."/".$rows_image[0]['id']."/thumb_";
-								$profile_image = 'http://134.213.29.220/profile_images/'.$path.$rows_image[0]['image'];
+								$profile_image = 'https://castit.dk/profile_images/'.$path.$rows_image[0]['image'];
 							}
 						}
       
@@ -2905,7 +2905,7 @@ $app->post('/sendgroup', function () use ($app) {
 				$html .= '</div><!--popup-row2-->
           
         <div class="popup-row3" style="float:left; width:100%; margin:60px 0 0 0 ;border-top:solid 1px #2d2e32; padding:30px 0;">
-             <span class="popup-icon1" style="float:left"><img style="max-width:100%;"  src="http://134.213.29.220/images/group_icon.png" alt="" /></span>
+             <span class="popup-icon1" style="float:left"><img style="max-width:100%;"  src="https://castit.dk/images/group_icon.png" alt="" /></span>
              <h3 style="font-weight:bold; margin:0; padding:0; float:right; font-size:32px; color:#000;font-family: helvetica;" >'.$group_date.'</h3>
         </div><!--popup-row3-->
         
@@ -2985,11 +2985,11 @@ $app->post('/sendgroup', function () use ($app) {
 							<table style="width:100%" border="0">
 							<tbody>
 							<tr>
-							<td align="left"><img alt="Mailtoplogo" src="http://134.213.29.220/assets/mailTopLogo.png" ></td>
+							<td align="left"><img alt="Mailtoplogo" src="https://castit.dk/assets/mailTopLogo.png" ></td>
 							<td style="width:270px;padding-top:18px" align="left" valign="top"><b style="color:#696969">Castit <span class="il">Lightbox</span>:</b><br>'.$mail_body.'</td>
 							</tr>
 							<tr>
-							<td colspan="2"><img alt="Mailtopborder" src="http://134.213.29.220/assets/mailTopBorder.jpg"></td>
+							<td colspan="2"><img alt="Mailtopborder" src="https://castit.dk/assets/mailTopBorder.jpg"></td>
 							</tr>
 							</tbody>
 							</table>
@@ -3017,11 +3017,11 @@ $app->post('/sendgroup', function () use ($app) {
 						$rows_image = $query_image->fetchAll(PDO::FETCH_ASSOC);
 						if(count($rows_image) > 0){
 							if (strpos($rows_image[0]['path'], 'vhost') !== false) {
-								$profile_image = 'http://134.213.29.220/images/uploads/'.$rows_image[0]['image'];
+								$profile_image = 'https://castit.dk/images/uploads/'.$rows_image[0]['image'];
 							}
 							else{
 								$path = $rows_image[0]['create_year']."/".$rows_image[0]['create_month']."/".$rows_image[0]['create_date']."/".$rows_image[0]['id']."/thumb_";
-								$profile_image = 'http://134.213.29.220/profile_images/'.$path.$rows_image[0]['image'];
+								$profile_image = 'https://castit.dk/profile_images/'.$path.$rows_image[0]['image'];
 							}
 							
 						}
@@ -3031,7 +3031,7 @@ $app->post('/sendgroup', function () use ($app) {
 							<tbody>
 							<tr>';
 						$html .= '<td style="height:230px;width:139px" valign="top">
-							<a href="http://134.213.29.220/?l='.$lbid.'" target="_blank">
+							<a href="https://castit.dk/?l='.$lbid.'" target="_blank">
 							<img src="'.$profile_image.'" alt="'.$row['first_name'].'">
 							</a>
 							<span style="display:block;background-color:Black;width:131px;color:#ffffff;font-weight:bold;font-size:11px;margin-left:1px">
@@ -3443,11 +3443,11 @@ $app->post('/resetpassword',function () use ($app) {
 								padding:0 0 13px; margin:18px 0 50px 0;">
 								<div style="color: #20be93;font-size: 23px;font-family: Calibri; 
 								background:#cccccc;float:left; width:100%; text-align:center; margin:0 0 16px 0; 
-								padding:8px 0 4px;"><img src="http://134.213.29.220/images/logo.png" 
+								padding:8px 0 4px;"><img src="https://castit.dk/images/logo.png" 
 								width="90px"/> </div>
 								<div style="padding:0 30px;">';
 					$content .= '<h5 style="color: #646e78;font-size: 16px;padding:0;margin: 0; text-align:left;">Kære '.ucfirst($rows[0]['first_name']).' '.ucfirst($rows[0]['last_name']).',</h5>';
-					$reset_link = '<a href="http://134.213.29.220/#/reset-password?email='.$email.'&resethash='.$randompass.'">Nulstille kodeord</a>';
+					$reset_link = '<a href="https://castit.dk/#/reset-password?email='.$email.'&resethash='.$randompass.'">Nulstille kodeord</a>';
 					// $content .= '<p style="color: #646e78;font-size: 16px;text-align:left;">Din nye adgangskode er,</p>';
 					$content .= '<p style="color: #646e78;font-size: 16px;padding:0; line-height:18px; text-align:left; 
 					">Klik venligst på linket og skift adgangskoden.<br/></p><p style="color: #646e78;font-size: 16px;padding:0; line-height:18px; text-align:left; 

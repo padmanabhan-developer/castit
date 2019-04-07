@@ -187,7 +187,7 @@ else{
 	if(count($rows)>0) {
 		if(isset($_SESSION['c_profiles'])){
 			$rows_temp = array_merge($_SESSION['c_profiles'], $_SESSION['y_profiles']);
-			$rows_new = array_slice($rows_temp, $offset*2, 2, true);
+			$rows_new = array_slice($rows_temp, $offset*30, 30, true);
 		}else{
 			$rows_new = $rows;
 		}

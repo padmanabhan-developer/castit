@@ -258,7 +258,10 @@ height:60px !important;
 
 @media screen and (max-width: 991px)
 {
-	
+.home-logo img{
+    width: 60% !important;
+}
+    
 .footer_center {
     display: inline-block;
     width: 200px;
