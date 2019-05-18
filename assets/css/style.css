@@ -1881,15 +1881,17 @@ padding: 0px;
     -webkit-box-shadow: 0 0 1px rgba(255,255,255,.5);
 }
 
-.alert_message, .success_message{
-    /* background-color: rgb(255, 255, 255, 0.9); */
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-color: #FFF;
-    opacity: 0.9;
+.alert_message, .success_message {
+	/* background-color: rgb(255, 255, 255, 0.9); */
+	position: fixed;
+	top: 20%;
+	left: 20%;
+	right: 20%;
+	bottom: 20%;
+	background-color: #FFF;
+	opacity: 1;
+	border-radius: 5px;
+	box-shadow: 0px 0px 5px 0px black;
 }
 
 div.alert_message p,
