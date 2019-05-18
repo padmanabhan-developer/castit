@@ -65,7 +65,7 @@ if ($row > 0){
     foreach ($language_query->fetchAll(PDO::FETCH_ASSOC) as $lng_item){
       $value['languages'][] = ['lang_id'=>$lng_item['language_proficiency_language_id'], 'rating'=>$lng_item['language_proficiency_rating_id'],'lng_pro_id'=>$lng_item['id']];
     }
-
+    sort($value['languages']);
     $payment_query = $db->prepare("SELECT * from payments where profile_id = $pid");
     $payment_query->execute();
     foreach($payment_query->fetchAll(PDO::FETCH_ASSOC) as $payment){
