@@ -15,20 +15,7 @@ class dbHelper {
             exit;
         }
     }
-    function query($sql){
-        return $this->db->query($sql);
-    }
-    function check_column($column, $table){
-        $q = $this->prepare("DESCRIBE ".$table);
-        $q->execute();
-        $table_fields = $q->fetchAll(PDO::FETCH_COLUMN);
-        if(in_array($column, $table_fields)){
-            return true;
-        }
-        else{
-            return false;
-        }
-    }
+    
     function select($table, $columns, $where, $order){
         try{
             $a = array();

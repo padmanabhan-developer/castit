@@ -11,7 +11,7 @@ Vi sætter stor pris på din interesse.</p>
 
 <p>BEMÆRK: Hvis du ligger hos andre bureauer  vil vi meget gerne vide det.</p>
 
-<p>Hvis du er interesseret så afholder vi workshops for amatører og helt nye profiler. Vi har stor succes med at uddanne vores profiler, så de har nemmere ved at få jobs og som en ekstra gevinst får de en masse personligt ud af det. Kig på vores hjemmeside under ”Workshops”.</p>
+<p>Hvis du er interesseret så afholder vi workshops for vores profiler i samarbejde med Tony Grahn. Vi har stor succes med at uddanne vores profiler, så de har nemmere ved at få jobs og som en ekstra gevinst får de en masse personligt ud af det også. Kig på vores hjemmeside under ”Workshops” for mere information.</p>
 
 <p>Vi glæder os til forhåbentligt snart, at tale med dig.</p>
 
@@ -46,11 +46,10 @@ Vi sætter stor pris på din interesse.</p>
 <p>PLEASE NOTE: If you are working with other agencies, we would like to know.</p>
 <br/>
 <p>If you are interested!</p>
-<p>We organize workshops for amateurs and new profiles together with Tony Grahn. We have great success in educating our profiles. That makes it easier to access jobs and our profiles get a lot of personal gains as well. Look at our website under "Workshops" or contact us directly.</p>
+<p>We organize workshops for our profiles together with Tony Grahn. We have great success in educating our profiles. That makes it easier to access jobs and our profiles get a lot of personal gains as well. Look at our website under "Workshops" or contact us directly.</p>
 <br/><br/>
-<p>PLEASE NOTE: If you are with other agencies, we would like to know.</p>
-<br/><br/>
-<p>We look forward to hopefully soon talking to you.</p>
+
+<p>We are looking forward to hopefully talk to you soon.</p>
 <br/>
 <p>Very best</p>
 <br/>

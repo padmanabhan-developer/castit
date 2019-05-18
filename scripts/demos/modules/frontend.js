@@ -1074,17 +1074,11 @@ var frontend = angular.module('theme.demos.dashboard', [
 	$scope.currentIndexVideo=0;
 	$scope.next_video=function(){
 		//alert($scope.profile_images.length);
-		alert('n');
-		var video = $('#pro_video')[0];
-		video.reset();
 		$scope.currentIndexVideo < $scope.profile_videos.length-1 ? $scope.currentIndexVideo++ : $scope.currentIndexVideo=0;
 		
 	};
 	$scope.prev_video=function(){
 		//alert($scope.currentIndexVideo);
-		alert('p');
-		var video = $('#pro_video')[0];
-		video.reset();
 		$scope.currentIndexVideo>0?$scope.currentIndexVideo--:$scope.currentIndexVideo=$scope.profile_videos.length-1;
 	};
 	$scope.$watch('currentIndexVideo',function(){
@@ -1098,9 +1092,7 @@ var frontend = angular.module('theme.demos.dashboard', [
 				usePluginFullScreen : false,
 				features: ['playpause','progress', 'fullscreen']
 			});*/
-			// video.reset();
 			video.load();
-			video.pause();
 			// video.play();
 
 		}

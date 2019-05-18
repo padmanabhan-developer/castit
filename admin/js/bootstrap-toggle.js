@@ -22,8 +22,8 @@
 	Toggle.VERSION  = '2.2.0'
 
 	Toggle.DEFAULTS = {
-		on: 'On',
-		off: 'Off',
+		on: 'Online',
+		off: 'Offline',
 		onstyle: 'primary',
 		offstyle: 'default',
 		size: 'normal',
@@ -173,7 +173,7 @@
 
 	$(document).on('click.bs.toggle', 'div[data-toggle^=toggle]', function(e) {
 		var $checkbox = $(this).find('input[type=checkbox]')
-		$checkbox.bootstrapToggle('toggle');
+		$checkbox.bootstrapToggle('toggle')
 		e.preventDefault()
 	})
 

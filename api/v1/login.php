@@ -37,5 +37,3 @@ if ($row > 0){
 else{
   echo 'wrong';
 }
-
-?>

@@ -1,0 +1,72 @@
+<style>
+
+</style>
+<div ng-controller="profileCreateController"   class="ansog1">
+     <div id="content" class="wrap2">
+     	  
+          <div class="page-black livetitle">
+          	   <div class="section-top">
+               		<h2>{{ isDanish ? 'Ansøgningsskema' : 'Application form' }}</h2>
+                    <div class="black-right">
+                    	 <!-- <a href="#" class="black-edit"></a> -->
+                          <a href="#/index{{isDanish ? '/da' : '/en'}}" class="black-close">{{ isDanish ? 'luk' : 'Close' }}</a>
+                    </div>
+               </div><!--close section-top-->
+               <form name="profile_ansog_form7" id="profile_ansog_form7" ng-submit="step7Create()">
+               <div class="section-middle">
+               		
+                    <div class="black-section">
+                    	 <div class="black-row">
+                         
+                         	  <div class="black-leftbar">
+                                      <!-- <p class="active" ng-if="isDanish">For at sende din ansøgning, bedes du klikke på feltet med "ansøg".</p> -->
+                                      <!-- <p class="active" ng-if="!isDanish">To submit your application please click on ”apply”.</p> -->
+                              </div><!--close black-leftbar-->
+                              
+                              <div class="black-rightbar livetitle ">
+                              	   
+                                   
+                                   <div class="black-row">
+                                   		<div class="black-cal6">
+                                        	 <h3><strong>{{ isDanish ? 'GEM DIN PROFIL' : 'Save Profile' }}</strong></h3>
+                                             
+                                             <div class="checkbox_box"><span class="box15"><input type="checkbox" required name="genre" id="check-1" value="action" /><label for="check-1"></label></span><a style="color: white;" target="_blank" href="./brugerbetingelser.pdf" >{{ isDanish ? 'Juridiske betingelser' : 'Terms & Conditions'}} *</a></div>
+                                             
+                                             <input name="" type="submit" value="{{ isDanish ? 'Gem' : 'Save' }}" class="submit">
+                                             
+                                             <div class="text">
+                                                  <p>{{ isDanish ? 'BEMÆRK' : 'NOTE:' }}<br>
+                                                            <em ng-if="isDanish">For at ansøge om en profil bedes du klikke på "Gem" og gå videre til næste side hvor du kan uploade billeder og film.</em>
+                                                            <em ng-if="!isDanish">To apply for a profile please click "Save" and proceed to the next page where you can upload photos and films.</em>
+                                                       </p>
+                                             </div>
+                                             
+                                        </div><!--close black-cal6-->
+                                        
+                                        
+                                   </div><!--close black-row-->
+                              </div><!--close black-rightbar-->
+                              
+                         </div><!--close black-row-->
+                    </div><!--close black-section-->
+                    
+                    <div class="black-numbers"><span class="span3"><em>06</em>/07</span></div>
+               </div><!--close section-middle-->
+               
+               <div class="section-bottom">
+               		<div class="blackpage-controller">
+                    	 <!-- <span class="controller-title">{{ isDanish ? 'Færdig' : 'Done' }}</span> -->
+                               <!-- <a href="#/ansog-trin6{{isDanish ? '/da' : '/en'}}" class="black-prev"></a> -->
+                               <a href="#/ansog-trin5{{isDanish ? '/da' : '/en'}}" class="black-prev">{{ isDanish ? 'FORRIGE SIDE' : 'PREVIOUS PAGE' }}</a>
+                         <!-- <button ng-disabled="profile_ansog_form7.$touched" type="submit" class="black-next"></button>  -->
+                         </div>
+               </div><!--close section-bottom-->
+               </form>
+          </div><!--close page-black-->
+          
+     </div><!--close content-->
+</div><!--close wrapper-->
+<input type="hidden" name="" class="operation" value="insert">
+
+</body>
+</html>

@@ -1,0 +1,19 @@
+Angular JS
+- landing
+- index 
+-- tiles, search, about-castit, workshop
+- registration
+- login
+PHP 
+- business logic
+-- REST APIs (supply data from database to AngularJS)
+-- validation and error messages
+-- eMails (Mailgun)
+- Admin
+-- Interface (admin pages)
+-- CRUD operations with database
+- External Interface
+-- Zencoder APIs
+-- Rackspace cloud APIs
+MySQL
+- database

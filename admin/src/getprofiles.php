@@ -28,6 +28,9 @@
       case 'bureau':
         $filter = " AND p.profile_status_id = '5' ";  
         break;
+      case 'recent':
+        $filter = " AND p.recently_updated = 'true' ";
+        break;
       default:
         $filter = "";
         break;

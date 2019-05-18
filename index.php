@@ -5,8 +5,10 @@
   <title>Castit</title>
 	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
 	<meta content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0' name='viewport' />
-	<meta name="description" content="Maverick">
-	<meta name="author" content="nDevr Studios & The Red Team">
+	<meta name =”robots” content=”index”>
+	<meta name =”robots” content=follow>
+	<meta name="description" content="We are specialized in finding people for photo shoots and commercials. We would love to hear from you." />
+	<meta name="author" content="Cathrine Hovmand">
 
 	<!-- prochtml:remove:dist -->
 	<!--<link href="assets/less/styles.less" rel="stylesheet/less" media="all"> -->
@@ -69,6 +71,15 @@
 	<script type="text/javascript" src="assets/plugins/misc/less.js"></script>-->
 	<!-- /prochtml -->
 	
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-138161884-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-138161884-1');
+</script>
 
 	</head>
 

@@ -187,7 +187,8 @@ else{
 	if(count($rows)>0) {
 		if(isset($_SESSION['c_profiles'])){
 			$rows_temp = array_merge($_SESSION['c_profiles'], $_SESSION['y_profiles']);
-			$rows_new = array_slice($rows_temp, $offset*30, 30, true);
+			$rows_new = array_slice($rows_temp, $offset*612, 612, true);
+			// $rows_new = $rows_temp;
 		}else{
 			$rows_new = $rows;
 		}
@@ -215,14 +216,27 @@ else{
 			$max = $rows_count - 1;
 			$random_index = rand($min, $max);
 			$random_index = 0;
-			if (strpos($rows_image[$random_index]['path'], 'vhost') !== false) {
-				$path = $rows_image[$random_index]['path'];
-				$profile_image = 'https://castit.dk/images/uploads/'.$rows_image[$random_index]['image'];
-			}
-			else{
-				$path = $rows_image[$random_index]['create_year']."/".$rows_image[$random_index]['create_month']."/".$rows_image[$random_index]['create_date']."/".$rows_image[$random_index]['id']."/big_";
-				$profile_image = 'https://castit.dk/profile_images/'.$path.$rows_image[$random_index]['image'];
-			}
+			// if(file_get_contents("/var/www/vhost/castit.dk/phpthumbnails/".$rows_image[$random_index]['image'],0,null,0,1)){
+				// if (file_get_contents("https://castit.dk/phpthumbnails/".$rows_image[$random_index]['image'],0,null,0,1)) {
+			
+			// if(file_exists("https://castit.dk/phpthumbnails/".$rows_image[$random_index]['image'])){
+				if(file_exists("/var/www/vhost/castit.dk/phpthumbnails_new/".$rows_image[$random_index]['image'])){
+					// echo '<pre>';
+					// echo $rows_image[$random_index]['image'];
+					$profile_image = "https://castit.dk/phpthumbnails_new/".$rows_image[$random_index]['image'];
+				}
+				elseif(file_exists("/var/www/vhost/castit.dk/phpthumbnails_new/big_".$rows_image[$random_index]['image'])){
+					$profile_image = "https://castit.dk/phpthumbnails_new/big_".$rows_image[$random_index]['image'];
+				}
+				elseif(strpos($rows_image[$random_index]['path'], 'vhost') !== false){
+						$path = $rows_image[$random_index]['path'];
+						$profile_image = 'https://castit.dk/images/uploads/'.$rows_image[$random_index]['image'];
+				}
+				else{
+					$path = $rows_image[$random_index]['create_year']."/".$rows_image[$random_index]['create_month']."/".$rows_image[$random_index]['create_date']."/".$rows_image[$random_index]['id']."/big_";
+					$profile_image = 'https://castit.dk/profile_images/'.$path.$rows_image[$random_index]['image'];
+				}
+			
 
 		}
 			$profiles[] = array('id' 			=> $row['id'],
@@ -348,9 +362,17 @@ $app->get('/getfilterprofiles',function () use ($app) {
 		$max = $rows_count - 1;
 		$random_index = rand($min, $max);
 		$random_index = 0;
-		if (strpos($rows_image[$random_index]['path'], 'vhost') !== false) {
-			$path = $rows_image[$random_index]['path'];
-			$profile_image = 'https://castit.dk/images/uploads/'.$rows_image[$random_index]['image'];
+		if(file_exists("/var/www/vhost/castit.dk/phpthumbnails_new/".$rows_image[$random_index]['image'])){
+			// echo '<pre>';
+			// echo $rows_image[$random_index]['image'];
+			$profile_image = "https://castit.dk/phpthumbnails_new/".$rows_image[$random_index]['image'];
+		}
+		elseif(file_exists("/var/www/vhost/castit.dk/phpthumbnails_new/big_".$rows_image[$random_index]['image'])){
+			$profile_image = "https://castit.dk/phpthumbnails_new/big_".$rows_image[$random_index]['image'];
+		}
+		elseif(strpos($rows_image[$random_index]['path'], 'vhost') !== false){
+				$path = $rows_image[$random_index]['path'];
+				$profile_image = 'https://castit.dk/images/uploads/'.$rows_image[$random_index]['image'];
 		}
 		else{
 			$path = $rows_image[$random_index]['create_year']."/".$rows_image[$random_index]['create_month']."/".$rows_image[$random_index]['create_date']."/".$rows_image[$random_index]['id']."/big_";
@@ -408,6 +430,17 @@ Purpose: Home page Landing page
 Parameter : NIL
 Type : POST
 ******************************************/
+function remote_file_exists($url)
+{
+    $ch = curl_init($url);
+    curl_setopt($ch, CURLOPT_NOBODY, true);
+    curl_exec($ch);
+    $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+    curl_close($ch);
+    if( $httpCode == 200 ){return true;}
+}
+
+
 $app->get('/getsingleprofiles',function () use ($app) { 
     global $db;
 	$profileid = $app->request->get('profileid');
@@ -477,10 +510,14 @@ $app->get('/getsingleprofiles',function () use ($app) {
 					$vpath = 'http://assets3.castit.dk'.$row_video['path']."/".$row_video['filename'];
 					$thumbpath = 'http://assets3.castit.dk'.$row_video['thumbnail_photo_path']."/".$row_video['thumbnail_photo_filename'];
 				} */
-				$vpath = 'http://assets3.castit.dk'.$row_video['path']."/".$row_video['filename'];
-					$thumbpath = 'http://assets3.castit.dk'.$row_video['thumbnail_photo_path']."/".$row_video['thumbnail_photo_filename'];
-				$profile_videos[] = array('vidcnt' => $videoc, 'urloriginal' =>$vpath, 'img_thum'=>$thumbpath, 'fullpath'=>$vpath);
-				$videoc++;
+				$vpath = 'https://8ffd082a2b0d60afbe5b-ee660e5023b1ce57ba3003086dec40a5.ssl.cf3.rackcdn.com'.$row_video['path']."/".$row_video['filename'];
+				$thumbpath = 'https://8ffd082a2b0d60afbe5b-ee660e5023b1ce57ba3003086dec40a5.ssl.cf3.rackcdn.com'.$row_video['thumbnail_photo_path']."/".$row_video['thumbnail_photo_filename'];
+
+				// if(remote_file_exists($vpath)){
+				if(1){
+					$profile_videos[] = array('vidcnt' => $videoc, 'urloriginal' =>$vpath, 'img_thum'=>$thumbpath, 'fullpath'=>$vpath);
+					$videoc++;
+				}
 			}
 		}
 
@@ -2867,17 +2904,17 @@ $app->post('/sendemail', function () use ($app) {
 
   //$html .= 'testemail';
   global $mgClient;
-  global $domain;
-  $result = $mgClient->sendMessage($domain, array(
-	'from'    => 'CASTIT <info@castit.dk>',
-	'to'      => $to_email,
-	// 'to'      => 'padmanabhan.code@gmail.com',
-	'subject' => $subject,
-	'html'    => $html,
-	'cc'	=> $to_cc,
-	'bcc'	=> 'padmanabhann@mailinator.com, vs@anewnative.com, cat@castit.dk',
-	));
-//   mail( $to_email, $subject, $html, $headers ); // Accountant
+	global $domain;
+	$email_data = array();
+	$email_data['from'] = 'CASTIT <info@castit.dk>';
+	$email_data['to']		=	$to_email;
+	$email_data['subject']		=	$subject;
+	$email_data['html']		=	$html;
+	if(isset($to_cc) && $to_cc != '') {$email_data['cc']		=	$to_cc;}
+	$email_data['bcc']		=	'padmanabhann@mailinator.com, vs@anewnative.com, cat@castit.dk';
+
+
+  $result = $mgClient->sendMessage($domain, $email_data);
   $response['success'] = true;
   $response['message'] = 'Email er sendt!';
 

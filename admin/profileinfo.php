@@ -394,11 +394,11 @@ if($value['gender_id'] == '2' && !$is_kid){
                            		<div class="col6">
                                 	 <h3>PERSONLIG INFO</h3>
                                      <div class="form-row">
-                                     	  <input type="text" class="form-input1 first_name" placeholder="Anders" value="<?php echo $value['first_name'] ;?>" >
+                                     	  <input type="text" class="form-input1 first_name" placeholder="Fornavn" value="<?php echo $value['first_name'] ;?>" >
                                      </div>
                                      
                                      <div class="form-row">
-                                     	  <input type="text" class="form-input1 last_name" placeholder="Andersen"  value="<?php echo $value['last_name'] ;?>" >
+                                     	  <input type="text" class="form-input1 last_name" placeholder="Efternavn"  value="<?php echo $value['last_name'] ;?>" >
                                      </div>
                                      
                                      <div class="form-row">
@@ -414,13 +414,13 @@ if($value['gender_id'] == '2' && !$is_kid){
                                 	 <h3>ADRESSE</h3>
                                      <div class="form-row">
                                      	  <div class="row">
-                                          	   <div class="col6"><input type="text" class="form-input1 zipcode" placeholder="4220"  value="<?php echo $value['zipcode'] ;?>" ></div>
-                                               <div class="col6"><input type="text" class="form-input1 city" placeholder="Korsør" value="<?php echo $value['city'] ;?>" ></div>
+                                          	   <div class="col6"><input type="text" class="form-input1 zipcode" placeholder="Post"  value="<?php echo $value['zipcode'] ;?>" ></div>
+                                               <div class="col6"><input type="text" class="form-input1 city" placeholder="By" value="<?php echo $value['city'] ;?>" ></div>
                                           </div>
                                      </div>
                                      
                                      <div class="form-row">
-                                     	  <input type="text" class="form-input1 address" placeholder="address: eg. Skovvejen 11" value="<?php echo $value['address'] ;?>" >
+                                     	  <input type="text" class="form-input1 address" placeholder="Gade" value="<?php echo $value['address'] ;?>" >
                                      </div>
                                      
                                      <div class="form-row">
@@ -456,7 +456,7 @@ if($value['gender_id'] == '2' && !$is_kid){
                            		<div class="col6">
                                 	 <h3>PERSONLIG INFO</h3>
                                      <div class="form-row">
-                                     	  <input type="text" class="form-input1 email" placeholder="hej@hej.dk" value="<?php echo $value['email'] ;?>" >
+                                     	  <input type="text" class="form-input1 email" placeholder="email id" value="<?php echo $value['email'] ;?>" >
                                      </div>
                                      
                                      <div class="form-row">

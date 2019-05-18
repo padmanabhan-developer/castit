@@ -110,7 +110,7 @@
                            <label>Alle</label>
                       </div>
                       
-                      <div class="radio radio-info">
+                      <div class="radio radio-info white-label">
                            <input type="radio" name="filter" id="Radios11" value="recent">
                            <label>Recently Updated</label>
                       </div>

@@ -95,6 +95,9 @@ function form_images_html($value = array('pics'=>'') , $name, $profile_number, $
     $output .= $wrap_begin;
     if(isset($value['pics']) && count($value['pics']) > 0){
       foreach ($value['pics'] as $key=>$pic){
+        if($pic["image"] == ""){
+          $pic["image"] = $pic["filename"];
+        }
         $new_img_file = $_SERVER['DOCUMENT_ROOT'] . '/images/uploads/' . $pic["image"];
         // $new_img_file = 'https://castit.dk/images/uploads/' . $pic["image"];
         // pp($new_img_file);
@@ -183,7 +186,7 @@ function form_images_html($value = array('pics'=>'') , $name, $profile_number, $
         <span><i class="fas fa-trash-alt"  onclick="updatemedia_delete('.$vid['id'].', this)" media_type="video"></i></span>
         
         <video controls id="pro_video" style="width:100%;max-width:100%;" width="640" height="360">
-          <source type="video/mp4" src="http://assets3.castit.dk' . $vid['path'] . '/' . $vid['filename'] . '">
+          <source type="video/mp4" src="https://8ffd082a2b0d60afbe5b-ee660e5023b1ce57ba3003086dec40a5.ssl.cf3.rackcdn.com' . $vid['path'] . '/' . $vid['filename'] . '">
         </video>
   
         <div class="numbertext">'.($key+1).' / '.count($value['vids']).'</div>
@@ -194,7 +197,7 @@ function form_images_html($value = array('pics'=>'') , $name, $profile_number, $
         $video_filename = $vid['filename'];
         $video_thumbnail_path = $vid['thumbnail_photo_path'];
         $video_thumbnail_filename = $vid['thumbnail_photo_filename'];
-        $vdo_thumb_url = "http://assets3.castit.dk" . $video_thumbnail_path . '/' . $video_thumbnail_filename;
+        $vdo_thumb_url = "https://8ffd082a2b0d60afbe5b-ee660e5023b1ce57ba3003086dec40a5.ssl.cf3.rackcdn.com" . $video_thumbnail_path . '/' . $video_thumbnail_filename;
         $output .= form_media_inner_html($vdo_thumb_url, $name, $profile_number, $status, $mediatype, $vid['id'], $key+1);
       }
       // $vdo_thumb_url = "http://assets3.castit.dk/videos/profiles/2016-03-29/f71e9bde-9521-4a00-a81b-c4329b6a6e70_Maja_v_full.jpg";
