@@ -536,6 +536,7 @@ main.controller('RegisterStep4Controller', ['$scope', '$filter', '$http', '$wind
 					}
 				}
 			}else{
+				/*
 					$timeout(function(){
 						let curcatid = '9';
 						$scope.selectedcategories = curcatid;
@@ -560,6 +561,7 @@ main.controller('RegisterStep4Controller', ['$scope', '$filter', '$http', '$wind
 						myElButtonTag.removeClass('button1').addClass('button2');
 						myElSpanTag.removeClass('plus-icon').addClass('close-icon');
 					}, 200);
+					*/
 			}
 		}else{
 			window.location = '#/ansog-trin3' + ($rootScope.isDanish ? '/da' : '/en' );
@@ -601,7 +603,7 @@ main.controller('RegisterStep4Controller', ['$scope', '$filter', '$http', '$wind
 		}
 
 		if($scope.selectedcategories == ""){
-			checkuncheckcategory('9');
+			// checkuncheckcategory('9');
 		}
 
 	};
@@ -639,7 +641,7 @@ main.controller('RegisterStep4Controller', ['$scope', '$filter', '$http', '$wind
 		}
 
 		if($scope.selectedskills == ""){
-			checkuncheckskill('16');
+			// checkuncheckskill('16');
 		}
 
 	};
@@ -676,7 +678,7 @@ main.controller('RegisterStep4Controller', ['$scope', '$filter', '$http', '$wind
 		}
 
 		if($scope.selectedlicences == ""){
-			checkunchecklicence('5');
+			// checkunchecklicence('5');
 		}
 		
 	};
