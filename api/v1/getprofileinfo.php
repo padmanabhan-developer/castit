@@ -85,6 +85,11 @@ if ($row > 0){
       ];
     }
 
+    foreach($value as $key=>$v){
+      if($v == "NULL" || $v == NULL || $v == 'null'){
+        $value[$key] = "";
+      }
+    }
 
     $user_profile = json_encode($value);
     echo $user_profile;
