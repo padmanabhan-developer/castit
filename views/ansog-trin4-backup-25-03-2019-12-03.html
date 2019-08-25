@@ -1,0 +1,84 @@
+<div ng-controller="RegisterStep4Controller"  class="ansog1">
+     <div id="content" class="wrap2">
+     	 <form name="profile_ansog_form4" id="profile_ansog_form4" ng-submit="step4Create()">   
+              <div class="page-black livetitle">
+                   <div class="section-top">
+                        <h2>{{ isDanish ? 'Ansøgningsskema' : 'Application form' }}</h2>
+                        <div class="black-right">
+                             <!-- <a href="#" class="black-edit"></a> -->
+                              <a href="#/index{{isDanish ? '/da' : '/en'}}" class="black-close">{{ isDanish ? 'luk' : 'Close' }}</a>
+                        </div>
+                   </div><!--close section-top-->
+                   
+                   <div class="section-middle">
+                        
+                        <div class="black-section">
+                             <div class="black-row">
+                             
+                                  <div class="black-leftbar" style="width:20%">
+                                   <p ng-if="isDanish">For at ansøge om en profil, bedes du udfylde felterne og klikke videre til næste side.</p>
+                                   <p ng-if="!isDanish">To apply for a profile please fill out the fields and continue to the next page.</p>
+                                  </div><!--close black-leftbar-->
+                                  
+                                  <div class="black-rightbar  livetitle" style="width:80%">
+                                       
+                                       
+                                       <div class="black-row">
+                                            <div class="black-cal6" style="width:30%">
+                                                 <h4>{{ isDanish ? 'LIDT OM MIG' : 'ABOUT ME' }}</h4>
+                                                 
+                                                 <div class="form_box">
+                                                      <textarea name="notes" id="notes" ng-model="notes" cols="" rows="" placeholder="{{ isDanish ? 'Skriv her...' : 'Write here...' }}" class="textarea2" char-count ></textarea>
+                                                      <a href="#" class="edit2"></a>
+                                                      <span class="words">{{ numberOfCharacters }}</span>
+                                                 </div>
+                                                 <h4>{{ isDanish ? 'SPORT & HOBBY' : 'SPORTS & HOBBIES' }}</h4>
+                                                 <div class="form_box">
+                                                      <textarea name="sports_hobby" id="sports_hobby" ng-model="sports_hobby" cols="" rows="" placeholder="{{ isDanish ? 'Skriv her...' : 'Write here...' }}" class="textarea2"  char-count-next></textarea>
+                                                      <a href="#" class="edit2"></a>
+                                                      <span class="words">{{ numberOfCharactersNext }}</span>
+                                                 </div>
+                                            </div><!--close black-cal4-->
+                                            
+                                            <div class="black-cal6 kategori" style="width:70%">
+                                            <input required type="hidden" name="selectedcategories" id="selectedcategories" ng-model="selectedcategories" value="{{selectedcategories}}"  />
+                                            <input required type="hidden" name="selectedskills" id="selectedskills" ng-model="selectedskills" value="{{selectedskills}}" />
+                                            <input required type="hidden" name="selectedlicences" id="selectedlicences" ng-model="selectedlicences" value="{{selectedlicences}}"/>
+                                                 <h3><strong>{{ isDanish ? 'KATEGORI' : 'CATEGORY' }}</strong> <small>/ {{ isDanish ? 'Vælg én eller flere' : 'select one or more' }}</small></h3>
+                                                 <div class="form_box">
+                                                      <span class="button1" id="catbut{{category.id}}" style="cursor:pointer;" ng-repeat="category in categoriesdropdown" ng-click="checkuncheckcategory(category.id)">{{category.name}} <span id="catspan{{category.id}}" class="plus-icon"></span></span>
+                                                 </div>
+                                                 
+                                                 <h4>{{ isDanish ? 'ERFARING' : 'Experience' }}</h4>
+                                                 <div class="form_box">
+                                                      <span class="button1" id="skillbut{{skill.id}}" style="cursor:pointer;" data-skill="{{skill.id}}" ng-repeat="skill in skillsdropdown" ng-click="checkuncheckskill(skill.id)">{{skill.name}}  <span id="skillspan{{skill.id}}" class="plus-icon"></span></span>
+                                                 </div>
+                                                 
+                                                 <h4>{{ isDanish ? 'KØREKORT' : 'Drivers license' }}</h4>
+                                                 <div class="form_box">
+                                                      <span class="button1" id="licbut{{licence.id}}" style="cursor:pointer;" data-licence="{{licence.id}}" ng-repeat="licence in licencesdropdown" ng-click="checkunchecklicence(licence.id)">{{licence.name}} <span id="licspan{{licence.id}}" class="plus-icon"></span></span>
+                                                 </div>
+                                            </div><!--close black-cal4-->
+                                       </div><!--close black-row-->
+                                  </div><!--close black-rightbar-->
+                                  
+                             </div><!--close black-row-->
+                        </div><!--close black-section-->
+                        
+                        <div class="black-numbers"><span class="span3"><em>04</em>/07</span></div>
+                   </div><!--close section-middle-->
+                   
+                   <div class="section-bottom">
+                    <div class="blackpage-controller">
+                     
+                      <a href="#/ansog-trin3{{isDanish ? '/da' : '/en'}}" class="black-prev">{{ isDanish ? 'FORRIGE SIDE' : 'PREVIOUS PAGE' }}</a>
+                      <button type="submit" class="black-next">{{ isDanish ? 'NÆSTE SIDE' : 'NEXT PAGE' }}</button>
+                 </div>
+            </div><!--close section-bottom-->
+              </div><!--close page-black-->
+          </form>
+     </div><!--close content-->
+</div><!--close wrapper-->
+<div class="alert_message" style="display:none">
+     <p>{{ isDanish ? 'Vælg mindst en værdi for KATEGORI, ERFARING og KØREKORT' : 'Please select at least one value for Category, Skill and Licence' }}</p>
+</div>

@@ -1,72 +1,121 @@
- <div style="overflow: hidden; padding:10px 0"><span style="float: right;">DA / <em>EN</em></span></div>
-<div id="header" class="page-header" ng-controller="MainController">
-    <div class="logo"><a href="#/index"><img ng-src="{{(interface == 'ansog' || interface == 'login' ) && 'images/logo2.png' || 'images/logo.png'}}" alt="" /></a></div>
-          <div class="header_right">
-               <div class="menu">
-                  <ul>
-                      <li ng-class="{ 'active': interface=='login'}"><a href="#/login">Login</a></li>
-                        <li ng-class="{ 'active': interface=='ansog'}"><a href="#/ansog-trin1">Ansøg</a></li>
-                        <li ng-class="{ 'active': interface=='aboutus'}"><a href="javascript:;" ng-click='show_about()'>Om Castit</a></li>
-                        <li ng-class="{ 'active': interface=='course'}"><a  href="javascript:;" ng-click='show_course()'>Castit Workshop</a></li>
-                        <li class="kontakt"><b>Kontakt</b>
-                    <ul class="">
-                              <li style="font-size: 10px; margin-top:10px;">
-                                M: 0045 21 28 58 25<br>
-                                E: <a href="mailto:info@Castit.dk" target="_top" style="color:#000 !important;font-weight: normal;
-text-decoration: underline;"> info@Castit.dk</a></li>
-                            </ul> 
-                       </li>
-
-                       <li class="kontakt"><b>Address</b>
-                    <ul class="">
-                              <li  style="font-size: 10px; margin-top:10px;">
-                                Rosenvængets Alle 11, 2. Sal<br>
-                                1260 København Ø<br></li>
-                            </ul> 
-                       </li>
-                    </ul>
-               </div>
-                              <div class="res-menu"  >
-                               <img class="black-menu" src="images/menu.png" alt="responsivemenu"/>
-                               <img class="white-menu" src="images/menu2.png"  alt="responsivemenu" style="display:none;"/>
-                               </div>
-                              
-                                        </div>
-
-
-               <div class="res_menu">
+<div id="header" class="page-header" ng-class="{ 'english': !isDanish}" ng-controller="MainController"
+     style="z-index: 2">
+     <div class="logo">
+          <a 
+               href="#/index{{isDanish ? '/da' : '/en'}}"><img
+               ng-src="{{(interface == 'ansog' || interface == 'login' ) && 'images/CASTIT_LOGO_RGB_white.svg' || 'images/CASTIT_LOGO_RGB_black.svg'}}"
+               alt="" /></a></div>
+     <div class="header_right">
+          <div ng-if="!(interface == 'ansog') && !(interface == 'login')" class="menu" style="z-index: 0">
                <ul>
-                      <li><div class="information-inside"><h2>MENU</h2><a href="#" class="poup-close2">LUK</a></div></li>
-                       
-                        <li ng-class="{ 'active': interface=='login'}"><a href="#/login">Login</a></li>
-                        <li ng-class="{ 'active': interface=='ansog'}"><a href="#/ansog-trin1">Ansøg</a></li>
-                        <li ng-class="{ 'active': interface=='aboutus'}"><a href="javascript:;" ng-click='show_about()'>Om Castit</a></li>
-                        <li ng-class="{ 'active': interface=='course'}"><a  href="javascript:;" ng-click='show_course()'>Castit Workshop</a></li>
-                        <li class="kontakt"><a href="javascript:;"  ng-click='show_contact()'>Kontakt</a> 
-                          <ul class="kon-dropdown">
-                              <li>
-                                 Castit ApS<br>
-                                Rosenvængets Alle 11, 2. Sal<br>
-                                1260 København Ø<br>
-                                M: 0045 21 28 58 25<br>
-                                E: <a href="mailto:info@Castit.dk" target="_top" style="color:#dcdde0 !important;font-weight: normal;
+                    <li  
+                         ng-class="{ 'active': interface=='login'}">
+                         <a href ng-click="goto('login' + (isDanish ? '/da' : '/en'))">Login</a></li>
+                    <li 
+                         ng-class="{ 'active': interface=='ansog'}">
+                         <a href ng-click="goto('ansog-trin1' + (isDanish ? '/da' : '/en'))">{{ isDanish ? 'Ansøg' : 'Apply' }}</a>
+                    </li>
+                    <li 
+                         ng-class="{ 'active': interface=='aboutus'}">
+                         <a href ng-click='show_about()'>{{ isDanish ? 'Om Castit' : 'About Castit' }}</a></li>
+                    <li 
+                         ng-class="{ 'active': interface=='course'}">
+                         <a href ng-click='show_course()'>{{ isDanish ? 'Castit Workshop' : 'Castit Workshop' }}</a></li>
+                    <li class="kontakt"><b>{{ isDanish ? 'Kontakt' : 'Contact' }}</b>
+                         <ul class="">
+                              <li style="font-size: 10px; margin-top:10px;">
+                                   M: 0045 21 28 58 25<br>
+                                   E: <a href="mailto:info@Castit.dk" target="_top" style="color:#2d2e32 !important;font-weight: normal;
 text-decoration: underline;"> info@Castit.dk</a></li>
-                            </ul>
-                       </li>
-                        
-                        <li>
-               <span class="span1">DA / <em>EN</em></span>
-               <span class="span2"><a href="https://www.facebook.com/castitdenmark" target="_blank">Facebook</a></span>
-                        </li>
-                        
-                        
+                         </ul>
+                    </li>
+
+                    <li class="kontakt"><b>{{ isDanish ? 'Adresse' : 'Address' }}</b>
+                         <ul class="">
+                              <li style="font-size: 10px; margin-top:10px;">
+                                   {{ isDanish ? 'Rosenvængets Allé 11, 1. Sal' : 'Rosenvængets Allé 11, 1st floor' }}<br>
+                                   {{ isDanish ? '2100 København Ø' : '2100 Copenhagen Ø' }}<br></li>
+                         </ul>
+                    </li>
+               </ul>
+          </div>
+          <div class="lngdiv"><span class="lngname"
+                    ng-class="{ 'lang-active': interface=='ansog' || interface=='login'}"><span
+                         ng-click="changeLanguage(true);" ng-class="{ 'active': isDanish}">DA</span> / <span
+                         ng-click="changeLanguage(false);" ng-class="{ 'active': !isDanish}">EN</span></span></div>
+
+          <div class="res-menu" ng-click="toggleMenu()">
+               <img class="black-menu main-menu-trigger" src="images/svgs/burgermenu1.svg" style="width:30px" alt="responsivemenu" />
+               <img class="white-menu main-menu-trigger" src="images/menu2.png" alt="responsivemenu" style="display: none;" />
+          </div>
+
+     </div>
+
+
+     <div id="main-menu-context" class="res_menu">
+
+          <div class="show-xs main-menu-header">
+               <img src="images/logo-b.svg" style="width: 40%"/>
+               <a 
+                    href="/#/index{{ isDanish ? '/da' : '/en'}}"
+                    class="poup-close2 popup-close-btn" style="background:none !important">{{ isDanish ? 'LUK' : 'CLOSE' }} <img src="images/svgs/lukb1.svg" alt=""> </a>
+          </div>
+
+          <ul>
+               <li class="hide-xs">
+                    <div class="information-inside">
+                         <h2>MENU</h2>
+                         <a href="/#/index{{ isDanish ? '/da' : '/en'}}"
+                              class="poup-close2 popup-close-btn" style="background:none !important">{{ isDanish ? 'LUK' : 'CLOSE' }} <img src="images/svgs/lukb1.svg" alt=""> </a>
+                    </div>
+               </li>
+               <!-- <li ng-click="hideMenu()" class="menu-item" ng-class="{ 'active': interface=='login'}"><a
+                         href="#/login{{ isDanish ? '/da' : '/en'}}">Login</a></li>
+               <li ng-click="hideMenu()" class="menu-item" ng-class="{ 'active': interface=='ansog'}"><a
+                         href="#/ansog-trin1{{ isDanish ? '/da' : '/en'}}">{{ isDanish ? 'Ansøg' : 'Apply' }}</a></li>
+               <li ng-click="hideMenu()" class="menu-item" ng-class="{ 'active': interface=='aboutus'}"><a
+                         href="javascript:;" ng-click='show_about()'>{{ isDanish ? 'Om Castit' : 'About Castit' }}</a>
+               </li>
+               <li ng-click="hideMenu()" class="menu-item" ng-class="{ 'active': interface=='course'}"><a
+                    href="javascript:;"
+                    ng-click='show_course()'>{{ isDanish ? 'Castit Workshop' : 'Castit Workshop' }}</a></li> -->
+               <li  
+                    ng-class="{ 'active': interface=='login'}">
+                    <a href ng-click="goto('login' + (isDanish ? '/da' : '/en'))">Login</a></li>
+               <li 
+                    ng-class="{ 'active': interface=='ansog'}">
+                    <a href ng-click="goto('ansog-trin1' + (isDanish ? '/da' : '/en'))">{{ isDanish ? 'Ansøg' : 'Apply' }}</a>
+               </li>
+               <li 
+                    ng-class="{ 'active': interface=='aboutus'}">
+                    <a href ng-click='show_about()'>{{ isDanish ? 'Om Castit' : 'About Castit' }}</a></li>
+               <li 
+                    ng-class="{ 'active': interface=='course'}">
+                    <a href ng-click='show_course()'>{{ isDanish ? 'Castit Workshop' : 'Castit Workshop' }}</a></li>
+               <li class="kontakt"><a href="javascript:;"
+                         ng-click=''>{{ isDanish ? 'Kontakt' : 'Contact' }}</a>
+                    <ul class="kon-dropdown_remove">
+                         <li>
+                              Castit ApS<br>
+                              {{ isDanish ? 'Rosenvængets Allé 11, 1. Sal' : 'Rosenvængets Allé 11, 1st floor' }}<br>
+                              {{ isDanish ? '2100 København Ø' : '2100 Copenhagen Ø' }}<br>
+                              M: 0045 21 28 58 25<br>
+                              E: <a href="mailto:info@Castit.dk" target="_top" style="color:#dcdde0 !important;font-weight: normal;
+text-decoration: underline;"> info@Castit.dk</a></li>
                     </ul>
-               
-               </div>
-               	
-        
-    </div><!-- close header -->
-   <!-- <div class="social_new">
+               </li>
+               <li ng-click="hideMenu()">
+                    <span class="span1"><span ng-click="changeLanguage(true);">DA</span> / <em
+                              ng-click="changeLanguage(false);">EN</em></span>
+                    <span class="span2"><a href="https://www.facebook.com/castitdenmark"
+                              target="_blank">Facebook</a></span>
+               </li>
+          </ul>
+     </div>
+
+
+</div><!-- close header -->
+<!-- <div class="social_new">
         	 <a href="#" class="facebook"></a>
              <a href="#" class="twitter"></a>
              <a href="#" class="google_plus"></a>

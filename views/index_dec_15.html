@@ -1,0 +1,441 @@
+<div ng-controller="FrontendController">
+   
+<div id="content">
+        <div class="leftbar">
+               <div class="leftbox">
+                  <h2>Navn/Nr</h2>
+                    <span class="side-searchbox"><input name="search_text" ng-model="search_text" id="search_text" type="text" value="{{search_text}}" class="side-input"><input name="" type="button" class="side-search"></span>
+               </div><!--close leftbox-->
+               
+               <div class="leftbox">
+                  <h2>Køn</h2>
+                    <ul class="ul-style1">
+                    <input type="hidden" name="gender" id="gender"  ng-model="gender" value="{{genderval}}" />
+                      <li><a href="#" class="gender_select" id="gender1" gender="1" ng-click='set_gender(1)'> Mand</a></li>
+                        <li><a href="#" class="gender_select" id="gender2" gender="2" ng-click='set_gender(2)'>Kvinde</a></li>
+                    </ul>
+               </div><!--close leftbox-->
+               
+               <div class="leftbox2">
+                  <h2>ALDER</h2>
+                    <div class="side-form">
+                        <span class="form-span"><input name="age_from" ng-model="age_from" id="age_from" value="{{age_from}}" type="text" class="side-input2" placeholder="Fra"></span>
+                        <span class="form-devider"></span>
+                        <span class="form-span"><input name="age_to" ng-model="age_to" id="age_to" type="text"  value="{{age_to}}" class="side-input2" placeholder="Til"></span>
+                        <span class="form-text">År</span>
+                    </div>
+               </div><!--close leftbox-->
+              
+                  <div class="side-bottom"><span class="line-white"></span><input name="" type="submit" class="side-submit" value="SØG" style="cursor:pointer;" ng-click='filterProfiles()'></div>
+          </div><!--close leftbar-->
+          
+          <div class="rightbar">
+               <div class="rightbar_inner">
+               <div class="rightbar-row">
+                  <div class="col" ng-repeat="x in profiles | filter:q | startFrom:currentPage*pageSize | limitTo:pageSize">
+                       <div class="col-inner" data-profileid={{x.id}}>
+                            <div class="thumb" ng-click="getSingleProfile(x.id)">
+                            <img ng-show="x.profile_image" ng-src="{{x.profile_image}}" onError="angular.element(this).scope().img = '/images/default_profile.jpg'"/>
+                            </div>
+                              <div class="detail">
+                                   <p>{{x.name}} {{x.profile_number}}
+                                   <strong>{{x.age}} år</strong>
+                                   <strong ng-click="addToLightbox(x.id)">Tilføg til lightbox</strong>
+                                   </p>
+                                   
+                              </div>
+                         </div>
+                    </div><!--close col-->
+                    <p ng-show="!profiles.length" style="color:#FFF;">{{loading}}</p>
+               </div><!--close rightbar-row-->
+              
+    
+    
+               <div class="slider-controller">
+                  <a href="#" ng-disabled="currentPage <= 0" ng-click="currentPage=currentPage-1" class="prev"></a>
+                    <a href="#" ng-disabled="currentPage >= getDataProfile().length/pageSize - 1" ng-click="currentPage=currentPage+1" class="next"></a>
+               </div><!--close slider-controller-->
+               
+               </div><!--close rightbar-inner-->
+          </div><!--close rightbar-->
+     </div><!--close content-->
+ 
+
+<div id="sidebar1" style="display:none;">
+        <div class="sidebar1-left">
+               <a href="#" class="sidebar1-close"></a>
+               <div class="side-tabs">
+                  <ul>
+                      <li><a href="#" class="tab1"></a></li>
+                        <li><a href="#" class="tab2"></a></li>
+                    </ul>
+               </div>
+          </div><!--close sidebar1-left-->
+          
+          <div class="sidebar1-right">
+               <div class="sidebar1-right_inner">
+                  <span class="sidebar1-searchbox"><input name="" type="text" class="sidebar1-input"><input name="" type="button" class="sidebar1-search"></span>
+                    <div class="sidebar1_box1">
+                       <span class="title1 active" id="event1">LIGHTBOX <span class="title2"><a href="#" class="send3">Send</a>{{lbprofilecount}}</span></span>
+                         
+                         <span class="title1_1" id="event2">GRUPPER
+                          <span class="title2">
+                         <span class="addbox">
+                         <input name="" placeholder="tilføj ny gruppe" class="addbox-input" type="text">
+                         <input name="" class="addbox-button" type="button">
+                         </span>
+                         <a href="#" class="add-grupper"></a>03</span>
+                         </span>
+                         
+                    </div>
+                    <div class="sidebar1_box2">
+                       <div class="lightbox">
+                         <div class="sidebar1_box2_middle">
+                            
+                              <div class="sidebar_box3" ng-repeat="lbprofile in lbprofiles">
+                                   <div class="sidebar_box2_left">
+                                      <span class="side_img"><img ng-show="lbprofile.profile_image" ng-src="{{lbprofile.profile_image}}" alt="" /></span>
+                                        <span class="side_img_number">{{lbprofile.profile_number}} </span>
+                                   </div>
+                                   
+                                   <div class="sidebar_box2_right">
+                                      <h4>{{lbprofile.name}}. {{lbprofile.age}} år.</h4>
+                                        <span class="bank"><a href="#"></a></span>
+                                        <h5>Danske Bank</h5>
+                                        <span class="edit3"><a href="#"></a></span>
+                                        <p>Hun har langt lyst hår</p>
+                                   </div>
+                                   
+                                   <div class="sidebar1_box2_bottom2">
+                                   <ul class="side-tool">
+                                      <li><a href="javascript:;" ng-click="removeFromLightbox(lbprofile.id)">Slet</a></li>
+                                      <li><a href="#">Åben</a></li>
+                                   </ul>
+                                   </div>
+                              </div><!--close sidebar_box3-->
+                              
+                         </div></div><!--lightbox-->
+                         <div class="grupper">
+                         <div class="sidebar1_box2">
+                       <div class="sidebar1_box2_top">
+                            <span class="title3">Danske Bank</span>
+                              <ul class="side-tool">
+                                  <li><a href="#">Slet</a></li>
+                                  <li><a href="#">Send</a></li>
+                              </ul>
+                         </div>
+                         <div class="sidebar1_box2_middle">
+                            <div class="side-tags">
+                                   <ul>
+                                      <li>Denise. <em>A0226</em></li>
+                                        <li>Kim. <em>A0226</em></li>
+                                        <li>Kim. <em>A0226</em></li>
+                                        <li>Kim. <em>A0226</em></li>
+                                   </ul>
+                              </div>
+                         </div>
+                         <div class="sidebar1_box2_bottom">
+                            <span class="title4">Oprettet 15.07.16</span>
+                              <a href="#" class="div-close"></a>
+                         </div>
+                    </div><!--close sidebar1_box2-->
+     
+                    <div class="sidebar1_box2">
+                       <div class="sidebar1_box2_top">
+                            <span class="title3">Fakta reklame</span>
+                              <ul class="side-tool">
+                                  <li><a href="#">Slet</a></li>
+                                  <li><a href="#">Send</a></li>
+                              </ul>
+                         </div>
+                         <div class="sidebar1_box2_middle">
+                            <div class="side-tags">
+                                   <ul>
+                                      <li>Denise. <em>A0226</em></li>
+                                        <li>Kim. <em>A0226</em></li>
+                                        <li>Kim. <em>A0226</em></li>
+                                        <li>Kim. <em>A0226</em></li>
+                                        <li>Denise. <em>A0226</em></li>
+                                        <li>Denise. <em>A0226</em></li>
+                                   </ul>
+                              </div>
+                         </div>
+                         <div class="sidebar1_box2_bottom">
+                            <span class="title4">Oprettet 04.06.16</span>
+                              <a href="#" class="div-close"></a>
+                         </div>
+                    </div><!--close sidebar1_box2-->
+                    <div class="sidebar1_box2">
+                       <div class="sidebar1_box2_top">
+                            <span class="title3">BABY</span>
+                              <ul class="side-tool">
+                                  <li><a href="#">Slet</a></li>
+                                  <li><a href="#">Send</a></li>
+                              </ul>
+                         </div>
+                         <div class="sidebar1_box2_middle">
+                            
+                              <div class="sidebar_box2">
+                                   <div class="sidebar_box2_left">
+                                      <span class="side_img"><img src="images/thumb-side.png" alt="" /></span>
+                                        <span class="side_img_number">A0226 </span>
+                                   </div>
+                                   
+                                   <div class="sidebar_box2_right">
+                                      <h4>Denise. 30 år.</h4>
+                                        <span class="edit3"><a href="#"></a></span>
+                                        <p>Hun har langt lyst og vil passe godt til en kommende Kampagne for Match.dk</p>
+                                   </div>
+                              </div><!--close sidebar_box2-->
+                              
+                              <div class="sidebar_box2">
+                                   <div class="sidebar_box2_left">
+                                      <span class="side_img"><img src="images/thumb-side.png" alt="" /></span>
+                                        <span class="side_img_number">A0226 </span>
+                                   </div>
+                                   
+                                   <div class="sidebar_box2_right">
+                                      <h4>Denise. 30 år.</h4>
+                                        <span class="edit3"><a href="#"></a></span>
+                                        <p>Hun har langt lyst og vil passe godt til en kommende Kampagne for Match.dk</p>
+                                   </div>
+                              </div><!--close sidebar_box2-->
+                              
+                         </div>
+                         <div class="sidebar1_box2_bottom sidebar1_box2_bottom2">
+                              <a href="#" class="div-open"></a>
+                         </div>
+                    </div><!--close sidebar1_box2-->
+                    </div><!--grupper-->
+                    </div><!--close sidebar1_box2-->
+                    
+                    
+               </div><!--close sidebar1-right_inner-->
+          </div><!--close sidebar1-right-->
+     </div><!--close sidebar1-->
+          <div class="right-sidebar">
+        <div class="side-top"><a href="#" class="side-icon1"></a></div>
+          
+          <div class="side-middle">
+               <span class="side-span">
+                     <span class="side-icon2"></span>
+                   <p>{{lbprofilecount}}</p>
+               </span>
+               <span class="side-span">
+                     <span class="side-icon3"></span>
+                   <p>03</p>
+               </span>
+          </div>
+     </div><!--close right-sidebar-->
+
+       
+<footer id="footer" >
+
+    	<div class="footer_left">
+               <span class="span1">DA / <em>EN</em></span>
+               <span class="span2">Facebook</span>
+                <img src="images/searchmini.png" class="searchmini" />
+          </div>
+          
+          <div class="footer_center">
+               <span class="span3">{{currentPage+1}}<em>/{{numberOfPages()}}</em></span>
+          </div>
+          
+          <div class="footer_right"><span class="footer-line"></span>
+          <img src="images/tabnew.png" class="tabnew" />
+          </div>
+</footer><!--close footer-->
+
+     <div class="popup popup-video">
+	 <div class="video_popup">
+     
+     <div class="video_section1">
+     	  <div class="logo2"><img src="images/logo2.png" alt=""></div>
+          <a href="#" class="video_download">download</a>
+          <a href="#" class="video_upload">TILFØJ </a>
+          <a href="#" class="poup-close3">luk</a>
+    
+     </div><!--close video_section1-->
+     
+     <div class="video_section2">
+      
+     	  <div class="video-leftbar video-res">
+          	   <div class="video_side">
+               		<h3>Billeder</h3>
+                    <h4>08</h4>
+               </div>
+               
+               <div class="video_side inactive">
+               		<h3>Videoer</h3>
+                    <h4>04</h4>
+               </div>
+          </div><!--close video-leftbar-->
+          
+          <div class="video-rightbar">
+          	   <div class="video-rightbar_inner">
+               		<div class="rightbar-row">
+                    	 <div class="video_call4 row-res">
+                         	  <div class="rightbar-row">
+                              	   <div class="video_call3"><span class="video-thumb">
+                                   <img src="images/video-thumb.png" alt="">
+                                   <span class="img_layer"><span class="number">01</span></span></span>
+                                   </div>
+                                   <div class="video_call3"><span class="video-thumb">
+                                   <img src="images/video-thumb.png" alt="">
+                                   <span class="img_layer"><span class="number">02</span></span></span>
+                                   </div>
+                                   <div class="video_call3"><span class="video-thumb">
+                                   <img src="images/video-thumb.png" alt="">
+                                   <span class="img_layer"><span class="number">03</span></span></span>
+                                   </div>
+                                   <div class="video_call3"><span class="video-thumb">
+                                   <img src="images/video-thumb.png" alt="">
+                                   <span class="img_layer"><span class="number">04</span></span></span>
+                                   </div>
+                                   <div class="video_call3"><span class="video-thumb">
+                                   <img src="images/video-thumb.png" alt="">
+                                   <span class="img_layer"><span class="number">05</span></span></span>
+                                   </div>
+                                   <div class="video_call3"><span class="video-thumb">
+                                   <img src="images/video-thumb.png" alt="">
+                                   <span class="img_layer"><span class="number">06</span></span></span>
+                                   </div>
+                                   <div class="video_call3"><span class="video-thumb">
+                                   <img src="images/video-thumb.png" alt="">
+                                   <span class="img_layer"><span class="number">07</span></span></span>
+                                   </div>
+                                   <div class="video_call3"><span class="video-thumb">
+                                   <img src="images/video-thumb.png" alt="">
+                                   <span class="img_layer"><span class="number">08</span></span></span>
+                                   </div>
+                                   
+                                   <div class="video_call6"><span class="video-thumb"><img src="images/video-thumb2.png" alt=""><a href="#" class="play-button"></a></span></div>
+                                   <div class="video_call6"><span class="video-thumb"><img src="images/video-thumb2.png" alt=""><a href="#" class="play-button"></a></span></div>
+                                   <div class="video_call6"><span class="video-thumb"><img src="images/video-thumb2.png" alt=""><a href="#" class="play-button"></a></span></div>
+                                   <div class="video_call6"><span class="video-thumb"><img src="images/video-thumb2.png" alt=""><a href="#" class="play-button"></a></span></div>
+                              </div><!--close rightbar-row-->
+                         </div><!--close video_call4-->
+                         
+                         <div class="video_call4">
+                         	  <div class="videobig_thumb" ><img src="images/model-info.png" alt="" id="thumb1" style="margin-top: -20px;">
+                               <img src="images/video2.png" alt="" id="thumb2">
+                              </div>
+                         </div><!--close video_call4-->
+                         
+                        
+                         
+                         
+                         
+                         <div class="video_call4 text-res">
+                         	  <div class="video_text">
+                              	   <h3>Esben. <strong>CM3322</strong> <span class="user-icon"><img src="images/icon11.png" alt=""></span></h3>
+                                   <h4>Amatørskuespiller, Model</h4>
+                                   <ul class="list">
+                                   		<li><span class="list_span1">Alder</span><span class="list_span2">41</span></li>
+                                        <li><span class="list_span1">Højde</span><span class="list_span2">183 cm</span></li>
+                                        <li><span class="list_span1">Vægt</span><span class="list_span2">76 kg</span></li>
+                                        <li><span class="list_span1">Øjenfarve</span><span class="list_span2">Blå</span></li>
+                                        <li><span class="list_span1">Hårfarve</span><span class="list_span2">Rød</span></li>
+                                        <li><span class="list_span1">Bluse</span><span class="list_span2">42 - 43</span></li>
+                                        <li><span class="list_span1">Bukser</span><span class="list_span2">30 - 32</span></li>
+                                        <li><span class="list_span1">Sko</span><span class="list_span2">43</span></li>
+                                   </ul>
+                                   
+                                   <h5>FRITID</h5>
+                                   <p>Fodbold . Synger . Tegner . Surfer . Kajak .</p>
+                                   
+                                   <h5>Erfaring</h5>
+                                   <p>Fodbold . Synger . Tegner . Surfer . Kajak .</p>
+                                   
+                                   <h5>sprog</h5>
+                                   <ul class="list2">
+                                   		<li>
+                                        <span class="list_span1">Dansk</span>
+                                        <span class="list_span2">
+                                        	 <img src="images/star3.png" alt="">
+                                             <img src="images/star3.png" alt="">
+                                             <img src="images/star3.png" alt="">
+                                             <img src="images/star3.png" alt="">
+                                        </span>
+                                        </li>
+                                        
+                                        <li>
+                                        <span class="list_span1">Engelsk </span>
+                                        <span class="list_span2">
+                                        	 <img src="images/star3.png" alt="">
+                                             <img src="images/star4.png" alt="">
+                                             <img src="images/star4.png" alt="">
+                                             <img src="images/star4.png" alt="">
+                                        </span>
+                                        </li>
+                                   </ul>
+                              </div><!--close video_text-->
+                         </div><!--close video_call4-->
+                    </div><!--close rightbar-row-->
+               </div><!--close video-rightbar_inner-->
+          </div><!--close video-rightbar-->
+          
+          </div><!--close video_section2-->
+          
+          
+          <div class="video_section3">
+          	   <div class="rightbar-row">
+               	    <div class="video_call4">
+                    	 &nbsp;
+                    </div>
+               		<div class="video_call4">
+                   		 <div class="video_controller"><a href="#" class="vide_prev"></a><a href="#" class="vide_next"></a></div>
+                    </div>
+                    
+                    <div class="video_call4">
+                         
+                   
+     	  <div class="footer_left">
+                <img src="images/imagepop.png" class="res-profile">
+                <img src="images/videopop.png" class="res-profile">
+                <img src="images/messagepop.png" class="res-profile">
+          </div>
+          
+          <div class="footer_center">
+          	   <span class="span3">01<em>/68</em></span>
+          </div>
+          
+          <div class="footer_right"><span class="footer-line"></span>
+          <img src="images/profileadd.png" class="tabnew">
+          <span class="videos_title">Billeder</span>
+          </div>
+     </div>
+               </div>
+          </div><!--close video_section3-->
+          
+          
+          
+          <div class="right-sidebar">
+     	  <div class="side-top"><a href="#" class="side-icon1"></a></div>
+          
+          <div class="side-middle">
+          	   <span class="side-span">
+               	     <span class="side-icon2"></span>
+               		 <p>{{lbprofilecount}}</p>
+               </span>
+               <span class="side-span">
+               	     <span class="side-icon3"></span>
+               		 <p>03</p>
+               </span>
+          </div>
+     </div>
+          
+          
+          
+          
+          
+          
+          
+     </div><!--close video_popup-->
+</div><!--video popup-->
+
+
+</div> 
+
+
+

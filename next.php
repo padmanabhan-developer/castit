@@ -88,7 +88,7 @@ curl_close($curl);
                     
                       <h3 class="res-name">{{singleprofile.name}}. <strong>{{singleprofile.profile_number}}</strong></h3>
                     
-                          <div ng-show = "IsProfileImage" class="videobig_thumb" fade-in style="background-image:url({{singleimage}})">
+                          <div  ng-show = "IsProfileImage" class="videobig_thumb" fade-in style="background-image:url({{singleimage}})">
                          <!-- <img src="images/model-info.png" alt="" id="thumb1" style="margin-top: -20px;">
                            <img src="images/video2.png" alt="" id="thumb2">-->
                           </div>

@@ -1,0 +1,165 @@
+<div ng-controller="MyProfileController5" class="ansog1 full-width-page full-screen-black-box">
+  <div id="content" class="wrap2">
+    <form name="profile_update_form5" id="profile_ansog_form5" ng-submit="step5Update()">
+      <div class="page-black livetitle">
+        
+          <div class="show-xs main-menu-header show-xs">
+              <img src="images/CASTIT_LOGO_RGB_white.svg" style="width:40%"/>
+              <a style=" padding-right: 0; line-height: 20px; display: inline-flex; " href="/#/index{{ isDanish ? '/da' : '/en'}}"
+                   class="poup-close2 popup-close-btn">{{ isDanish ? 'LUK' : 'CLOSE' }} <img style=" width: 20px; height: 15px; " src="images/svgs/lukw1.svg" alt=""></a>
+         </div>
+         
+         <div class="section-top">
+              <!-- <h2>{{ isDanish ? 'Ansøgningsskema' : 'Application form' }}</h2> -->
+              <h2>{{ profileinfo.first_name }} {{ profileinfo.last_name }} - {{ profileinfo.profile_number }}</h2>
+              <div class="black-right hide-xs">
+                   <a style=" padding-right: 0; line-height: 20px; display: inline-flex; " href="#/index{{isDanish ? '/da' : '/en'}}" class="black-close">{{ isDanish ? 'luk' : 'Close' }} <img style=" width: 20px; height: 15px; " src="images/svgs/lukw1.svg" alt=""></a>
+              </div>
+         </div>
+
+        <!--close section-top-->
+        <div class="section-middle">
+          <div class="black-section">
+            <div class="black-row">
+              <div class="black-leftbar">
+                  <p ng-if="isDanish">For at opdatere din profil bedes du udfylde felterne og klikke videre til næste side.</p>
+                  <p ng-if="!isDanish">To update your profile please fill out the fields and continue to the next page.</p>
+              </div>
+              <!--close black-leftbar-->
+              <div class="black-rightbar  livetitle blackcontainer">
+                <div class="black-row">
+                  <div class="black-cal4 language_dropdown">
+                    <h3 class="choose-language white-color">{{ isDanish ? 'SPROG' : 'LANGUAGE' }}</h3>
+                    <div class="form_box">
+                      <div class="select-style">
+                        <select required name="lang1" id="lang1" ng-model="lang1" class="input2">
+                          <option value="">{{ isDanish ? 'Modersmål' : 'Mother tongue' }}*</option>
+                          <option value="{{language_id.id}}" ng-selected="{{lang1 == language_id.id}}" ng-repeat="language_id in languagesdropdown">{{language_id.name}}</option>
+                        </select>
+                      </div>
+                    </div>
+                    <div class="form_box">
+                      <div class="select-style">
+                        <select name="lang2" id="lang2" ng-model="lang2" class="input2">
+                          <option value="">{{ isDanish ? 'Sprog' : 'Language' }}</option>
+                          <option value="{{language_id.id}}" ng-selected="{{lang2 == language_id.id}}" ng-repeat="language_id in languagesdropdown">{{language_id.name}}</option>
+                        </select>
+                      </div>
+                    </div>
+                    <div class="form_box">
+                      <div class="select-style">
+                        <select name="lang3" id="lang3" ng-model="lang3" class="input2">
+                          <option value="">{{ isDanish ? 'Sprog' : 'Language' }}</option>
+                          <option value="{{language_id.id}}" ng-selected="{{lang3 == language_id.id}}" ng-repeat="language_id in languagesdropdown">{{language_id.name}}</option>
+                        </select>
+                      </div>
+                    </div>
+                    <div class="form_box">
+                      <div class="select-style">
+                        <select name="lang4" id="lang4" ng-model="lang4" class="input2">
+                          <option value="">{{ isDanish ? 'Sprog' : 'Language' }}</option>
+                          <option value="{{language_id.id}}" ng-selected="{{lang4 == language_id.id}}" ng-repeat="language_id in languagesdropdown">{{language_id.name}}</option>
+                        </select>
+                      </div>
+                    </div>
+                  </div>
+                  <!--close black-cal4-->
+                  <div class="black-cal4 language_star">
+                    <h3 class="choose-level white-color">
+                    <strong>{{ isDanish ? 'Vælg niveau' : 'Choose level' }}</strong>
+                    </h3>
+                    <input type="hidden" ng-required="lang1!=''" name="langrateval1" id="langrateval1" ng-model="langrateval1" value="{{langrateval1}}" />
+                    <input type="hidden" ng-required="lang2!=''" name="langrateval2" id="langrateval2" ng-model="langrateval2" value="{{langrateval2}}" />
+                    <input type="hidden" ng-required="lang3!=''" name="langrateval3" id="langrateval3" ng-model="langrateval3" value="{{langrateval3}}" />
+                    <input type="hidden" ng-required="lang4!=''" name="langrateval4" id="langrateval4" ng-model="langrateval4" value="{{langrateval4}}" />
+                    <div class="form_box" ng-repeat="languagerating in languageratings">
+                      <span class="ratings">
+                        <img class="ratingstar" id="start_{{languagerating.langrateid}}_{{rating.starid}}" ng-click="setlangraing(languagerating.langrateid,rating.starid)"
+                        ng-src="images/{{rating.star}}" ng-repeat="rating in languagerating.ratingicon" on-finish-render="ngRepeatFinished">
+                      </span>
+                      <span ng-show>Required</span>
+                    </div>
+                  </div>
+                  <!--close black-cal4-->
+                  <div class="black-cal4 language_rating_info">
+                    <h3>&nbsp;</h3>
+                    <div class="form_box4">
+                        {{ isDanish ? 'Begynder' : 'Beginner' }}
+                        <span class="ratings2">
+                              <img src="images/star-white.png" />
+                              <img src="images/star-black.png" />
+                              <img src="images/star-black.png" />
+                              <img src="images/star-black.png" />
+                        </span>
+                  </div>
+
+                  <div class="form_box4">
+                        {{ isDanish ? 'Mellem' : 'Intermediate' }}
+                        <span class="ratings2">
+                              <img src="images/star-white.png" />
+                              <img src="images/star-white.png" />
+                              <img src="images/star-black.png" />
+                              <img src="images/star-black.png" />
+                        </span>
+                  </div>
+
+                  <div class="form_box4">
+                        {{ isDanish ? 'Flydende' : 'Fluent' }}
+                        <span class="ratings2">
+                              <img src="images/star-white.png" />
+                              <img src="images/star-white.png" />
+                              <img src="images/star-white.png" />
+                              <img src="images/star-black.png" />
+                        </span>
+                  </div>
+
+                  <div class="form_box4">
+                        {{ isDanish ? 'Perfekt' : 'Perfect' }}
+                        <span class="ratings2">
+                              <img src="images/star-white.png" />
+                              <img src="images/star-white.png" />
+                              <img src="images/star-white.png" />
+                              <img src="images/star-white.png" />
+                        </span>
+                  </div>
+                    <h4 class="white-color">{{ isDanish ? 'Dialekter' : 'Dialects' }}</h4>
+                    <div class="form_box">
+                      <input value="{{profileinfo.dealekter1}}" name="dealekter1" id="dealekter1" ng-model="profileinfo.dealekter1" type="text" class="input2" placeholder="{{ isDanish ? 'Skriv her' : 'Write here' }}">
+                    </div>
+                    <div class="form_box">
+                      <input value="{{profileinfo.dealekter2}}" name="dealekter2" id="dealekter2" ng-model="profileinfo.dealekter2" type="text" class="input2" placeholder="{{ isDanish ? 'Skriv her' : 'Write here' }}">
+                    </div>
+                    <div class="form_box">
+                      <input value="{{profileinfo.dealekter3}}" name="dealekter3" id="dealekter3" ng-model="profileinfo.dealekter3" type="text" class="input2" placeholder="{{ isDanish ? 'Skriv her' : 'Write here' }}">
+                    </div>
+                  </div>
+                  <!--close black-cal4-->
+                </div>
+                <!--close black-row-->
+              </div>
+              <!--close black-rightbar-->
+            </div>
+            <!--close black-row-->
+          </div>
+          <!--close black-section-->
+          <div class="black-numbers hide-xs">
+            <span class="span3">
+            <em>05</em>/06</span>
+          </div>
+        </div>
+        <!--close section-middle-->
+        <div class="section-bottom flex-footer">
+          <div class="black-numbers mobile-pager show-xs"><span class="span3"><em>05</em>/06</span></div>
+          <div class="blackpage-controller">
+            <a href="#/my-profile_4{{isDanish ? '/da' : '/en'}}" class="black-prev">{{ isDanish ? 'FORRIGE SIDE' : 'PREVIOUS PAGE' }}</a>
+            <button ng-disabled="profile_ansog_form5.$touched" type="submit" class="black-next">{{ isDanish ? 'NÆSTE SIDE' : 'NEXT PAGE' }}</button>
+          </div>
+        </div>
+        <!--close section-bottom-->
+      </div>
+      <!--close page-black-->
+    </form>
+  </div>
+  <!--close content-->
+</div>
+<!--close wrapper-->

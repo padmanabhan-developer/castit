@@ -1,0 +1,698 @@
+<div ng-controller="FrontendController">
+ 
+<div id="content" class="main_content">
+  <div class="leftbar">
+               <div class="leftbox">
+                  <h2>Navn/Nr</h2>
+                    <span class="side-searchbox"><input name="search_text" ng-model="search_text" id="search_text" type="text" value="{{search_text}}" class="side-input"><input name="" type="button" class="side-search"></span>
+               </div><!--close leftbox-->
+               
+               <div class="leftbox leftboxheight">
+                  <h2>Køn</h2>
+                    <ul class="ul-style1">
+                    <input type="hidden" name="gender" id="gender"  ng-model="gender" value="{{genderval}}" />
+                      <li><a class="gender_select" id="gender1" gender="1" ng-click='set_gender(1)'> Mand</a></li>
+                        <li><a  class="gender_select" id="gender2" gender="2" ng-click='set_gender(2)'>Kvinde</a></li>
+                        
+                    </ul>
+               </div><!--close leftbox-->
+               
+               <div class="leftbox2">
+                  <h2>ALDER</h2>
+                    <div class="side-form">
+                        <span class="form-span"><input name="age_from" ng-model="age_from" id="age_from" value="{{age_from}}" type="text" class="side-input2" placeholder="Fra"></span>
+                        <span class="form-devider"></span>
+                        <span class="form-span"><input name="age_to" ng-model="age_to" id="age_to" type="text"  value="{{age_to}}" class="side-input2" placeholder="Til"></span>
+                        
+                        <span class="form-text">År</span>
+                    </div>
+               </div><!--close leftbox-->
+              
+                  <div class="side-bottom" style="margin-top: 110px;"><input name="" type="submit" class="side-submit" value="SØG" style="cursor:pointer;" ng-click='filterProfiles()'></div>
+
+                  <span style="margin-top: 65px;">a</span>
+          </div><!--close leftbar-->
+
+
+          
+    <div class="rightbar">
+               <div class="rightbar_inner">
+               <div class="rightbar-row">
+                  <div class="col" ng-repeat="x in profiles | filter:q | startFrom:currentPage*pageSize | limitTo:pageSize">
+                       <div class="col-inner" profileid={{x.id}} ng-mouseover="hoverInLb()" ng-mouseleave="hoverOutLb()">
+                            <div class="thumb"  data-thisproid={{x.id}} ng-click="getSingleProfile(x.id)" ng-style="{'background-image':'url({{x.profile_image}})'}">
+                           
+                            </div>
+                              <div class="detail">
+                                   <p>{{x.name}} {{x.profile_number}}
+                                   <strong>{{x.age}} år</strong>
+                                   </p>
+                                   
+                              </div>
+                              
+                              <div  ng-show="hoverAddtoLb" id="add_to_lb_{{x.id}}" class="icon animate-show" ng-click="getProfileBox(x.id)"><img src="images/icon5.png" alt=""></div>
+                              
+                         </div>
+                    </div><!--close col-->
+                    <p ng-show="!profiles.length" style="color:#FFF; margin-top: 8%; margin-left: 40%" align="left"><img height="7%" width="7%" alt="loading" src="assets/loader/3.gif" /><br/><span style="margin-left: -2%; font-size: 11px;">Please Wait...</span></p>
+               </div><!--close rightbar-row-->
+
+               <div class="slider-controller">  
+                  <a href="javascript:void(0);" ng-disabled="currentPage <= 0" ng-click="((currentPage <= 0) ? return : (currentPage=currentPage-1))" class="prev" ng-class="{disabled: currentPage <= 0}"></a>
+                    <a href="javascript:void(0);"  ng-disabled="currentPage >= getDataProfile().length/pageSize - 1" ng-click="currentPage=currentPage+1" class="next"  ng-class="{disabled: (currentPage >= getDataProfile().length/pageSize - 1)}"></a>
+               </div><!--close slider-controller-->
+              
+    
+    
+               <!-- <div class="slider-controller">  
+                  <a javascript:void(0); ng-disabled="currentPage <= 0" ng-click="((currentPage <= 0) ? return : (currentPage=currentPage-1))" class="prev" ng-class="{disabled: currentPage <= 0}"></a>
+                    <a javascript:void(0);  ng-disabled="currentPage >= getDataProfile().length/pageSize - 1" ng-click="currentPage=currentPage+1" class="next"  ng-class="{disabled: (currentPage >= getDataProfile().length/pageSize - 1)}"></a>
+               </div><close slider-controller-->
+               
+               </div><!--close rightbar-inner-->
+          </div><!--close rightbar-->
+
+
+</div><!--close content-->
+
+
+
+<div id="content-white" class="contact_section" style="display:none;">
+        
+          <div class="information-inside">
+               <h2>Castit</h2>
+               <a href="javascript:void(0);" class="poup-close2">luk</a>
+               <div class="information-inside-row">
+                  <div class="information-inside-cal">
+                       <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. </p>
+                         <p><strong>Mellemrubrik</strong><br>
+It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum</p>
+                    </div><!--close information-inside-cal-->
+                    
+                    <div class="information-inside-cal">
+                       <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. </p>
+                         <p><strong>Mellemrubrik</strong><br>
+It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum</p>
+                    </div><!--close information-inside-cal-->
+                    
+                    <div class="information-inside-cal">
+                       <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. </p>
+                         <p><strong>Mellemrubrik</strong><br>
+It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum</p>
+                    </div><!--close information-inside-cal-->
+               </div><!--close information-inside-row-->
+          </div><!--close information-inside-->
+          
+     </div>
+
+<div id="content-white1"  class="course_section" style="display:none;">
+  <div class="information-inside">
+       <h2>Castit Workshop</h2>
+       <a href="javascript:void(0);" class="poup-close2">luk</a>
+       <div class="information-inside-row2">
+                <div class="information-inside-left">
+                <div class="listscroll"  mb-scrollbar="scrollbar('vertical', true)">
+                     <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. </p>
+                     <p><strong>Mellemrubrik</strong><br>
+It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum</p>
+<p><strong>Mellemrubrik</strong><br>
+It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum</p>
+<p><strong>Mellemrubrik</strong><br>
+It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum</p>
+               <p class="login_box5"><input name="" class="login_button5" value="Spørgsmål" type="button"></p>
+               <p class="login_box5"><input name="" class="login_button3" value="Tilmeld" type="button"></p>
+               
+                </div>
+                <button style="background-color:transparent;border:2px solid #17181b;color:#17181b;border-radius:50px; padding:10px; margin-top:20px;font-weight:bold;">Spørgsmål</button>
+              </div><!--close information-inside-left-->
+            
+            <div class="information-inside-right">
+                 <img src="images/information-inside.png" style="height:280px;"/>
+            </div><!--close information-inside-right-->
+       </div><!--close information-inside-row2-->
+     
+  </div><!--close information-inside-->
+</div><!--close content-->
+
+
+
+<div id="sidebar1" style="display:none;">
+    <div class="sidebar1-left">
+           <a href="javascript:void(0);" class="sidebar1-close"></a>
+           <div class="side-tabs">
+              <ul>
+                  <li><a href="javascript:void(0);" id="tab_ligtbox" class="tab1 tabactive"></a></li>
+                    <li><a href="javascript:void(0);" id="tab_group" class="tab2"></a></li>
+                </ul>
+           </div>
+      </div><!--close sidebar1-left-->
+      
+      <div class="sidebar1-right">
+      <div class="res-lightbox1">
+           <a href="javascript:void(0);" class="res-boxicon"></a>
+           <a href="javascript:void(0);" class="sidebar1-close res-close"></a>
+           </div>
+           <div class="sidebar1-right_inner">
+              <span class="sidebar1-searchbox"><input name="" type="text" class="sidebar1-input"><input name="" type="button" class="sidebar1-search"></span>
+                <div class="sidebar1_box1">
+                   <span class="title1 active" id="event1">LIGHTBOX <span class="title2"><a href="javascript:void(0);" ng-click="showLightBoxPopup();" class="send3">Send</a>{{lbprofilecount}}</span></span>
+                     
+                     <span class="title1_1" id="event2">GRUPPER
+                      <span class="title2">
+                    <form name="add_new_group_form" id="add_new_group_form" ng-submit="addgroupintoGrouplist()">
+                     <span  ng-show="ifAddGroupFormShow"  class="addbox">
+                     <input name="new_group_name1" id="new_group_name1" ng-model="new_group_name1" placeholder="tilføj ny gruppe" class="addbox-input" type="text">
+                     <input name="add_new_group_button" class="addbox-button" value="" type="submit">
+                     </span>
+                     </form>
+                     <a href="javascript:void(0);" class="add-grupper" ng-click="addNewGroupInstant()"></a>{{gpprofilecount}}</span>
+                     </span>
+                     
+                </div>
+                <div class="sidebar1_box2">
+                
+                   <div class="lightbox">
+                   <div class="listscroll"  mb-scrollbar="scrollbar('vertical', true)">
+                     <div class="sidebar1_box2_middle">
+                         
+                          <div class="sidebar_box3" ng-repeat="lbprofile in lbprofiles">
+                               <div class="sidebar_box2_left">
+                                  <span class="side_img"><img ng-show="lbprofile.profile_image" ng-src="{{lbprofile.profile_image}}" alt="" /></span>
+                                    <span class="side_img_number">{{lbprofile.profile_number}} </span>
+                               </div>
+                               
+                               <div class="sidebar_box2_right">
+                                  <h4>{{lbprofile.name}}. {{lbprofile.age}} år.</h4>
+                                    <span class="bank"><a javascript:void(0);></a></span>
+                                    <h5> {{lbprofile.group_name}}</h5>
+                                    <span class="edit3"><a href="javascript:void(0);"></a></span>
+                                    <p>{{lbprofile.lb_note}}</p>
+                               </div>
+                               
+                               <div class="sidebar1_box2_bottom2">
+                               <ul class="side-tool">
+                                  <li><a href="javascript:void(0);" ng-click="removeFromLightboxPopup(lbprofile.id)">Slet</a></li>
+                                  <li><a href="javascript:void(0);" ng-click="getSingleProfile(lbprofile.id)">Åben</a></li>
+                               </ul>
+                               </div>
+                          </div></div><!--close sidebar_box3-->
+                          
+                     </div></div><!--lightbox-->
+                     <div class="grupper">
+                     <div class="listscroll"  mb-scrollbar="scrollbar('vertical', true)">
+                     <div class="sidebar1_box2" ng-repeat="gpprofile in gpprofiles">
+                        <div class="sidebar1_box2_top">
+                            <span class="title3">{{gpprofile.group_name}}</span>
+                              <ul class="side-tool">
+                                  <li><a href="javascript:void(0);" ng-click="removeGroup(gpprofile.group_id)">Slet</a></li>
+                                  <li><a href="javascript:void(0);" ng-click="showSendGroupPopup(gpprofile.group_id);">Send</a></li>
+                              </ul>
+                         </div>
+                        <div class="sidebar1_box2_middle">
+                        <div class="side-tags">
+                               <ul>
+                                  <li  ng-repeat="gp_profile in gpprofile.group_profiles">{{gp_profile.name}}. <em>{{gp_profile.profile_number}}</em></li>
+                               </ul>
+                          </div>
+                        </div>
+                        <div class="sidebar1_box2_bottom">
+                        <span class="title4">{{gpprofile.addedon}}</span>
+                          <a href="javascript:void(0);" class="div-close" ng-click="togglegrouping()"></a>
+                        </div>
+                </div><!--close sidebar1_box2-->
+ 
+                </div>
+                </div><!--grupper-->
+               
+                </div><!--close sidebar1_box2-->
+                
+                
+           </div><!--close sidebar1-right_inner-->
+      </div><!--close sidebar1-right-->
+ </div><!--close sidebar1-->
+
+<div class="right-sidebar">
+    <div class="side-top">
+        <a href="javascript:void(0);" class="side-icon1"></a>
+    </div>
+    <div class="side-middle">
+        <span class="side-span">
+             <span class="side-icon2" id="tab_ligtbox1" style="cursor:pointer;"></span>
+           <p>{{lbprofilecount}}</p>
+        </span>
+        <span class="side-span">
+             <span class="side-icon3" id="tab_group1" style="cursor:pointer;"></span>
+           <p>{{gpprofilecount}}</p>
+        </span>
+    </div>
+</div><!--close right-sidebar-->
+
+<div id="profile_popup" class="popup popup-video">
+ <div class="video_popup">
+ 
+ <div class="video_section1 poup-close3">
+      <div class="logo2"><img src="images/logo2.png" alt=""></div>
+      <a href="{{singleimage}}" target="_blank" class="video_download">download</a>
+      <a href="javascript:void(0);" ng-click="getProfileBox(pbox_profileid)" class="video_upload">TILFØJ </a>
+      <a href="javascript:void(0);" class="poup-closeno">luk</a>
+
+ </div><!--close video_section1-->
+ <p ng-show="isGetSingleLoading" style="color:#FFF; margin-top: 20%; margin-left: 50%" align="left"><img height="7%" width="7%" alt="loading" src="assets/loader/3.gif" /><br/><span style="margin-left: -2%; font-size: 11px;">Please Wait...</span></p>
+ <div class="video_section2" ng-show="!isGetSingleLoading" >
+  
+  
+      <div class="video-rightbar">
+           <div class="video-rightbar_inner">
+           
+           
+           
+                <div class="rightbar-row">
+                
+                <div class="video-fullscreen">
+                     <div id="row-res" class="video_call4 row-res">
+                          <div class="rightbar-row">
+                            <div class="rightbar-row-row "> 
+                            <div class="video-leftbar video-res poup-close3">
+                               <div id="imagediv" class="video_side">
+                                    <h3>Billeder</h3>
+                                    <h4>{{profile_images.length}}</h4>
+                               </div>
+                  </div> 
+                               <div id="image_icons" class="image_icons"> 
+                                   <div class="video_call3" ng-repeat="proimage in profile_images">
+                                        <span class="video-thumb" ng-class="{'profile-thumb-highlight':selectedThumb===$index}" ng-style="{'background-image':'url({{proimage.fullpath}})'}">
+                                            <!--<img src="images/video-thumb.png" alt="">-->
+                                            <span class="img_layer"  id="{{'progallerythumb'+ $index }}" ng-click ="changeSingleImageBig(proimage.fullpath,$index)">
+                                                <span class="number">{{proimage.imgcnt}}</span>
+                                            </span>
+                                        </span>
+                                   </div>
+                               </div>
+                           </div>
+                           <div class="rightbar-row-row">
+                           
+                           <div class="video-leftbar video-res poup-close3">
+                     <div id="videodiv" class="video_side inactive">
+                                    <h3>Videoer</h3>
+                                    <h4>{{profile_videos.length}}</h4>
+                               </div>
+                </div>
+                           <div id="video_icons" class="video_icons">
+                               <div class="video_call6" ng-repeat="provideo in profile_videos">
+                                    <span class="video-thumb" ng-style="{'background-image':'url({{provideo.img_thum}})'}">
+                                        <!--<img src="images/video-thumb2.png" alt="">-->
+                                        <a href="javascript:void(0);" class="play-button" id="{{'progalleryvideo'+ $index }}" ng-click ="changeSingleVideoBig(provideo.fullpath)"></a>
+                                        
+                                    </span>
+                               </div>
+                           </div>    
+                           </div>
+                          </div><!--close rightbar-row-->
+                     </div><!--close video_call4-->
+                      </div>
+                      
+                    <div class="change-video" >
+                    
+                    <div id="videodiv" class="videodiv video_call4 ">
+                    
+                      <h3 class="res-name">{{singleprofile.name}}. <strong>{{singleprofile.profile_number}}</strong></h3>
+                    
+                          <div  ng-show = "IsProfileImage" class="videobig_thumb" fade-in style="background-image:url({{singleimage}})">
+                         <!-- <img src="images/model-info.png" alt="" id="thumb1" style="margin-top: -20px;">
+                           <img src="images/video2.png" alt="" id="thumb2">-->
+                          </div>
+                          <div  ng-show = "IsProfileVideo" class="videobig_thumb video_margin" >
+                          
+                          
+                              <video id="pro_video"  style="width:100%;max-width:100%;">
+                                    <source ng-src="{{currVideoUrl | trusted}}" type="video/mp4">
+                                      
+                            </video>
+                            
+                          </div>
+                          <div id="photo_nav"  ng-show="IsProfileImage">
+                            <div class="video_controller">
+                             <a href="javascript:void(0);" ng-click="prev()" class="vide_prev"></a>
+                             <a javascript:void(0);  ng-click="next()" class="vide_next"></a>
+                            </div>
+                            <span class="span3"><em>{{currentIndex+1}}</em>/{{profile_images.length}}</span>
+                       </div>
+                       <div id="video_nav"  style="display:none;" ng-show="profile_videos.length > 1 && IsProfileVideo">
+                            <div class="video_controller">
+                             <a javascript:void(0); ng-click="prev_video()" class="vide_prev"></a>
+                             <a javascript:void(0);  ng-click="next_video()" class="vide_next"></a>
+                            </div>
+                             <span class="span3"><em>{{currentIndexVideo+1}}</em>/{{profile_videos.length}}</span>
+                       </div>
+                       
+                     </div></div><!--close video_call4-->
+                     <div  ng-show = "responsiveProfileDetail" class="video_call4 text-res poup-close3">
+                          <div class="video_text">
+                               <h3>{{singleprofile.name}}. <strong>{{singleprofile.profile_number}}</strong> <span class="user-icon"><img src="images/icon11.png" alt=""></span></h3>
+                               <h4>{{categories}}</h4>
+                               <ul class="list">
+                                    <li><span class="list_span1">Alder</span><span class="list_span2">{{singleprofile.age}} År</span></li>
+                                    <li><span class="list_span1">Højde</span><span class="list_span2">{{singleprofile.height}} cm</span></li>
+                                    <li><span class="list_span1">Vægt</span><span class="list_span2">{{singleprofile.weight}} kg</span></li>
+                                    <li><span class="list_span1">Øjenfarve</span><span class="list_span2">{{singleprofile.eye_color_name}}</span></li>
+                                    <li><span class="list_span1">Hårfarve</span><span class="list_span2">{{singleprofile.hair_color_name}}</span></li>
+                                    <li><span class="list_span1">Bluse</span><span class="list_span2">{{singleprofile.shirt}}</span></li>
+                                    <li><span class="list_span1">Bukser</span><span class="list_span2">{{singleprofile.pants}}</span></li>
+                                    <li><span class="list_span1">Sko</span><span class="list_span2">{{singleprofile.shoes}}</span></li>
+                               </ul>
+                               
+                               <h5>FRITID</h5>
+                               <p>{{skills}}</p>
+                               
+                               <h5>Erfaring</h5>
+                               <p>{{singleprofile.experience}}</p>
+                               
+                               <h5>sprog</h5>
+                               <ul class="list2" ng-show="lang.length>0">
+                                    <li  ng-repeat="language in lang">
+                                    <span class="list_span1">{{language.name}}</span>
+                                    <span class="list_span2">
+                                         <span ng-repeat="starimg in language.langstar">{{value}}
+                                             <img ng-src="images/{{starimg.star}}" alt="" >
+                                         </span>
+                                    </span>
+                                    </li>
+                               </ul>
+                               <p ng-show="lang.length==0">-</p>
+                               <h5>Driving License</h5>
+                               <p>{{licenses}}</p>
+                               
+                          </div><!--close video_text-->
+                     </div><!--close video_call4-->
+                </div><!--close rightbar-row-->
+           </div><!--close video-rightbar_inner-->
+      </div><!--close video-rightbar-->
+      
+      </div><!--close video_section2-->
+      
+ <div class="video_section3">
+           <div class="rightbar-row">
+                <div class="video_call4">
+                     &nbsp;
+                </div>
+                <div class="video_call4">
+                  &nbsp;
+                </div>
+                <!-- <div id="photo_nav" class="video_call4" ng-show="IsProfileImage">
+                     <div class="video_controller">
+                      <a javascript:void(0); ng-click="prev()" class="vide_prev"></a>
+                      <a javascript:void(0);  ng-click="next()" class="vide_next"></a>
+                     </div>
+                     <span class="span3"><em>{{currentIndex+1}}</em>/{{profile_images.length}}</span>
+                </div>
+                <div id="video_nav" class="video_call4" style="display:none;" ng-show="profile_videos.length > 1 && IsProfileVideo">
+                     <div class="video_controller">
+                      <a javascript:void(0); ng-click="prev_video()" class="vide_prev"></a>
+                      <a javascript:void(0);  ng-click="next_video()" class="vide_next"></a>
+                     </div>
+                      <span class="span3"><em>{{currentIndexVideo+1}}</em>/{{profile_videos.length}}</span>
+                </div> -->
+                
+                <div class="video_call4">
+                     
+               
+      <div class="footer_left">
+            <div class="res-profile" ng-class="photoiconclass" ng-click="changeToImageView()" ></div>
+            <div class="res-profile" ng-class="mediaiconclass" ng-click="changeToVideoView()" ></div>
+            <div class="res-profile" ng-class="infoiconclass" ng-click="changeToDetailView()" ></div>
+      </div>
+      
+      <div class="footer_center">
+      </div>
+      
+      <div class="footer_right"><span class="footer-line"></span>
+      <img src="images/profileadd.png" ng-click="getProfileBox(pbox_profileid)" class="tabnew">
+      <span class="videos_title">Billeder</span>
+      </div>
+ </div>
+           </div>
+      </div><!--close video_section3-->
+      
+ <div class="right-sidebar">
+      <div class="side-top"><a javascript:void(0); class="side-icon1"></a></div>
+      
+      <div class="side-middle">
+           <span class="side-span">
+                 <span class="side-icon2"></span>
+                 <p>{{lbprofilecount}}</p>
+           </span>
+           <span class="side-span">
+                 <span class="side-icon3"></span>
+                 <p>{{gpprofilecount}}</p>
+           </span>
+      </div>
+ </div>
+      
+ </div><!--close video_popup-->
+</div><!--video popup-->
+
+<div id="lightbox_popup" class="popup popup-video">
+   
+     <a href="javascript:void(0);" id="close_lightbox" class="poup-close">luk</a>
+     
+   <div class="popup-table">
+        <div class="popup-td">
+               <div ng-show="ifLightboxForm" class="sendlightbox_form">
+               <form name="form_send_lightbox" id="form_send_lightbox" ng-submit="sendLightboxForm()">
+                  <div class="sendlightbox_form_inner">
+                     <h2>Send Lightbox</h2>
+                            
+                          <div class="sendlightbox_form_col">
+                               <input name="to_email" id="to_email" ng-model="to_email" type="text" placeholder="Til email" class="profile_form_input" required >
+                          </div>
+                          <div class="sendlightbox_form_col">
+                               <input name="to_cc" id="to_cc" ng-model="to_cc" type="text" placeholder="CC" class="profile_form_input" >
+                          </div>
+                          <div class="sendlightbox_form_col">
+                               <input name="form_email" id="form_email" ng-model="form_email" type="text" placeholder="Din email" class="profile_form_input" required >
+                          </div>
+                          <div class="sendlightbox_form_col">
+                               <textarea name="mail_body" id="mail_body" ng-model="mail_body" cols="" rows="" placeholder="Skriv kommentar..." class="profile_form_textarea" ></textarea>
+                               <a href="javascript:void(0);" class="edit2"></a>
+                          </div>
+                                  
+                          <div class="sendlightbox_form_col2">
+                               <input  ng-disabled="profile_ansog_form4.$invalid" name="Send" type="submit" class="send" value="Send" >
+                               <input name="Annullere" type="button" class="cancel" value="Annullere" ng-click="cancelLigtbox2()" >
+                          </div>
+                    </div>
+               </form><!--close profile_form-->
+               </div><!--close profile_form-->
+               <div ng-show="ifLightboxFormSuccess" class="popup-title" style="color: green;">Lightbox er sendt!</div>
+          </div>
+     </div>
+</div><!--close popup-->
+
+<div id="lightbox_remove_popup" class="popup popup-video">
+     <a href="javascript:void(0);" id="close_remove_lightbox" class="poup-close">luk</a>
+   <div class="popup-table">
+        <div class="popup-td">
+          <div ng-show="ifLightboxFormRemove" class="sendlightbox_form">
+                 <form name="remove_form_lightbox" id="remove_form_lightbox" ng-submit="removeFromLightbox()">
+                  <div class="sendlightbox_form_inner">
+                        <div class="send_inner">
+                             <h2>FJERN FRA LIGHTBOX</h2>
+                                       <span class="popup-icon_31"></span> 
+                                       <span class="popup-icon_21"></span>
+                                       <span class="popup-icon_31_1"></span>
+                              
+                                   <div class="sendlightbox_form_col2">
+                                   
+                                   <input name="" type="submit" class="send" value="Slet" >
+                                   <input name="" type="button" class="cancel" ng-click="hideRemoveLoghtboxPopup()" value="Annullere" >
+                              </div>    
+                        </div>
+                    </div>
+                   </form>
+               </div>
+         <div  ng-show="!ifLightboxFormRemove" class="popup-title">Slettet fra Lightbox!</div> 
+          </div>
+     </div>
+</div>
+<div id="group_remove_popup" class="popup popup-video">
+     <a href="javascript:void(0);" id="close_remove_group" class="poup-close">luk</a>
+   <div class="popup-table">
+        <div class="popup-td">
+          <div ng-show="ifGroupFormRemove" class="sendlightbox_form">
+                 <form name="remove_form_group" id="remove_form_group" ng-submit="removeFromGrouplist()">
+                  <div class="sendlightbox_form_inner">
+                        <div class="send_inner">
+                             <h2>FJERN GRUPPE</h2>
+                                       <span class="popup-icon_11"></span> 
+                                       <span class="popup-icon_21"></span>
+                                       <span class="popup-icon_31_1"></span>
+                              
+                                   <div class="sendlightbox_form_col2">
+                                   
+                                   <input name="" type="submit" class="send" value="Slet" >
+                                   <input name="" type="button" class="cancel" ng-click="hideRemoveGroupPopup()" value="Annullere" >
+                              </div>    
+                        </div>
+                    </div>
+                   </form>
+               </div>
+         <div  ng-show="!ifGroupFormRemove" class="popup-title">GRUPPER ER SLETTET!</div> 
+          </div>
+     </div>
+</div>
+
+<div id="send_group_popup" class="popup popup-video">
+   
+     <a href="javascript:void(0);" id="close_sendgroup" class="poup-close">luk</a>
+     
+   <div class="popup-table">
+        <div class="popup-td">
+               <div ng-show="ifLightboxForm" class="sendlightbox_form">
+               <form name="form_send_group" id="form_send_group" ng-submit="sendGroupForm()">
+                  <div class="sendlightbox_form_inner">
+                     <h2>Send Group</h2>
+
+                       <div  ng-hide = "gid" class="sendlightbox_form_col">
+                                <input name="gid" id="gid" ng-model="gid"  ng-value="gid" class="profile_form_input" type="hidden" >
+                          </div>
+
+                         <!--  <div class="sendlightbox_form_col">
+                               <input name="to_email" id="to_groupid" ng-model="to_email" type="text" placeholder="Til email" class="profile_form_input" required >
+                          </div> -->
+
+                            
+                          <div class="sendlightbox_form_col">
+                               <input name="to_email" id="to_email" ng-model="to_email" type="text" placeholder="Til email" class="profile_form_input" required >
+                          </div>
+                          <div class="sendlightbox_form_col">
+                               <input name="to_cc" id="to_cc" ng-model="to_cc" type="text" placeholder="CC" class="profile_form_input" >
+                          </div>
+                          <div class="sendlightbox_form_col">
+                               <input name="form_email" id="form_email" ng-model="form_email" type="text" placeholder="Din email" class="profile_form_input" required >
+                          </div>
+                          <div class="sendlightbox_form_col">
+                               <textarea name="mail_body" id="mail_body" ng-model="mail_body" cols="" rows="" placeholder="Skriv kommentar..." class="profile_form_textarea" ></textarea>
+                               <a href="javascript:void(0);" class="edit2"></a>
+                          </div>
+                                  
+                          <div class="sendlightbox_form_col2">
+                               <input  ng-disabled="profile_ansog_form4.$invalid" name="Send" type="submit" class="send" value="Send" >
+                               <input name="Annullere" type="button" class="cancel" value="Annullere" ng-click="cancelLigtbox()" >
+                          </div>
+                    </div>
+               </form><!--close profile_form-->
+               </div><!--close profile_form-->
+               <div ng-show="ifLightboxFormSuccess" class="popup-title" style="color: green;">Lightbox er sendt!</div>
+          </div>
+     </div>
+</div><!--close popup-->
+
+
+<div class="popup" id="profilebox" style="display:none;">
+   
+     <a javascript:void(0); class="poup-close-profilebox">luk</a>
+     
+     <form name="form_add_to_lightbox" id="form_add_to_lightbox" ng-submit="addToLightbox()" >
+         <div class="popup-table"  id="des-popup1">
+              <div class="popup-td">
+                   
+                   <div class="form-big">
+                        <div class="form-big-inner">
+                             <div class="popup_left" style="background-image:url({{pbox_singleimage}})"></div>
+                             <div class="popup_right">
+                                  <div class="popup-box">
+                                       <h2>TILFØJ TIL LIGHTBOX</h2>
+                                       <span class="popup-icon1"></span>
+                                       <div class="form-box1">
+                                       <input type="hidden" name="pbox_profileid" id="pbox_profileid" ng-model="pbox_profileid" value="" />
+                                            <textarea name="profile_notes" id="profile_notes" ng-model="profile_notes" cols="" rows="" placeholder="Skriv note..." class="textarea"></textarea>
+                                            <a href="javascript:void(0);" class="edit2"></a>
+                                       </div>
+                                       <h3>23.01.17</h3>
+                                  </div><!--close popup-box-->
+                                  <div class="popup-box">
+                                       <h2>Gem i gruppe</h2>
+                                       <span class="popup-icon2"></span>
+                                       <div class="form-box1">
+                                            <input name="new_group_name" id="new_group_name" ng-model="new_group_name" type="text" placeholder="tilføj ny gruppe" class="input">
+                                            <a javascript:void(0); class="plus" style="cursor:pointer;" ng-click="add_new_group()"></a>
+                                       </div>
+                                       
+                                       <div class="form-box3">
+                                       <span class="button" id="groupingbut{{grouping.id}}" style="cursor:pointer;" ng-repeat="grouping in groupings" ng-click="checkuncheckgrouping(grouping.id)">{{grouping.name}}</span>
+                                            <!--<a javascript:void(0); class="button">Danske Bank</a>
+                                            <a javascript:void(0); class="button">BABY</a>
+                                             <a javascript:void(0); class="button2">Fakta</a>-->
+                                       </div>
+                                       
+                                       <div class="form-box2">
+                                            <input name="" type="submit" class="send2" value="Tilføj" >
+                                            <input name="" type="button" ng-click="closeProfileboxpopup2()" class="cancel2" value="Annullere" >
+                                       </div>
+                                  </div><!--close popup-box-->
+                             </div><!--close popup_right-->
+                        </div><!--close form-big-inner-->
+                   </div><!--close profile_form-->
+                   
+              </div>
+         </div>
+         <div class="popup-table" id="res-popup1">
+              <div class="popup-td">
+              
+              
+              <div class="sendlightbox_form">
+                        <div class="sendlightbox_form_inner">
+                             <h2>TILFØJ TIL LIGHTBOX</h2>
+                                  
+                              <div class="form-box1">
+                               <input type="hidden" name="pbox_profileid" id="pbox_profileid" ng-model="pbox_profileid" value="" />
+                                            <textarea name="profile_notes" id="profile_notes" ng-model="profile_notes" cols="" rows="" placeholder="Skriv note..." class="textarea"></textarea>
+                                            <a href="javascript:void(0);" class="edit2"></a>
+                                       </div>
+                                       <div class="form-box2">
+                                            <input name="" class="send2" value="Tilføj" type="submit">
+                                            <input name="" class="cancel2" value="Annullere" type="button">
+                                       </div>
+                        </div>
+                   </div>
+              
+              
+              <div class="downjoin"><img src="images/down.png" ng-click="closeProfileboxpopup()" /></div>
+              
+              
+              </div>
+         </div>
+    </form>
+</div>
+
+<div class="popup" id="lightboxsubmit" style="display:none;">
+   
+     <a javascript:void(0); class="poup-close">luk</a>
+     
+   <div class="popup-table">
+        <div class="popup-td">
+               
+               <div class="popup-title">PROFIL TILFØJET LIGHTBOX!</div>
+               
+          </div>
+     </div>
+</div><!--close popup-->
+
+<footer id="footer" >
+
+      <div class="footer_left">
+               
+               <span class="span1"><a style="color:#000" href="https://www.facebook.com/castitdenmark" target="_blank">Facebook</a></span>
+                <img src="images/searchmini.png" class="searchmini" />
+          </div>
+          
+          <div ng-show="isMaincontent" class="footer_center">
+               <span class="span3" style="margin-top: -10px;">{{currentPage+1}}<em>/{{numberOfPages()}}</em></span>
+          </div>
+          
+          <div class="footer_right"><span class="footer-line"></span>
+            <img src="images/tabnew.png" id="tabnewblack" class="tabnew" />
+          </div>
+</footer><!--close footer-->
+</div> 
+

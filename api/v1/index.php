@@ -3,6 +3,10 @@ require '../libs/Slim/Slim.php';
 require_once 'dbHelper.php';
 require_once 'SimpleImage.php';
 
+require '../../vendor/autoload.php';
+use OpenCloud\Rackspace; 
+use Mailgun\Mailgun; 
+
 // Get Slim instance
 \Slim\Slim::registerAutoloader();
 $app = new \Slim\Slim();
@@ -14,11 +18,15 @@ if (version_compare(PHP_VERSION, '5.4.0', '<')) {
     }
 // call our own dbHelper class
 $db = new dbHelper();
+$mgClient = new Mailgun('key-ebe8829c00330a3be43c59dd67da5b73');
+$domain = "mail.castit.dk";
 
 $imageClass = new SimpleImage();
 
 $app->post('/',function () use ($app) { 
-    global $db;
+	global $db;
+	global $mgClient;
+	global $domain;
 });
 
 /*****************************************
@@ -56,39 +64,181 @@ Purpose: Home page Landing page
 Parameter : NIL
 Type : POST
 ******************************************/
+
 $app->get('/getprofiles',function () use ($app) { 
-    global $db;
+  global $db;
+  $conditional_profiles = array(
+	  0 => "AND ( m.profile_number LIKE 'C%') ",
+	  1 => "AND ( m.profile_number LIKE 'Y%') ",
+  );
+	$offset = (isset($_GET['offset'])) ? $_GET['offset'] : 0;
+	if(!isset($conditional_profiles[$offset])){
+		$conditional_profiles[$offset] = "";
+	}
+//   $conditional_profiles = "AND ( m.profile_number LIKE 'C%' OR m.profile_number LIKE 'A%'OR m.profile_number LIKE 'J%' OR m.profile_number LIKE 'Y%' ) ";
+
+  $sql = "SELECT 
+  p.*, m.profile_group_id, m.profile_number, m.profile_number_first_name_last_name, m.version, m.current, g.name 
+  as gender_name, hc.name 
+  as hair_color_name, ec.name 
+  as eye_color_name 
+FROM profiles p 
+  INNER JOIN (select * from memberships where current = 1) m ON m.profile_id = p.id 
+  INNER JOIN genders g ON g.id = p.gender_id 
+  INNER JOIN hair_colors hc ON hc.id = p.hair_color_id 
+  INNER JOIN eye_colors ec ON ec.id = p.eye_color_id  
+WHERE ( p.profile_status_id = '1') 
+
+AND m.current ='1' AND p.id IN ( SELECT profile_id from photos WHERE published ='1' and media_slet_status != '1' GROUP by profile_id ) ";
+// $offset = $offset * 500;
+// $limit  = " LIMIT 500 OFFSET ". $offset;
+// $sql = $sql . " ORDER BY RAND() " . $limit;
+// $sql = $sql . " ORDER BY RAND() limit 2";
 
 
-	$query = $db->prepare("SELECT p.*, m.profile_group_id, m.profile_number, m.profile_number_first_name_last_name, m.version, m.current, g.name as gender_name, hc.name as hair_color_name, ec.name as eye_color_name FROM profiles p INNER JOIN memberships m ON m.profile_id = p.id INNER JOIN genders g ON g.id = p.gender_id INNER JOIN hair_colors hc ON hc.id = p.hair_color_id INNER JOIN eye_colors ec ON ec.id = p.eye_color_id  WHERE (p.profile_status_id = '1' OR  p.profile_status_id = '2') AND m.current ='1' AND (m.profile_number LIKE 'C%' OR m.profile_number LIKE 'A%'OR m.profile_number LIKE 'J%' OR m.profile_number LIKE 'Y%')  AND p.id IN (SELECT profile_id from photos WHERE published ='1' GROUP by profile_id) ORDER by case WHEN m.profile_number LIKE 'CF%' THEN 1 WHEN m.profile_number LIKE 'CM%' THEN 2 WHEN m.profile_number LIKE 'A%' THEN 3 WHEN m.profile_number LIKE 'J%' THEN 4  WHEN m.profile_number LIKE 'YF%' THEN 5 WHEN m.profile_number LIKE 'YM%' THEN 6 ELSE 7 END "); 
+if($_SERVER['HTTP_HOST'] == 'castit.local'){
+	$sql = $sql . " ORDER BY m.profile_number ASC";
+}
+else{
+	// $sql = $sql . " ORDER BY RAND() ";
+	$sql = $sql . " ORDER BY m.profile_number ASC";
+}
 
-	//echo $query;exit;
-	$query->execute();
-    $rows = $query->fetchAll(PDO::FETCH_ASSOC);
-    //echo 'sdsds';die;
-//	print_r($rows[0]);exit;
-    $profiles = array();
+// $sql = $sql . " ORDER BY m.profile_group_id " . $limit;
+	  
+	if(isset($_GET['group_id']) && is_numeric($_GET['group_id']) && $_GET['group_id']>0){
+		unset($_SESSION['all_profiles']);
+		unset($_SESSION['c_profiles']);
+		unset($_SESSION['y_profiles']);
+		$group_id = $_GET['group_id'];
+		$group_profiles_query = $db->prepare("SELECT distinct(profile_id), profile_notes from profile_grouping where group_id = $group_id");
+		$group_profiles_query->execute();
+		$group_profiles_rows = $group_profiles_query->fetchAll(PDO::FETCH_ASSOC);
+      
+    	$ids_in_group = array();
+		foreach($group_profiles_rows as $gp_row){
+			$ids_in_group[] = $gp_row['profile_id'];
+    	}
+    // var_dump($ids_in_group);
+    	$ids_in_group_sql = " (" . implode(",",$ids_in_group) . ") ";
+    // var_export($ids_in_group_sql);
+		$grouping_query = $db->prepare("SELECT * from grouping where group_id = $group_id");
+		$grouping_query->execute();
+		$grouping_rows = $grouping_query->fetchAll(PDO::FETCH_ASSOC);
+
+		$sql = "SELECT 
+			p.*, m.profile_group_id, m.profile_number, m.profile_number_first_name_last_name, m.version, m.current, g.name 
+			as gender_name
+			FROM profiles p 
+			INNER JOIN 
+      		(select * from memberships where current = 1) m ON m.profile_id = p.id 
+			INNER JOIN genders g ON g.id = p.gender_id  
+			WHERE ( p.profile_status_id = '1' ) 
+					AND p.id IN $ids_in_group_sql";
+			
+			$query = $db->prepare($sql); 
+			// echo $sql;exit;
+			// echo $query;exit;
+			$query->execute();
+			$rows_group = $query->fetchAll(PDO::FETCH_ASSOC);	
+			// echo '<pre>';
+			// print_r($rows_group);
+			// exit;
+
+	}
+
+	if(!isset($_GET['group_id']) && !isset($_SESSION['c_profiles'])){
+		$query = $db->prepare($sql); 
+		$query->execute();
+		$rows = $query->fetchAll(PDO::FETCH_ASSOC);
+		$_SESSION['all_profiles'] = $rows;
+	}else{
+		if(isset($_SESSION['all_profiles'] ) && !isset($_GET['group_id'])){
+			$rows = $_SESSION['all_profiles'];
+		}
+		if(isset($_GET['group_id']) && is_numeric($_GET['group_id']) && $_GET['group_id']>0){
+			$rows = $rows_group;
+		}
+	}
+
+	// echo 'sdsds';die;
+	// print_r($rows[0]);exit;
+	$profiles = array();
+
+	$c_profiles = array();
+	$y_profiles = array();
+	// unset($_SESSION['c_profiles']);
+	if(count($rows)>0 && !isset($_GET['group_id']) && !isset($_SESSION['c_profiles'])) {
+		foreach($rows as $item){
+			$current_prefix = substr($item['profile_number'], 0, 1);
+			if($current_prefix == "C"){
+				$c_profiles[]=$item;
+			}
+			if($current_prefix == "Y"){
+				$y_profiles[]=$item;
+			}
+		}
+		shuffle($c_profiles);
+		shuffle($y_profiles);
+		$_SESSION['c_profiles'] = $c_profiles;
+		$_SESSION['y_profiles'] = $y_profiles;
+	}
+
 	if(count($rows)>0) {
-		foreach($rows as $row){
+		if(isset($_SESSION['c_profiles'])){
+			$rows_temp = array_merge($_SESSION['c_profiles'], $_SESSION['y_profiles']);
+			$rows_new = array_slice($rows_temp, $offset*612, 612, true);
+			// $rows_new = $rows_temp;
+		}else{
+			$rows_new = $rows;
+		}
+					// echo '<pre>';
+			// print_r($rows_new);
+			// exit;
+		foreach($rows_new as $row){
 			$birthdate = new DateTime($row['birthday']);
         	$today   = new DateTime('today');
         	$age = $birthdate->diff($today)->y;
 
 			// Profile Image
 			$profile_image ='';
-			$query_image = $db->prepare("SELECT *, DATE_FORMAT(created_at, '%Y') as create_year, DATE_FORMAT(created_at, '%m') as create_month, DATE_FORMAT(created_at, '%d') as create_date FROM photos WHERE profile_id = '".$row['id']."' and published ='1' ORDER BY position ASC LIMIT 1"); 
-	$query_image->execute();
-	$image= '';
-    $rows_image = $query_image->fetchAll(PDO::FETCH_ASSOC);
-	if(count($rows_image) > 0){
-		$path = $rows_image[0]['create_year']."/".$rows_image[0]['create_month']."/".$rows_image[0]['create_date']."/".$rows_image[0]['id']."/big_";
-		$profile_image = 'http://134.213.29.220/profile_images/'.$path.$rows_image[0]['image'];
-		//$profile_image = 'http://134.213.29.220/assets/profile_images/'.$path.$rows_image[0]['image'];
-		
-		
+			$query_image = $db->prepare("SELECT *, DATE_FORMAT(created_at, '%Y') as create_year, DATE_FORMAT(created_at, '%m') as create_month, DATE_FORMAT(created_at, '%d') as create_date FROM photos WHERE profile_id = '".$row['id']."' and published ='1' and media_slet_status != '1' ORDER BY position ASC limit 1"); 
+		$query_image->execute();
+		$image= '';
+    	$rows_image = $query_image->fetchAll(PDO::FETCH_ASSOC);
+		if(count($rows_image) > 0){
+			// $path = $rows_image[0]['create_year']."/".$rows_image[0]['create_month']."/".$rows_image[0]['create_date']."/".$rows_image[0]['id']."/big_";
+			// $profile_image = 'https://castit.dk/profile_images/'.$path.$rows_image[0]['image'];
+			//$profile_image = 'http://castit.dk/assets/profile_images/'.$path.$rows_image[0]['image'];
+			
+			$min = 0;
+			$rows_count = count($rows_image);
+			$max = $rows_count - 1;
+			$random_index = rand($min, $max);
+			$random_index = 0;
+			// if(file_get_contents("/var/www/vhost/castit.dk/phpthumbnails/".$rows_image[$random_index]['image'],0,null,0,1)){
+				// if (file_get_contents("https://castit.dk/phpthumbnails/".$rows_image[$random_index]['image'],0,null,0,1)) {
+			
+			// if(file_exists("https://castit.dk/phpthumbnails/".$rows_image[$random_index]['image'])){
+				if(file_exists("/var/www/vhost/castit.dk/phpthumbnails_new/".$rows_image[$random_index]['image'])){
+					// echo '<pre>';
+					// echo $rows_image[$random_index]['image'];
+					$profile_image = "https://castit.dk/phpthumbnails_new/".$rows_image[$random_index]['image'];
+				}
+				elseif(file_exists("/var/www/vhost/castit.dk/phpthumbnails_new/big_".$rows_image[$random_index]['image'])){
+					$profile_image = "https://castit.dk/phpthumbnails_new/big_".$rows_image[$random_index]['image'];
+				}
+				elseif(strpos($rows_image[$random_index]['path'], 'vhost') !== false){
+						$path = $rows_image[$random_index]['path'];
+						$profile_image = 'https://castit.dk/images/uploads/'.$rows_image[$random_index]['image'];
+				}
+				else{
+					$path = $rows_image[$random_index]['create_year']."/".$rows_image[$random_index]['create_month']."/".$rows_image[$random_index]['create_date']."/".$rows_image[$random_index]['id']."/big_";
+					$profile_image = 'https://castit.dk/profile_images/'.$path.$rows_image[$random_index]['image'];
+				}
+			
+
 		}
-
-
 			$profiles[] = array('id' 			=> $row['id'],
 								'bureau' 		=> $row['bureau'],
 								'nationality' 	=> $row['nationality'],
@@ -109,10 +259,13 @@ $app->get('/getprofiles',function () use ($app) {
 								'cellphone' 	=> $row['cellphone'],
 								'email' 		=> $row['email'],
 								'job' 			=> $row['job'],
+								'marked_as_new'	=> $row['marked_as_new'],
 
 							);
-		}
-		$response = array('success' => true, 'profiles' => $profiles );
+    }
+    $group_token = (isset($grouping_rows[0]['token_id'])) ? $grouping_rows[0]['token_id'] : array();
+    $response = array('success' => true, 'profiles' => $profiles, 'group_token' => $group_token);
+
 	}
 	
 	else {
@@ -152,8 +305,8 @@ $app->get('/getfilterprofiles',function () use ($app) {
 
 	if($age_to){
 		$date2 = strtotime($date_debut); 
-		$time2 = $age_to*31556926; 
-		$dob2 = $date2 - $time2; 
+		$time2 = $age_to*31556926 + (31556926); 
+		$dob2 = $date2 - $time2;
 		$year_to = date("Y-m-d",$dob2); 
 		$search_qry .= " AND p.birthday >= '".$year_to."'";
 	}
@@ -162,9 +315,28 @@ $app->get('/getfilterprofiles',function () use ($app) {
 	}
 
 	if($search_text){
-		$search_qry .= " AND (p.first_name LIKE '%".$search_text."%' OR p.last_name LIKE '%".$search_text."%' OR m.profile_number LIKe '%".$search_text."%')";		
+		$search_qry .= " AND (p.first_name = '".$search_text."' 
+		OR m.profile_number = '".$search_text."'
+		OR m.profile_number like '%".$search_text."%')";		
 	}
-	$qry = "SELECT p.*, m.profile_group_id, m.profile_number, m.profile_number_first_name_last_name, m.version, m.current, g.name as gender_name, hc.name as hair_color_name, ec.name as eye_color_name FROM profiles p INNER JOIN memberships m ON m.profile_id = p.id INNER JOIN genders g ON g.id = p.gender_id INNER JOIN hair_colors hc ON hc.id = p.hair_color_id INNER JOIN eye_colors ec ON ec.id = p.eye_color_id  WHERE (p.profile_status_id = '1' OR  p.profile_status_id = '2') AND m.current ='1' AND p.id IN (SELECT profile_id from photos WHERE published ='1' GROUP by profile_id) ".$search_qry."  ORDER by case WHEN m.profile_number LIKE 'CF%' THEN 1 WHEN m.profile_number LIKE 'CM%' THEN 2 WHEN m.profile_number LIKE 'A%' THEN 3 WHEN m.profile_number LIKE 'J%' THEN 4  WHEN m.profile_number LIKE 'YF%' THEN 5 WHEN m.profile_number LIKE 'YM%' THEN 6 ELSE 7 END ";
+	
+	$qry = "SELECT p.*, m.profile_group_id, m.profile_number, m.profile_number_first_name_last_name, m.version, m.current, g.name as gender_name FROM profiles p INNER JOIN memberships m ON m.profile_id = p.id INNER JOIN genders g ON g.id = p.gender_id  WHERE (p.profile_status_id = '1' ) AND m.current ='1' AND p.id IN (SELECT profile_id from photos WHERE published ='1' and media_slet_status != '1' GROUP by profile_id) ".$search_qry."  ORDER by case WHEN m.profile_number LIKE 'C%' THEN 1 WHEN m.profile_number LIKE 'Y%' THEN 2 ELSE 3 END ";
+
+  $offset = (isset($_GET['offset'])) ? $_GET['offset'] : 1;
+  
+	$offset = $offset * 100;
+	$limit  = " LIMIT 100 OFFSET ". $offset;
+	$qry = $qry . $limit;
+
+	$sql_check_qry = "SELECT p.*, m.profile_group_id, m.profile_number, m.profile_number_first_name_last_name, m.version, m.current, g.name as gender_name FROM profiles p INNER JOIN memberships m ON m.profile_id = p.id INNER JOIN genders g ON g.id = p.gender_id  WHERE (p.profile_status_id = '1' ) AND m.current ='1' AND p.id IN (SELECT profile_id from photos WHERE published ='1' and media_slet_status != '1' GROUP by profile_id) AND m.profile_number = '" . $search_text . "'";
+	$sql_check = $db->prepare($sql_check_qry);
+	$sql_check->execute();
+	$result_set = $sql_check->fetchAll(PDO::FETCH_ASSOC);
+	// echo '<pre>';var_dump($result_set);exit;
+	if(count($result_set)>0){
+		$qry = $sql_check_qry;
+	}
+
 	$query = $db->prepare($qry); 
 	$query->execute();
     $rows = $query->fetchAll(PDO::FETCH_ASSOC);
@@ -179,13 +351,33 @@ $app->get('/getfilterprofiles',function () use ($app) {
 
 			// Profile Image
 			$profile_image ='';
-			$query_image = $db->prepare("SELECT *, DATE_FORMAT(created_at, '%Y') as create_year, DATE_FORMAT(created_at, '%m') as create_month, DATE_FORMAT(created_at, '%d') as create_date FROM photos WHERE profile_id = '".$row['id']."' and published ='1' ORDER BY position ASC LIMIT 1"); 
+			$query_image = $db->prepare("SELECT *, DATE_FORMAT(created_at, '%Y') as create_year, DATE_FORMAT(created_at, '%m') as create_month, DATE_FORMAT(created_at, '%d') as create_date FROM photos WHERE profile_id = '".$row['id']."' and published ='1' and media_slet_status != '1' ORDER BY position ASC LIMIT 1"); 
 	$query_image->execute();
 	$image= '';
     $rows_image = $query_image->fetchAll(PDO::FETCH_ASSOC);
-	if(count($rows_image) > 0){
-		$path = $rows_image[0]['create_year']."/".$rows_image[0]['create_month']."/".$rows_image[0]['create_date']."/".$rows_image[0]['id']."/big_";
-		$profile_image = 'http://134.213.29.220/profile_images/'.$path.$rows_image[0]['image'];
+
+    $rows_count = count($rows_image); 
+	if($rows_count > 0){
+		$min = 0;
+		$max = $rows_count - 1;
+		$random_index = rand($min, $max);
+		$random_index = 0;
+		if(file_exists("/var/www/vhost/castit.dk/phpthumbnails_new/".$rows_image[$random_index]['image'])){
+			// echo '<pre>';
+			// echo $rows_image[$random_index]['image'];
+			$profile_image = "https://castit.dk/phpthumbnails_new/".$rows_image[$random_index]['image'];
+		}
+		elseif(file_exists("/var/www/vhost/castit.dk/phpthumbnails_new/big_".$rows_image[$random_index]['image'])){
+			$profile_image = "https://castit.dk/phpthumbnails_new/big_".$rows_image[$random_index]['image'];
+		}
+		elseif(strpos($rows_image[$random_index]['path'], 'vhost') !== false){
+				$path = $rows_image[$random_index]['path'];
+				$profile_image = 'https://castit.dk/images/uploads/'.$rows_image[$random_index]['image'];
+		}
+		else{
+			$path = $rows_image[$random_index]['create_year']."/".$rows_image[$random_index]['create_month']."/".$rows_image[$random_index]['create_date']."/".$rows_image[$random_index]['id']."/big_";
+			$profile_image = 'https://castit.dk/profile_images/'.$path.$rows_image[$random_index]['image'];
+		}
 		
 		}
 		$name = $row['first_name'];
@@ -218,6 +410,7 @@ $app->get('/getfilterprofiles',function () use ($app) {
 								'cellphone' 	=> $row['cellphone'],
 								'email' 		=> $row['email'],
 								'job' 			=> $row['job'],
+								'marked_as_new'	=> $row['marked_as_new'],
 
 							);
 		}
@@ -237,13 +430,29 @@ Purpose: Home page Landing page
 Parameter : NIL
 Type : POST
 ******************************************/
+function remote_file_exists($url)
+{
+    $ch = curl_init($url);
+    curl_setopt($ch, CURLOPT_NOBODY, true);
+    curl_exec($ch);
+    $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+    curl_close($ch);
+    if( $httpCode == 200 ){return true;}
+}
+
+
 $app->get('/getsingleprofiles',function () use ($app) { 
     global $db;
 	$profileid = $app->request->get('profileid');
+	$current_language = $app->request->get('lang');
 	if($profileid)
-	$query = $db->prepare("SELECT p.*, m.profile_group_id, m.profile_number, m.profile_number_first_name_last_name, m.version, m.current, g.name as gender_name, hc.name as hair_color_name, ec.name as eye_color_name FROM profiles p INNER JOIN memberships m ON m.profile_id = p.id INNER JOIN genders g ON g.id = p.gender_id INNER JOIN hair_colors hc ON hc.id = p.hair_color_id INNER JOIN eye_colors ec ON ec.id = p.eye_color_id  WHERE p.id='".$profileid."' AND (p.profile_status_id = '1' OR  p.profile_status_id = '2') AND m.current ='1' LIMIT 1"); 
+	// $query = $db->prepare("SELECT p.*, m.profile_group_id, m.profile_number, m.profile_number_first_name_last_name, m.version, m.current, g.name as gender_name FROM profiles p INNER JOIN memberships m ON m.profile_id = p.id INNER JOIN genders g ON g.id = p.gender_id  WHERE p.id='".$profileid."' AND (p.profile_status_id = '1' OR  p.profile_status_id = '2') AND m.current ='1' LIMIT 1"); 
+	$query = $db->prepare("SELECT p.*, m.profile_group_id, m.profile_number, m.profile_number_first_name_last_name, m.version, m.current, g.name as gender_name FROM profiles p INNER JOIN memberships m ON m.profile_id = p.id INNER JOIN genders g ON g.id = p.gender_id  WHERE p.id='".$profileid."' AND (p.profile_status_id = '1' OR  p.profile_status_id = '2') AND m.current ='1' LIMIT 1"); 
 	$query->execute();
-    $rows = $query->fetchAll(PDO::FETCH_ASSOC);
+		$rows = $query->fetchAll(PDO::FETCH_ASSOC);
+		// INNER JOIN hair_colors hc ON hc.id = p.hair_color_id INNER JOIN eye_colors ec ON ec.id = p.eye_color_id 
+		// , hc.name as hair_color_name, ec.name as eye_color_name
+
     //echo 'sdsds';die;
 //	print_r($rows[0]);exit;
     $profile_data = array();
@@ -253,40 +462,73 @@ $app->get('/getsingleprofiles',function () use ($app) {
 		$today   = new DateTime('today');
 		$age = $birthdate->diff($today)->y;
 
+		$hair_eye_color_query = $db->prepare("SELECT hc.name as hair_color_name, ec.name as eye_color_name from profiles p INNER JOIN hair_colors hc ON hc.id = p.hair_color_id INNER JOIN eye_colors ec ON ec.id = p.eye_color_id where p.id = '".$profileid."' ");
+		$hair_eye_color_query->execute();
+		$hair_eye_colors = $hair_eye_color_query->fetchAll(PDO::FETCH_ASSOC);
+
+		$row['eye_color_name'] = isset($hair_eye_colors[0]['eye_color_name']) ? $hair_eye_colors[0]['eye_color_name'] : " - ";
+		$row['hair_color_name'] = isset($hair_eye_colors[0]['hair_color_name']) ? $hair_eye_colors[0]['hair_color_name'] : " - ";
+
 		// Profile Image
 		$profile_images = array();
-		$query_image = $db->prepare("SELECT *, DATE_FORMAT(created_at, '%Y') as create_year, DATE_FORMAT(created_at, '%m') as create_month, DATE_FORMAT(created_at, '%d') as create_date FROM photos WHERE profile_id = '".$row['id']."' and published ='1' ORDER BY position ASC"); 
+		$query_image = $db->prepare("SELECT *, DATE_FORMAT(created_at, '%Y') as create_year, DATE_FORMAT(created_at, '%m') as create_month, DATE_FORMAT(created_at, '%d') as create_date FROM photos WHERE profile_id = '".$row['id']."' and published ='1' and media_slet_status != '1' ORDER BY position ASC"); 
 		$query_image->execute();
 		$image= '';
 		$rows_image = $query_image->fetchAll(PDO::FETCH_ASSOC);
 		$imgc = 1;
 		if(count($rows_image) > 0){
 			foreach($rows_image as $row_image){
-				$path = $row_image['create_year']."/".$row_image['create_month']."/".$row_image['create_date']."/".$row_image['id']."/big_";
-				$profile_images[] = array('imgcnt' => $imgc, 'urloriginal' =>$row_image['image'], 'fullpath'=>'http://134.213.29.220/profile_images/'.$path.$row_image['image']);
+				if (strpos($row_image['path'], 'vhost') !== false) {
+					$fullpath = 'https://castit.dk/images/uploads/'.$row_image['image'];
+				}
+				else{
+					$path = $row_image['create_year']."/".$row_image['create_month']."/".$row_image['create_date']."/".$row_image['id']."/big_";
+					$fullpath = 'https://castit.dk/profile_images/'.$path.$row_image['image'];
+				}
+				
+				$profile_images[] = array('imgcnt' => $imgc, 'urloriginal' =>$row_image['image'], 'fullpath'=>$fullpath);
+				
 				$imgc++;
 			}
 		}
 		
 		// Profile Videos
 		$profile_videos = array();
-		$query_video = $db->prepare("SELECT * FROM videos WHERE profile_id = '".$row['id']."' and published ='1' ORDER BY position ASC"); 
+		$query_video = $db->prepare("SELECT * FROM videos WHERE profile_id = '".$row['id']."' and published ='1' and media_slet_status != '1' ORDER BY position ASC"); 
 		$query_video->execute();
 		$video= '';
 		$rows_video = $query_video->fetchAll(PDO::FETCH_ASSOC);
 		$videoc = 1;
 		if(count($rows_video) > 0){
 			foreach($rows_video as $row_video){
-				$vpath = 'http://assets3.castit.dk'.$row_video['path']."/".$row_video['filename'];
-				$thumbpath = 'http://assets3.castit.dk'.$row_video['thumbnail_photo_path']."/".$row_video['thumbnail_photo_filename'];
-				$profile_videos[] = array('vidcnt' => $videoc, 'urloriginal' =>$vpath, 'img_thum'=>$thumbpath, 'fullpath'=>$vpath);
-				$videoc++;
+				/*
+				if (strpos($row_video['path'], 'vhost') !== false) {
+					$vpath = 'https://castit.dk/images/uploads/'.$row_video['filename'];
+					$thumbpath = 'https://castit.dk/images/uploads/'.$row_video['filename'];
+				}
+				else{
+					$vpath = 'http://assets3.castit.dk'.$row_video['path']."/".$row_video['filename'];
+					$thumbpath = 'http://assets3.castit.dk'.$row_video['thumbnail_photo_path']."/".$row_video['thumbnail_photo_filename'];
+				} */
+				$vpath = 'https://8ffd082a2b0d60afbe5b-ee660e5023b1ce57ba3003086dec40a5.ssl.cf3.rackcdn.com'.$row_video['path']."/".$row_video['filename'];
+				$thumbpath = 'https://8ffd082a2b0d60afbe5b-ee660e5023b1ce57ba3003086dec40a5.ssl.cf3.rackcdn.com'.$row_video['thumbnail_photo_path']."/".$row_video['thumbnail_photo_filename'];
+
+				// if(remote_file_exists($vpath)){
+				if(1){
+					$profile_videos[] = array('vidcnt' => $videoc, 'urloriginal' =>$vpath, 'img_thum'=>$thumbpath, 'fullpath'=>$vpath);
+					$videoc++;
+				}
 			}
 		}
 
 
 		$skills= '-';
 		$query_skills = $db->prepare("SELECT s.name FROM skills s JOIN profiles_skills ps ON ps.skill_id = s.id WHERE ps.profile_id = '".$row['id']."'"); 
+
+		if($current_language == 'en'){
+			$query_skills = $db->prepare("SELECT s.name_en as name FROM skills s JOIN profiles_skills ps ON ps.skill_id = s.id WHERE ps.profile_id = '".$row['id']."'"); 
+		}
+		
 		$query_skills->execute();
 		$rows_skills = $query_skills->fetchAll(PDO::FETCH_ASSOC);
 		if(count($rows_skills) > 0){
@@ -298,17 +540,30 @@ $app->get('/getsingleprofiles',function () use ($app) {
 
 		$categories= '-';
 		$query_exp = $db->prepare("SELECT c.name FROM categories c JOIN categories_profiles cp ON cp.category_id = c.id WHERE cp.profile_id = '".$row['id']."'"); 
+		
+		if($current_language == 'en'){
+			$query_exp = $db->prepare("SELECT c.name_en as name FROM categories c JOIN categories_profiles cp ON cp.category_id = c.id WHERE cp.profile_id = '".$row['id']."'"); 			
+		}
+		
 		$query_exp->execute();
 		$rows_exp = $query_exp->fetchAll(PDO::FETCH_ASSOC);
 		if(count($rows_exp) > 0){
 			$expa=array();
 			foreach($rows_exp as $row_exp){
-				$expa[] = $row_exp['name'];
+				if(!in_array($row_exp['name'], $expa)){
+					$expa[] = $row_exp['name'];
+				}
 			}
 			$categories=  implode(", ",$expa);
 		}
 		$licenses="-";
+		
 		$query_licenses= $db->prepare("SELECT l.name FROM drivers_licenses l JOIN drivers_licenses_profiles lp ON lp.drivers_license_id = l.id WHERE lp.profile_id = '".$row['id']."'"); 
+	
+		if($current_language == 'en'){
+			$query_licenses= $db->prepare("SELECT l.name_en as name FROM drivers_licenses l JOIN drivers_licenses_profiles lp ON lp.drivers_license_id = l.id WHERE lp.profile_id = '".$row['id']."'"); 
+		}
+		
 		$query_licenses->execute();
 		$rows_licenses = $query_licenses->fetchAll(PDO::FETCH_ASSOC);
 		if(count($rows_licenses) > 0){
@@ -322,7 +577,13 @@ $app->get('/getsingleprofiles',function () use ($app) {
 
 		$lang= array();
 		//echo $row['id'];
+		
 		$query_lang = $db->prepare("SELECT lp.*, lpl.name FROM language_proficiencies lp, language_proficiency_languages lpl WHERE lpl.id = lp.language_proficiency_language_id AND lp.profile_id = '".$row['id']."' ORDER BY lp.id"); 
+		
+		if($current_language == 'en'){
+			$query_lang = $db->prepare("SELECT lp.*, lpl.name_en as name FROM language_proficiencies lp, language_proficiency_languages lpl WHERE lpl.id = lp.language_proficiency_language_id AND lp.profile_id = '".$row['id']."' ORDER BY lp.id"); 
+		}
+		
 		$query_lang->execute();
 		$rows_langs = $query_lang->fetchAll(PDO::FETCH_ASSOC);
 		if(count($rows_langs) > 0){
@@ -364,20 +625,21 @@ $app->get('/getsingleprofiles',function () use ($app) {
 								'age' 			=> $age,
 								'height' 		=> $row['height'],
 								'weight' 		=> $row['weight'],
-								'hair_color_name' 	=> $row['hair_color_name'],
-								'eye_color_name' 	=> $row['eye_color_name'],
-								'shoes' 		=> $shoes,
-								'shirt' 		=> $shirt,
-								'pants' 		=> $pants,
-								'bra' 			=> $bra,
-								'children' 		=> $children,
+								'hair_color_name' 	=> isset($row['hair_color_name']) ? $row['hair_color_name'] : " - ",
+								'eye_color_name' 	=> isset($row['eye_color_name']) ? $row['eye_color_name'] : " - ",
+								'shoes' 		=> ($shoes != '') ? $shoes : ' - ' ,
+								'shirt' 		=> ($shirt != '') ? $shirt : ' - ',
+								'pants' 		=> ($pants != '') ? $pants : ' - ',
+								'bra' 			=> ($bra != '') ? $bra : ' - ',
+								'children' 		=> ($children != '') ? $children : ' - ',
 								/*'address' 		=> $row['address'],
 								'zipcode' 		=> $row['zipcode'],
 								'city' 			=> $row['city'],
 								'phone' 		=> $row['phone'],
 								'cellphone' 	=> $row['cellphone'],
 								'email' 		=> $row['email'],*/
-								'experience' 			=> $row['job'],
+								'experience' 			=> ($row['job'] != '') ? $row['job'] : ' - ',
+								'sports_hobby'			=> ($row['sports_hobby']) ? $row['sports_hobby'] : ' - '
 
 							);
 		
@@ -394,6 +656,19 @@ $app->get('/getsingleprofiles',function () use ($app) {
 	echoResponse(200, $response);
 });
 
+/*
+* 
+*/
+
+$app->post('/updategroupdata', function () use ($app) {
+  global $db;
+  $params = $app->request;
+  $allPostVars = $app->request->post();
+  ppe($allPostVars);
+
+	}
+);
+
 /******************************************
 Purpose: Update in to lightbox profiles list
 Parameter : profile id
@@ -407,6 +682,7 @@ $app->get('/updatelightboxprofiles', function () use ($app) {
 	$rowcount = 0;
 	$profile_note =  $app->request->get('profile_notes');
 	$profile_grouping =  $app->request->get('selectedgroupings');
+	$grouptoken =  $app->request->get('grouptoken');
 
 	if(isset($_SESSION["lightbox_token"])){
 		$lightbox_token = $_SESSION["lightbox_token"];
@@ -450,9 +726,9 @@ $app->get('/updatelightboxprofiles', function () use ($app) {
 			$query_check_gp->execute();
 			$rows_gp = $query_check_gp->fetchAll(PDO::FETCH_ASSOC);
 			if(count($rows_gp)>0) {
-				
+				// echo 'ssposdpofsdf';
 			}else{
-				$q_insert_profilegp = "INSERT INTO `profile_grouping` ( `profile_id`, `group_id`) VALUES ('".$profileid."', '".$gidval."')"; 
+				$q_insert_profilegp = "INSERT INTO `profile_grouping` ( `profile_id`, `group_id`, `profile_notes`) VALUES ('".$profileid."', '".$gidval."', '".$profile_note."')"; 
 				//echo $q; 
 				$query_insert_profilegp = $db->prepare($q_insert_profilegp);
 				$query_insert_profilegp->execute();
@@ -468,7 +744,7 @@ $app->get('/updatelightboxprofiles', function () use ($app) {
 				foreach($rows_lb_pprofiles as $rowp) {
 					//$lb_pprofiles[] = array('id' => $rowp['profile_id']);
 					
-						$query = $db->prepare("SELECT p.*, m.profile_group_id, m.profile_number, m.profile_number_first_name_last_name, m.version, m.current, g.name as gender_name, hc.name as hair_color_name, ec.name as eye_color_name FROM profiles p INNER JOIN memberships m ON m.profile_id = p.id INNER JOIN genders g ON g.id = p.gender_id INNER JOIN hair_colors hc ON hc.id = p.hair_color_id INNER JOIN eye_colors ec ON ec.id = p.eye_color_id  WHERE p.id='".$rowp['profile_id']."' AND (p.profile_status_id = '1' OR  p.profile_status_id = '2') AND m.current ='1' LIMIT 1"); 
+						$query = $db->prepare("SELECT p.*, m.profile_group_id, m.profile_number, m.profile_number_first_name_last_name, m.version, m.current, g.name as gender_name, hc.name as hair_color_name, ec.name as eye_color_name FROM profiles p INNER JOIN memberships m ON m.profile_id = p.id INNER JOIN genders g ON g.id = p.gender_id INNER JOIN hair_colors hc ON hc.id = p.hair_color_id INNER JOIN eye_colors ec ON ec.id = p.eye_color_id  WHERE p.id='".$rowp['profile_id']."' AND (p.profile_status_id = '1' ) AND m.current ='1' LIMIT 1"); 
 						$query->execute();
 						$rows = $query->fetchAll(PDO::FETCH_ASSOC);
 						//echo 'sdsds';die;
@@ -481,18 +757,25 @@ $app->get('/updatelightboxprofiles', function () use ($app) {
 					
 								// Profile Image
 								$profile_image ='';
-								$query_image = $db->prepare("SELECT *, DATE_FORMAT(created_at, '%Y') as create_year, DATE_FORMAT(created_at, '%m') as create_month, DATE_FORMAT(created_at, '%d') as create_date FROM photos WHERE profile_id = '".$row['id']."' and published ='1' ORDER BY position ASC LIMIT 1"); 
+								$query_image = $db->prepare("SELECT *, DATE_FORMAT(created_at, '%Y') as create_year, DATE_FORMAT(created_at, '%m') as create_month, DATE_FORMAT(created_at, '%d') as create_date FROM photos WHERE profile_id = '".$row['id']."' and published ='1' and media_slet_status != '1' ORDER BY position ASC LIMIT 1"); 
 						$query_image->execute();
 						$image= '';
 						$rows_image = $query_image->fetchAll(PDO::FETCH_ASSOC);
 						if(count($rows_image) > 0){
-							$path = $rows_image[0]['create_year']."/".$rows_image[0]['create_month']."/".$rows_image[0]['create_date']."/".$rows_image[0]['id']."/thumb_";
-							$profile_image = 'http://134.213.29.220/profile_images/'.$path.$rows_image[0]['image'];
+							if (strpos($rows_image[0]['path'], 'vhost') !== false) {
+								$profile_image = 'https://castit.dk/images/uploads/'.$rows_image[0]['image'];
+							}
+							else{
+								$path = $rows_image[0]['create_year']."/".$rows_image[0]['create_month']."/".$rows_image[0]['create_date']."/".$rows_image[0]['id']."/thumb_";
+								$profile_image = 'https://castit.dk/profile_images/'.$path.$rows_image[0]['image'];
+							}
 							
 							}
 								$lb_note = isset($_SESSION["lb_notes"][$row['id']]) ? $_SESSION["lb_notes"][$row['id']]: '' ;
 								$groupnamear = array();
-								$lb_group_qry = "SELECT pg.*, g.group_name from profile_grouping pg JOIN grouping g ON pg.group_id = g.group_id WHERE pg.profile_id='".$row['id']."'";	
+							
+								$lb_group_qry = "SELECT pg.*, g.group_name from profile_grouping pg JOIN grouping g ON pg.group_id = g.group_id AND g.token_id = '".$grouptoken."' WHERE pg.profile_id='".$row['id']."'";	
+							
 								$query_group = $db->prepare($lb_group_qry);
 								$query_group->execute();
 								$rows_group = $query_group->fetchAll(PDO::FETCH_ASSOC);
@@ -553,6 +836,7 @@ $app->get('/removelightboxprofiles', function () use ($app) {
 	$lb_pprofiles = array();
 	$reponse = array();
 	$rowcount = 0;
+	$grouptoken =  $app->request->get('grouptoken');
 
 	if(isset($_SESSION["lightbox_token"])){
 		$lightbox_token = $_SESSION["lightbox_token"];
@@ -579,7 +863,7 @@ $app->get('/removelightboxprofiles', function () use ($app) {
 				foreach($rows_lb_pprofiles as $rowp) {
 					//$lb_pprofiles[] = array('id' => $rowp['profile_id']);
 					
-						$query = $db->prepare("SELECT p.*, m.profile_group_id, m.profile_number, m.profile_number_first_name_last_name, m.version, m.current, g.name as gender_name, hc.name as hair_color_name, ec.name as eye_color_name FROM profiles p INNER JOIN memberships m ON m.profile_id = p.id INNER JOIN genders g ON g.id = p.gender_id INNER JOIN hair_colors hc ON hc.id = p.hair_color_id INNER JOIN eye_colors ec ON ec.id = p.eye_color_id  WHERE p.id='".$rowp['profile_id']."' AND (p.profile_status_id = '1' OR  p.profile_status_id = '2') AND m.current ='1' LIMIT 1"); 
+						$query = $db->prepare("SELECT p.*, m.profile_group_id, m.profile_number, m.profile_number_first_name_last_name, m.version, m.current, g.name as gender_name, hc.name as hair_color_name, ec.name as eye_color_name FROM profiles p INNER JOIN memberships m ON m.profile_id = p.id INNER JOIN genders g ON g.id = p.gender_id INNER JOIN hair_colors hc ON hc.id = p.hair_color_id INNER JOIN eye_colors ec ON ec.id = p.eye_color_id  WHERE p.id='".$rowp['profile_id']."' AND (p.profile_status_id = '1' ) AND m.current ='1' LIMIT 1"); 
 						$query->execute();
 						$rows = $query->fetchAll(PDO::FETCH_ASSOC);
 						//echo 'sdsds';die;
@@ -592,18 +876,23 @@ $app->get('/removelightboxprofiles', function () use ($app) {
 					
 								// Profile Image
 								$profile_image ='';
-								$query_image = $db->prepare("SELECT *, DATE_FORMAT(created_at, '%Y') as create_year, DATE_FORMAT(created_at, '%m') as create_month, DATE_FORMAT(created_at, '%d') as create_date FROM photos WHERE profile_id = '".$row['id']."' and published ='1' ORDER BY position ASC LIMIT 1"); 
+								$query_image = $db->prepare("SELECT *, DATE_FORMAT(created_at, '%Y') as create_year, DATE_FORMAT(created_at, '%m') as create_month, DATE_FORMAT(created_at, '%d') as create_date FROM photos WHERE profile_id = '".$row['id']."' and published ='1' and media_slet_status != '1' ORDER BY position ASC LIMIT 1"); 
 						$query_image->execute();
 						$image= '';
 						$rows_image = $query_image->fetchAll(PDO::FETCH_ASSOC);
 						if(count($rows_image) > 0){
-							$path = $rows_image[0]['create_year']."/".$rows_image[0]['create_month']."/".$rows_image[0]['create_date']."/".$rows_image[0]['id']."/thumb_";
-							$profile_image = 'http://134.213.29.220/profile_images/'.$path.$rows_image[0]['image'];
+							if (strpos($rows_image[0]['path'], 'vhost') !== false) {
+								$profile_image = 'https://castit.dk/images/uploads/'.$rows_image[0]['image'];
+							}
+							else{
+								$path = $rows_image[0]['create_year']."/".$rows_image[0]['create_month']."/".$rows_image[0]['create_date']."/".$rows_image[0]['id']."/thumb_";
+								$profile_image = 'https://castit.dk/profile_images/'.$path.$rows_image[0]['image'];
+							}
 							
 							}
 								$lb_note = isset($_SESSION["lb_notes"][$row['id']]) ? $_SESSION["lb_notes"][$row['id']]: '' ;
 								$groupnamear = array();
-								$lb_group_qry = "SELECT pg.*, g.group_name from profile_grouping pg JOIN grouping g ON pg.group_id = g.group_id WHERE pg.profile_id='".$row['id']."'";	
+								$lb_group_qry = "SELECT pg.*, g.group_name from profile_grouping pg JOIN grouping g ON pg.group_id = g.group_id  AND g.token_id = '".$grouptoken."' WHERE pg.profile_id='".$row['id']."'";	
 								$query_group = $db->prepare($lb_group_qry);
 								$query_group->execute();
 								$rows_group = $query_group->fetchAll(PDO::FETCH_ASSOC);
@@ -665,6 +954,7 @@ $app->get('/getlightboxprofiles', function () use ($app) {
 	$lb_pprofiles = array();
 	$reponse = array();
 	$rowcount = 0;
+	$grouptoken =  $app->request->get('grouptoken');
 
 	if(isset($_SESSION["lightbox_token"])){
 		$lightbox_token = $_SESSION["lightbox_token"];
@@ -692,7 +982,7 @@ $app->get('/getlightboxprofiles', function () use ($app) {
 	if($rowcount > 0){
 		foreach($rows_lb_pprofiles as $rowp) {
 			
-				$query = $db->prepare("SELECT p.*, m.profile_group_id, m.profile_number, m.profile_number_first_name_last_name, m.version, m.current, g.name as gender_name, hc.name as hair_color_name, ec.name as eye_color_name FROM profiles p INNER JOIN memberships m ON m.profile_id = p.id INNER JOIN genders g ON g.id = p.gender_id INNER JOIN hair_colors hc ON hc.id = p.hair_color_id INNER JOIN eye_colors ec ON ec.id = p.eye_color_id  WHERE p.id='".$rowp['profile_id']."' AND (p.profile_status_id = '1' OR  p.profile_status_id = '2') AND m.current ='1' LIMIT 1"); 
+				$query = $db->prepare("SELECT p.*, m.profile_group_id, m.profile_number, m.profile_number_first_name_last_name, m.version, m.current, g.name as gender_name, hc.name as hair_color_name, ec.name as eye_color_name FROM profiles p INNER JOIN memberships m ON m.profile_id = p.id INNER JOIN genders g ON g.id = p.gender_id INNER JOIN hair_colors hc ON hc.id = p.hair_color_id INNER JOIN eye_colors ec ON ec.id = p.eye_color_id  WHERE p.id='".$rowp['profile_id']."' AND (p.profile_status_id = '1' ) AND m.current ='1' LIMIT 1"); 
 
 				$query->execute();
 				$rows = $query->fetchAll(PDO::FETCH_ASSOC);
@@ -704,17 +994,21 @@ $app->get('/getlightboxprofiles', function () use ($app) {
 			
 						// Profile Image
 						$profile_image ='';
-						$query_image = $db->prepare("SELECT *, DATE_FORMAT(created_at, '%Y') as create_year, DATE_FORMAT(created_at, '%m') as create_month, DATE_FORMAT(created_at, '%d') as create_date FROM photos WHERE profile_id = '".$row['id']."' and published ='1' ORDER BY position ASC LIMIT 1"); 
+						$query_image = $db->prepare("SELECT *, DATE_FORMAT(created_at, '%Y') as create_year, DATE_FORMAT(created_at, '%m') as create_month, DATE_FORMAT(created_at, '%d') as create_date FROM photos WHERE profile_id = '".$row['id']."' and published ='1' and media_slet_status != '1' ORDER BY position ASC LIMIT 1"); 
 				$query_image->execute();
 				$image= '';
 				$rows_image = $query_image->fetchAll(PDO::FETCH_ASSOC);
 				if(count($rows_image) > 0){
-					$path = $rows_image[0]['create_year']."/".$rows_image[0]['create_month']."/".$rows_image[0]['create_date']."/".$rows_image[0]['id']."/thumb_";
-					$profile_image = 'http://134.213.29.220/profile_images/'.$path.$rows_image[0]['image'];
-					
+					if (strpos($rows_image[0]['path'], 'vhost') !== false) {
+						$profile_image = 'https://castit.dk/images/uploads/'.$rows_image[0]['image'];
 					}
+					else{
+						$path = $rows_image[0]['create_year']."/".$rows_image[0]['create_month']."/".$rows_image[0]['create_date']."/".$rows_image[0]['id']."/thumb_";
+						$profile_image = 'https://castit.dk/profile_images/'.$path.$rows_image[0]['image'];
+					}
+				}
 				$groupnamear = array();
-				$lb_group_qry = "SELECT pg.*, g.group_name from profile_grouping pg JOIN grouping g ON pg.group_id = g.group_id WHERE pg.profile_id='".$row['id']."'";	
+				$lb_group_qry = "SELECT pg.*, g.group_name from profile_grouping pg JOIN grouping g ON pg.group_id = g.group_id AND g.token_id = '".$grouptoken."' WHERE pg.profile_id='".$row['id']."'";	
 				$query_group = $db->prepare($lb_group_qry);
 				$query_group->execute();
 				$rows_group = $query_group->fetchAll(PDO::FETCH_ASSOC);
@@ -761,7 +1055,13 @@ $app->get('/getlightboxprofiles', function () use ($app) {
 	echoResponse(200, $reponse);
   
 });
-
+$app->post('/updatenotes', function() use ($app){
+	global $db;
+	$data = json_decode($app->request->getBody());
+	$sql = "UPDATE `profile_grouping` set `profile_notes` = '".$data->notes."' WHERE `group_id` = ".$data->group_id." AND `profile_id` = ".$data->profile_id;
+	$updatenotes_in_db = $db->prepare($sql);
+	$updatenotes_in_db->execute();
+});
 /******************************************
 Purpose: Get Grouping profiles list
 Parameter : null
@@ -772,8 +1072,13 @@ $app->get('/getgroupingprofiles', function () use ($app) {
 	$reponse = array();
 	$rowcount = 0;
 	$grouping_profile = array();
-
-	$query_check_gb = $db->prepare("SELECT *, date_format(added_on , '%d.%m.%Y') as addedon  FROM grouping where status = '1' order by group_name asc"); 
+	$grouptoken =  $app->request->get('grouptoken');
+  $sql = "SELECT *, date_format(added_on , '%d.%m.%Y') as addedon  FROM grouping where token_id= '".$grouptoken."' AND status = '1' order by group_name asc";
+  if(isset($_GET['grouptoken_groupid'])){
+    $gpid = (is_numeric($_GET['grouptoken_groupid'])) ? " AND group_id = ".$_GET['grouptoken_groupid'] : '';
+    $sql = "SELECT *, date_format(added_on , '%d.%m.%Y') as addedon  FROM grouping where token_id= '".$grouptoken."' AND status = '1' ". $gpid ." order by group_name asc";
+  }
+  $query_check_gb = $db->prepare($sql); 
 	$query_check_gb->execute();
 	$rows_gb = $query_check_gb->fetchAll(PDO::FETCH_ASSOC);
 	if(count($rows_gb)>0) {
@@ -788,8 +1093,8 @@ $app->get('/getgroupingprofiles', function () use ($app) {
 			$rowcountpg = count($rows_lb_pprofiles);
 			if($rowcountpg > 0){
 				foreach($rows_lb_pprofiles as $rowp) {
-					
-						$query = $db->prepare("SELECT p.*, m.profile_group_id, m.profile_number, m.profile_number_first_name_last_name, m.version, m.current, g.name as gender_name, hc.name as hair_color_name, ec.name as eye_color_name FROM profiles p INNER JOIN memberships m ON m.profile_id = p.id INNER JOIN genders g ON g.id = p.gender_id INNER JOIN hair_colors hc ON hc.id = p.hair_color_id INNER JOIN eye_colors ec ON ec.id = p.eye_color_id  WHERE p.id='".$rowp['profile_id']."' AND (p.profile_status_id = '1' OR  p.profile_status_id = '2') AND m.current ='1' LIMIT 1"); 
+						// $query = $db->prepare("SELECT p.*, m.profile_group_id, m.profile_number, m.profile_number_first_name_last_name, m.version, m.current, g.name as gender_name, hc.name as hair_color_name, ec.name as eye_color_name FROM profiles p INNER JOIN memberships m ON m.profile_id = p.id INNER JOIN genders g ON g.id = p.gender_id INNER JOIN hair_colors hc ON hc.id = p.hair_color_id INNER JOIN eye_colors ec ON ec.id = p.eye_color_id  WHERE p.id='".$rowp['profile_id']."' AND (p.profile_status_id = '1' ) AND m.current ='1' LIMIT 1"); 
+						$query = $db->prepare("SELECT p.*, m.profile_group_id, m.profile_number, m.profile_number_first_name_last_name, m.version, m.current, g.name as gender_name FROM profiles p INNER JOIN memberships m ON m.profile_id = p.id INNER JOIN genders g ON g.id = p.gender_id  WHERE p.id='".$rowp['profile_id']."' AND (p.profile_status_id = '1' ) AND m.current ='1' LIMIT 1"); 
 						$query->execute();
 						$rows = $query->fetchAll(PDO::FETCH_ASSOC);
 						if(count($rows)>0) {
@@ -800,16 +1105,22 @@ $app->get('/getgroupingprofiles', function () use ($app) {
 					
 								// Profile Image
 								$profile_image ='';
-								$query_image = $db->prepare("SELECT *, DATE_FORMAT(created_at, '%Y') as create_year, DATE_FORMAT(created_at, '%m') as create_month, DATE_FORMAT(created_at, '%d') as create_date FROM photos WHERE profile_id = '".$row['id']."' and published ='1' ORDER BY position ASC LIMIT 1"); 
+								$query_image = $db->prepare("SELECT *, DATE_FORMAT(created_at, '%Y') as create_year, DATE_FORMAT(created_at, '%m') as create_month, DATE_FORMAT(created_at, '%d') as create_date FROM photos WHERE profile_id = '".$row['id']."' and published ='1' and media_slet_status != '1' ORDER BY position ASC LIMIT 1"); 
 						$query_image->execute();
 						$image= '';
 						$rows_image = $query_image->fetchAll(PDO::FETCH_ASSOC);
 						if(count($rows_image) > 0){
-							$path = $rows_image[0]['create_year']."/".$rows_image[0]['create_month']."/".$rows_image[0]['create_date']."/".$rows_image[0]['id']."/thumb_";
-							$profile_image = 'http://134.213.29.220/profile_images/'.$path.$rows_image[0]['image'];
-							
+							if (strpos($rows_image[0]['path'], 'vhost') !== false) {
+								$profile_image = 'https://castit.dk/images/uploads/'.$rows_image[0]['image'];
 							}
-						$lb_note = isset($_SESSION["lb_notes"][$row['id']]) ? $_SESSION["lb_notes"][$row['id']]: '' ;
+							else{
+								$path = $rows_image[0]['create_year']."/".$rows_image[0]['create_month']."/".$rows_image[0]['create_date']."/".$rows_image[0]['id']."/thumb_";
+								$profile_image = 'https://castit.dk/profile_images/'.$path.$rows_image[0]['image'];
+							}
+							
+						}
+						// $lb_note = isset($_SESSION["lb_notes"][$row['id']]) ? $_SESSION["lb_notes"][$row['id']]: '' ;
+						$lb_note = $rowp['profile_notes'];
 						$lb_pprofiles[] = array('id' 			=> $row['id'],
 											'bureau' 		=> $row['bureau'],
 											'nationality' 	=> $row['nationality'],
@@ -848,6 +1159,18 @@ $app->get('/getgroupingprofiles', function () use ($app) {
   
 });
 
+$app->get('/removeProfileFromGroup', function () use ($app){
+    global $db;
+	$groupid =  $app->request->get('groupid');
+	$grouptoken =  $app->request->get('grouptoken');
+	$profile_id = $app->request->get('profileid');
+
+	if(($groupid > 0) && ($profile_id > 0)){
+		$query = $db->prepare("delete from profile_grouping where profile_id = " . $profile_id . " AND group_id = " . $groupid);
+		$query->execute();
+	}
+});
+
 /******************************************
 Purpose: Remove group from Grouping profiles list
 Parameter : null
@@ -856,9 +1179,10 @@ Type : GET
 $app->get('/removegroupfromgrouping', function () use ($app) { 
     global $db;
 	$groupid =  $app->request->get('groupid');
+	$grouptoken =  $app->request->get('grouptoken');
 
 	if($groupid){
-		$query_check_gb = $db->prepare("SELECT * FROM grouping where group_id = '".$groupid."'"); 
+		$query_check_gb = $db->prepare("SELECT * FROM grouping where group_id = '".$groupid."' AND token_id = '".$grouptoken."'"); 
 		$query_check_gb->execute();
 		$rows_gb = $query_check_gb->fetchAll(PDO::FETCH_ASSOC);
 		if(count($rows_gb)>0) {
@@ -879,7 +1203,7 @@ $app->get('/removegroupfromgrouping', function () use ($app) {
 	$rowcount = 0;
 	$grouping_profile = array();
 
-	$query_check_gb = $db->prepare("SELECT *, date_format(added_on , '%d.%m.%Y') as addedon  FROM grouping where status = '1' order by group_name asc"); 
+	$query_check_gb = $db->prepare("SELECT *, date_format(added_on , '%d.%m.%Y') as addedon  FROM grouping where status = '1' AND token_id = '".$grouptoken."' order by group_name asc"); 
 	$query_check_gb->execute();
 	$rows_gb = $query_check_gb->fetchAll(PDO::FETCH_ASSOC);
 	if(count($rows_gb)>0) {
@@ -895,7 +1219,7 @@ $app->get('/removegroupfromgrouping', function () use ($app) {
 			if($rowcountpg > 0){
 				foreach($rows_lb_pprofiles as $rowp) {
 					
-						$query = $db->prepare("SELECT p.*, m.profile_group_id, m.profile_number, m.profile_number_first_name_last_name, m.version, m.current, g.name as gender_name, hc.name as hair_color_name, ec.name as eye_color_name FROM profiles p INNER JOIN memberships m ON m.profile_id = p.id INNER JOIN genders g ON g.id = p.gender_id INNER JOIN hair_colors hc ON hc.id = p.hair_color_id INNER JOIN eye_colors ec ON ec.id = p.eye_color_id  WHERE p.id='".$rowp['profile_id']."' AND (p.profile_status_id = '1' OR  p.profile_status_id = '2') AND m.current ='1' LIMIT 1"); 
+						$query = $db->prepare("SELECT p.*, m.profile_group_id, m.profile_number, m.profile_number_first_name_last_name, m.version, m.current, g.name as gender_name, hc.name as hair_color_name, ec.name as eye_color_name FROM profiles p INNER JOIN memberships m ON m.profile_id = p.id INNER JOIN genders g ON g.id = p.gender_id INNER JOIN hair_colors hc ON hc.id = p.hair_color_id INNER JOIN eye_colors ec ON ec.id = p.eye_color_id  WHERE p.id='".$rowp['profile_id']."' AND (p.profile_status_id = '1' ) AND m.current ='1' LIMIT 1"); 
 						$query->execute();
 						$rows = $query->fetchAll(PDO::FETCH_ASSOC);
 						if(count($rows)>0) {
@@ -906,15 +1230,19 @@ $app->get('/removegroupfromgrouping', function () use ($app) {
 					
 								// Profile Image
 								$profile_image ='';
-								$query_image = $db->prepare("SELECT *, DATE_FORMAT(created_at, '%Y') as create_year, DATE_FORMAT(created_at, '%m') as create_month, DATE_FORMAT(created_at, '%d') as create_date FROM photos WHERE profile_id = '".$row['id']."' and published ='1' ORDER BY position ASC LIMIT 1"); 
+								$query_image = $db->prepare("SELECT *, DATE_FORMAT(created_at, '%Y') as create_year, DATE_FORMAT(created_at, '%m') as create_month, DATE_FORMAT(created_at, '%d') as create_date FROM photos WHERE profile_id = '".$row['id']."' and published ='1' and media_slet_status != '1' ORDER BY position ASC LIMIT 1"); 
 						$query_image->execute();
 						$image= '';
 						$rows_image = $query_image->fetchAll(PDO::FETCH_ASSOC);
 						if(count($rows_image) > 0){
-							$path = $rows_image[0]['create_year']."/".$rows_image[0]['create_month']."/".$rows_image[0]['create_date']."/".$rows_image[0]['id']."/thumb_";
-							$profile_image = 'http://134.213.29.220/profile_images/'.$path.$rows_image[0]['image'];
-							
+							if (strpos($rows_image[0]['path'], 'vhost') !== false) {
+								$profile_image = 'https://castit.dk/images/uploads/'.$rows_image[0]['image'];
 							}
+							else{
+								$path = $rows_image[0]['create_year']."/".$rows_image[0]['create_month']."/".$rows_image[0]['create_date']."/".$rows_image[0]['id']."/thumb_";
+								$profile_image = 'https://castit.dk/profile_images/'.$path.$rows_image[0]['image'];
+							}
+						}
 						$lb_note = isset($_SESSION["lb_notes"][$row['id']]) ? $_SESSION["lb_notes"][$row['id']]: '' ;
 						$lb_pprofiles[] = array('id' 			=> $row['id'],
 											'bureau' 		=> $row['bureau'],
@@ -966,9 +1294,10 @@ $app->get('/addgroupintogrouping', function () use ($app) {
 	$reponse = array();
 	$rowcount = 0;
 
-	$grouping_token = generate_uuid();
+	//$grouping_token = generate_uuid();
+	$grouping_token = $app->request->get('grouptoken');
 	
-	$query_check_gp = $db->prepare("SELECT * FROM `grouping` where `group_name` LIKE '%".$groupname."%'"); 
+	$query_check_gp = $db->prepare("SELECT * FROM `grouping` where `group_name` LIKE '%".$groupname."%' AND token_id = '".$grouping_token."'"); 
 	$query_check_gp->execute();
 	$rows_gp = $query_check_gp->fetchAll(PDO::FETCH_ASSOC);
 	if(count($rows_gp)>0) {
@@ -984,7 +1313,7 @@ $app->get('/addgroupintogrouping', function () use ($app) {
 	$rowcount = 0;
 	$grouping_profile = array();
 
-	$query_check_gb = $db->prepare("SELECT *, date_format(added_on , '%d.%m.%Y') as addedon  FROM grouping where status = '1' order by group_name asc"); 
+	$query_check_gb = $db->prepare("SELECT *, date_format(added_on , '%d.%m.%Y') as addedon  FROM grouping where status = '1' AND token_id = '".$grouping_token."' order by group_name asc"); 
 	$query_check_gb->execute();
 	$rows_gb = $query_check_gb->fetchAll(PDO::FETCH_ASSOC);
 	if(count($rows_gb)>0) {
@@ -1000,7 +1329,7 @@ $app->get('/addgroupintogrouping', function () use ($app) {
 			if($rowcountpg > 0){
 				foreach($rows_lb_pprofiles as $rowp) {
 					
-						$query = $db->prepare("SELECT p.*, m.profile_group_id, m.profile_number, m.profile_number_first_name_last_name, m.version, m.current, g.name as gender_name, hc.name as hair_color_name, ec.name as eye_color_name FROM profiles p INNER JOIN memberships m ON m.profile_id = p.id INNER JOIN genders g ON g.id = p.gender_id INNER JOIN hair_colors hc ON hc.id = p.hair_color_id INNER JOIN eye_colors ec ON ec.id = p.eye_color_id  WHERE p.id='".$rowp['profile_id']."' AND (p.profile_status_id = '1' OR  p.profile_status_id = '2') AND m.current ='1' LIMIT 1"); 
+						$query = $db->prepare("SELECT p.*, m.profile_group_id, m.profile_number, m.profile_number_first_name_last_name, m.version, m.current, g.name as gender_name, hc.name as hair_color_name, ec.name as eye_color_name FROM profiles p INNER JOIN memberships m ON m.profile_id = p.id INNER JOIN genders g ON g.id = p.gender_id INNER JOIN hair_colors hc ON hc.id = p.hair_color_id INNER JOIN eye_colors ec ON ec.id = p.eye_color_id  WHERE p.id='".$rowp['profile_id']."' AND (p.profile_status_id = '1' ) AND m.current ='1' LIMIT 1"); 
 						$query->execute();
 						$rows = $query->fetchAll(PDO::FETCH_ASSOC);
 						if(count($rows)>0) {
@@ -1011,15 +1340,19 @@ $app->get('/addgroupintogrouping', function () use ($app) {
 					
 								// Profile Image
 								$profile_image ='';
-								$query_image = $db->prepare("SELECT *, DATE_FORMAT(created_at, '%Y') as create_year, DATE_FORMAT(created_at, '%m') as create_month, DATE_FORMAT(created_at, '%d') as create_date FROM photos WHERE profile_id = '".$row['id']."' and published ='1' ORDER BY position ASC LIMIT 1"); 
+								$query_image = $db->prepare("SELECT *, DATE_FORMAT(created_at, '%Y') as create_year, DATE_FORMAT(created_at, '%m') as create_month, DATE_FORMAT(created_at, '%d') as create_date FROM photos WHERE profile_id = '".$row['id']."' and published ='1' and media_slet_status != '1' ORDER BY position ASC LIMIT 1"); 
 						$query_image->execute();
 						$image= '';
 						$rows_image = $query_image->fetchAll(PDO::FETCH_ASSOC);
 						if(count($rows_image) > 0){
-							$path = $rows_image[0]['create_year']."/".$rows_image[0]['create_month']."/".$rows_image[0]['create_date']."/".$rows_image[0]['id']."/thumb_";
-							$profile_image = 'http://134.213.29.220/profile_images/'.$path.$rows_image[0]['image'];
-							
+							if (strpos($rows_image[0]['path'], 'vhost') !== false) {
+								$profile_image = 'https://castit.dk/images/uploads/'.$rows_image[0]['image'];
 							}
+							else{
+								$path = $rows_image[0]['create_year']."/".$rows_image[0]['create_month']."/".$rows_image[0]['create_date']."/".$rows_image[0]['id']."/thumb_";
+								$profile_image = 'https://castit.dk/profile_images/'.$path.$rows_image[0]['image'];
+							}
+						}
 						$lb_note = isset($_SESSION["lb_notes"][$row['id']]) ? $_SESSION["lb_notes"][$row['id']]: '' ;
 						$lb_pprofiles[] = array('id' 			=> $row['id'],
 											'bureau' 		=> $row['bureau'],
@@ -1075,12 +1408,31 @@ $app->get('/countries', function () use ($app) {
 	
     foreach($rows_countries as $row) {
 		$countries[] = array('id' => $row['id'],
-						  'name' => $row['name']
+						  'name' => $row['name_dk']
 						);
-	}
-	echoResponse(200, $countries);
+		}
+		// sort alphabetically by name
+		usort($countries, 'compare_country_name');
+		echoResponse(200, $countries);
 });
 
+function compare_country_name($a, $b){
+		return strnatcmp($a['name'], $b['name']);
+}
+
+$app->get('/countries/en', function () use ($app) { 
+  global $db;
+	$query_country = $db->prepare("SELECT * FROM countries order by name"); 
+	$query_country->execute();
+	$rows_countries = $query_country->fetchAll(PDO::FETCH_ASSOC);
+  foreach($rows_countries as $row) {
+		$countries[] = array('id' => $row['id'],
+			'name' => $row['name']
+		);
+	}
+	usort($countries, 'compare_country_name');
+	echoResponse(200, $countries);
+});
 
 
 
@@ -1092,13 +1444,16 @@ Type : POST
 $app->post('/step1Create',function () use ($app) { 
     global $db;
 	$data =  json_decode($app->request->getBody(), true);
+  // echo '<pre>';print_r($_SESSION["step1"]);exit;
 	$response = array();
 	global $imageClass;
 
 	$_SESSION["step1"]["status"] =1;
 	$_SESSION["step1"]["first_name"]= $data['first_name'];
 	$_SESSION["step1"]["last_name"]= $data['last_name'];
-	$_SESSION["step1"]["password"]= $data['password'];
+	if (isset($data['password'])) {
+		$_SESSION["step1"]["password"]= $data['password'];
+	}
 	$_SESSION["step1"]["address"]= $data['address'];
 	$_SESSION["step1"]["zipcode"]= $data['zipcode'];
 	$_SESSION["step1"]["city"]= $data['city'];
@@ -1192,7 +1547,8 @@ $app->post('/step2Create',function () use ($app) {
 	$_SESSION["step2"]["birth_day"]= $data['birth_day'];
 	$_SESSION["step2"]["birth_month"]= $data['birth_month'];
 	$_SESSION["step2"]["birth_year"]= $data['birth_year'];
-	$_SESSION["step2"]["ethinic_origin"]= $data['ethinic_origin'];
+	$_SESSION["step2"]["ethnic_origin"]= $data['ethnic_origin'];
+	$_SESSION["step2"]["job"]= $data['job'];
 
 	$response = array('success' => true);
 			
@@ -1311,21 +1667,21 @@ $app->post('/step3Create',function () use ($app) {
 	$response = array();
 	global $imageClass;
 
-	$_SESSION["step3"]["status"] 			=1;
-	$_SESSION["step3"]["shirt_size_from"]	= $data['shirt_size_from'];
-	$_SESSION["step3"]["shirt_size_to"]		= $data['shirt_size_to'];
-	$_SESSION["step3"]["pants_size_from"]	= $data['pants_size_from'];
-	$_SESSION["step3"]["pants_size_to"]		= $data['pants_size_to'];
-	$_SESSION["step3"]["shoe_size_from"]	= $data['shoe_size_from'];
-	$_SESSION["step3"]["shoe_size_to"]		= $data['shoe_size_to'];
-	$_SESSION["step3"]["suite_size_from"]	= $data['suite_size_from'];
-	$_SESSION["step3"]["suite_size_to"]		= $data['suite_size_to'];
-	$_SESSION["step3"]["children_sizes"]	= $data['children_sizes'];
-	$_SESSION["step3"]["eye_color_id"]		= $data['eye_color_id'];
-	$_SESSION["step3"]["hair_color_id"]		= $data['hair_color_id'];
-	$_SESSION["step3"]["bra_size"]			= $data['bra_size'];
-	$_SESSION["step3"]["height"]			= $data['height'];
-	$_SESSION["step3"]["weight"]			= $data['weight'];
+	$_SESSION["step3"]["status"] 			= 1;
+	$_SESSION["step3"]["shirt_size_from"]	= isset($data['shirt_size_from']) ? $data['shirt_size_from'] : '-';
+	$_SESSION["step3"]["shirt_size_to"]		= isset($data['shirt_size_to']) ? $data['shirt_size_to'] : '-';
+	$_SESSION["step3"]["pants_size_from"]	= isset($data['pants_size_from']) ? $data['pants_size_from'] : '-';
+	$_SESSION["step3"]["pants_size_to"]		= isset($data['pants_size_to']) ? $data['pants_size_to'] : '-';
+	$_SESSION["step3"]["shoe_size_from"]	= isset($data['shoe_size_from']) ? $data['shoe_size_from'] : '-';
+	$_SESSION["step3"]["shoe_size_to"]		= isset($data['shoe_size_to']) ? $data['shoe_size_to'] : '-';
+	$_SESSION["step3"]["suite_size_from"]	= isset($data['suite_size_from']) ? $data['suite_size_from'] : '-';
+	$_SESSION["step3"]["suite_size_to"]		= isset($data['suite_size_to']) ? $data['suite_size_to'] : '-';
+	$_SESSION["step3"]["children_sizes"]	= isset($data['children_sizes']) ? $data['children_sizes'] : '-';
+	$_SESSION["step3"]["eye_color_id"]		= isset($data['eye_color_id']) ? $data['eye_color_id'] : '-';
+	$_SESSION["step3"]["hair_color_id"]		= isset($data['hair_color_id']) ? $data['hair_color_id'] : '-';
+	$_SESSION["step3"]["bra_size"]			= isset($data['bra_size']) ? $data['bra_size'] : '-';
+	$_SESSION["step3"]["height"]			= isset($data['height']) ? $data['height'] : '-';
+	$_SESSION["step3"]["weight"]			= isset($data['weight']) ? $data['weight'] : '-';
 
 	$response = array('success' => true);
 			
@@ -1422,7 +1778,19 @@ $app->get('/getcategories', function () use ($app) {
 	}
 	echoResponse(200, $categories);
 });
-
+$app->get('/getcategories/en', function () use ($app) { 
+    global $db;
+	$query_categories = $db->prepare("SELECT * FROM categories order by sortby"); 
+	$query_categories->execute();
+	$rows_categories = $query_categories->fetchAll(PDO::FETCH_ASSOC);
+	
+    foreach($rows_categories as $row) {
+		$categories[] = array('id' => $row['id'],
+						  'name' => $row['name_en'],
+						);
+	}
+	echoResponse(200, $categories);
+});
 /******************************************
 Purpose: Get skills for dropdown
 Parameter : 
@@ -1437,6 +1805,19 @@ $app->get('/getskills', function () use ($app) {
     foreach($rows_skills as $row) {
 		$skills[] = array('id' => $row['id'],
 						  'name' => $row['name']
+						);
+	}
+	echoResponse(200, $skills);
+});
+$app->get('/getskills/en', function () use ($app) { 
+    global $db;
+	$query_skills = $db->prepare("SELECT * FROM skills order by sortby"); 
+	$query_skills->execute();
+	$rows_skills = $query_skills->fetchAll(PDO::FETCH_ASSOC);
+	
+    foreach($rows_skills as $row) {
+		$skills[] = array('id' => $row['id'],
+						  'name' => $row['name_en']
 						);
 	}
 	echoResponse(200, $skills);
@@ -1461,6 +1842,19 @@ $app->get('/getlicences', function () use ($app) {
 	}
 	echoResponse(200, $licences);
 });
+$app->get('/getlicences/en', function () use ($app) { 
+    global $db;
+	$query_licence = $db->prepare("SELECT * FROM drivers_licenses order by sortby"); 
+	$query_licence->execute();
+	$rows_licences = $query_licence->fetchAll(PDO::FETCH_ASSOC);
+	
+    foreach($rows_licences as $row) {
+		$licences[] = array('id' => $row['id'],
+						  'name' => $row['name_en']
+						);
+	}
+	echoResponse(200, $licences);
+});
 
 /******************************************
 Purpose: Register user step 4
@@ -1473,9 +1867,9 @@ $app->post('/step4Create',function () use ($app) {
 	$response = array();
 	global $imageClass;
 
-	$_SESSION["step4"]["status"] 			=1;
+	$_SESSION["step4"]["status"] = 1;
 	$_SESSION["step4"]["notes"]	= $data['notes'];
-	$_SESSION["step4"]["job"]		= $data['job'];
+	$_SESSION["step4"]["sports_hobby"] = $data['sportshobby'];
 	$_SESSION["step4"]["selectedcategories"]	= $data['selectedcategories'];
 	$_SESSION["step4"]["selectedskills"]	= $data['selectedskills'];
 	$_SESSION["step4"]["selectedlicences"]	= $data['selectedlicences'];
@@ -1585,8 +1979,27 @@ $app->get('/getlanguages', function () use ($app) {
 						  'name' => $row['name']
 						);
 	}
+	usort($languages, 'compare_language_name');
 	echoResponse(200, $languages);
 });
+function compare_language_name($a, $b){
+	return strnatcmp($a['name'], $b['name']);
+}
+$app->get('/getlanguages/en', function () use ($app) { 
+	global $db;
+$query_language = $db->prepare("SELECT * FROM language_proficiency_languages order by name_en"); 
+$query_language->execute();
+$rows_language = $query_language->fetchAll(PDO::FETCH_ASSOC);
+
+	foreach($rows_language as $row) {
+	$languages[] = array('id' => $row['id'],
+						'name' => $row['name_en']
+					);
+}
+usort($languages, 'compare_language_name');
+echoResponse(200, $languages);
+});
+
 
 /******************************************
 Purpose: Get rating icons for available languages
@@ -1624,8 +2037,11 @@ $app->post('/step5Create',function () use ($app) {
 	$data =  json_decode($app->request->getBody(), true);
 	$response = array();
 	global $imageClass;
+	$_SESSION['operation'] = isset($data['operation']) ? $data['operation'] : "insert";
+	$_SESSION['user_profile_id'] = isset($data['user_profile_id']) ? $data['user_profile_id'] : "";
 
 	$_SESSION["step5"]["status"] 			=1;
+
 	if(isset($data['lang1']))
 		$_SESSION["step5"]["lang1"]	= $data['lang1'];
 	if(isset($data['lang2']))
@@ -1634,6 +2050,7 @@ $app->post('/step5Create',function () use ($app) {
 		$_SESSION["step5"]["lang3"]	= $data['lang3'];
 	if(isset($data['lang4']))
 		$_SESSION["step5"]["lang4"]	= $data['lang4'];
+
 	if(isset($data['langrateval1']))
 		$_SESSION["step5"]["langrateval1"]	= $data['langrateval1'];
 	if(isset($data['langrateval2']))
@@ -1642,6 +2059,16 @@ $app->post('/step5Create',function () use ($app) {
 		$_SESSION["step5"]["langrateval3"]	= $data['langrateval3'];
 	if(isset($data['langrateval4']))
 		$_SESSION["step5"]["langrateval4"]	= $data['langrateval4'];
+
+	if(isset($data['lng_pro_id1']))
+		$_SESSION["step5"]["lng_pro_id1"]	= $data['lng_pro_id1'];
+	if(isset($data['lng_pro_id2']))
+		$_SESSION["step5"]["lng_pro_id2"]	= $data['lng_pro_id2'];
+	if(isset($data['lng_pro_id3']))
+		$_SESSION["step5"]["lng_pro_id3"]	= $data['lng_pro_id3'];
+	if(isset($data['lng_pro_id4']))
+		$_SESSION["step5"]["lng_pro_id4"]	= $data['lng_pro_id4'];
+
 	if(isset($data['dealekter1']))
 		$_SESSION["step5"]["dealekter1"]	= $data['dealekter1'];
 	if(isset($data['dealekter2']))
@@ -1756,7 +2183,21 @@ Parameter : Form post parameters
 Type : POST
 ******************************************/
 $app->post('/step6Create',function () use ($app) { 
+	unset($_SESSION['Image_file_location']);
+	unset($_SESSION['Video_file_location']);
+	unset($_SESSION['Video_file']['name']);
+	unset($_SESSION['Image_file']['name']);
+	// ppe($_SESSION);
+	
 
+});
+
+$app->post('/step7Create', function() use ($app){
+	// echo '<pre>';
+	// var_dump($_SESSION);
+	// exit;
+	$operation = (isset($_SESSION['operation'])) ? $_SESSION['operation'] : 'insert';
+	$user_profile_id = (isset($_SESSION['user_profile_id'])) ? $_SESSION['user_profile_id'] : '';
 	global $db;
 	$first_name=$_SESSION["step1"]["first_name"];
 	$last_name=$_SESSION["step1"]["last_name"];
@@ -1776,7 +2217,8 @@ $app->post('/step6Create',function () use ($app) {
 	$birth_month=$_SESSION["step2"]["birth_month"];
 	$birth_year=$_SESSION["step2"]["birth_year"];
 	$birthday=$birth_year."-".$birth_month."-".$birth_day;
-	$ethinic_origin=$_SESSION["step2"]["ethinic_origin"];
+	$ethnic_origin=$_SESSION["step2"]["ethnic_origin"];
+	$job=$_SESSION["step2"]["job"];
 
 	$shirt_size_from=$_SESSION["step3"]["shirt_size_from"]!=''?(int)$_SESSION["step3"]["shirt_size_from"]:'NULL';	
 	$shirt_size_to=$_SESSION["step3"]["shirt_size_to"]!=''?(int)$_SESSION["step3"]["shirt_size_to"]:'NULL';
@@ -1787,14 +2229,14 @@ $app->post('/step6Create',function () use ($app) {
 	$suite_size_from=$_SESSION["step3"]["suite_size_from"]!=''?(int)$_SESSION["step3"]["suite_size_from"]:'NULL';
 	$suite_size_to=$_SESSION["step3"]["suite_size_to"]!=''?(int)$_SESSION["step3"]["suite_size_to"]:'NULL';
 	$children_sizes=$_SESSION["step3"]["children_sizes"]!=''?(int)$_SESSION["step3"]["children_sizes"]:'NULL';
-	$eye_color_id=$_SESSION["step3"]["eye_color_id"]!=''?(int)$_SESSION["step3"]["eye_color_id"]:'NULL';
-	$hair_color_id=$_SESSION["step3"]["hair_color_id"]!=''?(int)$_SESSION["step3"]["hair_color_id"]:'NULL';
-	$bra_size=$_SESSION["step3"]["bra_size"]!=''?(int)$_SESSION["step3"]["bra_size"]:'NULL';
-	$height=$_SESSION["step3"]["height"]!=''?(int)$_SESSION["step3"]["height"]:'NULL';
-	$weight=$_SESSION["step3"]["weight"]!=''?(int)$_SESSION["step3"]["weight"]:'NULL';
+	$eye_color_id=$_SESSION["step3"]["eye_color_id"]!=''?$_SESSION["step3"]["eye_color_id"]:'NULL';
+	$hair_color_id=$_SESSION["step3"]["hair_color_id"]!=''?$_SESSION["step3"]["hair_color_id"]:'NULL';
+	$bra_size=$_SESSION["step3"]["bra_size"]!=''?(string)$_SESSION["step3"]["bra_size"]:'NULL';
+	$height=$_SESSION["step3"]["height"]!=''?(string)$_SESSION["step3"]["height"]:'NULL';
+	$weight=$_SESSION["step3"]["weight"]!=''?(string)$_SESSION["step3"]["weight"]:'NULL';
 
 	$notes=$_SESSION["step4"]["notes"];
-	$job=$_SESSION["step4"]["job"];
+	$sports_hobby=$_SESSION["step4"]["sports_hobby"];
 	$selectedcategories=$_SESSION["step4"]["selectedcategories"];
 	$selectedskills=$_SESSION["step4"]["selectedskills"];
 	$selectedlicences=$_SESSION["step4"]["selectedlicences"];
@@ -1807,6 +2249,7 @@ $app->post('/step6Create',function () use ($app) {
 		$languages[2]['language_id']=$_SESSION["step5"]["lang3"];
 	if(isset($_SESSION["step5"]["lang4"])&& $_SESSION["step5"]["lang4"]!='')
 		$languages[3]['language_id']=$_SESSION["step5"]["lang4"];
+
 	if(isset($_SESSION["step5"]["langrateval1"]) && $_SESSION["step5"]["langrateval1"]!='')
 		$languages[0]['rating_id']=$_SESSION["step5"]["langrateval1"];
 	if(isset($_SESSION["step5"]["langrateval2"]) && $_SESSION["step5"]["langrateval2"]!='')
@@ -1815,82 +2258,670 @@ $app->post('/step6Create',function () use ($app) {
 		$languages[2]['rating_id']=$_SESSION["step5"]["langrateval3"];
 	if(isset($_SESSION["step5"]["langrateval4"]) && $_SESSION["step5"]["langrateval4"]!='')
 		$languages[3]['rating_id']=$_SESSION["step5"]["langrateval4"];
+
+	if(isset($_SESSION["step5"]["lng_pro_id1"]) && $_SESSION["step5"]["lng_pro_id1"]!='')
+		$languages[0]['lng_pro_id']=$_SESSION["step5"]["lng_pro_id1"];
+	if(isset($_SESSION["step5"]["lng_pro_id2"]) && $_SESSION["step5"]["lng_pro_id2"]!='')
+		$languages[1]['lng_pro_id']=$_SESSION["step5"]["lng_pro_id2"];
+	if(isset($_SESSION["step5"]["lng_pro_id3"]) && $_SESSION["step5"]["lng_pro_id3"]!='')
+		$languages[2]['lng_pro_id']=$_SESSION["step5"]["lng_pro_id3"];
+	if(isset($_SESSION["step5"]["lng_pro_id4"]) && $_SESSION["step5"]["lng_pro_id4"]!='')
+		$languages[3]['lng_pro_id']=$_SESSION["step5"]["lng_pro_id4"];
+
+		$dealekter1 = '';
+		$dealekter2 = '';
+		$dealekter3 = '';
+
 	if(isset($_SESSION["step5"]["dealekter1"]) && $_SESSION["step5"]["dealekter1"]!='')
 		$dealekter1=$_SESSION["step5"]["dealekter1"];
 	if(isset($_SESSION["step5"]["dealekter2"]) && $_SESSION["step5"]["dealekter2"]!='')
 		$dealekter2=$_SESSION["step5"]["dealekter2"];
-	if(isset($data['dealekter3']) && $_SESSION["step5"]["dealekter3"]!='')
+	if(isset($_SESSION["step5"]["dealekter3"]) && $_SESSION["step5"]["dealekter3"]!='')
 		$dealekter3=$_SESSION["step5"]["dealekter3"];
+	$agreed_to_these_terms=1;
 
-		$agreed_to_these_terms=1;
-		$q_chip = "INSERT INTO `profiles` ( `first_name`, `last_name`, `gender_id`, `hair_color_id`,`eye_color_id`, `birthday`, `height`, `weight`, `shoe_size_from`, `shoe_size_to`, 	`shirt_size_from`,`shirt_size_to`,`pants_size_from`,`pants_size_to`,`bra_size`,`children_sizes`,`address`,`zipcode`,`city`,`country_id`,`phone`,`phone_at_work`,`email`,`job`,`notes`,`agreed_to_these_terms`,`password`,`hashed_password`,`created_at`,`updated_at`,`suite_size_from`,`suite_size_to`) VALUES ('".$first_name."', '".$last_name."','".$gender_id."',".$hair_color_id.",".$eye_color_id.",'".$birthday."',".$height.",".$weight.",".$shoe_size_from.",".$shoe_size_to.",".$shirt_size_from.",".$shirt_size_to.",".$pants_size_from.",".$pants_size_from.",".$bra_size.",".$children_sizes.",'".$address."','".$zipcode."','".$city."','".$country_id."','".$phone."','".$phone_at_work."','".$email."','".$job."','".$notes."','".$agreed_to_these_terms."','".$password."','".$hashed_password."',now(),now(),".$suite_size_from.",".$suite_size_to.")";
-				$profile_id = $db->exec($q_chip);
 
-				if($profile_id){
-					if($selectedcategories!=''){
-						$cat_arr= explode(",",$selectedcategories);
-						foreach($cat_arr as $cat){
-							$query = "INSERT INTO `categories_profiles` (`profile_id`,`category_id`) VALUES ('".$profile_id."','".$cat."')";
-							$db->exec($query);
-						}
-					}
-					if($selectedskills!=''){
-						$skill_arr= explode(",",$selectedskills);
-						foreach($skill_arr as $skill){
-							$query = "INSERT INTO `profiles_skills` (`profile_id`,`skill_id`) VALUES ('".$profile_id."','".$skill."')";
-							$db->exec($query);
-						}
-					}
-					if($selectedlicences){
-						$license_arr= explode(",",$selectedlicences);
-						foreach($license_arr as $license){
-							$query = "INSERT INTO `drivers_licenses_profiles` (`profile_id`,`drivers_license_id`) VALUES ('".$profile_id."','".$license."')";
-							$db->exec($query);
-						}
-					}
-					if(!empty($selectedlicences)){
-						foreach($languages as $language){
-							$query = "INSERT INTO `language_proficiencies` (`language_proficiency_language_id`,`profile_id`,`language_proficiency_rating_id`,`created_at`,`updated_at`) VALUES ('".$language['language_id']."','".$profile_id."','".$language['rating_id']."',now(),now())";
-							//echo $query;
-							$db->exec($query);
-						}
-					}
-						if(isset($_FILES['Image_file']['name'][0])){
-							foreach($_FILES['Image_file']['name'] as $key=>$value){
-								$filename = $_FILES['Image_file']['name'][$key];
-								$location = $_SERVER['DOCUMENT_ROOT'].'/images/uploads/';
-								move_uploaded_file($_FILES['Image_file']['tmp_name'][$key],$location.$filename);
-								$query = "INSERT INTO `photos` (`path`,`original_path`,`profile_id`,`filename`,`published`,`position`,`phototype_id`,`image`,`created_at`,`updated_at`,`image_tmp`,`image_processing`,`image_token`) VALUES ('".$location."','".$location."','".$profile_id."','".$filename."','1','".$key."','1','".$filename."',now(),now(),'".$filename."','1','".$filename."')";
-								$db->exec($query);
-							}	
-						}
-					
-					if(isset($_FILES['Video_file']['name'][0])){
-						//echo "ok";die;
-						foreach($_FILES['Video_file']['name'] as $key=>$value){
-							$filename = $_FILES['Video_file']['name'][$key];
-							$location = $_SERVER['DOCUMENT_ROOT'].'/images/uploads/';
-							move_uploaded_file($_FILES['Video_file']['tmp_name'][$key],$location.$filename);
-							$query = "INSERT INTO `videos` (`profile_id`,`path`,`uploaded_as_filename`,`filename`,`video_original_path`,`video_original_filename`,`video_original_file_basename`,`thumbnail_original_photo_path`,`thumbnail_photo_path`,`thumbnail_photo_filename`,`thumbnail_at_time`,`published`,`position`) VALUES ('".$profile_id."','".$location."','".$location."','".$filename."','".$filename."','".$filename."','".$filename."','".$filename."','".$filename."','".$filename."','3','1','".$key."')";
-							//echo $query;die;
-							$db->exec($query);
-						}	
-					
-					}
-				session_destroy();
-				echoResponse(200,array('status'=>true,'msg'=>'Registered Sucessfully'));
+	if($operation == 'insert'){
+		$q_chip = "INSERT INTO `profiles` ( 
+			`first_name`, 
+			`last_name`, 
+			`gender_id`, 
+			`hair_color_id`,
+			`eye_color_id`, 
+			`birthday`, 
+			`height`, 
+			`weight`, 
+			`shoe_size_from`, 
+			`shoe_size_to`, 
+			`shirt_size_from`,
+			`shirt_size_to`,
+			`pants_size_from`,
+			`pants_size_to`,
+			`bra_size`,
+			`children_sizes`,
+			`address`,
+			`zipcode`,
+			`city`,
+			`country_id`,
+			`phone`,
+			`phone_at_work`,
+			`email`,
+			`job`,
+			`notes`,
+			`agreed_to_these_terms`,
+			`password`,
+			`hashed_password`,
+			`created_at`,
+			`updated_at`,
+			`suite_size_from`,
+			`suite_size_to`,
+			`sports_hobby`,
+			`ethnic_origin`,
+			`dealekter1`,
+			`dealekter2`,
+			`dealekter3`) 
+			VALUES (
+				'".$first_name."',
+				'".$last_name."',
+				'".$gender_id."',
+				'".$hair_color_id."',
+				'".$eye_color_id."',
+				'".$birthday."',
+				'".$height."',
+				'".$weight."',
+				".$shoe_size_from.",
+				".$shoe_size_to.",
+				".$shirt_size_from.",
+				".$shirt_size_to.",
+				".$pants_size_from.",
+				".$pants_size_to.",
+				'".$bra_size."',
+				".$children_sizes.",
+				'".$address."',
+				'".$zipcode."',
+				'".$city."',
+				'".$country_id."',
+				'".$phone."',
+				'".$phone_at_work."',
+				'".$email."',
+				'".$job."',
+				'".$notes."',
+				'".$agreed_to_these_terms."',
+				'".$password."',
+				'".$hashed_password."',
+				now(),
+				now(),
+				".$suite_size_from.",
+				".$suite_size_to.",
+				'".$sports_hobby."',
+				'".$ethnic_origin."',
+				'".$dealekter1."',
+				'".$dealekter2."',
+				'".$dealekter3."'
+				)";
 
+		$profile_id = $db->exec($q_chip);
+		$user_profile_id = $profile_id;
+		if($profile_id){
+			
+			// 1 male - YM; 2 female - YF
+			$profile_number_prefix = ($gender_id == 2) ? "YF":"YM";
+			$max_existing = $db->prepare("SELECT MAX(CAST(SUBSTRING(profile_number, 3) AS UNSIGNED)) as max_profile FROM memberships where profile_number LIKE 'Y%' OR profile_number LIKE 'C%' OR profile_number LIKE 'B%' ");
+			$max_existing->execute();
+			$max_profile = $max_existing->fetchAll(PDO::FETCH_ASSOC);
+			
+			$profile_number = $profile_number_prefix . ($max_profile[0]['max_profile'] + 1);
+			$profile_number_first_name_last_name = $profile_number . " " . $first_name . " " . $last_name;
+			$version = 1;
+			$created_at = date("o-m-d H:i:s");
+			$current = 1;
+			$set_to_current_at = date("o-m-d");
+			$previous_profile_group_id = 1;
+			$previous_profile_number = '';
+
+
+			$membership_table_query = "INSERT INTO
+				memberships(
+				`profile_id`, 
+				`profile_group_id`, 
+				`profile_number`, 
+				`profile_number_first_name_last_name`, 
+				`version`, 
+				`created_at`, 
+				`current`, 
+				`set_to_current_at`, 
+				`previous_profile_group_id`, 
+				`previous_profile_number`)
+				VALUES
+				('$profile_id', 1, '$profile_number', '$profile_number_first_name_last_name', '$version', '$created_at', '$current', '$set_to_current_at', '$previous_profile_group_id', '$previous_profile_number' )";
+		
+			$activation = $db->prepare($membership_table_query);
+			$activation->execute();
+
+
+			if($selectedcategories!=''){
+				if(!(is_array($selectedcategories))){
+					$cat_arr= explode(",",$selectedcategories);
 				}
 				else{
-					echoResponse(200,array('status'=>false,'msg'=>'Couldn\'t Register, Please try again later'));
+					$cat_arr= $selectedcategories;
 				}
-			
-				
-		
-	
 
-	
+				foreach($cat_arr as $cat){
+					$query = "INSERT INTO `categories_profiles` (`profile_id`,`category_id`) VALUES ('".$profile_id."','".$cat."')";
+					$db->exec($query);
+				}
+			}
+
+			if($selectedskills!=''){
+				if(!(is_array($selectedskills))){
+					$skill_arr= explode(",",$selectedskills);
+				}
+				else{
+					$skill_arr= $selectedskills;
+				}
+				foreach($skill_arr as $skill){
+					$query = "INSERT INTO `profiles_skills` (`profile_id`,`skill_id`) VALUES ('".$profile_id."','".$skill."')";
+					$db->exec($query);
+				}
+			}
+
+			if($selectedlicences){
+				if(!(is_array($selectedlicences))){
+					$license_arr= explode(",",$selectedlicences);
+				}
+				else{
+					$license_arr= $selectedlicences;
+				}
+				foreach($license_arr as $license){
+				$query = "INSERT INTO `drivers_licenses_profiles` (`profile_id`,`drivers_license_id`) VALUES ('".$profile_id."','".$license."')";
+				$db->exec($query);
+				}
+			}
+
+			if(!empty($languages)){
+				foreach($languages as $language){
+					$query = "INSERT INTO `language_proficiencies` (`language_proficiency_language_id`,`profile_id`,`language_proficiency_rating_id`,`created_at`,`updated_at`) VALUES ('".$language['language_id']."','".$profile_id."','".$language['rating_id']."',now(),now())";
+					//echo $query;
+					$db->exec($query);
+				}
+			}
+			
+			echoResponse(200,array('status'=>true,'msg'=>'Tak for din oprettelse. Du modtager en mail fra os inden for 2 uger, når vi har kigget din ansøgning igennem','email'=>$email, 'first_name'=>$first_name, 'last_name'=>$last_name, 'profile_number'=>$profile_number, 'profile_id'=> $profile_id));
+
+		}
+		else{
+			echoResponse(200,array('status'=>false,'msg'=>'Couldn\'t Register, Please try again later'));
+		}
+	}
+	if($operation == "update"){
+		if($user_profile_id != ""){
+			$q_chip =  "UPDATE profiles 
+									 SET
+									 first_name = '$first_name', 
+									last_name = '$last_name', 
+									gender_id = $gender_id, 
+									hair_color_id = '$hair_color_id',
+									eye_color_id = '$eye_color_id', 
+									birthday = '$birthday',
+									height = '$height', 
+									weight = '$weight', 
+									shoe_size_from = $shoe_size_from, 
+									shoe_size_to = $shoe_size_to,
+									shirt_size_from = $shirt_size_from,
+									shirt_size_to = $shirt_size_to,
+									pants_size_from = $pants_size_from,
+									pants_size_to = $pants_size_to,
+									bra_size = '$bra_size',
+									children_sizes = $children_sizes,
+									address = '$address',
+									zipcode = '$zipcode',
+									city = '$city',
+									country_id = $country_id,
+									phone = '$phone',
+									phone_at_work = '$phone_at_work',
+									email = '$email',
+									job = '$job',
+									notes = '$notes',
+									agreed_to_these_terms = $agreed_to_these_terms,
+									password = '$password',
+									hashed_password = '$hashed_password',
+									updated_at = now(),
+									suite_size_from = $suite_size_from,
+									suite_size_to = $suite_size_to,
+									ethnic_origin = '$ethnic_origin',
+									sports_hobby = '$sports_hobby',
+									dealekter1 = '$dealekter1',
+									dealekter2 = '$dealekter2',
+									dealekter3 = '$dealekter3'
+								WHERE id = $user_profile_id";
+								// echo $q_chip;
+								// exit;
+					$query_prepared = $db->prepare($q_chip);
+					$query_prepared->execute();
+			}
+			$check_membership_query		= "SELECT * from memberships where profile_id = $user_profile_id";
+			$check_membership 				= $db->prepare($check_membership_query);
+			$check_membership->execute();
+			$m_count = $check_membership->rowCount();
+			if($m_count > 0){
+			  $membership_table_query = "UPDATE memberships SET current = '1' WHERE profile_id = $user_profile_id";
+	}
+	else{
+	  // 1 male - CM; 2 female - CF
+	  $profile_number_prefix = ($gender_id == 2) ? "CF":"CM";
+	  $max_existing = $db->prepare("SELECT MAX(CAST(SUBSTRING(profile_number, 3) AS UNSIGNED)) as max_profile FROM memberships where profile_number LIKE 'C%' OR profile_number LIKE 'Y%' OR profile_number LIKE 'B%'");
+	  $max_existing->execute();
+	  $max_profile = $max_existing->fetchAll(PDO::FETCH_ASSOC);
+	  
+	  $profile_number = $profile_number_prefix . ($max_profile[0]['max_profile'] + 1);
+	  $profile_number_first_name_last_name = $profile_number . " " . $first_name . " " . $last_name;
+	  $version = 1;
+	  $created_at = date("o-m-d H:i:s");
+	  $current = 1;
+	  $set_to_current_at = date("o-m-d");
+	  $previous_profile_group_id = 1;
+	  $previous_profile_number = '';
+
+
+	  $membership_table_query = "INSERT INTO
+		memberships(
+		`profile_id`, 
+		`profile_group_id`, 
+		`profile_number`, 
+		`profile_number_first_name_last_name`, 
+		`version`, 
+		`created_at`, 
+		`current`, 
+		`set_to_current_at`, 
+		`previous_profile_group_id`, 
+		`previous_profile_number`)
+		VALUES
+		('$user_profile_id', 1, '$profile_number', '$profile_number_first_name_last_name', '$version', '$created_at', '$current', '$set_to_current_at', '$previous_profile_group_id', '$previous_profile_number' )";
+	}
+	$activation = $db->prepare($membership_table_query);
+	$activation->execute();
+
+			if($selectedcategories!=''){
+				if(!(is_array($selectedcategories))){
+					$cat_arr= explode(",",$selectedcategories);
+				}
+				else{
+					$cat_arr= $selectedcategories;
+				}
+				
+				$clear_existance_query = $db->prepare("delete from categories_profiles where profile_id = ".$user_profile_id);
+				$clear_existance_query->execute();
+
+				foreach($cat_arr as $cat){
+					$query = "INSERT INTO `categories_profiles` (`profile_id`,`category_id`) VALUES ('".$user_profile_id."','".$cat."')";
+					$query_prepared = $db->prepare($query);
+					$query_prepared->execute();
+				}
+			}
+
+			if($selectedskills!=''){
+				if(!(is_array($selectedskills))){
+					$skill_arr= explode(",",$selectedskills);
+				}
+				else{
+					$skill_arr= $selectedskills;
+				}
+				
+				$clear_existance_query = $db->prepare("delete from profiles_skills where profile_id = ".$user_profile_id);
+				$clear_existance_query->execute();
+
+				foreach($skill_arr as $skill){
+					$query = "INSERT INTO `profiles_skills` (`profile_id`,`skill_id`) VALUES ('".$user_profile_id."','".$skill."')";
+					$query_prepared = $db->prepare($query);
+					$query_prepared->execute();
+				}
+			}
+
+			if($selectedlicences){
+				if(!(is_array($selectedlicences))){
+					$license_arr= explode(",",$selectedlicences);
+				}
+				else{
+					$license_arr= $selectedlicences;
+				}
+
+				$clear_existance_query = $db->prepare("delete from drivers_licenses_profiles where profile_id = ".$user_profile_id);
+    		$clear_existance_query->execute();
+				foreach($license_arr as $license){
+					$sql_query = "INSERT INTO `drivers_licenses_profiles` (`profile_id`,`drivers_license_id`) VALUES ('".$user_profile_id."','".$license."')";
+					$prepared_query = $db->prepare($sql_query);
+					$prepared_query->execute();
+				}
+			}
+
+			if(!empty($languages)){
+				$clear_existance_query = $db->prepare("delete from language_proficiencies where profile_id = ".$user_profile_id);
+				$clear_existance_query->execute();
+				foreach($languages as $language){
+					$language_id = $language['language_id'];
+					$rating_id = $language['rating_id'];
+					
+					if($language_id != 0 && $language_id != ''){
+						$query = "INSERT INTO `language_proficiencies` (`language_proficiency_language_id`,`profile_id`,`language_proficiency_rating_id`,`created_at`,`updated_at`) VALUES ('".$language['language_id']."','".$user_profile_id."','".$language['rating_id']."',now(),now())";
+					}
+					$query_prepared = $db->prepare($query);
+					$query_prepared->execute();
+				}
+			}
+			/*
+			if(isset($_SESSION['Image_file'])){
+				foreach($_SESSION['Image_file'] as $key => $image){
+					$filename = $image['name'][0];
+					$location = $_SERVER['DOCUMENT_ROOT'].'/images/uploads/';
+					move_uploaded_file($image['tmp_name'][0],$location.$filename);
+					$check_existing_record = "SELECT profile_id from photos where profile_id = $user_profile_id AND position = $key";
+					$check_existance = $db->prepare($check_existing_record);
+					$check_existance->execute();
+					$rowcount = $check_existance->rowCount();
+					if($rowcount > 0){
+						$query = "UPDATE photos 
+											SET
+												path = '$location',
+												original_path = '$location',
+												filename = '$filename',
+												published = 1,
+												phototype_id = 1,
+												image = '$filename',
+												updated_at = now(),
+												image_tmp = '$filename',
+												image_processing = 1,
+												image_token = '$filename'
+											WHERE
+												profile_id = $user_profile_id AND
+												position = $key";
+					}
+					else{
+						$query = "INSERT INTO `photos` (`path`,`original_path`,`profile_id`,`filename`,`published`,`position`,`phototype_id`,`image`,`created_at`,`updated_at`,`image_tmp`,`image_processing`,`image_token`) VALUES ('".$location."','".$location."','".$user_profile_id."','".$filename."','1','".$key."','1','".$filename."',now(),now(),'".$filename."','1','".$filename."')";
+					}
+					$query_prepared = $db->prepare($query);
+					$query_prepared->execute();
+				}
+			unset($_SESSION['Image_file']);
+			unset($_SESSION['Image_file_location']);
+			}
+
+			if(isset($_SESSION['Video_file'])){
+				foreach($_SESSION['Video_file'] as $key=>$video){
+					$filename = $video['cdnfilename'];
+					$location = $video['cdnfilepath'];
+					$thumbnail = $video['thumbnail'];
+
+					$cloud_orig_path = str_replace('/videos',"", $location);
+					$check_existing_record = "SELECT profile_id from videos where profile_id = $user_profile_id AND position = $key";
+					$check_existance = $db->prepare($check_existing_record);
+					$check_existance->execute();
+					$rowcount = $check_existance->rowCount();
+					if($rowcount > 0){
+						$query = "UPDATE videos 
+											SET
+												`path`='$location',
+												`uploaded_as_filename`='".$video['name'][0]."',
+												`filename`='$filename',
+												`video_original_path`='$cloud_orig_path',
+												`video_original_filename`='$filename',
+												`video_original_file_basename`='$filename',
+												`thumbnail_original_photo_path`='$location',
+												`thumbnail_photo_path`='$location',
+												`thumbnail_photo_filename`='$thumbnail',
+												`thumbnail_at_time`=3,
+												`published`=1
+											WHERE 
+												`profile_id`=$user_profile_id AND
+												`position`=$key";
+					}
+					else{
+						$query = "INSERT INTO `videos` (
+								`profile_id`,
+								`path`,
+								`uploaded_as_filename`,
+								`filename`,
+								`video_original_path`,
+								`video_original_filename`,
+								`video_original_file_basename`,
+								`thumbnail_original_photo_path`,
+								`thumbnail_photo_path`,
+								`thumbnail_photo_filename`,
+								`thumbnail_at_time`,
+								`published`,
+								`position`) 
+							VALUES (
+								'".$user_profile_id."',
+								'".$location."',
+								'".$video['name'][0]."',
+								'".$filename."',
+								'".$cloud_orig_path."',
+								'".$filename."',
+								'".$filename."',
+								'".$location."',
+								'".$location."',
+								'".$thumbnail."',
+								'3',
+								'1',
+								'".$key."')";
+					}
+					$query_prepared = $db->prepare($query);
+					$query_prepared->execute();
+				}
+			unset($_SESSION['Video_file']);
+			unset($_SESSION['Video_file_location']);	
+			}
+			*/
+			echoResponse(200,array('status'=>true,'msg'=>'Updated Sucessfully'));
+	}
 });
+
+
+/******************************************
+Purpose: Send to email id
+Parameter : form field
+Type : POST
+******************************************/
+/* // disabled this as it is handled in another section
+$app->post('/fileuploadparser', function () use ($app) {
+
+	$fileName = $_FILES["Image_file"]["name"][0]; // The file name
+	$fileTmpLoc = $_FILES["Image_file"]["tmp_name"][0]; // File in the PHP tmp folder
+	$fileType = $_FILES["Image_file"]["type"]; // The type of file it is
+	$fileSize = $_FILES["Image_file"]["size"]; // File size in bytes
+	$fileErrorMsg = $_FILES["Image_file"]["error"]; // 0 for false... and 1 for true
+
+	// $file_name = $_FILES['Image_file']['name'][$key];
+	$file_name = $_FILES['Image_file']['name'];
+	$location = $_SERVER['DOCUMENT_ROOT'].'/images/uploads/';
+// var_dump($_FILES);
+	if (!$fileTmpLoc) { // if file not chosen
+		
+	    echo "ERROR: Please browse for a file before clicking the upload button.";
+	    exit();
+	}
+	if(move_uploaded_file($fileTmpLoc, $location.$fileName)){
+	    echo json_encode(['status_message'=>'file upload success', 'filename'=>$fileName]);
+	} else {
+	    echo "move_uploaded_file function failed";
+	}
+
+});
+*/
+/******************************************
+Purpose: Send to email id
+Parameter : form field
+Type : POST
+******************************************/
+$app->post('/welcome_email', function () use ($app) {
+  $to_email = $app->request->post('email');
+  $first_name = $app->request->post('first_name');
+  $from = 'cat@castit.dk';
+  $subject  = "Tak for din ansøgning!  /  Thank you for your application!";
+
+  $headers = "MIME-Version: 1.0" . "\r\n";
+  $headers .= "Content-type:text/html;charset=UTF-8" . "\r\n";
+  $headers .= 'From: Castit <cat@castit.dk>' . "\r\n";
+  $headers .= 'Reply-To: <'.$from.'>' . "\r\n";
+  $headers .= 'Return-Path: <cat@castit.dk>' ."\r\n";
+  $headers .= "Organization: CASTIT"."\r\n";
+  $headers .= "X-Priority: 3\r\n";
+  $headers .= "X-Mailer: PHP". phpversion() ."\r\n" ;
+	// $headers .= 'BCC: padmanabhann@mailinator.com, vs@anewnative.com, cat@castit.dk' . "\r\n";
+  $headers .= 'BCC: padmanabhann@mailinator.com' . "\r\n";
+
+  
+$html_body = <<< EOM
+<p>Kære $first_name,</p>
+<p>
+Tusind tak for din ansøgning. Så snart vi har kigget den igennem, modtager du en mail med information om vi lægger din profil Online eller Offline.
+</p>
+<p>
+Vi bestræber os på at svare inden 14 dage.
+</p>
+<p>
+De bedste hilsner
+</p>
+<p>Cathrine & Pernille</p>
+<br/>
+<img style="max-width: 150px;" src="https://castit.dk/images/new_logo_black.png" alt="" />
+<p>Rosenvængets Allè 11, 1. Sal</p>
+<p>2100 København Ø</p>
+
+
+<p>Cathrine Hovmand</p>
+<p># 0045 2128 5825</p>
+<p>E: cat@castit.dk</p>
+
+<p>Pernille Marco: </p>
+<p># 0045 3135 3579</p>
+<p>E: pernille@castit.dk</p>
+
+<a href="https://castit.dk">Castit.dk</a>
+<br/>
+------------------------------------------------------------------
+<br/>
+
+<p>Dear $first_name,</p>
+<p>
+Thank you for your application. As soon as we have looked it through, you will receive an email with information about whether we will add your profile Online or Offline.  We strive to respond within 14 days.
+</p>
+<p>
+Very best
+</p>
+<p>Cathrine & Pernille</p>
+<br/>
+<img style="max-width: 150px;" src="https://castit.dk/images/new_logo_black.png" alt="" />
+<p>Rosenvængets Allè 11, 1. Sal</p>
+<p>2100 København Ø</p>
+
+
+<p>Cathrine Hovmand</p>
+<p># 0045 2128 5825</p>
+<p>E: cat@castit.dk</p>
+
+<p>Pernille Marco: </p>
+<p># 0045 3135 3579</p>
+<p>E: pernille@castit.dk</p>
+
+<a href="https://castit.dk">Castit.dk</a>
+
+EOM;
+global $mgClient;
+global $domain;
+$result = $mgClient->sendMessage($domain, array(
+	'from'    => 'CASTIT <info@castit.dk>',
+	'to'      => $to_email,
+	// 'to'      => 'padmanabhan.code@gmail.com',
+	'subject' => $subject,
+	'html'    => $html_body,
+	'bcc'	=> 'padmanabhann@mailinator.com, cat@castit.dk',
+));
+// mail( $to_email, $subject, $html_body, $headers ); // Accountant
+  $response['success'] = true;
+  $response['message'] = 'Email er sendt!';
+  $response['email'] = $to_email;
+
+  echoResponse(200, $response);
+
+  }
+);
+
+
+$app->post('/sendemail', function () use ($app) { 
+  global $db;
+  $data = json_decode($app->request->getBody(), true);
+  $response = array();
+  $to_email = $data['to_email'];
+  $from_email = $data['from_email'];
+  $mail_body ='';$to_cc ='';
+  if(isset($data['mail_body'])){
+    $mail_body = $data['mail_body'];
+  }
+  if(isset($data['to_cc'])){
+    $to_cc = $data['to_cc'];
+  }
+
+  $html = '<table style="text-align:left" cellspacing="0" cellpadding="0" width="556" border="0">
+    <tbody>
+    <tr>
+    <td>
+    <table style="width:100%" border="0">
+    <tbody>
+    <tr>
+    <td align="left"><img alt="Mailtoplogo" src="https://castit.dk/assets/mailTopLogo.png" ></td>
+    <td style="width:270px;padding-top:18px" align="left" valign="top"><b style="color:#696969">Castit <span class="il">Lightbox</span>:</b><br>'.$mail_body.'</td>
+    </tr>
+    <tr>
+    <td colspan="2"></td>
+    </tr>
+    </tbody>
+    </table>
+    </td>
+    </tr>
+    <tr>';
+
+  $subject = "Castit Workshop enquiry";
+
+  $headers = "MIME-Version: 1.0" . "\r\n";
+  $headers .= "Content-type:text/html;charset=UTF-8" . "\r\n";
+  $headers .= 'From: Castit <cat@castit.dk>' . "\r\n";
+  $headers .= 'Reply-To: <'.$from_email.'>' . "\r\n";
+  $headers .= 'Return-Path: <cat@castit.dk>' ."\r\n";
+  $headers .= "Organization: CASTIT"."\r\n";
+  $headers .= "X-Priority: 3\r\n";
+  $headers .= "X-Mailer: PHP". phpversion() ."\r\n" ;
+	// $headers .= 'BCC: padmanabhann@mailinator.com, vs@anewnative.com, cat@castit.dk' . "\r\n";
+//   $headers .= 'BCC: padmanabhann@mailinator.com' . "\r\n";
+
+
+  if($to_cc){
+    $headers .= 'CC: <'.$to_cc.'>' ."\r\n";
+  }
+
+	// $headers .= 'BCC: cat@castit.dk' . "\r\n";
+	$headers .= 'BCC: padmanabhann@mailinator.com, cat@castit.dk' . "\r\n";
+
+  //$html .= 'testemail';
+  global $mgClient;
+	global $domain;
+	$email_data = array();
+	$email_data['from'] = 'CASTIT <info@castit.dk>';
+	$email_data['to']		=	$to_email;
+	$email_data['subject']		=	$subject;
+	$email_data['html']		=	$html;
+	if(isset($to_cc) && $to_cc != '') {$email_data['cc']		=	$to_cc;}
+	$email_data['bcc']		=	'padmanabhann@mailinator.com, cat@castit.dk';
+
+
+  $result = $mgClient->sendMessage($domain, $email_data);
+  $response['success'] = true;
+  $response['message'] = 'Email er sendt!';
+
+  echoResponse(200, $response);
+});
+
+
 /******************************************
 Purpose: Send Lighbox profiles to email id
 Parameter : form field
@@ -1903,7 +2934,9 @@ $app->post('/sendlightbox', function () use ($app) {
 	$response = array();
 	$to_email = $data['to_email'];
 	$from_email = $data['form_email'];
-	$mail_body ='';$to_cc ='';
+	$mail_body ='';
+	$to_cc ='';
+	$to_bcc='';
 	if(isset($data['mail_body'])){
 		$mail_body = $data['mail_body'];
 	}
@@ -1931,11 +2964,11 @@ $app->post('/sendlightbox', function () use ($app) {
 							<table style="width:100%" border="0">
 							<tbody>
 							<tr>
-							<td align="left"><img alt="Mailtoplogo" src="http://134.213.29.220/assets/mailTopLogo.png" ></td>
+							<td align="left"><img alt="Mailtoplogo" src="https://castit.dk/assets/mailTopLogo.png" ></td>
 							<td style="width:270px;padding-top:18px" align="left" valign="top"><b style="color:#696969">Castit <span class="il">Lightbox</span>:</b><br>'.$mail_body.'</td>
 							</tr>
 							<tr>
-							<td colspan="2"><img alt="Mailtopborder" src="http://134.213.29.220/assets/mailTopBorder.jpg"></td>
+							<td colspan="2"><img alt="Mailtopborder" src="https://castit.dk/assets/mailTopBorder.jpg"></td>
 							</tr>
 							</tbody>
 							</table>
@@ -1946,7 +2979,7 @@ $app->post('/sendlightbox', function () use ($app) {
 				
 				foreach($rows_lb_pprofiles as $rowp) {
 					
-						$query = $db->prepare("SELECT p.*, m.profile_group_id, m.profile_number, m.profile_number_first_name_last_name, m.version, m.current, g.name as gender_name, hc.name as hair_color_name, ec.name as eye_color_name FROM profiles p INNER JOIN memberships m ON m.profile_id = p.id INNER JOIN genders g ON g.id = p.gender_id INNER JOIN hair_colors hc ON hc.id = p.hair_color_id INNER JOIN eye_colors ec ON ec.id = p.eye_color_id  WHERE p.id='".$rowp['profile_id']."' AND (p.profile_status_id = '1' OR  p.profile_status_id = '2') AND m.current ='1' LIMIT 1"); 
+						$query = $db->prepare("SELECT p.*, m.profile_group_id, m.profile_number, m.profile_number_first_name_last_name, m.version, m.current, g.name as gender_name, hc.name as hair_color_name, ec.name as eye_color_name FROM profiles p INNER JOIN memberships m ON m.profile_id = p.id INNER JOIN genders g ON g.id = p.gender_id INNER JOIN hair_colors hc ON hc.id = p.hair_color_id INNER JOIN eye_colors ec ON ec.id = p.eye_color_id  WHERE p.id='".$rowp['profile_id']."' AND (p.profile_status_id = '1' ) AND m.current ='1' LIMIT 1"); 
 						$query->execute();
 						$rows = $query->fetchAll(PDO::FETCH_ASSOC);
 						if(count($rows)>0) {
@@ -1957,22 +2990,26 @@ $app->post('/sendlightbox', function () use ($app) {
 					
 								// Profile Image
 								$profile_image ='';
-								$query_image = $db->prepare("SELECT *, DATE_FORMAT(created_at, '%Y') as create_year, DATE_FORMAT(created_at, '%m') as create_month, DATE_FORMAT(created_at, '%d') as create_date FROM photos WHERE profile_id = '".$row['id']."' and published ='1' ORDER BY position ASC LIMIT 1"); 
+								$query_image = $db->prepare("SELECT *, DATE_FORMAT(created_at, '%Y') as create_year, DATE_FORMAT(created_at, '%m') as create_month, DATE_FORMAT(created_at, '%d') as create_date FROM photos WHERE profile_id = '".$row['id']."' and published ='1' and media_slet_status != '1' ORDER BY position ASC LIMIT 1"); 
 						$query_image->execute();
 						$image= '';
 						$rows_image = $query_image->fetchAll(PDO::FETCH_ASSOC);
 						if(count($rows_image) > 0){
-							$path = $rows_image[0]['create_year']."/".$rows_image[0]['create_month']."/".$rows_image[0]['create_date']."/".$rows_image[0]['id']."/lightbox_";
-							$profile_image = 'http://134.213.29.220/profile_images/'.$path.$rows_image[0]['image'];
-							
+							if (strpos($rows_image[0]['path'], 'vhost') !== false) {
+								$profile_image = 'https://castit.dk/images/uploads/'.$rows_image[0]['image'];
 							}
+							else{
+								$path = $rows_image[0]['create_year']."/".$rows_image[0]['create_month']."/".$rows_image[0]['create_date']."/".$rows_image[0]['id']."/thumb_";
+								$profile_image = 'https://castit.dk/profile_images/'.$path.$rows_image[0]['image'];
+							}
+						}
 			
 						$html .= '<td style="vertical-align:top">
 							<table style="width:100%">
 							<tbody>
 							<tr>';
 						$html .= '<td style="height:230px;width:139px" valign="top">
-							<a href="http://134.213.29.220/?l='.$lbid.'" target="_blank">
+							<a href="https://castit.dk/?l='.$lbid.'" target="_blank">
 							<img src="'.$profile_image.'" alt="'.$row['first_name'].'">
 							</a>
 							<span style="display:block;background-color:Black;width:131px;color:#ffffff;font-weight:bold;font-size:11px;margin-left:1px">
@@ -1997,8 +3034,21 @@ $app->post('/sendlightbox', function () use ($app) {
 			if($to_cc){
 				$headers .= 'CC: <'.$to_cc.'>' ."\r\n";
 			}
+			// $headers .= 'BCC: cat@castit.dk' . "\r\n";
+  		$headers .= 'BCC: padmanabhann@mailinator.com, cat@castit.dk' . "\r\n";
+
 			//$html .= 'testemail';
-			mail( $to_email, $subject, $html, $headers ); // Accountant
+			global $mgClient;
+			global $domain;
+			$result = $mgClient->sendMessage($domain, array(
+                'from'    => 'CASTIT <info@castit.dk>',
+                'to'      => $to_email,
+                // 'to'      => 'padmanabhan.code@gmail.com',
+                'subject' => $subject,
+								'html'    => $html,
+								'bcc' => 'cat@castit.dk'
+            ));
+			// mail( $to_email, $subject, $html, $headers ); // Accountant
 			$response['success'] = true;
 			$response['message'] = 'Lightbox er sendt!';
 			}
@@ -2027,43 +3077,56 @@ $app->post('/sendgroup', function () use ($app) {
 	$response = array();
 	$to_email = $data['to_email'];
 	$from_email = $data['form_email'];
-	//$gid = $app->request->get('gpid');
-	$gid = $data['gpid'];
-	$mail_body ='';$to_cc ='';
+
+  $gid = $data['gpid'];
+  $username = $data['username'];
+	$mail_body ='';
+	$to_cc ='';
 	if(isset($data['mail_body'])){
 		$mail_body = $data['mail_body'];
 	}
 	if(isset($data['to_cc'])){
 		$to_cc = $data['to_cc'];
-	}
-	
-		
-				
+  }
+
 			$query_lb_pprofiles = $db->prepare("SELECT * FROM profile_grouping WHERE group_id = '".$gid."'"); 
 			$query_lb_pprofiles->execute();
 			$rows_lb_pprofiles = $query_lb_pprofiles->fetchAll(PDO::FETCH_ASSOC);
+// profile_notes
+			$group_addedon_query = $db->prepare("SELECT * from grouping where group_id = '".$gid."'");
+			$group_addedon_query->execute();
+			$group_addedon_value = $group_addedon_query->fetchAll(PDO::FETCH_ASSOC);
+			$group_date = date("d.m.y", strtotime($group_addedon_value[0]['added_on']));
 			$rowcount = count($rows_lb_pprofiles);
 			if($rowcount > 0){
-				$html = '<table style="text-align:left" cellspacing="0" cellpadding="0" width="556" border="0">
-							<tbody>
-							<tr>
-							<td>
-							<table style="width:100%" border="0">
-							<tbody>
-							<tr>
-							<td align="left"><img alt="Mailtoplogo" src="http://134.213.29.220/assets/mailTopLogo.png" ></td>
-							<td style="width:270px;padding-top:18px" align="left" valign="top"><b style="color:#696969">Castit <span class="il">Lightbox</span>:</b><br>'.$mail_body.'</td>
-							</tr>
-							</tbody>
-							</table>
-							</td>
-							</tr>
-							<tr>';
+				$html = '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+        <html xmlns="http://www.w3.org/1999/xhtml">
+        <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+        <title>Castit</title>
+        <link rel="stylesheet" type="text/css" href="https://castit.dk/assets/css/emailstyle.css" media="all">';
 
-				
+        $html .= "
+        </head>";
+
+        $html .= '<body style="margin:0; padding:0; border:0; outline:0; font-size:100%; vertical-align:baseline; font-weight:normal; box-sizing:border-box;line-height:1;background:#fff; font-family:helveticaneueltstdbd; font-size:14px; overflow-x:hidden;">
+        <link itemprop="url" rel="stylesheet" type="text/css" href="https://castit.dk/assets/css/emailstyle.css" media="all">
+        <div id="popup-wrapper"  style="float:left; width:100%; padding:54px 0 0 0;" >
+           <div class="popup-container" style="margin: auto ; width: 730px ; padding: 0 15px ; max-width: 100%" >
+                 <div class="popup-row1" style="border-bottom: solid 1px #2d2e32 ; float: left ; width: 730px; padding: 0 0 20px 0; margin: 0px 0 10px -5px;" >
+					   <div class="popup-logo" style="float:left; width:182px;" ><a href="#"><img style="max-width: 150px; margin-bottom: 15px;"  src="https://castit.dk/images/new_logo_black.png" alt="" /></a>
+					 	<a href="https://castit.dk/#/index/da?group='.$gid.'&username='.$username.'&groupname='.$group_addedon_value[0]['group_name'].'" style="background-color: blue;border-radius: 20px;padding: 7px 17px;color: #FFF;text-decoration: none;font-family: helvetica;font-size: 13px;">Open Lightbox</a>  
+					   </div>
+                       <div class="popup-text" style="display:block; padding:0 0 0 182px;">
+                             <h4 style="padding:0;color:#000; font-size:16px; line-height:20px; font-weight:bold; font-family:Arial, Helvetica, sans-serif; margin:0 0 20px 0;" >Castit Lightbox: '.$group_addedon_value[0]['group_name'].'</h4>
+                            <p style="color:#dddddd; font-size:14px; line-height:20px; font-weight:normal; font-family:Arial, Helvetica, sans-serif; margin:0;">'.$mail_body.'.</p>
+                       </div>
+                  </div><!--popup-row1-->
+                  <div class="popup-row2" style="clear: both ; margin: 0 0;width: 730px;">';
+        
 				foreach($rows_lb_pprofiles as $rowp) {
 					
-						$query = $db->prepare("SELECT p.*, m.profile_group_id, m.profile_number, m.profile_number_first_name_last_name, m.version, m.current, g.name as gender_name, hc.name as hair_color_name, ec.name as eye_color_name FROM profiles p INNER JOIN memberships m ON m.profile_id = p.id INNER JOIN genders g ON g.id = p.gender_id INNER JOIN hair_colors hc ON hc.id = p.hair_color_id INNER JOIN eye_colors ec ON ec.id = p.eye_color_id  WHERE p.id='".$rowp['profile_id']."' AND (p.profile_status_id = '1' OR  p.profile_status_id = '2') AND m.current ='1' LIMIT 1"); 
+						$query = $db->prepare("SELECT p.*, m.profile_group_id, m.profile_number, m.profile_number_first_name_last_name, m.version, m.current, g.name as gender_name FROM profiles p INNER JOIN memberships m ON m.profile_id = p.id INNER JOIN genders g ON g.id = p.gender_id  WHERE p.id='".$rowp['profile_id']."' AND (p.profile_status_id = '1' ) AND m.current ='1' LIMIT 1"); 
 						$query->execute();
 						$rows = $query->fetchAll(PDO::FETCH_ASSOC);
 						if(count($rows)>0) {
@@ -2074,69 +3137,92 @@ $app->post('/sendgroup', function () use ($app) {
 					
 								// Profile Image
 								$profile_image ='';
-								$query_image = $db->prepare("SELECT *, DATE_FORMAT(created_at, '%Y') as create_year, DATE_FORMAT(created_at, '%m') as create_month, DATE_FORMAT(created_at, '%d') as create_date FROM photos WHERE profile_id = '".$row['id']."' and published ='1' ORDER BY position ASC LIMIT 1"); 
+								$query_image = $db->prepare("SELECT *, DATE_FORMAT(created_at, '%Y') as create_year, DATE_FORMAT(created_at, '%m') as create_month, DATE_FORMAT(created_at, '%d') as create_date FROM photos WHERE profile_id = '".$row['id']."' and published ='1' and media_slet_status != '1' ORDER BY position ASC LIMIT 1"); 
 						$query_image->execute();
 						$image= '';
 						$rows_image = $query_image->fetchAll(PDO::FETCH_ASSOC);
 						if(count($rows_image) > 0){
-							$path = $rows_image[0]['create_year']."/".$rows_image[0]['create_month']."/".$rows_image[0]['create_date']."/".$rows_image[0]['id']."/lightbox_";
-							$profile_image = 'http://134.213.29.220/profile_images/'.$path.$rows_image[0]['image'];
-							
+							if (strpos($rows_image[0]['path'], 'vhost') !== false) {
+								$profile_image = 'https://castit.dk/images/uploads/'.$rows_image[0]['image'];
 							}
-			
-						$html .= '<td style="vertical-align:top">
-							<table style="width:100%">
-							<tbody>
-							<tr>';
-						$html .= '<td style="height:230px;width:139px" valign="top">
-							<a href="http://134.213.29.220" target="_blank">
-							<img src="'.$profile_image.'" alt="'.$row['first_name'].'">
-							</a>
-							<span style="display:block;background-color:Black;width:131px;color:#ffffff;font-weight:bold;font-size:11px;margin-left:1px">
-							'.$row['first_name'].'&nbsp;'.$row['profile_number'].';
-							</span>
-							<span>
-							</span>
-							</td>';
+							else{
+								$path = $rows_image[0]['create_year']."/".$rows_image[0]['create_month']."/".$rows_image[0]['create_date']."/".$rows_image[0]['id']."/thumb_";
+								$profile_image = 'https://castit.dk/profile_images/'.$path.$rows_image[0]['image'];
+							}
+						}
+      
+            $html .= '<div class="pop-col3" style="float:left; padding:0 0; margin:0 0 20px 0;border: 5px solid white; width: 170px !important;">
+              <div class="pop-col-inner" style=""float:left; width:100%; position:relative;>
+                <div class="pop-thumb" style="float:left; width:100%; position:relative; margin:0 0 10px 0; background-image: url('.$profile_image.'); height:217px;background-size: cover;background-repeat: no-repeat;background-position: top center;">
+                <h6 style="font-weight:normal; margin:0; margin-top:100% !important; padding:0;color:#fff; font-size:10px; line-height:20px; font-weight:normal; font-family:Arial, Helvetica, sans-serif; padding:13px 0 13px 0; background:rgba(0,0,0,0.75); position:absolute; left:0; bottom:0; width:100%; text-align:center;" >'.$row['first_name'].'.&nbsp;'.$row['profile_number'].'</h6>
+              </div>
+              <h5 style="margin:0; padding:0;color:#000; font-size:12px; line-height:16px; font-weight:bold; font-family:Arial, Helvetica, sans-serif; margin:0 0 0 0;" >Note: </h5>
+                  <p style="color:#d1d1d1; font-size:12px; line-height:16px; font-weight:normal; font-family:Arial, Helvetica, sans-serif; margin:0 0 0 0;">'.$rowp["profile_notes"].'</p>
+                </div>
+              </div>';
+
 						}
 				}
-				$html .= ' </tr>
-					</tbody></table>
-					</td>
-					</tr>
-					</tbody></table>';
+				$html .= '</div><!--popup-row2-->
+          
+        <div class="popup-row3" style="float:left; width:100%; margin:60px 0 0 0 ;border-top:solid 1px #2d2e32; padding:30px 0;">
+             <span class="popup-icon1" style="float:left"><img style="max-width:100%;"  src="https://castit.dk/images/group_icon.png" alt="" /></span>
+             <h3 style="font-weight:bold; margin:0; padding:0; float:right; font-size:32px; color:#000;font-family: helvetica;" >'.$group_date.'</h3>
+        </div><!--popup-row3-->
+        
+   </div>
+</div>
 
-			$subject = "Castit Lighbox";
-			$headers = "MIME-Version: 1.0" . "\r\n";
-			$headers .= "Content-type:text/html;charset=UTF-8" . "\r\n";
-			$headers .= 'From: Castit <info@ldsstage.in>' . "\r\n";
-			$headers .= 'Reply-To: <'.$from_email.'>' . "\r\n";
+</body>
+</html>';
 
+      $subject = "Castit Lighbox : ".$group_addedon_value[0]['group_name'];
+          
+      $headers = "MIME-Version: 1.0" . "\r\n";
+      $headers .= "Content-type:text/html;charset=UTF-8" . "\r\n";
+      $headers .= 'From: Castit <cat@castit.dk>' . "\r\n";
+      $headers .= 'Reply-To: <'.$from_email.'>' . "\r\n";
+      $headers .= 'Return-Path: <cat@castit.dk>' ."\r\n";
+      $headers .= "Organization: CASTIT"."\r\n";
+      $headers .= "X-Priority: 3\r\n";
+      $headers .= "X-Mailer: PHP". phpversion() ."\r\n" ;
+  		// $headers .= 'BCC: padmanabhann@mailinator.com, vs@anewnative.com, cat@castit.dk' . "\r\n";
+  		$headers .= 'BCC: padmanabhann@mailinator.com' . "\r\n";
 
-			//$headers = "From: info@ldsstage.in\r\n";
-		
-  $headers .=  'Return-Path: <<info@ldsstage.in>' ."\r\n";
-  $headers .= "Organization: Sender Organization"."\r\n";
-  $headers .= "X-Priority: 3\r\n";
-  $headers .= "X-Mailer: PHP". phpversion() ."\r\n" ;
+      
+      $email_body = $html;
+      // $email_body = 'akjsldjalskd';
+      // $to_email = 'padmanabhan.code@gmail.com';
+	  //$html .= 'testemail';
+	  global $mgClient;
+		global $domain;
+		if($to_cc != ""){
+			$result = $mgClient->sendMessage($domain, array(
+				'from'    => 'CASTIT <info@castit.dk>',
+				'to'      => $to_email,
+				'cc'			=> $to_cc,
+				'subject' => $subject,
+				'html'    => $email_body,
+				'bcc'	=> 'padmanabhann@mailinator.com, cat@castit.dk',
+				));
+		}
+		else{
+			$result = $mgClient->sendMessage($domain, array(
+				'from'    => 'CASTIT <info@castit.dk>',
+				'to'      => $to_email,
+				'subject' => $subject,
+				'html'    => $email_body,
+				'bcc'	=> 'padmanabhann@mailinator.com, cat@castit.dk',
+				));
+		}
 
-
-
-			//$headers .= "Reply-To: myplace2@example.com\r\n";
-			//$headers .= 'Return-Path: <'.$from_email.'>' ."\r\n";
-			//$headers .= "CC: sombodyelse@example.com\r\n";
-			$headers .= "BCC: hidden@example.com\r\n";
-			if($to_cc){
-				$headers .= 'CC: <'.$to_cc.'>' ."\r\n";
-			}
-			//$html .= 'testemail';
-			mail( $to_email, $subject, $html, $headers ); // Accountant
+			// mail( $to_email, $subject, $email_body, $headers ); // Accountant
 			$response['success'] = true;
-			$response['message'] = 'Lightbox er sendt!';
+			$response['message'] = 'Group er sendt!';
 			}
 			else{
 			$response['success'] = true;
-			$response['message'] = 'No Profiles in Lightbox';
+			$response['message'] = 'No Profiles in Group';
 			}
 		
 
@@ -2172,11 +3258,11 @@ $app->post('/sendgroup', function () use ($app) {
 							<table style="width:100%" border="0">
 							<tbody>
 							<tr>
-							<td align="left"><img alt="Mailtoplogo" src="http://134.213.29.220/assets/mailTopLogo.png" ></td>
+							<td align="left"><img alt="Mailtoplogo" src="https://castit.dk/assets/mailTopLogo.png" ></td>
 							<td style="width:270px;padding-top:18px" align="left" valign="top"><b style="color:#696969">Castit <span class="il">Lightbox</span>:</b><br>'.$mail_body.'</td>
 							</tr>
 							<tr>
-							<td colspan="2"><img alt="Mailtopborder" src="http://134.213.29.220/assets/mailTopBorder.jpg"></td>
+							<td colspan="2"><img alt="Mailtopborder" src="https://castit.dk/assets/mailTopBorder.jpg"></td>
 							</tr>
 							</tbody>
 							</table>
@@ -2187,7 +3273,7 @@ $app->post('/sendgroup', function () use ($app) {
 				
 				foreach($rows_lb_pprofiles as $rowp) {
 					
-						$query = $db->prepare("SELECT p.*, m.profile_group_id, m.profile_number, m.profile_number_first_name_last_name, m.version, m.current, g.name as gender_name, hc.name as hair_color_name, ec.name as eye_color_name FROM profiles p INNER JOIN memberships m ON m.profile_id = p.id INNER JOIN genders g ON g.id = p.gender_id INNER JOIN hair_colors hc ON hc.id = p.hair_color_id INNER JOIN eye_colors ec ON ec.id = p.eye_color_id  WHERE p.id='".$rowp['profile_id']."' AND (p.profile_status_id = '1' OR  p.profile_status_id = '2') AND m.current ='1' LIMIT 1"); 
+						$query = $db->prepare("SELECT p.*, m.profile_group_id, m.profile_number, m.profile_number_first_name_last_name, m.version, m.current, g.name as gender_name, hc.name as hair_color_name, ec.name as eye_color_name FROM profiles p INNER JOIN memberships m ON m.profile_id = p.id INNER JOIN genders g ON g.id = p.gender_id INNER JOIN hair_colors hc ON hc.id = p.hair_color_id INNER JOIN eye_colors ec ON ec.id = p.eye_color_id  WHERE p.id='".$rowp['profile_id']."' AND (p.profile_status_id = '1' ) AND m.current ='1' LIMIT 1"); 
 						$query->execute();
 						$rows = $query->fetchAll(PDO::FETCH_ASSOC);
 						if(count($rows)>0) {
@@ -2203,17 +3289,22 @@ $app->post('/sendgroup', function () use ($app) {
 						$image= '';
 						$rows_image = $query_image->fetchAll(PDO::FETCH_ASSOC);
 						if(count($rows_image) > 0){
-							$path = $rows_image[0]['create_year']."/".$rows_image[0]['create_month']."/".$rows_image[0]['create_date']."/".$rows_image[0]['id']."/lightbox_";
-							$profile_image = 'http://134.213.29.220/profile_images/'.$path.$rows_image[0]['image'];
-							
+							if (strpos($rows_image[0]['path'], 'vhost') !== false) {
+								$profile_image = 'https://castit.dk/images/uploads/'.$rows_image[0]['image'];
 							}
+							else{
+								$path = $rows_image[0]['create_year']."/".$rows_image[0]['create_month']."/".$rows_image[0]['create_date']."/".$rows_image[0]['id']."/thumb_";
+								$profile_image = 'https://castit.dk/profile_images/'.$path.$rows_image[0]['image'];
+							}
+							
+						}
 			
 						$html .= '<td style="vertical-align:top">
 							<table style="width:100%">
 							<tbody>
 							<tr>';
 						$html .= '<td style="height:230px;width:139px" valign="top">
-							<a href="http://134.213.29.220/?l='.$lbid.'" target="_blank">
+							<a href="https://castit.dk/?l='.$lbid.'" target="_blank">
 							<img src="'.$profile_image.'" alt="'.$row['first_name'].'">
 							</a>
 							<span style="display:block;background-color:Black;width:131px;color:#ffffff;font-weight:bold;font-size:11px;margin-left:1px">
@@ -2268,7 +3359,9 @@ $app->get('/getgroupinglist', function () use ($app) {
     global $db;
 	$grouping = array();
 	$reponse =  array();
-	$query_grouping = $db->prepare("SELECT * FROM grouping WHERE status ='1' order by group_name"); 
+	$grouptoken =  $app->request->get('grouptoken');
+
+	$query_grouping = $db->prepare("SELECT * FROM grouping WHERE token_id='".$grouptoken."' AND status ='1' order by group_name"); 
 	$query_grouping->execute();
 	$rows_grouping = $query_grouping->fetchAll(PDO::FETCH_ASSOC);
 	$rowcount = count($rows_grouping);
@@ -2293,9 +3386,9 @@ $app->get('/addnewgrouping', function () use ($app) {
 	$reponse = array();
 	$rowcount = 0;
 
-	$grouping_token = generate_uuid();
+	$grouping_token = $app->request->get('grouptoken');
 	
-	$query_check_gp = $db->prepare("SELECT * FROM `grouping` where `group_name` LIKE '%".$groupname."%'"); 
+	$query_check_gp = $db->prepare("SELECT * FROM `grouping` where `group_name` LIKE '%".$groupname."%' AND token_id ='".$grouping_token."'"); 
 	$query_check_gp->execute();
 	$rows_gp = $query_check_gp->fetchAll(PDO::FETCH_ASSOC);
 	if(count($rows_gp)>0) {
@@ -2306,7 +3399,7 @@ $app->get('/addnewgrouping', function () use ($app) {
 			$gpid = $db->exec($q_gruping);
 	}
 	
-	$query_grouping = $db->prepare("SELECT * FROM grouping WHERE status ='1' order by group_name"); 
+	$query_grouping = $db->prepare("SELECT * FROM grouping WHERE status ='1' AND token_id ='".$grouping_token."' order by group_name"); 
 	$query_grouping->execute();
 	$rows_grouping = $query_grouping->fetchAll(PDO::FETCH_ASSOC);
 	$rowcount = count($rows_grouping);
@@ -2592,12 +3685,12 @@ $app->post('/resetpassword',function () use ($app) {
     global $db;
 	$data = json_decode($app->request->getBody(), true);
 	$email = $data['email'];
-	$query = $db->prepare("SELECT * FROM users WHERE email='".$email."'"); 
+	$query = $db->prepare("SELECT * FROM profiles WHERE email='".$email."' ORDER by id desc limit 1"); 
 	$query->execute();
     $rows = $query->fetchAll(PDO::FETCH_ASSOC);
 	//print_r($rows);die;
 	if((isset($rows)) && count($rows)> 0){
-		if($rows[0]['status'] ==1){
+		if($rows[0]['profile_status_id'] ==1){
 
 			$alphabet = 'abdefghklmnpqrstuvwxyzABDEFGHKLMNPQRSTUVWXYZ23456789';
 			$pass = array(); //remember to declare $pass as an array
@@ -2608,7 +3701,7 @@ $app->post('/resetpassword',function () use ($app) {
 			}
 			$newpass = implode($pass);
 			$randompass = md5($newpass);
-			$q_pwd = "UPDATE `users` SET `password`='".$randompass."' WHERE `email`='".$email."'";
+			$q_pwd = "UPDATE `profiles` SET `password`='".$randompass."' WHERE `email`='".$email."'";
 			$query = $db->prepare($q_pwd);
 			$query->execute();
 				$content = '';
@@ -2622,44 +3715,310 @@ $app->post('/resetpassword',function () use ($app) {
 								width:580px;-webkit-border-radius: 8px;-moz-border-radius: 8px;border-radius: 8px; 	
 								padding:0 0 13px; margin:18px 0 50px 0;">
 								<div style="color: #20be93;font-size: 23px;font-family: Calibri; 
-								background:#313743;float:left; width:100%; text-align:center; margin:0 0 16px 0; 
-								padding:8px 0 4px;"><img src="http://dev.tailtracking.com/assets/img/logo.png" 
+								background:#cccccc;float:left; width:100%; text-align:center; margin:0 0 16px 0; 
+								padding:8px 0 4px;"><img src="https://castit.dk/images/logo.png" 
 								width="90px"/> </div>
 								<div style="padding:0 30px;">';
-					$content .= '<h5 style="color: #646e78;font-size: 16px;padding:0;margin: 0; text-align:left;">Hi '.$rows[0]['fname'].' '.$rows[0]['lname'].',</h5>';
-				
-					$content .= '<p style="color: #646e78;font-size: 16px;text-align:left;">Your new requested password is,</p>';
-					$content .= '<p style="color: #646e78;font-size: 16px;padding:0; line-height:18px; text-align:left; 
-								">Username :'.$email.'<br/>Password :'.$newpass.'<br/></p>
-								<p style="color: #646e78;font-size: 16px;padding:0; line-height:18px; text-align:left; 
-								">Please login in to your account and change the password<br/></p>';
-					$content .= '<p style="color: #646e78;text-align:left;font-size: 16px;padding:0 0 45px 0; margin:51px 0 0; 
-								line-height:20px; text-align:left;font-family:Calibri">Thank you!<br><br>Best 
-								regards,<br>TailTracking.</p>
+					$content_sal_dk = '<h5 style="color: #646e78;font-size: 16px;padding:0;margin: 0; text-align:left;">Kære '.ucfirst($rows[0]['first_name']).' '.ucfirst($rows[0]['last_name']).',</h5>';
+					$content_sal_en = '<h5 style="color: #646e78;font-size: 16px;padding:0;margin: 0; text-align:left;">Dear '.ucfirst($rows[0]['first_name']).' '.ucfirst($rows[0]['last_name']).',</h5>';
+					$reset_link_dk = '<a href="https://castit.dk/#/reset-password?email='.$email.'&resethash='.$randompass.'">Nulstil kodeord</a>';
+					$reset_link_en = '<a href="https://castit.dk/#/reset-password?email='.$email.'&resethash='.$randompass.'">Reset Password</a>';
+					// $content .= '<p style="color: #646e78;font-size: 16px;text-align:left;">Din nye adgangskode er,</p>';
+					$content_sign_dk = '<p style="color: #646e78;text-align:left;font-size: 16px;padding:0 0 45px 0; margin:51px 0 0; 
+								line-height:20px; text-align:left;font-family:Calibri"><br><br>Med venlig hilsen,<br>Castit</p>
 								<div style="float:left; width:100%; margin:40px 0 0 0; border-top:solid 1px #dddddd; 	
-								padding:20px 0 0 0;"> <span style="color: #646e78;font-size: 12px; 
-								float:left;line-height:34px;">Copyrights @ 2017. All Rights Reserved.</span> ';
+								padding:20px 0 0 0;">';
+					$content_sign_en = '<p style="color: #646e78;text-align:left;font-size: 16px;padding:0 0 45px 0; margin:51px 0 0; 
+								line-height:20px; text-align:left;font-family:Calibri"><br><br>Yours sincerely,<br>Castit</p>
+								<div style="float:left; width:100%; margin:40px 0 0 0; border-top:solid 1px #dddddd; 	
+								padding:20px 0 0 0;">';
+
+					$content .= $content_sal_dk.'<p style="color: #646e78;font-size: 16px;padding:0; line-height:18px; text-align:left; 
+					">Klik på linket og skift din adgangskode.<br/></p><p style="color: #646e78;font-size: 16px;padding:0; line-height:18px; text-align:left; 
+								">'.$reset_link_dk.'</p>'.$content_sign_dk.'<br>
+								'.$content_sal_en.'<p style="color: #646e78;font-size: 16px;padding:0; line-height:18px; text-align:left;" >
+								Click on the link and change your password '.$reset_link_en.'
+								</p>'.$content_sign_en;
+					
 					$content.= '</div></div></div></div></div></body></html>';	
 				//echo 	$content;	
 				$to = $email;
-				$subject = "Tailtracking password request";
+				$subject = "Castit adgangskode";
+				
+				// $headers = "MIME-Version: 1.0" . "\r\n";
+				// $headers .= "Content-type:text/html;charset=UTF-8" . "\r\n";
+				// $headers .= 'From: Castit Admin<noreply@castit.com>' . "\r\n";
+
 				$headers = "MIME-Version: 1.0" . "\r\n";
 				$headers .= "Content-type:text/html;charset=UTF-8" . "\r\n";
-				$headers .= 'From: TailTracking Admin<noreplay@tailtracking.com>' . "\r\n";
-				mail( $to, $subject, $content, $headers ); // Accountant
+				$headers .= 'From: Castit <cat@castit.dk>' . "\r\n";
+				$headers .= 'Reply-To: <cat@castit.dk>' . "\r\n";
+				$headers .= 'Return-Path: <cat@castit.dk>' ."\r\n";
+				$headers .= "Organization: CASTIT"."\r\n";
+				$headers .= "X-Priority: 3\r\n";
+				$headers .= "X-Mailer: PHP". phpversion() ."\r\n" ;
+					// $headers .= 'BCC: padmanabhann@mailinator.com, vs@anewnative.com, cat@castit.dk' . "\r\n";
+				$headers .= 'BCC: padmanabhann@mailinator.com, cat@castit.dk' . "\r\n";
+				global $mgClient;
+				global $domain;
+				$result = $mgClient->sendMessage($domain, array(
+					'from'    => 'CASTIT <info@castit.dk>',
+					'to'      => $to,
+					// 'to'      => 'padmanabhan.code@gmail.com',
+					'subject' => $subject,
+					'html'    => $content,
+					'bcc'	=> 'padmanabhann@mailinator.com, cat@castit.dk',
+				));
+				// mail( $to, $subject, $content, $headers ); // Accountant
 			
-			$response = array( 'success' => true, 'message' => 'Your new password has been sent to your mentioned mail id. Please check your mail.');
+			$response = array( 'success' => true, 'message' => 'Din nye adgangskode er blevet sendt til din email.', 'message_en' => 'Your new password has been send to you email.');
 		}
 		else{
-			$response = array( 'success' => false, 'message' => 'Your account is in inactive status. Please contact Administrator');
+			$response = array( 'success' => false, 'message' => 'Din konto er i inaktiv status. Kontakt venligst administrator');
 		}
 	}
 	else{
 		$customer ='';
-			$response = array( 'success' => false, 'message' => 'There is no data for this email in our database. Please check your email.');
+			$response = array( 'success' => false, 'message' => 'Der er ingen data for denne email i vores database. Bekræft venligst den angivne e-mail.');
 		}
 	echoResponse(200, $response);
 });
+
+/******************************************
+Purpose: Create and get Group Token
+Parameter : null
+Type : GET
+******************************************/
+$app->get('/getgrouptoken',function () use ($app) { 
+  global $db;
+	$group_token = generate_uuid();
+	$response = array( 'success' => true, 'grouptoken' => $group_token);
+	echoResponse(200, $response);
+});
+
+$app->get('/getmediadata', function () use ($app) {
+	global $db;
+	$profile_id = isset($_REQUEST['profile_id']) ? $_REQUEST['profile_id'] : '';
+
+	$image_sql = "select * from photos where profile_id='".$profile_id."'";
+	$image_query = $db->prepare($image_sql);
+	$image_query->execute();
+	$images = $image_query->fetchAll(PDO::FETCH_ASSOC);
+
+	$video_sql = "select * from videos where profile_id='".$profile_id."'";
+	$video_query = $db->prepare($video_sql);
+	$video_query->execute();
+	$videos = $video_query->fetchAll(PDO::FETCH_ASSOC);
+
+	echo json_encode(['images'=>$images, 'videos'=>$videos]);
+
+});
+
+$app->post('/clearsessions', function () use ($app) {
+	unset($_SESSION['step1']);
+	unset($_SESSION['step2']);
+	unset($_SESSION['step3']);
+	unset($_SESSION['step4']);
+	unset($_SESSION['step5']);
+});
+
+$app->post('/mediafiledelete', function () use ($app) {
+	global $db;
+	$type = isset($_REQUEST['type']) ? $_REQUEST['type'] : '';
+	$profile_id = isset($_REQUEST['profile_id']) ? $_REQUEST['profile_id'] : '';
+	$position = isset($_REQUEST['position']) ? $_REQUEST['position'] : '';
+
+	if($type != '' && $profile_id != '' && $position != ''){
+		switch($type){
+			case 'image':
+				$sql = "delete from photos where profile_id = '".$profile_id."' AND position = '".$position."'";
+				$query = $db->prepare($sql);
+				$query->execute();
+				break;
+
+				case 'video':
+				$sql = "delete from videos where profile_id = '".$profile_id."' AND position = '".$position."'";
+				$query = $db->prepare($sql);
+				$query->execute();
+				break;
+
+			default:
+				break;
+		}
+
+		echo json_encode(['status_message'=>'deleted', 'position'=>$position, 'type'=>$type]);
+	}
+	else{
+		echo json_encode(['status_message'=>'insufficient data']);
+	}
+});
+
+$app->post('/fileuploadparser', function () use ($app) {
+	global $db;
+	$profile_id = isset($_REQUEST['profile_id']) ? $_REQUEST['profile_id'] : '';
+	$position = isset($_REQUEST['position']) ? $_REQUEST['position'] : '1';
+  $cdnfilepath	=	'';
+  $time 				=	time();  
+	if(!isset($_REQUEST["uploaded_file_type"])){
+		$fileName			= $_FILES["Image_file"]["name"];
+		$ext 					= ".".pathinfo($fileName, PATHINFO_EXTENSION);
+		$fileName			= unique_code(10).time().$ext;
+		
+		$_FILES["Image_file"]["name"] = $fileName;
+	  $fileTmpLoc   = $_FILES["Image_file"]["tmp_name"];
+	  $fileType     = $_FILES["Image_file"]["type"];
+	  $fileSize     = $_FILES["Image_file"]["size"];
+	  $fileErrorMsg = $_FILES["Image_file"]["error"];
+	  $location     = $_SERVER['DOCUMENT_ROOT'].'/images/uploads/';
+
+	  if (!$fileTmpLoc) { // if file not chosen
+	      echo "ERROR: Please browse for a file before clicking the upload button.";
+	      exit();
+	  }
+	  if(move_uploaded_file($fileTmpLoc, $location.$fileName)){			
+
+			$query = "INSERT INTO `photos` (`path`,`original_path`,`profile_id`,`filename`,`published`,`position`,`phototype_id`,`image`,`created_at`,`updated_at`,`image_tmp`,`image_processing`,`image_token`) VALUES ('".$location."','".$location."','".$profile_id."','".$fileName."','0','".$position."','1','".$fileName."',now(),now(),'".$fileName."','1','".$fileName."')";
+			$db->exec($query);
+			echo json_encode(['status_message'=>'file upload success', 'filename'=>$fileName, 'imgpath'=>'/images/uploads/'.$fileName, 'position'=>$position, 'type'=>'image']);
+
+			$recently_updated = "update profiles set recently_updated = 'true' where id = '".$profile_id."'";
+					$query_prepared = $db->prepare($recently_updated);
+					$query_prepared->execute();
+	    // echo json_encode(['status_message'=>'file upload success', 'type'=>'image', 'filename'=>"/images/uploads/".$fileName]);
+	  } 
+	  else {
+	    echo "move_uploaded_file function failed";
+	  }
+	}	
+  
+  if(isset($_REQUEST["uploaded_file_type"]) && $_REQUEST["uploaded_file_type"] == "video"){
+	  unset($_SESSION["Video_file"]);
+	  $fileTmpLoc   = $_FILES["Video_file"]["tmp_name"];
+
+    $client = new Rackspace(Rackspace::UK_IDENTITY_ENDPOINT, array(
+      'username' => 'castit',
+      'apiKey'   => '187a515209d0affd473fedaedd6d770b'
+    ));
+
+    $location 					= $_SERVER['DOCUMENT_ROOT'].'/images/uploads/';
+    $objectStoreService = $client->objectStoreService(null, 'LON');
+    $container          = $objectStoreService->getContainer('video_original_files');
+    $date_dir           = date("o-m-d");
+	$fileName			= $_FILES["Video_file"]["name"];
+	$ext 				= ".".pathinfo($fileName, PATHINFO_EXTENSION);
+	$fileName			= unique_code(10).$ext;
+  $localFileName      = $location.$fileName;
+	$remoteFileName     = "/profiles/".$date_dir."/".$time."__".$fileName;
+	// $remoteFileName     = urlencode($remoteFileName);
+	$cdnfilepath     	= "/videos/profiles/".$date_dir;
+	$cdnfilename 		= $time."__".$fileName;
+	$thumbnail 			= "thumb_".$cdnfilename.".png";
+	$_FILES["Video_file"]["cdnfilepath"] = $cdnfilepath;
+	$_FILES["Video_file"]["cdnfilename"] = $cdnfilename;
+	$_FILES["Video_file"]["thumbnail"] = $thumbnail;
+
+
+  	$_SESSION["Video_file"][]	= $_FILES["Video_file"];
+		move_uploaded_file($fileTmpLoc, $location.$fileName);
+    
+    $handle = fopen($location.$fileName, 'r');
+    $container->uploadObject($remoteFileName, $handle);
+    unset($handle);
+
+
+    $zencoder_input   	= "cf+uk://castit:187a515209d0affd473fedaedd6d770b@video_original_files".$remoteFileName;
+    $zencoder_output  	= "cf+uk://castit:187a515209d0affd473fedaedd6d770b@videos_public/videos".$remoteFileName;
+    $zencoder_base_url  = "cf+uk://castit:187a515209d0affd473fedaedd6d770b@videos_public".$cdnfilepath;
+
+    $zencoder_array = [
+      "input_file"		=> $zencoder_input,
+      "output_file"		=> $zencoder_output,
+      "base_url"		=> $zencoder_base_url,
+      "filename"		=> $cdnfilename,
+    ];
+
+    // $zencoder_json = json_encode($zencoder_array);
+    $zencoder_json = build_json_zencoder($zencoder_array);
+
+
+    $url = 'https://app.zencoder.com/api/v2/jobs';
+    $ch = curl_init( $url );
+    curl_setopt( $ch, CURLOPT_POST, 1);
+    curl_setopt( $ch, CURLOPT_POSTFIELDS, $zencoder_json);
+    curl_setopt( $ch, CURLOPT_RETURNTRANSFER , 1);
+    curl_setopt( $ch, CURLOPT_HTTPHEADER, array(
+      'Content-Type: application/json ',
+      'Zencoder-Api-Key: 9477541a57e1eb2471b1ff256ca4b92c'
+    ));
+
+		$response = curl_exec( $ch );
+		
+		$filename = $cdnfilename;
+		$location = $cdnfilepath;
+		$thumbnail = $thumbnail;
+					$cloud_orig_path = str_replace('/videos',"", $location);
+						$query = "INSERT INTO `videos` (
+							`profile_id`,
+							`path`,
+							`uploaded_as_filename`,
+							`filename`,
+							`video_original_path`,
+							`video_original_filename`,
+							`video_original_file_basename`,
+							`thumbnail_original_photo_path`,
+							`thumbnail_photo_path`,
+							`thumbnail_photo_filename`,
+							`thumbnail_at_time`,
+							`published`,
+							`position`) 
+						VALUES (
+							'".$profile_id."',
+							'".$location."',
+							'".$fileName."',
+							'".$filename."',
+							'".$cloud_orig_path."',
+							'".$filename."',
+							'".$filename."',
+							'".$location."',
+							'".$location."',
+							'".$thumbnail."',
+							'3',
+							'0',
+							'".$position."')";
+					$query_prepared = $db->prepare($query);
+					$query_prepared->execute();
+
+					$recently_updated = "update profiles set recently_updated = 'true' where id = '".$profile_id."'";
+					$query_prepared = $db->prepare($recently_updated);
+					$query_prepared->execute();
+					// $db->exec($recently_updated);
+
+    echo json_encode(['status_message'=>'file upload success', 'type'=>'video', 'filename'=>$fileName, 'cdnfilepath'=>$cdnfilepath, 't'=>$time, 'thumbnail'=>$thumbnail, 'zencoder_input'=>$zencoder_input,'zencoder_output'=>$zencoder_output, 'position'=>$position ]);
+  }
+});
+
+function build_json_zencoder($data_array){
+	$json = '{
+	"input": "'.$data_array["input_file"].'",
+	"outputs": [{
+		"thumbnails": [
+				{
+					"base_url": "'.$data_array["base_url"].'",
+					"label": "regular",
+					"number": 1,
+					"filename": "thumb_'.$data_array["filename"].'",
+					"public": "true"
+				}
+			]
+		},
+    {"label": "mp4 high"},
+    {"url": "'.$data_array["output_file"].'"},
+    {"h264_profile": "high"}
+	]
+	}';
+	return $json;
+}
+
 //JSON coneverion
 function echoResponse($status_code, $response) {
     global $app;
@@ -2698,5 +4057,56 @@ function generate_uuid() {
 	
 	
 $app->run();
+
+function pp($q){
+  echo '<pre>';
+  print_r($q);
+  echo '</pre>';
+}
+
+function ppe($q){
+  pp($q);exit;
+}
+
+function unique_code($limit)
+{
+  return substr(base_convert(sha1(uniqid(mt_rand())), 16, 36), 0, $limit);
+}
+
+function array_sort($array, $on, $order=SORT_ASC)
+{
+    $new_array = array();
+    $sortable_array = array();
+
+    if (count($array) > 0) {
+        foreach ($array as $k => $v) {
+            if (is_array($v)) {
+                foreach ($v as $k2 => $v2) {
+                    if ($k2 == $on) {
+                        $sortable_array[$k] = $v2;
+                    }
+                }
+            } else {
+                $sortable_array[$k] = $v;
+            }
+        }
+
+        switch ($order) {
+            case SORT_ASC:
+                asort($sortable_array);
+            break;
+            case SORT_DESC:
+                arsort($sortable_array);
+            break;
+        }
+
+        foreach ($sortable_array as $k => $v) {
+            $new_array[$k] = $array[$k];
+        }
+    }
+
+    return $new_array;
+}
+
 
 ?>
