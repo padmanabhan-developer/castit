@@ -424,6 +424,11 @@ padding: 0px;
   -webkit-border-radius: 32px;
   -moz-border-radius: 32px;
   border-radius: 32px; color:#fff; font-size:14px; font-weight:bold;}
+  .send2.grp-add{
+      margin-top: 10px;
+      background-color: gray;
+      float: right;
+  }
   .form-box1{float:left; width:100%; position:relative; margin:0 0 20px 0;}
   
   .button{line-height:28px; padding:0 10px; border:solid 2px #000;color:#000; font-size:14px;font-weight:bold; float:left; text-decoration:none; margin:0 10px 10px 0;
@@ -481,6 +486,9 @@ padding: 0px;
   .black .span3 {font-size: 70px; color:#32333c;margin-left: 0px;}
   .black .span3 em{color:#fff;}
   .section-top h2{color:#fefefe; font-size:25px; font-family:Arial, Helvetica, sans-serif; font-weight:bold; position:relative; padding:0 0 55px 0;}
+  .customer-login-page .login_inner h2{color:#fefefe; font-size:17px; font-family:Arial, Helvetica, sans-serif; font-weight:bold; position:relative; padding:0 0 40px 0;}
+  .customer-login-page .login-call6{width: 33%}
+  .customer-login-page span{color: #aaa}
   .section-top h2:before {
       width: 24px;
       height: 4px;
@@ -490,6 +498,19 @@ padding: 0px;
       bottom: 0;
       content: ' ';
   }
+  .customer::before{
+      display: none;
+  }
+    .customer-h2{
+        color: #fefefe;
+        font-size: 20px;
+        font-family: Arial, Helvetica, sans-serif;
+        font-weight: bold;
+        position: relative;
+        padding: 0 0 40px 0;
+    }
+  .form_box .customer-label{font-size: 14px; color: #CCCCCC}
+  .customer div.form_box{margin-bottom: 25px !important}
   .black-right{position:absolute; top:20px; right:0;}
   .black-edit{float:left; width:21px; height:24px; background:url(images/edit3.png) no-repeat 0 0;}
   .black-close{float:left; margin:4px 0 0 48px; color:#fefefe !important; font-size:12px; font-family:Arial, Helvetica, sans-serif; text-transform:uppercase; line-height:15px; padding:0 20px 0 0; text-decoration:none !important;}
@@ -897,6 +918,8 @@ padding: 0px;
   .section-login{float:left; width:100%; border-bottom:solid 1px #fff; padding:15px 0 100px 0;}
   .login-row{margin:0 -12px;}
   .login-call3{float:left; width:30%; padding:0 12px;}
+  .login-call6{float:left; width:50%; padding:0 12px;}
+  .login-call6 .login_inner{width:60%}
   .login-page .section-top h2:before{display:none !important;}
   .login_inner{float:left; width:100%; position:relative; height:280px;}
   .login_box{float:left; width:100%; margin:0 0 20px 0;}

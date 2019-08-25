@@ -365,7 +365,16 @@ main.controller('RegisterStep2Controller', ['$scope', '$filter', '$http', '$wind
 	$scope.gender = $rootScope.isDanish ? genderDa : genderEn;
 
 	$scope.step2Create = step2Create;
-	function step2Create() {  
+	function step2Create() {
+		$scope.email = $("#email").val();
+		$scope.phone = $("#phone").val();
+		$scope.phone_at_work = $("#phone_at_work").val();
+		$scope.gender_id = $("#gender_id").val();
+		$scope.birth_day = $("#birth_day").val();
+		$scope.birth_month = $("#birth_month").val();
+		$scope.birth_year = $("#birth_year").val();
+		$scope.ethnic_origin = $("#ethnic_origin").val();
+		$scope.job = $("#job").val();
 		var formData = {
             email: $scope.email,
 						phone: $scope.phone,
@@ -692,11 +701,15 @@ main.controller('RegisterStep4Controller', ['$scope', '$filter', '$http', '$wind
 						selectedlicences: $scope.selectedlicences,
 						sportshobby: $scope.sports_hobby,
 						}
+		
+		/*
 		if(
 			($scope.selectedskills != undefined && $scope.selectedskills != '') && 
 			($scope.selectedcategories != undefined && $scope.selectedcategories != '') &&
 			($scope.selectedlicences != undefined && $scope.selectedlicences != '')
 			){
+		*/
+		if(true){
 			$http.post('api/v1/step4Create', formData).success(function(sucess) {
 				if(sucess){
 					window.location = '#/ansog-trin5' + ($rootScope.isDanish ? '/da' : '/en' );
@@ -704,7 +717,7 @@ main.controller('RegisterStep4Controller', ['$scope', '$filter', '$http', '$wind
 			});
 		}
 		else{
-			$(".alert_message").fadeIn("fast");
+			// $(".alert_message").fadeIn("fast");
 		}		
 	}
 
@@ -1183,19 +1196,36 @@ main.controller('mediaUploadController',['$scope', '$http', '$rootScope', functi
 		}
 		$scope.showSuccessPopup = showSuccessPopup;
 		function showSuccessPopup(){
-			$(".reg-success-popup").fadeIn();
-			sessionStorage.removeItem('registered_user_profile_id');
-			sessionStorage.removeItem('registered_user_profile_number');
-			sessionStorage.removeItem('registered_user_first_name');
-			sessionStorage.removeItem('registered_user_last_name');
-			sessionStorage.removeItem('profileinfo');
-			sessionStorage.removeItem('loginemail');
-
-			$http.post('api/v1/clearsessions');
-			setTimeout(function(){
-				$(".reg-success-popup").fadeOut();
-				window.location = '#/index' + ($rootScope.isDanish ? '/da' : '/en' );
-			}, 10000);
+			let imageExists = false;
+			let input_fields = $("input[name^='upload']");
+			// console.log(input_fields);
+			$.each(input_fields, function(key, value){
+				if(value.value){
+					imageExists = true;
+				}
+			})
+			console.log(imageExists);
+			if(!imageExists){
+				$(".image-reminder-popup").fadeIn();
+				$(".image-reminder-popup").click(function(){
+					$(".image-reminder-popup").fadeOut();
+				});
+			}
+			else{
+				sessionStorage.removeItem('registered_user_profile_id');
+				sessionStorage.removeItem('registered_user_profile_number');
+				sessionStorage.removeItem('registered_user_first_name');
+				sessionStorage.removeItem('registered_user_last_name');
+				sessionStorage.removeItem('profileinfo');
+				sessionStorage.removeItem('loginemail');
+	
+				$http.post('api/v1/clearsessions');
+				$(".reg-success-popup").fadeIn();
+				$(".reg-success-popup").click(function(){
+					$(".reg-success-popup").fadeOut();
+					window.location = '#/index' + ($rootScope.isDanish ? '/da' : '/en' );
+				});
+			}
 		}
 	
 		function errorHandler(event) {
@@ -2164,8 +2194,7 @@ main.controller('AngularLoginController', ['$scope', '$filter', '$http', '$windo
 
 	$(".login_link").click(function(){
 		if($("#login_email").hasClass('ng-valid') && $("#login_email").val()!=""){
-			$("#login_email").addClass("blue-login");
-
+			$("#login_email").removeClass("blue-login");
 			$("input[type=submit].login_button1").addClass("blue-login");
 			$("input[type=submit].login_button1").val("Send Email");
 			$("input[type=submit].login_button1").attr("type","button");
@@ -2284,6 +2313,7 @@ main.controller('MyProfileController1',['$scope', '$rootScope','$http', function
 						}
 		$http.post('api/v1/step1Create', formData).success(function(response) {
 			if(response.success){
+				sessionStorage.setItem('profileinfo', JSON.stringify($scope.profileinfo));
 				window.location = '#/my-profile_2' + ($rootScope.isDanish ? '/da' : '/en' );
 			}
 		});				
@@ -2324,6 +2354,15 @@ main.controller('MyProfileController2',['$scope', '$rootScope','$http', function
   
   $scope.step2Update = step2Update;
   function step2Update() {
+		$scope.profileinfo.email = $("#email").val();
+		$scope.profileinfo.phone = $("#phone").val();
+		$scope.profileinfo.phone_at_work = $("#phone_at_work").val();
+		$scope.profileinfo.gender_id = $("#gender_id").val();
+		$scope.profileinfo.birth_day = $("#birth_day").val();
+		$scope.profileinfo.birth_month = $("#birth_month").val();
+		$scope.profileinfo.birth_year = $("#birth_year").val();
+		$scope.profileinfo.ethnic_origin = $("#ethnic_origin").val();
+		$scope.profileinfo.job = $("#job").val();
     if($scope.profileinfo.ethnic_origin == undefined){
       $scope.profileinfo.ethnic_origin = '';
     }
@@ -2340,6 +2379,7 @@ main.controller('MyProfileController2',['$scope', '$rootScope','$http', function
         }
     $http.post('api/v1/step2Create', formData).success(function(response) {
       if(response.success){
+				sessionStorage.setItem('profileinfo', JSON.stringify($scope.profileinfo));
         window.location = '#/my-profile_3' + ($rootScope.isDanish ? '/da' : '/en' );
       }
     });       
@@ -2423,6 +2463,7 @@ main.controller('MyProfileController3',['$scope', '$rootScope','$http', function
 				
     $http.post('api/v1/step3Create', formData).success(function(response) {
       if(response.success){
+				sessionStorage.setItem('profileinfo', JSON.stringify($scope.profileinfo));
         window.location = '#/my-profile_4' + ($rootScope.isDanish ? '/da' : '/en' );
       }
     });       
@@ -2513,7 +2554,7 @@ main.controller('MyProfileController4',['$scope', '$rootScope','$http', function
 		}
 
 		if($scope.selectedcategories == ""){
-			checkuncheckcategory('9');
+			// checkuncheckcategory('9');
 		}
 
   };
@@ -2550,7 +2591,7 @@ main.controller('MyProfileController4',['$scope', '$rootScope','$http', function
 		}
 
 		if($scope.selectedskills == ""){
-			checkuncheckskill('16');
+			// checkuncheckskill('16');
 		}
     
   };
@@ -2587,7 +2628,7 @@ main.controller('MyProfileController4',['$scope', '$rootScope','$http', function
 		}
 
 		if($scope.selectedlicences == ""){
-			checkunchecklicence('5');
+			// checkunchecklicence('5');
 		}
   };
   
@@ -2613,6 +2654,7 @@ main.controller('MyProfileController4',['$scope', '$rootScope','$http', function
 
     $http.post('api/v1/step4Create', formData).success(function(response) {
       if(response.success){
+				sessionStorage.setItem('profileinfo', JSON.stringify($scope.profileinfo));
         window.location = '#/my-profile_5' + ($rootScope.isDanish ? '/da' : '/en' );
       }
     });       
@@ -2620,7 +2662,7 @@ main.controller('MyProfileController4',['$scope', '$rootScope','$http', function
 }]);
 
 main.controller('MyProfileController5',['$scope', '$rootScope','$http', function($scope, $rootScope, $http, $cookies){
-  $scope.profileinfo = JSON.parse(sessionStorage.getItem('profileinfo'));
+	$scope.profileinfo = JSON.parse(sessionStorage.getItem('profileinfo'));
 	let loaded_info = $scope.profileinfo;
   $http.get('api/v1/getlanguages').success(function(languagesdropdown) {
     $scope.languagesdropdown = languagesdropdown
@@ -2645,12 +2687,15 @@ main.controller('MyProfileController5',['$scope', '$rootScope','$http', function
       }
       $('#langrateval'+langrowid).val(langrateid);
     }
-  };
+	};
 
+
+	if($scope.profileinfo.languages){
   $scope.lang1 = ($scope.profileinfo.languages[0] != undefined) ? $scope.profileinfo.languages[0].lang_id : "";
   $scope.lang2 = ($scope.profileinfo.languages[1] != undefined) ? $scope.profileinfo.languages[1].lang_id : "";
   $scope.lang3 = ($scope.profileinfo.languages[2] != undefined) ? $scope.profileinfo.languages[2].lang_id : "";
   $scope.lang4 = ($scope.profileinfo.languages[3] != undefined) ? $scope.profileinfo.languages[3].lang_id : "";
+	
 
   $("#lang1 option[value='"+ $scope.lang1 +"']").attr("selected","selected");
   $("#lang2 option[value='"+ $scope.lang2 +"']").attr("selected","selected");
@@ -2661,7 +2706,11 @@ main.controller('MyProfileController5',['$scope', '$rootScope','$http', function
   $scope.langrateval2 = ($scope.profileinfo.languages[1] != undefined) ? $scope.profileinfo.languages[1].rating : "";
   $scope.langrateval3 = ($scope.profileinfo.languages[2] != undefined) ? $scope.profileinfo.languages[2].rating : "";
   $scope.langrateval4 = ($scope.profileinfo.languages[3] != undefined) ? $scope.profileinfo.languages[3].rating : "";
-  
+	}
+	else{
+		$scope.lang1 = $scope.lang2 = $scope.lang3 = $scope.lang4 = "";
+		$scope.langrateval1 = $scope.langrateval2 = $scope.langrateval3 = $scope.langrateval4 = "";
+	}
   $scope.$on('ngRepeatFinished', function(ngRepeatFinishedEvent) {
     ($scope.langrateval1 != "") ? setlangraing(1, $scope.langrateval1) : $scope.langrateval1 = "";
     ($scope.langrateval2 != "") ? setlangraing(2, $scope.langrateval2) : $scope.langrateval2 = "";
@@ -2757,7 +2806,7 @@ main.controller('MyProfileController5',['$scope', '$rootScope','$http', function
 						window.location = '#/index' + ($rootScope.isDanish ? '/da' : '/en' );
 					});	
 				}
-
+				sessionStorage.setItem('profileinfo', JSON.stringify($scope.profileinfo));
         window.location = '#/my-profile_6' + ($rootScope.isDanish ? '/da' : '/en' );
       }
     });       

@@ -46,7 +46,7 @@ photos 			: verify exist
 	  	else{
 	  		// 1 male - CM; 2 female - CF
 	  		$profile_number_prefix = ($value['gender_id'] == 2) ? "CF":"CM";
-	  		$max_existing = $db->prepare("SELECT MAX(CAST(SUBSTRING(profile_number, 3) AS UNSIGNED)) as max_profile FROM memberships where profile_number LIKE 'CF%' OR profile_number LIKE 'CM%' ");
+	  		$max_existing = $db->prepare("SELECT MAX(CAST(SUBSTRING(profile_number, 3) AS UNSIGNED)) as max_profile FROM memberships where profile_number LIKE 'C%' OR profile_number LIKE 'Y%' OR profile_number LIKE 'B%' ");
 	  		$max_existing->execute();
 	  		$max_profile = $max_existing->fetchAll(PDO::FETCH_ASSOC);
 	  		

@@ -60,12 +60,12 @@ if ($row > 0){
       $value['licenses'][] = $lc_item['drivers_license_id'];
     }
 
-    $language_query = $db->prepare("SELECT id, language_proficiency_language_id, language_proficiency_rating_id FROM language_proficiencies where profile_id = $pid");
+    $language_query = $db->prepare("SELECT id, language_proficiency_language_id, language_proficiency_rating_id FROM language_proficiencies where profile_id = $pid order by id");
     $language_query->execute();
     foreach ($language_query->fetchAll(PDO::FETCH_ASSOC) as $lng_item){
       $value['languages'][] = ['lang_id'=>$lng_item['language_proficiency_language_id'], 'rating'=>$lng_item['language_proficiency_rating_id'],'lng_pro_id'=>$lng_item['id']];
     }
-    sort($value['languages']);
+    // sort($value['languages']);
     $payment_query = $db->prepare("SELECT * from payments where profile_id = $pid");
     $payment_query->execute();
     foreach($payment_query->fetchAll(PDO::FETCH_ASSOC) as $payment){

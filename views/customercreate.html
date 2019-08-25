@@ -1,0 +1,99 @@
+<div ng-controller="createCustomerController" class="ansog1 full-width-page full-screen-black-box">
+
+        <div id="content" class="wrap2">
+             <form name="createCustomerForm" id="createCustomerForm" ng-submit="createCustomer()">
+   
+                  <div class="page-black livetitle customer">
+                       
+                       <div class="show-xs main-menu-header show-xs">
+                            <img src="images/CASTIT_LOGO_RGB_white.svg" style="width:40%"/>
+                            <a style=" padding-right: 0; line-height: 20px; display: inline-flex; " href="/#/index{{ isDanish ? '/da' : '/en'}}" class="poup-close2 popup-close-btn">{{ isDanish ? 'LUK' : 'CLOSE' }} <img style=" width: 20px; height: 15px; " src="images/svgs/lukw1.svg" alt=""></a>
+                       </div>
+                       
+                       <div class="section-top">
+                            <!-- <h2 class="customer">{{ isDanish ? 'Opret Kunde Profil' : 'Create Customer Profile' }}</h2> -->
+                            <div class="black-right hide-xs">
+                                 <!-- <a href="#" class="black-edit"></a> -->
+                                 <a style=" padding-right: 0; line-height: 20px; display: inline-flex; " href="#/index{{isDanish ? '/da' : '/en'}}" class="black-close">{{ isDanish ? 'luk' : 'Close' }} <img style=" width: 20px; height: 15px; " src="images/svgs/lukw1.svg" alt=""></a>
+                            </div>
+                       </div>
+                       <!--close section-top-->
+   
+                       <div class="section-middle">
+   
+                            <div class="black-section">
+                                 <div class="black-row">
+   
+                                     
+                                      <!--close black-leftbar-->
+                                      <div class="black-rightbar livetitle">
+   
+                                           <div class="black-row">
+                                                <div class="black-cal6">
+                                                    <h2 class="customer-h2">{{ isDanish ? 'Profil' : 'Profile' }}</h2>
+                                                     <div class="form_box">
+                                                         <label class="customer-label">{{ isDanish ? 'Brugernavn' : 'Username' }}*</label>
+                                                          <input ng-model="username" name="username" id="first_name"
+                                                               required pattern=".{2,}" type="email" class="input2"
+                                                               placeholder="{{ isDanish ? 'Email' : 'Email' }}">
+   
+                                                     </div>
+                                                     <div class="form_box">
+                                                        <label class="customer-label">{{ isDanish ? 'Virksomhed' : 'Corporation' }}*</label>
+                                                         <input ng-model="corporation" name="corporation" id="corporation"
+                                                              required pattern=".{2,}" type="text" class="input2"
+                                                              placeholder="{{ isDanish ? 'Virksomhed' : 'corporation' }}">
+  
+                                                    </div>  
+                                                    <div class="form_box">
+                                                        <label class="customer-label">{{ isDanish ? 'Telefon' : 'Telephone' }}*</label>
+                                                         <input ng-model="telephone" name="telephone" id="telephone"
+                                                              required pattern=".{2,}" type="text" class="input2"
+                                                              placeholder="{{ isDanish ? '+45 87654321' : '+45 87654321' }}">
+  
+                                                    </div>
+                                                    <div class="form_box">
+                                                        <label class="customer-label">{{ isDanish ? 'Adgangskode' : 'Password' }}*</label>
+                                                         <input ng-model="password" name="password" id="password"
+                                                              required pattern=".{2,}" type="password" class="input2"
+                                                              placeholder="{{ isDanish ? '****' : '****' }}">
+  
+                                                    </div>
+                                                    <div class="form_box">
+                                                        <label class="customer-label">{{ isDanish ? 'Bekræft Adgangskode' : 'Confirm Password' }}*</label>
+                                                         <input ng-model="cpassword" name="cpassword" id="cpassword"
+                                                              required pattern=".{2,}" type="password" class="input2"
+                                                              placeholder="{{ isDanish ? '****' : '****' }}">
+  
+                                                    </div>
+                                                    <div class="form_box">
+                                                         <input style="background-color: #EEE; color:#000" ng-model="opretcustomer" name="opretcustomer" id="opretcustomer"
+                                                              required pattern=".{2,}" value="{{isDanish ? 'OPRET': 'Create'}}" type="submit" class="send2">
+  
+                                                    </div>                                                   
+                                                </div>
+                                                <!--close black-cal4-->
+   
+                                                
+                                                <!--close black-cal4-->
+                                           </div>
+                                           <!--close black-row-->
+                                      </div>
+                                      <!--close black-rightbar-->
+                                 </div>
+                                 <!--close black-row-->
+                            </div>
+                            <!--close black-section-->
+   
+                            
+                       </div>
+                       <!--close section-middle-->
+   
+                  </div>
+                  <!--close page-black-->
+             </form>
+        </div>
+        <!--close content-->
+   
+   
+   </div>

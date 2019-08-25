@@ -1,5 +1,5 @@
 <style>
-.reg-success-popup {
+.reg-success-popup, .image-reminder-popup {
      display: block;
      position: fixed;
      top: 0;
@@ -576,9 +576,19 @@ span.addmore {
 	}
 }
 @media (max-width: 500px) {
-	.imgContainer, .upload-placeholder {
-		width: calc( 33.33% - 10px);
-	}
+    .imgContainer, .upload-placeholder {
+      width: calc( 33.33% - 10px );
+    }
+    .upload-wrap{
+      height: 170px;
+    }
+    .upload_section{
+      margin: 25px 0 0 0;
+      height: 50px;
+    }
+    .main-menu-header{
+      margin-bottom: 15px;
+    }
 }
 </style>
 <div ng-controller="mediaUploadController" class="ansog1 full-width-page full-screen-black-box">
@@ -795,7 +805,7 @@ span.addmore {
 	<!--close wrapper-->
 	<input type="hidden" name="" class="operation" value="insert">
 	<div class="reg-success-popup" style="color: white; display: none">
-			<div class="reg-caption">
+		<div class="reg-caption">
 				 <p class="upper">{{ isDanish ? 'Tak for din oprettelse!' : 'Thank you for submitting your application' }}</p> 
 				 <br>
 				 <p class="remarks">{{ isDanish ? 'En bekræftigelse er sendt til din mail.' : 'You will receive an email from us within 2 weeks.' }}</p>
@@ -804,9 +814,14 @@ span.addmore {
 							<span ng-if="isDanish">Ingen profiler offentliggøres på vores hjemmeside før den er gennemset af en medarbejder. Når din profil godkendes eller afvises, hører du fra os pr. mail</span>
 							<span ng-if="!isDanish">No profiles are published on our website before it is reviewed by an employee. When your profile is approved or rejected, you get to know from us via email.</span>
 						</p>
-			</div>
+		</div>
 	   
-	   </div>
+	</div>
+	<div class="image-reminder-popup" style="color: white; display: none">
+		<div class="reg-caption">
+			<p class="upper">{{ isDanish ? 'Husk at uploade foto' : 'Remember to upload photo' }}</p>
+		</div>
+	</div>
 
 	</body>
 

@@ -60,7 +60,7 @@
        <div class="page-bottom">
        		<div class="container">
             	 <div class="toolbar">
-                 	  <div class="radio radio-info">
+                 	  <div class="radio radio-info" style="margin-right: 270px;">
                            <input type="radio" name="sort" id="Radios1" value="first_name">
                            <label>Navn</label>
                       </div>
@@ -100,20 +100,20 @@
                            <label>Bureau</label>
                       </div>
                       
-                      <div class="radio radio-info white-label">
+                      <!-- <div class="radio radio-info white-label">
                            <input type="radio" name="filter" id="Radios9" value="slet">
                            <label>Slettet</label>
-                      </div>
+                      </div> -->
 
                       <div class="radio radio-info white-label">
                            <input type="radio" name="filter" id="Radios10" value="all">
                            <label>Alle</label>
                       </div>
                       
-                      <div class="radio radio-info white-label">
+                      <!-- <div class="radio radio-info white-label">
                            <input type="radio" name="filter" id="Radios11" value="recent">
                            <label>Recently Updated</label>
-                      </div>
+                      </div> -->
                       
                       <div class="right-small-txt"></div>
                  </div>

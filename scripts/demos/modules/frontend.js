@@ -1,12 +1,11 @@
 var frontend = angular.module('theme.demos.dashboard', [
     'angular-skycons',
-    'theme.demos.forms'
+	'theme.demos.forms',
+	'ngCookies'
   ])
-  frontend.controller('FrontendController', ['$scope', '$rootScope', '$http', '$timeout', '$window', '$filter', '$location', function($scope,$rootScope, $http, $timeout, $window, $filter, $location) {
+  frontend.controller('FrontendController', ['$scope', '$rootScope', '$http', '$timeout', '$window', '$filter', '$location','$cookies', function($scope,$rootScope, $http, $timeout, $window, $filter, $location, $cookies) {
     'use strict';
-	//$('#headerlogo').hide();
-  //alert('ddd');
-  
+
 	$rootScope.bodylayout = '';		
 	$rootScope.interface = 'home';
 	$rootScope.isMaincontent = true;
@@ -68,6 +67,7 @@ var frontend = angular.module('theme.demos.dashboard', [
   $scope.enableNotesBoxFN = function(){
 	$scope.enableNotesBox = !$scope.enableNotesBox;
   }
+
   $scope.updateNotesFN = function($event){
 	  let data = { 
 			'group_id' : $event.currentTarget.attributes.group_id.nodeValue,
@@ -673,31 +673,36 @@ var frontend = angular.module('theme.demos.dashboard', [
 	  
 	$scope.pbox_singleimage='';	
 	$scope.getProfileBox = function (profileid){
-    $scope.selectedgroupings = '';
-	$scope.pbox_singleimage = '';
-	$scope.profile_notes = '';
-    $scope.pbox_profileid = profileid;
-    $scope.disable_lightbox_submit = true;
-    $scope.disable_lightbox_submit_style = {"background-color": "grey"};
-		$http.get('api/v1/getgroupinglist', {params: {view: 'home', grouptoken : $scope.groupToken}}).success(function(groupingdata) {
-			$scope.groupingcount =groupingdata.count;
-			if(groupingdata.count){
-				$scope.groupings = groupingdata.grouping;
-			}else{
-				$scope.groupings ='';
-			}
-		});
 
-		$http.get('api/v1/getsingleprofiles', {params:{profileid:profileid}}).success(function(profiledata) {
-			//alert(response.success);
-			if(profiledata.success){
-				$scope.pbox_singleimage = profiledata.profile_images[0].fullpath;
-				$scope.apply;
-			}else{
-				$scope.pbox_loading = 'Ingen data fundet';
-			}
-		});	
-		$("#profilebox").fadeIn("slow"); 
+		if($cookies.customer_user == undefined){
+			window.location.href = '#/customerlogin' + ($rootScope.isDanish ? '/da' : '/en' );
+		}
+
+		$scope.selectedgroupings = '';
+		$scope.pbox_singleimage = '';
+		$scope.profile_notes = '';
+		$scope.pbox_profileid = profileid;
+		$scope.disable_lightbox_submit = true;
+		$scope.disable_lightbox_submit_style = {"background-color": "grey"};
+			$http.get('api/v1/getgroupinglist', {params: {view: 'home', grouptoken : $scope.groupToken}}).success(function(groupingdata) {
+				$scope.groupingcount =groupingdata.count;
+				if(groupingdata.count){
+					$scope.groupings = groupingdata.grouping;
+				}else{
+					$scope.groupings ='';
+				}
+			});
+
+			$http.get('api/v1/getsingleprofiles', {params:{profileid:profileid}}).success(function(profiledata) {
+				//alert(response.success);
+				if(profiledata.success){
+					$scope.pbox_singleimage = profiledata.profile_images[0].fullpath;
+					$scope.apply;
+				}else{
+					$scope.pbox_loading = 'Ingen data fundet';
+				}
+			});	
+			$("#profilebox").fadeIn("slow"); 
 	}
 
 	$(".poup-close-profilebox").click(function(){
@@ -761,7 +766,6 @@ var frontend = angular.module('theme.demos.dashboard', [
 
 	$scope.add_new_group = add_new_group;
 	function add_new_group() {
-
 		if($scope.new_group_name){
 
 			var formData = {groupname: $scope.new_group_name, grouptoken : $scope.groupToken};
@@ -770,8 +774,8 @@ var frontend = angular.module('theme.demos.dashboard', [
 				$scope.groupingcount =groupingdata.count;
 				if(groupingdata.count){
 					$scope.groupings = groupingdata.grouping;
-					 $scope.new_group_name='';
-					 
+					$scope.new_group_name='';
+					
 				}else{
 					$scope.groupings ='';
 				}

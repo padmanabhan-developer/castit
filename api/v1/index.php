@@ -2366,7 +2366,7 @@ $app->post('/step7Create', function() use ($app){
 			
 			// 1 male - YM; 2 female - YF
 			$profile_number_prefix = ($gender_id == 2) ? "YF":"YM";
-			$max_existing = $db->prepare("SELECT MAX(CAST(SUBSTRING(profile_number, 3) AS UNSIGNED)) as max_profile FROM memberships where profile_number LIKE 'YF%' OR profile_number LIKE 'YM%' ");
+			$max_existing = $db->prepare("SELECT MAX(CAST(SUBSTRING(profile_number, 3) AS UNSIGNED)) as max_profile FROM memberships where profile_number LIKE 'Y%' OR profile_number LIKE 'C%' OR profile_number LIKE 'B%' ");
 			$max_existing->execute();
 			$max_profile = $max_existing->fetchAll(PDO::FETCH_ASSOC);
 			
@@ -2510,7 +2510,7 @@ $app->post('/step7Create', function() use ($app){
 	else{
 	  // 1 male - CM; 2 female - CF
 	  $profile_number_prefix = ($gender_id == 2) ? "CF":"CM";
-	  $max_existing = $db->prepare("SELECT MAX(CAST(SUBSTRING(profile_number, 3) AS UNSIGNED)) as max_profile FROM memberships where profile_number LIKE 'CF%' OR profile_number LIKE 'CM%' ");
+	  $max_existing = $db->prepare("SELECT MAX(CAST(SUBSTRING(profile_number, 3) AS UNSIGNED)) as max_profile FROM memberships where profile_number LIKE 'C%' OR profile_number LIKE 'Y%' OR profile_number LIKE 'B%'");
 	  $max_existing->execute();
 	  $max_profile = $max_existing->fetchAll(PDO::FETCH_ASSOC);
 	  
@@ -2768,7 +2768,7 @@ $app->post('/welcome_email', function () use ($app) {
   $headers .= "X-Priority: 3\r\n";
   $headers .= "X-Mailer: PHP". phpversion() ."\r\n" ;
 	// $headers .= 'BCC: padmanabhann@mailinator.com, vs@anewnative.com, cat@castit.dk' . "\r\n";
-  $headers .= 'BCC: padmanabhann@mailinator.com, vs@anewnative.com' . "\r\n";
+  $headers .= 'BCC: padmanabhann@mailinator.com' . "\r\n";
 
   
 $html_body = <<< EOM
@@ -2784,7 +2784,7 @@ De bedste hilsner
 </p>
 <p>Cathrine & Pernille</p>
 <br/>
-<p><img style="width:150px; height:30px" src="https://castit.dk/images/logo-b.svg"/></p>
+<img style="max-width: 150px;" src="https://castit.dk/images/new_logo_black.png" alt="" />
 <p>Rosenvængets Allè 11, 1. Sal</p>
 <p>2100 København Ø</p>
 
@@ -2811,7 +2811,7 @@ Very best
 </p>
 <p>Cathrine & Pernille</p>
 <br/>
-<p><img style="width:150px; height:30px" src="https://castit.dk/images/logo-b.svg"/></p>
+<img style="max-width: 150px;" src="https://castit.dk/images/new_logo_black.png" alt="" />
 <p>Rosenvængets Allè 11, 1. Sal</p>
 <p>2100 København Ø</p>
 
@@ -2835,7 +2835,7 @@ $result = $mgClient->sendMessage($domain, array(
 	// 'to'      => 'padmanabhan.code@gmail.com',
 	'subject' => $subject,
 	'html'    => $html_body,
-	'bcc'	=> 'padmanabhann@mailinator.com, vs@anewnative.com, cat@castit.dk',
+	'bcc'	=> 'padmanabhann@mailinator.com, cat@castit.dk',
 ));
 // mail( $to_email, $subject, $html_body, $headers ); // Accountant
   $response['success'] = true;
@@ -2892,7 +2892,7 @@ $app->post('/sendemail', function () use ($app) {
   $headers .= "X-Priority: 3\r\n";
   $headers .= "X-Mailer: PHP". phpversion() ."\r\n" ;
 	// $headers .= 'BCC: padmanabhann@mailinator.com, vs@anewnative.com, cat@castit.dk' . "\r\n";
-  $headers .= 'BCC: padmanabhann@mailinator.com, vs@anewnative.com' . "\r\n";
+//   $headers .= 'BCC: padmanabhann@mailinator.com' . "\r\n";
 
 
   if($to_cc){
@@ -2900,7 +2900,7 @@ $app->post('/sendemail', function () use ($app) {
   }
 
 	// $headers .= 'BCC: cat@castit.dk' . "\r\n";
-	$headers .= 'BCC: padmanabhann@mailinator.com, vs@anewnative.com, cat@castit.dk' . "\r\n";
+	$headers .= 'BCC: padmanabhann@mailinator.com, cat@castit.dk' . "\r\n";
 
   //$html .= 'testemail';
   global $mgClient;
@@ -2911,7 +2911,7 @@ $app->post('/sendemail', function () use ($app) {
 	$email_data['subject']		=	$subject;
 	$email_data['html']		=	$html;
 	if(isset($to_cc) && $to_cc != '') {$email_data['cc']		=	$to_cc;}
-	$email_data['bcc']		=	'padmanabhann@mailinator.com, vs@anewnative.com, cat@castit.dk';
+	$email_data['bcc']		=	'padmanabhann@mailinator.com, cat@castit.dk';
 
 
   $result = $mgClient->sendMessage($domain, $email_data);
@@ -3035,7 +3035,7 @@ $app->post('/sendlightbox', function () use ($app) {
 				$headers .= 'CC: <'.$to_cc.'>' ."\r\n";
 			}
 			// $headers .= 'BCC: cat@castit.dk' . "\r\n";
-  		$headers .= 'BCC: padmanabhann@mailinator.com, vs@anewnative.com, cat@castit.dk' . "\r\n";
+  		$headers .= 'BCC: padmanabhann@mailinator.com, cat@castit.dk' . "\r\n";
 
 			//$html .= 'testemail';
 			global $mgClient;
@@ -3126,7 +3126,7 @@ $app->post('/sendgroup', function () use ($app) {
         
 				foreach($rows_lb_pprofiles as $rowp) {
 					
-						$query = $db->prepare("SELECT p.*, m.profile_group_id, m.profile_number, m.profile_number_first_name_last_name, m.version, m.current, g.name as gender_name, hc.name as hair_color_name, ec.name as eye_color_name FROM profiles p INNER JOIN memberships m ON m.profile_id = p.id INNER JOIN genders g ON g.id = p.gender_id INNER JOIN hair_colors hc ON hc.id = p.hair_color_id INNER JOIN eye_colors ec ON ec.id = p.eye_color_id  WHERE p.id='".$rowp['profile_id']."' AND (p.profile_status_id = '1' ) AND m.current ='1' LIMIT 1"); 
+						$query = $db->prepare("SELECT p.*, m.profile_group_id, m.profile_number, m.profile_number_first_name_last_name, m.version, m.current, g.name as gender_name FROM profiles p INNER JOIN memberships m ON m.profile_id = p.id INNER JOIN genders g ON g.id = p.gender_id  WHERE p.id='".$rowp['profile_id']."' AND (p.profile_status_id = '1' ) AND m.current ='1' LIMIT 1"); 
 						$query->execute();
 						$rows = $query->fetchAll(PDO::FETCH_ASSOC);
 						if(count($rows)>0) {
@@ -3195,15 +3195,27 @@ $app->post('/sendgroup', function () use ($app) {
       // $to_email = 'padmanabhan.code@gmail.com';
 	  //$html .= 'testemail';
 	  global $mgClient;
-	  global $domain;
-		$result = $mgClient->sendMessage($domain, array(
-		'from'    => 'CASTIT <info@castit.dk>',
-		'to'      => $to_email,
-		// 'to'      => 'padmanabhan.code@gmail.com',
-		'subject' => $subject,
-		'html'    => $email_body,
-		'bcc'	=> 'padmanabhann@mailinator.com, vs@anewnative.com, cat@castit.dk',
-		));
+		global $domain;
+		if($to_cc != ""){
+			$result = $mgClient->sendMessage($domain, array(
+				'from'    => 'CASTIT <info@castit.dk>',
+				'to'      => $to_email,
+				'cc'			=> $to_cc,
+				'subject' => $subject,
+				'html'    => $email_body,
+				'bcc'	=> 'padmanabhann@mailinator.com, cat@castit.dk',
+				));
+		}
+		else{
+			$result = $mgClient->sendMessage($domain, array(
+				'from'    => 'CASTIT <info@castit.dk>',
+				'to'      => $to_email,
+				'subject' => $subject,
+				'html'    => $email_body,
+				'bcc'	=> 'padmanabhann@mailinator.com, cat@castit.dk',
+				));
+		}
+
 			// mail( $to_email, $subject, $email_body, $headers ); // Accountant
 			$response['success'] = true;
 			$response['message'] = 'Group er sendt!';
@@ -3746,7 +3758,7 @@ $app->post('/resetpassword',function () use ($app) {
 				$headers .= "X-Priority: 3\r\n";
 				$headers .= "X-Mailer: PHP". phpversion() ."\r\n" ;
 					// $headers .= 'BCC: padmanabhann@mailinator.com, vs@anewnative.com, cat@castit.dk' . "\r\n";
-				$headers .= 'BCC: padmanabhann@mailinator.com, vs@anewnative.com, cat@castit.dk' . "\r\n";
+				$headers .= 'BCC: padmanabhann@mailinator.com, cat@castit.dk' . "\r\n";
 				global $mgClient;
 				global $domain;
 				$result = $mgClient->sendMessage($domain, array(
@@ -3755,7 +3767,7 @@ $app->post('/resetpassword',function () use ($app) {
 					// 'to'      => 'padmanabhan.code@gmail.com',
 					'subject' => $subject,
 					'html'    => $content,
-					'bcc'	=> 'padmanabhann@mailinator.com, vs@anewnative.com, cat@castit.dk',
+					'bcc'	=> 'padmanabhann@mailinator.com, cat@castit.dk',
 				));
 				// mail( $to, $subject, $content, $headers ); // Accountant
 			

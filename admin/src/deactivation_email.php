@@ -10,8 +10,9 @@ $deactivation_email = <<< EOM
 <p>De bedste hilsner</p>
 
 <p>Cathrine & Pernille</p>
-
-<p><img style="width:150px; height:30px" src="https://castit.dk/admin/images/logo.png"/></p>
+<p></p>
+<br/>
+<img style="max-width: 150px;" src="https://castit.dk/images/new_logo_black.png" alt="" />
 <p>Rosenvængets Allè 11, 1. Sal</p>
 <p>2100 København Ø</p>
 
@@ -38,8 +39,9 @@ $deactivation_email = <<< EOM
 <p>Very best</p>
 
 <p>Cathrine & Pernille</p>
-
-<p><img style="width:150px; height:30px" src="https://castit.dk/admin/images/logo.png"/></p>
+<p></p>
+<br/>
+<img style="max-width: 150px;" src="https://castit.dk/images/new_logo_black.png" alt="" />
 <p>Rosenvængets Allè 11, 1st floor</p>
 <p>2100 Copenhagen Ø</p>
 

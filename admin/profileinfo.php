@@ -468,6 +468,7 @@ if($value['gender_id'] == '2' && !$is_kid){
                                      
                                      <div class="form-row">
                                      	  <div class="row">
+                                              <div class="col6"><input type="text" class="form-input1 cellphone" placeholder="cellphone" value="<?php echo $value['cellphone'] ;?>" ></div>
                                               <div class="col6">
                                                 <?php // <input type="text" class="form-input1 gender" placeholder="Mand" value="echo $value['gender_id']" > ?>
                                                 <div class="custom-select">

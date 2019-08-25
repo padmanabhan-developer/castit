@@ -323,6 +323,7 @@ $(document).ready(function () {
         profile.country_id  = "";
         profile.phone_at_work  = "";
         profile.phone  = "";
+        profile.cellphone  = "";
         profile.email  = "";        
         profile.gender_id  = "";
         profile.hair_color_id  = "";

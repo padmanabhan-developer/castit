@@ -18,8 +18,9 @@ Vi sætter stor pris på din interesse.</p>
 <p>De bedste hilsner</p>
 
 <p>Cathrine & Pernille</p>
-
-<p><img style="width:150px; height:30px" src="https://castit.dk/admin/images/logo.png"/></p>
+<p></p>
+<br/>
+<img style="max-width: 150px;" src="https://castit.dk/images/new_logo_black.png" alt="" />
 <p>Rosenvængets Allè 11, 1. Sal</p>
 <p>2100 København Ø</p>
 
@@ -54,8 +55,9 @@ Vi sætter stor pris på din interesse.</p>
 <p>Very best</p>
 <br/>
 <p>Cathrine & Pernille</p>
+<p></p>
 <br/>
-<p><img style="width:150px; height:30px" src="https://castit.dk/admin/images/logo.png"/></p>
+<img style="max-width: 150px;"  src="https://castit.dk/images/new_logo_black.png" alt="" />
 <p>Rosenvængets Allè 11, 1st floor</p>
 <p>2100 Copenhagen East</p>
 <br/>

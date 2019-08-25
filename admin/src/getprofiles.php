@@ -49,6 +49,9 @@
       END
       ";
     }
+    elseif($sort_param == 'created_at' || $sort_param == 'updated_at'){
+      $order  = " ORDER BY p.".$sort_param." DESC ";
+    }
     else{
       $order  = " ORDER BY p.".$sort_param." ASC ";
     }
@@ -109,7 +112,9 @@
       }
 
       $created_at = strtotime($value['created_at']);
+      $updated_at = strtotime($value['updated_at']);
       $info['created_at'] = $created_date = date("d.m.y", $created_at);
+      $info['updated_at'] = $updated_at = date("d.m.y", $updated_at);
       $info['valid_till'] = $valid_till = "31.12.2018";
       $info['approved'] = $approved = $value['approved'];
     /*
@@ -165,7 +170,7 @@
         <td class="td1"><p class="'.$info['recently_updated'].'"><strong>'. $info['name'] .'</strong></p></td>
         <td class="td2"><p>'. $info['profile_number'] .'</p></td>
         <td class="td3"><p>'. $info['created_at'] .'</p></td>
-        <td class="td4"><p>'. $info['valid_till'] .'</p></td>
+        <td class="td4"><p>'. $info['updated_at'] .'</p></td>
         <td class="td5"><p>'. $status_info .'</td>
         <td class="td6"><p><a href="/admin/profileinfo?id='. $info["profile_id"] .'">Info</a></p></td>
         <td class="td7"><p>Kalender</p></td>
