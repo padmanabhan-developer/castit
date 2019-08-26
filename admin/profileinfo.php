@@ -263,7 +263,7 @@ if($value['gender_id'] == '2' && !$is_kid){
                         </div>
                         <div class="form-row">
                           <label style="float: left;width: 30%;" class="chek-box">Bureau</label>
-                            <input style="width: 65%;height: 35px;" type="text" class="form-input1 disabled bureau" placeholder="" value="<?php echo $value['bureau'] ;?>">
+                            <input style="width: 65%;height: 35px;" type="text" class="form-input1 disabled bureau" placeholder_dummy="" value="<?php echo $value['bureau'] ;?>">
                         </div>
                       </div>
                  	  <div class="box1">
@@ -299,9 +299,9 @@ if($value['gender_id'] == '2' && !$is_kid){
                                 */
                                ?>
                                <?php /* ?>
-                                <div class="col3"><input value="<?php echo $marked_as_new_from_day;?>" type="text" class="form-input1 marked_as_new_from_day" placeholder="DD" maxlength=2></div>
-                                <div class="col3"><input value="<?php echo $marked_as_new_from_month;?>" type="text" class="form-input1 marked_as_new_from_month" placeholder="MM" maxlength=2></div>
-                                <div class="col3"><input value="<?php echo $marked_as_new_from_year;?>" type="text" class="form-input1 marked_as_new_from_year" placeholder="YYYY" maxlength=4></div>
+                                <div class="col3"><input value="<?php echo $marked_as_new_from_day;?>" type="text" class="form-input1 marked_as_new_from_day" placeholder_dummy="DD" maxlength=2></div>
+                                <div class="col3"><input value="<?php echo $marked_as_new_from_month;?>" type="text" class="form-input1 marked_as_new_from_month" placeholder_dummy="MM" maxlength=2></div>
+                                <div class="col3"><input value="<?php echo $marked_as_new_from_year;?>" type="text" class="form-input1 marked_as_new_from_year" placeholder_dummy="YYYY" maxlength=4></div>
                                 <?php */ ?>
 
                                 <div class="col6" style="padding:0; width:185px; float:right;"><input type="date" name="marked_as_new_from" class="form-input1 marked_as_new_from" style="padding-left: 25%; letter-spacing:1px; font-weight:bold" value="<?php echo $marked_as_new_from;?>"></div>
@@ -326,9 +326,9 @@ if($value['gender_id'] == '2' && !$is_kid){
                                 */
                                ?>
                                <?php /* ?>
-                                <div class="col3"><input value="<?php echo $marked_as_new_till_day;?>" type="text" class="form-input1 marked_as_new_till_day" placeholder="DD" maxlength=2></div>
-                                <div class="col3"><input value="<?php echo $marked_as_new_till_month;?>" type="text" class="form-input1 marked_as_new_till_month" placeholder="MM" maxlength=2></div>
-                                <div class="col3"><input value="<?php echo $marked_as_new_till_year;?>" type="text" class="form-input1 marked_as_new_till_year" placeholder="YYYY" maxlength=4></div>
+                                <div class="col3"><input value="<?php echo $marked_as_new_till_day;?>" type="text" class="form-input1 marked_as_new_till_day" placeholder_dummy="DD" maxlength=2></div>
+                                <div class="col3"><input value="<?php echo $marked_as_new_till_month;?>" type="text" class="form-input1 marked_as_new_till_month" placeholder_dummy="MM" maxlength=2></div>
+                                <div class="col3"><input value="<?php echo $marked_as_new_till_year;?>" type="text" class="form-input1 marked_as_new_till_year" placeholder_dummy="YYYY" maxlength=4></div>
                                 <?php */ ?>
                                 <div class="col6" style="padding:0; width:185px; float:right"><input type="date" name="marked_as_new_till" class="form-input1 marked_as_new_till" style="padding-left: 25%; letter-spacing:1px; font-weight:bold" value="<?php echo $marked_as_new_till;?>"></div>
                            </div>
@@ -394,19 +394,19 @@ if($value['gender_id'] == '2' && !$is_kid){
                            		<div class="col6">
                                 	 <h3>PERSONLIG INFO</h3>
                                      <div class="form-row">
-                                     	  <input type="text" class="form-input1 first_name" placeholder="Fornavn" value="<?php echo $value['first_name'] ;?>" >
+                                     	  <input type="text" class="form-input1 first_name" placeholder_dummy="Fornavn" value="<?php echo $value['first_name'] ;?>" >
                                      </div>
                                      
                                      <div class="form-row">
-                                     	  <input type="text" class="form-input1 last_name" placeholder="Efternavn"  value="<?php echo $value['last_name'] ;?>" >
+                                     	  <input type="text" class="form-input1 last_name" placeholder_dummy="Efternavn"  value="<?php echo $value['last_name'] ;?>" >
                                      </div>
                                      
                                      <div class="form-row">
-                                     	  <input type="text" class="form-input1 password_primary" placeholder="***********"  value="<?php echo $value['password'] ;?>" >
+                                     	  <input type="text" class="form-input1 password_primary" placeholder_dummy="***********"  value="<?php echo $value['password'] ;?>" >
                                      </div>
                                      
                                      <div class="form-row">
-                                     	  <input type="text" class="form-input1 password" placeholder="***********" value="<?php echo $value['password'] ;?>" >
+                                     	  <input type="text" class="form-input1 password" placeholder_dummy="***********" value="<?php echo $value['password'] ;?>" >
                                      </div>
                                 </div>
                                 
@@ -414,17 +414,17 @@ if($value['gender_id'] == '2' && !$is_kid){
                                 	 <h3>ADRESSE</h3>
                                      <div class="form-row">
                                      	  <div class="row">
-                                          	   <div class="col6"><input type="text" class="form-input1 zipcode" placeholder="Post"  value="<?php echo $value['zipcode'] ;?>" ></div>
-                                               <div class="col6"><input type="text" class="form-input1 city" placeholder="By" value="<?php echo $value['city'] ;?>" ></div>
+                                          	   <div class="col6"><input type="text" class="form-input1 zipcode" placeholder_dummy="Post"  value="<?php echo $value['zipcode'] ;?>" ></div>
+                                               <div class="col6"><input type="text" class="form-input1 city" placeholder_dummy="By" value="<?php echo $value['city'] ;?>" ></div>
                                           </div>
                                      </div>
                                      
                                      <div class="form-row">
-                                     	  <input type="text" class="form-input1 address" placeholder="Gade" value="<?php echo $value['address'] ;?>" >
+                                     	  <input type="text" class="form-input1 address" placeholder_dummy="Gade" value="<?php echo $value['address'] ;?>" >
                                      </div>
                                      
                                      <div class="form-row">
-                                     	  <?php // <input type="text" class="form-input1 country" placeholder="Country: eg. Danmark" value="$value['country_id'];" >  ?>
+                                     	  <?php // <input type="text" class="form-input1 country" placeholder_dummy="Country: eg. Danmark" value="$value['country_id'];" >  ?>
                                          <div class="custom-select">
                                                   <!-- country -->
                                                   <select class="country_id">
@@ -442,7 +442,7 @@ if($value['gender_id'] == '2' && !$is_kid){
                                      </div>
 
                                      <div class="form-row">
-                                     	  <input type="text" class="form-input1 address" placeholder="Occupation/Beskæftigelse" value="<?php echo $value['job'] ;?>" >
+                                     	  <input type="text" class="form-input1 job" placeholder_dummy="Occupation/Beskæftigelse" value="<?php echo $value['job'] ;?>" >
                                      </div>
                                      
                                 </div>
@@ -456,21 +456,21 @@ if($value['gender_id'] == '2' && !$is_kid){
                            		<div class="col6">
                                 	 <h3>PERSONLIG INFO</h3>
                                      <div class="form-row">
-                                     	  <input type="text" class="form-input1 email" placeholder="email id" value="<?php echo $value['email'] ;?>" >
+                                     	  <input type="text" class="form-input1 email" placeholder_dummy="email id" value="<?php echo $value['email'] ;?>" >
                                      </div>
                                      
                                      <div class="form-row">
                                      	  <div class="row">
-                                          	   <div class="col6"><input type="text" class="form-input1 phone" placeholder="tlf.1" value="<?php echo $value['phone'] ;?>" ></div>
-                                               <div class="col6"><input type="text" class="form-input1 phone_at_work" placeholder="tlf.2" value="<?php echo $value['phone_at_work'] ;?>" ></div>
+                                          	   <div class="col6"><input type="text" class="form-input1 phone" placeholder_dummy="tlf.1" value="<?php echo $value['phone'] ;?>" ></div>
+                                               <div class="col6"><input type="text" class="form-input1 phone_at_work" placeholder_dummy="tlf.2" value="<?php echo $value['phone_at_work'] ;?>" ></div>
                                           </div>
                                      </div>
                                      
                                      <div class="form-row">
                                      	  <div class="row">
-                                              <div class="col6"><input type="text" class="form-input1 cellphone" placeholder="cellphone" value="<?php echo $value['cellphone'] ;?>" ></div>
+                                              <div class="col6"><input type="text" class="form-input1 cellphone" placeholder_dummy="cellphone" value="<?php echo $value['cellphone'] ;?>" ></div>
                                               <div class="col6">
-                                                <?php // <input type="text" class="form-input1 gender" placeholder="Mand" value="echo $value['gender_id']" > ?>
+                                                <?php // <input type="text" class="form-input1 gender" placeholder_dummy="Mand" value="echo $value['gender_id']" > ?>
                                                 <div class="custom-select">
                                                   <!-- gender -->
                                                   <select class="gender_id">
@@ -494,14 +494,14 @@ if($value['gender_id'] == '2' && !$is_kid){
                                 	 <h3>FØDT</h3>
                                      <div class="form-row">
                                      	  <div class="row">
-                                          	   <div class="col4"><input type="text" class="form-input1 birth_day" placeholder="DD" value="<?php echo $value['birth_day'] ;?>" ></div>
-                                               <div class="col4"><input type="text" class="form-input1 birth_month" placeholder="MM" value="<?php echo $value['birth_month'] ;?>" ></div>
-                                               <div class="col4"><input type="text" class="form-input1 birth_year" placeholder="YYYY" value="<?php echo $value['birth_year'] ;?>" ></div>
+                                          	   <div class="col4"><input type="text" class="form-input1 birth_day" placeholder_dummy="DD" value="<?php echo $value['birth_day'] ;?>" ></div>
+                                               <div class="col4"><input type="text" class="form-input1 birth_month" placeholder_dummy="MM" value="<?php echo $value['birth_month'] ;?>" ></div>
+                                               <div class="col4"><input type="text" class="form-input1 birth_year" placeholder_dummy="YYYY" value="<?php echo $value['birth_year'] ;?>" ></div>
                                           </div>
                                      </div>
                                      
                                      <div class="form-row">
-                                     	  <input type="text" class="form-input1 ethnic_origin" placeholder="Etninsk oprindelse" value="<?php echo $value['ethnic_origin'] ;?>" >
+                                     	  <input type="text" class="form-input1 ethnic_origin" placeholder_dummy="Etninsk oprindelse" value="<?php echo $value['ethnic_origin'] ;?>" >
                                      </div>
                                      
                                 </div>
@@ -517,7 +517,7 @@ if($value['gender_id'] == '2' && !$is_kid){
                                      <div class="form-row">
                                      	  <div class="row payment-type-1">
                                           	   <div class="col3"><span class="percent">25 %</span></div>
-                                               <div class="col6"><input type="text" class="form-input1" placeholder="Skriv her.." value="<?php echo $payment_0_description ;?>" ></div>
+                                               <div class="col6"><input type="text" class="form-input1" placeholder_dummy="Skriv her.." value="<?php echo $payment_0_description ;?>" ></div>
                                                <div class="col3">
                                                <?php
                                                     $checked_active = "";
@@ -547,7 +547,7 @@ if($value['gender_id'] == '2' && !$is_kid){
                                      <div class="form-row">
                                      	  <div class="row payment-type-3">
                                           	   <div class="col3"><span class="percent">20 %</span></div>
-                                               <div class="col6"><input type="text" class="form-input1" placeholder="Skriv her.." value="<?php echo $payment_2_description ;?>" ></div>
+                                               <div class="col6"><input type="text" class="form-input1" placeholder_dummy="Skriv her.." value="<?php echo $payment_2_description ;?>" ></div>
                                                <div class="col3">
                                                <?php
                                                     $checked_active = "";
@@ -577,7 +577,7 @@ if($value['gender_id'] == '2' && !$is_kid){
                                      <div class="form-row">
                                      	  <div class="row payment-type-2">
                                           	   <div class="col3"><span class="percent">7 %</span></div>
-                                               <div class="col6"><input type="text" class="form-input1" placeholder="Skriv her.." value="<?php echo $payment_1_description ;?>" ></div>
+                                               <div class="col6"><input type="text" class="form-input1" placeholder_dummy="Skriv her.." value="<?php echo $payment_1_description ;?>" ></div>
                                                <div class="col3">
                                                     <?php
                                                     $checked_active = "";
@@ -632,14 +632,14 @@ if($value['gender_id'] == '2' && !$is_kid){
                                 <label class="ansog_select_label">højde</label>
                                 	 <div class="">
                                       <!-- height / hojde -->
-                                      <input type="text" class="form-input1 height" placeholder="Højde" value="<?php echo $value['height'];?>" >
+                                      <input type="text" class="form-input1 height" placeholder_dummy="Højde" value="<?php echo $value['height'];?>" >
                                     </div>
                                 </div>                                
                                 <div class="col3">
                                 <label class="ansog_select_label">vægt</label>
                                 	 <div class="">
                                       <!-- weight / vaegt -->
-                                      <input type="text" class="form-input1 weight" placeholder="Vægt" value="<?php echo $value['weight'];?>" >
+                                      <input type="text" class="form-input1 weight" placeholder_dummy="Vægt" value="<?php echo $value['weight'];?>" >
                                     </div>
                                 </div>
                                 <div class="col3">
@@ -693,13 +693,13 @@ if($value['gender_id'] == '2' && !$is_kid){
                                         	 <h3>LIDT OM MIG</h3>
                                              
                                              <div class="form_box">
-                                             	  <textarea name="" cols="" rows="" placeholder="Skriv her..." class="textarea2 notes"><?php echo $value['notes']?></textarea>
+                                             	  <textarea name="" cols="" rows="" placeholder_dummy="Skriv her..." class="textarea2 notes"><?php echo $value['notes']?></textarea>
                                					  <a href="#" class="edit2"></a>
                                                   <span class="words">72</span>
                                              </div>
                                              <h3>SPORT &amp; HOBBY</h3>
                                              <div class="form_box">
-                                             	  <textarea name="" cols="" rows="" placeholder="Skriv her..." class="textarea2 sports_hobby"><?php echo $value['sports_hobby']?></textarea>
+                                             	  <textarea name="" cols="" rows="" placeholder_dummy="Skriv her..." class="textarea2 sports_hobby"><?php echo $value['sports_hobby']?></textarea>
                                					  <a href="#" class="edit2"></a>
                                                   <span class="words">72</span>
                                              </div>
@@ -780,7 +780,7 @@ if($value['gender_id'] == '2' && !$is_kid){
                                      <div class="fields">
                                      <?php /* ?>
                                      	  <div class="form-row">
-                                     	  	   <input type="text" class="form-input1" placeholder="Dansk*">
+                                     	  	   <input type="text" class="form-input1" placeholder_dummy="Dansk*">
                                      	  </div>
                                           <div class="form-row">
                                           	   <div class="custom-select">
@@ -950,15 +950,15 @@ if($value['gender_id'] == '2' && !$is_kid){
                                              
                                              <h3 style="margin-top:30px;">Dealekter</h3>
                                              <div class="form_box">
-                                             	  <input name="dealekter1" type="text" class="form-input1 dealekter1" placeholder="Skriv her" value="<?php echo $value['dealekter1']?>">
+                                             	  <input name="dealekter1" type="text" class="form-input1 dealekter1" placeholder_dummy="Skriv her" value="<?php echo $value['dealekter1']?>">
                                              </div>
                                              
                                              <div class="form_box">
-                                             	  <input name="dealekter2" type="text" class="form-input1 dealekter2" placeholder="Skriv her" value="<?php echo $value['dealekter2']?>">
+                                             	  <input name="dealekter2" type="text" class="form-input1 dealekter2" placeholder_dummy="Skriv her" value="<?php echo $value['dealekter2']?>">
                                              </div>
                                              
                                              <div class="form_box">
-                                             	  <input name="dealekter3" type="text" class="form-input1 dealekter3" placeholder="Skriv her" value="<?php echo $value['dealekter3']?>">
+                                             	  <input name="dealekter3" type="text" class="form-input1 dealekter3" placeholder_dummy="Skriv her" value="<?php echo $value['dealekter3']?>">
                                              </div>
                                 </div>
                                 

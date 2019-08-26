@@ -1,0 +1,63 @@
+<div class="page ansog1 full-width-page full-screen-black-box" ng-controller="UserloginController as ulc" >
+        <div id="content" ng-controller="AngularLoginController as angCtrl" >
+          <div class="page-black newpadding login-page customer-login-page">
+      
+              <div class="show-xs main-menu-header show-xs">
+                  <img src="images/CASTIT_LOGO_RGB_white.svg" style="height: 12vh" />
+                  <a style=" padding-right: 0; line-height: 20px; display: inline-flex; " href="/#/index{{ isDanish ? '/da' : '/en'}}" class="poup-close2 popup-close-btn">{{ isDanish ? 'LUK' : 'CLOSE' }} <img style=" width: 20px; height: 15px; " src="images/svgs/lukw1.svg" alt=""></a>
+             </div>
+      
+            <div class="section-top hide-xs">
+                <div class="black-right">
+                
+              </div>              
+            </div>
+      
+            <div class="section-login">
+              <div class="login-row">
+                <div>
+                <div class="login-call6" style="">
+                  <div class="login_inner">
+                      <h2>{{ isDanish ? 'Kunde Login' : 'Customer Login' }}</h2>
+
+                    <form name="customer-login" ng-submit="angCtrl.customerLoginForm()" class="form-horizontal" method="POST" role="form">
+                      <div class="login_box">
+                        <label>{{ isDanish ? 'BRUGERNAVN' : 'USERNAME' }}</label>
+                        <input ng-model="angCtrl.inputData.customer_email" name="customer_email" type="email"  placeholder="Email" class="login_input" required autocomplete="off">
+                      </div>
+                      <div class="login_box">
+                        <label>{{ isDanish ? 'KODE' : 'PASSWORD' }}</label>
+                        <input ng-model="angCtrl.inputData.customer_password" name="customer_password" type="password" placeholder="**********" class="login_input" required autocomplete="off">
+                      </div>
+                      <div class="login_box">
+                        <a href="javascript:;" class="login_link">{{ isDanish ? 'Glemt adgangskode' : 'Forgot password?' }}</a>
+                      </div>
+                      <div class="login_box2">
+                        <input name="" type="submit" class="login_button1" value="Login">
+                      </div>
+                    </form>
+                  </div>
+                </div><!--close login-call6-->
+              </div>
+              <div class="login-call6" style="">
+                  <div class="login_inner">
+                      <h2>{{ isDanish ? 'Opret Kundeprofil' : 'Create Customer profile' }}</h2>
+                      <div class="login_box" style="height: 70px">
+                        <span>
+                          {{ isDanish ? 'For at kunne oprette og gemme dine Lightbox skal du lave en kundeprofil' : 'In order to create and save your Lightbox, you need to create a customer profile' }}
+                        </span>
+                      </div>
+                      <div class="login_box">
+                        <a href="/#/customercreate/{{isDanish?'da':'en'}}">
+                          <input name="createCustomerButton" style="float: none" type="button" class="login_button1" value="{{isDanish?'Opret profil':'Create profile'}}">
+                        </a>
+                      </div>
+                  </div>
+                </div><!--close login-call6-->
+              </div><!--close login-row-->
+      
+            </div><!--close section-login-->
+          </div><!--close page-black-->
+        </div>
+      </div>
+      

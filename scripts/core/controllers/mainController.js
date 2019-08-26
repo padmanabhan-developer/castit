@@ -50,6 +50,10 @@ main.controller('MainController', ['$scope', '$theme', '$timeout', 'progressLoad
 				$('.res_menu').removeClass('active');
 				$(".res_menu ul li").fadeOut("slow");
 			});
+			$(".side-top-arrow").click(function(){
+				$scope.profile_from_lightbox = false;
+				$("#sidebar1").show("slow").css("display","inline-flex");
+			  });
 		});
 
     $scope.layoutLoading = true;
@@ -403,7 +407,26 @@ main.controller('RegisterStep3Controller', ['$scope', '$filter', '$http', '$wind
 	$rootScope.bodylayout = 'black';
 	$rootScope.interface = 'ansog';	
 	var limit='';
-	
+	$(".button3").click(function(){
+		if(!$scope.show_child_sizes){
+			$scope.show_child_sizes = true;
+			console.log($scope.show_child_sizes);
+		}
+		else{
+			$scope.show_child_sizes = false;
+			console.log($scope.show_child_sizes);
+		}
+	});
+	function showChildSizes(){
+		if(!$scope.show_child_sizes){
+			$scope.show_child_sizes = true;
+			console.log($scope.show_child_sizes);
+		}
+		else{
+			$scope.show_child_sizes = false;
+			console.log($scope.show_child_sizes);
+		}
+	}
 	$http.get('api/v1/checkstep2', {params: {limit: limit}}).success(function(reponse) {
 		if(reponse.step1status){
 			if(reponse.step2status){
@@ -2164,6 +2187,11 @@ main.controller('AngularLoginController', ['$scope', '$filter', '$http', '$windo
 			$('.res_menu').removeClass('active');
 			$(".res_menu ul li").fadeOut("slow");
 		});
+		$("input[name='proceedNormal']").click(function(){
+			$cookies.customer_open = 'true';
+			window.location.href = '#/index' + ($rootScope.isDanish ? '/da' : '/en' );
+
+		});
 	});
 
 	this.loginForm = function() {
@@ -2173,6 +2201,8 @@ main.controller('AngularLoginController', ['$scope', '$filter', '$http', '$windo
 		user_password : this.inputData.password,
 	};
 	// console.log(user_data);
+	
+	
 
 	$.post('api/v1/login.php', user_data).done(
 		function(data){
@@ -2190,11 +2220,25 @@ main.controller('AngularLoginController', ['$scope', '$filter', '$http', '$windo
 		}
 	}
 	);
-}
+	}
+
+	this.customerLoginForm = function(){
+		// console.log(this.inputData);
+		$http.post('api/v1/customer-login', this.inputData).success(function(response) {
+			console.log(response);
+			if(response.status == 'success'){
+				// alert(response.message);
+				window.location.href = '#/index' + ($rootScope.isDanish ? '/da' : '/en' );
+			}else{
+				alert(response.message);
+			}
+		});
+	}
 
 	$(".login_link").click(function(){
 		if($("#login_email").hasClass('ng-valid') && $("#login_email").val()!=""){
-			$("#login_email").removeClass("blue-login");
+			$("#login_email").addClass("blue-login");
+
 			$("input[type=submit].login_button1").addClass("blue-login");
 			$("input[type=submit].login_button1").val("Send Email");
 			$("input[type=submit].login_button1").attr("type","button");
@@ -2660,6 +2704,55 @@ main.controller('MyProfileController4',['$scope', '$rootScope','$http', function
     });       
 	}
 }]);
+main.controller('createCustomerController',['$scope', '$rootScope','$http', function($scope, $rootScope, $http, $cookies){
+	$rootScope.bodylayout = 'black';
+	$rootScope.interface = 'ansog';	
+	
+	$scope.username 	= $("input[name=username]").val();
+	$scope.corporation 	= $("input[name=corporation]").val();
+	$scope.telephone 	= $("input[name=telephone]").val();
+	$scope.password 	= $("input[name=password]").val();
+	$scope.cpassword 	= $("input[name=cpassword]").val();
+	
+	async function emailCustomer(emailData) {
+		try {
+			$http.post('api/v1/welcome-email-customer', emailData);
+			  console.log('email sent');
+		} catch(err) {
+		  console.log('Ohh no:', err.message);
+		}
+	}
+
+	$scope.createCustomer = createCustomer;
+	function createCustomer(){
+		$("input[name=opretcustomer]").attr("disabled", true);
+
+		if($scope.password !== $scope.cpassword){
+			alert("passwords entered doesn't match");
+			return;
+		}
+		else{
+			let formData = {
+				email: $scope.username,
+				corporation: $scope.corporation,
+				telephone: $scope.telephone,
+				password: $scope.password
+			}
+			$http.post('api/v1/customer-create', formData).success(function(response) {
+				console.log(response);
+				if(response.status == 'success'){
+					alert(response.message);
+					let emailData = { email : $scope.username }
+					emailCustomer(emailData)
+					window.location.href = '#/index' + ($rootScope.isDanish ? '/da' : '/en' );
+				}else{
+					alert(response.message);
+				}
+			});
+		}
+	}
+}]);
+
 
 main.controller('MyProfileController5',['$scope', '$rootScope','$http', function($scope, $rootScope, $http, $cookies){
 	$scope.profileinfo = JSON.parse(sessionStorage.getItem('profileinfo'));

@@ -72,7 +72,8 @@ height:45px !important;
 }
 #sidebar1 {
     /* width: 390px ; */
-    width: 450px ;
+    /* width: 450px ; */
+    width: 600px ;
 }
 /* #wrapper {
     padding: 0 300px 0 30px; */
@@ -233,7 +234,8 @@ height:60px !important;
 	position: relative;
 }
 #sidebar1 {
-    width: 420px;
+    /* width: 420px; */
+    width: 500px;
 }
 .sidebar1-right {
     width: 330px;

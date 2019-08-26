@@ -39,10 +39,12 @@ text-decoration: underline;"> info@Castit.dk</a></li>
                     </li>
                </ul>
           </div>
-          <div class="lngdiv"><span class="lngname"
+          <div ng-if="!(interface == 'ansog') && !(interface == 'login')" class="lngdiv"><span class="lngname"
                     ng-class="{ 'lang-active': interface=='ansog' || interface=='login'}"><span
                          ng-click="changeLanguage(true);" ng-class="{ 'active': isDanish}">DA</span> / <span
                          ng-click="changeLanguage(false);" ng-class="{ 'active': !isDanish}">EN</span></span></div>
+          
+          <a ng-if="(interface == 'login')" style="color:#FEFEFE !important; top:10px; padding-right: 0; line-height: 20px; display: inline-flex; " href="/#/index{{ isDanish ? '/da' : '/en'}}" class="poup-close2 popup-close-btn">{{ isDanish ? 'LUK' : 'CLOSE' }} <img style=" width: 20px; height: 15px; " src="images/svgs/lukw1.svg" alt=""></a>
 
           <div class="res-menu" ng-click="toggleMenu()">
                <img class="black-menu main-menu-trigger" src="images/svgs/burgermenu1.svg" style="width:30px" alt="responsivemenu" />

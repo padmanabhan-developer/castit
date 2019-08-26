@@ -66,7 +66,7 @@
       OR m.profile_number like '%".$search_text."%' 
       OR p.first_name like '%".$search_text."%' 
       OR p.email = '".$search_text."'
-      
+      OR CONCAT(p.first_name,' ',p.last_name) = '".$search_text."'
       ) AND p.profile_status_id IN (1,2,3,5)". $order . $limit;
       
       /* if(in_array($search_text, ['CM','CF','YM','YF','BM','BF'])){ // A and J are excluded here as it too less for a search input

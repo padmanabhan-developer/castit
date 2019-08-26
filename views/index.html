@@ -265,7 +265,8 @@
            <div class="side-tabs">
               <ul>
                   <!-- <li><a href="javascript:void(0);" id="tab_ligtbox" class="tab1 tabactive"></a></li> -->
-                  <li><a href="javascript:void(0);" id="tab_group" class="tab2" style="background: none !important;display: inline-block;text-align: center;"><img style=" width: 30px; height: auto; " src="images/svgs/lightbox_iconw1.svg" alt=""></a></li>
+                  <li ng-if="!profile_from_lightbox"><a href="javascript:void(0);" id="tab_group" class="tab2" style="background: none !important;display: inline-block;text-align: center;"><img style=" width: 30px; height: auto; " src="images/svgs/lightbox_iconw1.svg" alt=""></a></li>
+                  
                 </ul>
            </div>
       </div><!--close sidebar1-left-->
@@ -281,7 +282,7 @@
                    <!-- <span class="title1 active" id="event1">LIGHTBOX <span class="title2"><a href="javascript:void(0);" ng-click="showLightBoxPopup();" class="send3">Send</a>{{lbprofilecount}}</span></span> -->
                      
                     <span class="title1_1 active" id="event2">
-                      <span class="title1_1 active group_title_left">{{ isDanish ? 'GRUPPER' : 'GROUPS' }}</span>
+                      <span class="title1_1 active group_title_left">{{ isDanish ? 'LIGHTBOX' : 'LIGHTBOX' }}</span>
                       <span class="title2 group_title_right">
                         <form name="add_new_group_form" id="add_new_group_form" ng-submit="addgroupintoGrouplist()">
                         <span  ng-show="ifAddGroupFormShow"  class="addbox">
@@ -290,7 +291,7 @@
                         </span>
                         </form>
                         <div style="float:right">
-                        <a href="javascript:void(0);" class="add-grupper" ng-click="addNewGroupInstant()"><span class="glyphicon glyphicon-plus"></span></a>
+                        <!-- <a href="javascript:void(0);" class="add-grupper" ng-click="addNewGroupInstant()"><span class="glyphicon glyphicon-plus"></span></a> -->
                         <span class="group_count"> &nbsp; {{gpprofilecount}}</span>
                         </div>
                       </span>
@@ -334,9 +335,15 @@
                         <div class="sidebar1_box2_top">
                             <span class="title3">{{gpprofile.group_name}}</span>
                               <ul class="side-tool">
-                                  <li><a href="javascript:void(0);" ng-click="removeGroup(gpprofile.group_id)">{{ isDanish ? 'Slet' : 'Delete' }}</a></li>
-                                  <li><a href="javascript:void(0);" ng-click="showSendGroupPopup(gpprofile.group_id);">Send</a></li>
-                                  <li><a href="javascript:void(0);" class="div-close group-view-toggle" style="background: none !important" ng-click="togglegrouping_top($event)"><img src="images/svgs/down1.svg" alt=""></a></li>
+                                   <li>
+                                        <a href="javascript:void(0);" ng-click="removeGroup(gpprofile.group_id)">{{ isDanish ? 'Slet' : 'Delete' }}</a>
+                                   </li>
+                                   <li>
+                                        <a href="javascript:void(0);" ng-click="showSendGroupPopup(gpprofile.group_id);">Send</a>
+                                   </li>
+                                   <li>
+                                        <a href="javascript:void(0);" class="group-view-toggle" style="background: none !important" ng-click="togglegrouping_top($event)">{{ view_profiles_text_default }}</a>
+                                   </li>
                               </ul>
                          </div>
                         <div class="sidebar1_box2_middle group-list">
@@ -358,7 +365,7 @@
                                       <!-- <span class="bank"><a javascript:void(0);></a></span> -->
                                       <h5> {{gp_profile.group_name}}</h5>
                                       <span class="edit3"><a href="javascript:void(0);" ng-click="enableNotesBoxFN()"></a></span>
-                                      <textarea name="" id="" class="notes-textarea" ng-model="gp_profile.lb_note" ng-disabled="!enableNotesBox" ng-blur="updateNotesFN($event)" profile_id="{{gp_profile.id}}" group_id="{{gpprofile.group_id}}" maxlength="60"></textarea>
+                                      <textarea name="" id="" class="notes-textarea" ng-model="gp_profile.lb_note" ng-disabled="!enableNotesBox" ng-blur="updateNotesFN($event)" profile_id="{{gp_profile.id}}" group_id="{{gpprofile.group_id}}"></textarea>
                                       
                                       <!-- <p>{{gp_profile.lb_note}}</p> -->
                                  </div>
@@ -366,14 +373,23 @@
                                  <div class="sidebar1_box2_bottom2">
                                  <ul class="side-tool">
                                     <li><a href="javascript:void(0);" ng-click="removeFromLightboxPopup(gp_profile.id, gpprofile.group_id)">{{ isDanish ? 'Slet' : 'Delete' }}</a></li>
-                                    <li><a href="javascript:void(0);" ng-click="getSingleProfile(gp_profile.id)">{{ isDanish ? 'Åben' : 'Open' }}</a></li>
+                                    <li><a href="javascript:void(0);" ng-click="getSingleProfile(gp_profile.id, 'lightbox')">{{ isDanish ? 'Åben' : 'Open' }}</a></li>
                                  </ul>
                                  </div>
                             </div>
                         </div>
-                        <div class="sidebar1_box2_bottom">
-                        <span class="title4">{{gpprofile.addedon}}</span>
-                          <a href="javascript:void(0);" class="div-close group-view-toggle" ng-click="togglegrouping($event)" style="background: none !important"><img src="images/svgs/down1.svg" alt=""></a>
+                        <div class="sidebar1_box2_bottom" style="display: none">
+                              <ul class="side-tool">
+                                        <li>
+                                             <a href="javascript:void(0);" ng-click="removeGroup(gpprofile.group_id)">{{ isDanish ? 'Slet' : 'Delete' }}</a>
+                                        </li>
+                                        <li>
+                                             <a href="javascript:void(0);" ng-click="showSendGroupPopup(gpprofile.group_id);">Send</a>
+                                        </li>
+                                        <li>
+                                             <a href="javascript:void(0);" class="group-view-toggle" style="background: none !important" ng-click="togglegrouping_top($event)">{{ view_profiles_text_default }}</a>
+                                        </li>
+                                   </ul>
                         </div>
                 </div><!--close sidebar1_box2-->
  
@@ -397,8 +413,8 @@
            <p>{{lbprofilecount}}</p>
         </span> -->
         <span class="side-span">
-             <div class="side-icon3" id="tab_group1" style="cursor:pointer;background: none !important"><img src="images/svgs/lightbox_iconw1.svg" alt=""></div>
-           <p>{{gpprofilecount}}</p>
+             <div class="side-icon3" id="tab_group1" style="cursor:pointer;background: none !important;width: 30px"><img src="images/svgs/lightbox_iconw1.svg" style="width: 100%" alt=""></div>
+           <!-- <p>{{gpprofilecount}}</p> -->
         </span>
     </div>
 </div><!--close right-sidebar-->
@@ -595,7 +611,11 @@
       </div><!--close video_section3-->
       
  <div class="right-sidebar">
-      <div class="side-top"><a javascript:void(0); class="side-icon1"></a></div>
+     <div class="{{ profile_from_lightbox ? 'side-top-arrow' : 'side-top' }}" class="">
+          <!-- <a javascript:void(0); class="side-icon1"></a> -->
+          <!-- <span class="side-icon3"></span> -->
+          <!-- <a ng-if="profile_from_lightbox" javascript:void(0); class="side-icon2-arrow"></a> -->
+     </div>
       
       <div class="side-middle">
            <!-- <span class="side-span">
@@ -603,8 +623,8 @@
                  <p>{{lbprofilecount}}</p>
            </span> -->
            <span class="side-span">
-                 <span class="side-icon3"></span>
-                 <p>{{gpprofilecount}}</p>
+                 
+                 <div>{{ isDanish ? 'Vis' : 'View' }}</div>
            </span>
       </div>
  </div>
@@ -806,21 +826,21 @@
                                        <!-- <span class="popup-icon1"></span> -->
                                        <div class="form-box1">
                                        <input type="hidden" name="pbox_profileid" id="pbox_profileid" ng-model="pbox_profileid" value="" />
-                                            <textarea name="profile_notes" id="profile_notes" ng-model="profile_notes" cols="" rows="" char-count placeholder="{{ isDanish ? 'Skriv note...':'Note' }}" class="textarea" maxlength="60"></textarea>
+                                            <textarea name="profile_notes" id="profile_notes" ng-model="profile_notes" cols="" rows="" char-count placeholder="{{ isDanish ? 'Skriv note...':'Note' }}" class="textarea" ></textarea>
                                             <a href="javascript:void(0);" class="edit2"></a>
-                                            <span style="color:#8B8B8B" class="words">{{ 60 - numberOfCharacters }}</span>
                                        </div>
                                        <h3>23.01.17</h3>
                                   </div><!--close popup-box-->
                                   <div class="popup-box">
-                                       <h2>{{ isDanish ? 'Gem i gruppe' : 'ADD TO GROUP' }}</h2>
-                                       <span class="popup-icon2"></span>
+                                       <h2>{{ isDanish ? 'NY LIGHTBOX' : 'NEW LIGHTBOX' }} <img src="images/icon9.png" ></h2>
+                                       
                                        <div class="form-box1">
-                                            <input name="new_group_name" id="new_group_name" ng-model="new_group_name" type="text" placeholder="{{ isDanish ? 'tilføj ny gruppe' : 'Add new group' }}" class="input">
-                                            <a javascript:void(0); class="plus" style="cursor:pointer;" ng-click="add_new_group()"></a>
+                                            <input name="new_group_name" id="new_group_name" ng-model="new_group_name" type="text" placeholder="{{ isDanish ? 'Giv din Lightbox et navn' : 'Your Lightbox name' }}" class="input">
+                                            <input name="" type="button" ng-click="add_new_group()" class="send2 grp-add" value="{{ isDanish ? 'Opret' : 'Add' }}" >
                                        </div>
                                        
                                        <div class="form-box3">
+                                            <h2>{{ customer_set ? "MINE LIGHTBOX" : "" }}</h2>
                                        <span class="button" id="groupingbut{{grouping.id}}" style="cursor:pointer;" ng-repeat="grouping in groupings" ng-click="checkuncheckgrouping(grouping.id)">{{grouping.name}}</span>
                                             <!--<a javascript:void(0); class="button">Danske Bank</a>
                                             <a javascript:void(0); class="button">BABY</a>
@@ -828,8 +848,8 @@
                                        </div>
                                        
                                        <div class="form-box2">
-                                            <input name="" type="submit" class="send2" value="{{ isDanish ? 'Tilføj' : 'Add' }}" ng-disabled="disable_lightbox_submit" ng-style="disable_lightbox_submit_style">
-                                            <input name="" type="button" ng-click="closeProfileboxpopup2()" class="cancel2" value="{{ isDanish ? 'Annullere' : 'Cancel' }}" >
+                                            <input style="float: right" name="" type="submit" class="send2" value="{{ isDanish ? 'Tilføj profil' : 'Add profile' }}" ng-disabled="disable_lightbox_submit" ng-style="disable_lightbox_submit_style">
+                                            <!-- <input name="" type="button" ng-click="closeProfileboxpopup2()" class="cancel2" value="{{ isDanish ? 'Annullere' : 'Cancel' }}" > -->
                                        </div>
                                   </div><!--close popup-box-->
                              </div><!--close popup_right-->

@@ -1,12 +1,11 @@
 var frontend = angular.module('theme.demos.dashboard', [
     'angular-skycons',
-    'theme.demos.forms'
+	'theme.demos.forms',
+	'ngCookies'
   ])
-  frontend.controller('FrontendController', ['$scope', '$rootScope', '$http', '$timeout', '$window', '$filter', '$location', function($scope,$rootScope, $http, $timeout, $window, $filter, $location) {
+  frontend.controller('FrontendController', ['$scope', '$rootScope', '$http', '$timeout', '$window', '$filter', '$location','$cookies', function($scope,$rootScope, $http, $timeout, $window, $filter, $location, $cookies) {
     'use strict';
-	//$('#headerlogo').hide();
-  //alert('ddd');
-  
+
 	$rootScope.bodylayout = '';		
 	$rootScope.interface = 'home';
 	$rootScope.isMaincontent = true;
@@ -17,25 +16,34 @@ var frontend = angular.module('theme.demos.dashboard', [
 	$scope.responsiveProfileDetail = true;
 	$scope.ifAddGroupFormShow = false;
 	$scope.response_text ='';
-  $scope.currentPage = 0;
+  	$scope.currentPage = 0;
 	$scope.pbox_profileid ='';
 	$scope.removeprofileid  ='';
 	$scope.removegroupid ='';
-  $scope.pageSize = 40;
-  $scope.profiles = [];
+  	$scope.pageSize = 40;
+  	$scope.profiles = [];
 	$scope.gpprofilecount =0;
 	$scope.photoiconclass='photo-iconactive';
 	$scope.mediaiconclass='media-icon';
 	$scope.infoiconclass='info-icon';
-  $scope.q = '';
-  $scope.loading = 'Indlaeser';
+  	$scope.q = '';
+  	$scope.loading = 'Indlaeser';
 	$scope.enableNotesBox = false;
-	
+	 
+	$scope.view_profiles_text_open = $rootScope.isDanish ? 'Vis profiler' : 'View profiles';
+	$scope.view_profiles_text_close = $rootScope.isDanish ? 'Luk profiler' : 'Close profiles';
+	$scope.view_profiles_text_default = $scope.view_profiles_text_open;
+	$scope.profile_from_lightbox = false;
+
 	if($( window ).width() <= 860){
 		$scope.scroll_counter_number = 9;
 	}
 	else{
 		$scope.scroll_counter_number = 18;
+	}
+	$scope.customer_set = false;
+	if($cookies.customer_id != undefined){
+		$scope.customer_set = true;		
 	}
 	
 
@@ -323,9 +331,9 @@ var frontend = angular.module('theme.demos.dashboard', [
 		 });
 		 
 	$(".side-top").click(function(){
-		// $("#sidebar1")
 		$("#sidebar1").show("slow").css("display","inline-flex");
 	  });
+
 	
 	$("#tabnewblack").click(function(){
 		$("#sidebar1").show("slow"); 
@@ -670,34 +678,39 @@ var frontend = angular.module('theme.demos.dashboard', [
 			}
 		});				
 	  }
-	  
+
 	$scope.pbox_singleimage='';	
 	$scope.getProfileBox = function (profileid){
-    $scope.selectedgroupings = '';
-	$scope.pbox_singleimage = '';
-	$scope.profile_notes = '';
-    $scope.pbox_profileid = profileid;
-    $scope.disable_lightbox_submit = true;
-    $scope.disable_lightbox_submit_style = {"background-color": "grey"};
-		$http.get('api/v1/getgroupinglist', {params: {view: 'home', grouptoken : $scope.groupToken}}).success(function(groupingdata) {
-			$scope.groupingcount =groupingdata.count;
-			if(groupingdata.count){
-				$scope.groupings = groupingdata.grouping;
-			}else{
-				$scope.groupings ='';
-			}
-		});
 
-		$http.get('api/v1/getsingleprofiles', {params:{profileid:profileid}}).success(function(profiledata) {
-			//alert(response.success);
-			if(profiledata.success){
-				$scope.pbox_singleimage = profiledata.profile_images[0].fullpath;
-				$scope.apply;
-			}else{
-				$scope.pbox_loading = 'Ingen data fundet';
-			}
-		});	
-		$("#profilebox").fadeIn("slow"); 
+		if($cookies.customer_open == undefined){
+			window.location.href = '#/customerlogin' + ($rootScope.isDanish ? '/da' : '/en' );
+		}
+
+		$scope.selectedgroupings = '';
+		$scope.pbox_singleimage = '';
+		$scope.profile_notes = '';
+		$scope.pbox_profileid = profileid;
+		$scope.disable_lightbox_submit = true;
+		$scope.disable_lightbox_submit_style = {"background-color": "grey"};
+		$http.get('api/v1/getgroupinglist', {params: {view: 'home', grouptoken : $scope.groupToken}}).success(function(groupingdata) {
+				$scope.groupingcount =groupingdata.count;
+				if(groupingdata.count){
+					$scope.groupings = groupingdata.grouping;
+				}else{
+					$scope.groupings ='';
+				}
+			});
+
+			$http.get('api/v1/getsingleprofiles', {params:{profileid:profileid}}).success(function(profiledata) {
+				//alert(response.success);
+				if(profiledata.success){
+					$scope.pbox_singleimage = profiledata.profile_images[0].fullpath;
+					$scope.apply;
+				}else{
+					$scope.pbox_loading = 'Ingen data fundet';
+				}
+			});	
+			$("#profilebox").fadeIn("slow"); 
 	}
 
 	$(".poup-close-profilebox").click(function(){
@@ -718,6 +731,20 @@ var frontend = angular.module('theme.demos.dashboard', [
 	function togglegrouping_top($event){
 		let this_element = $event.currentTarget;
 		$(this_element).parent().parent().parent().siblings('.group-full').slideToggle();
+		switch ($scope.view_profiles_text_default) {
+			case $scope.view_profiles_text_close:
+					$scope.view_profiles_text_default = $scope.view_profiles_text_open;
+					$(this_element).parent().parent().parent().parent().find(".sidebar1_box2_bottom").hide();
+				break;
+		
+			case $scope.view_profiles_text_open:
+					$scope.view_profiles_text_default = $scope.view_profiles_text_close;
+					$(this_element).parent().parent().parent().parent().find(".sidebar1_box2_bottom").show();					
+				break;
+			default:
+				break;
+		}
+
 		$(this_element).parent().parent().parent().parent().find(".group-view-toggle").toggleClass('rotated-arrow');
 	}
 	
@@ -761,7 +788,6 @@ var frontend = angular.module('theme.demos.dashboard', [
 
 	$scope.add_new_group = add_new_group;
 	function add_new_group() {
-
 		if($scope.new_group_name){
 
 			var formData = {groupname: $scope.new_group_name, grouptoken : $scope.groupToken};
@@ -770,8 +796,8 @@ var frontend = angular.module('theme.demos.dashboard', [
 				$scope.groupingcount =groupingdata.count;
 				if(groupingdata.count){
 					$scope.groupings = groupingdata.grouping;
-					 $scope.new_group_name='';
-					 
+					$scope.new_group_name='';
+					
 				}else{
 					$scope.groupings ='';
 				}
@@ -971,7 +997,7 @@ var frontend = angular.module('theme.demos.dashboard', [
 	$scope.IsProfileVideo = false;
 	$scope.isGetSingleLoading=false;
 	
-	$scope.getSingleProfile = function (profileid){
+	$scope.getSingleProfile = function (profileid, arg){
 		$scope.IsProfileImage = true;
 		$scope.IsProfileVideo = false;
 		$scope.responsiveProfileDetail = false;
@@ -1011,7 +1037,9 @@ var frontend = angular.module('theme.demos.dashboard', [
 				$scope.profiles ='';
 				$scope.loading = 'Ingen data fundet';
 			}
-		});	
+		});
+		$("#sidebar1").hide("slow");
+		$scope.profile_from_lightbox = true;
 		$("#profile_popup").fadeIn("slow"); 
 	}
 	
