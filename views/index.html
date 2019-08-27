@@ -87,7 +87,7 @@
                               
                               <div  ng-show="hoverAddtoLb" id="add_to_lb_{{x.id}}" class="icon animate-show" ng-click="getProfileBox(x.id)"><img src="images/icon5.png" alt=""></div>
                               
-                              <div ng-show="x.marked_as_new == 1" class="icon animate-show new-splash"><img src="{{ isDanish ? 'images/svgs/ny1.svg' : 'images/svgs/new1.svg' }}" alt=""></div>
+                              <div ng-show="checkNew(x)" class="icon animate-show new-splash"><img src="{{ isDanish ? 'images/svgs/ny1.svg' : 'images/svgs/new1.svg' }}" alt=""></div>
                               
                          </div>
                     </div><!--close col-->
@@ -611,7 +611,7 @@
       </div><!--close video_section3-->
       
  <div class="right-sidebar">
-     <div class="{{ profile_from_lightbox ? 'side-top-arrow' : 'side-top' }}" class="">
+     <div ng-click="backToLightbox()" class="{{ profile_from_lightbox ? 'side-top-arrow' : 'side-top' }}" >
           <!-- <a javascript:void(0); class="side-icon1"></a> -->
           <!-- <span class="side-icon3"></span> -->
           <!-- <a ng-if="profile_from_lightbox" javascript:void(0); class="side-icon2-arrow"></a> -->

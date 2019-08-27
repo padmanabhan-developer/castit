@@ -149,6 +149,9 @@ if($value['gender_id'] == '2' && !$is_kid){
 <meta http-equiv="expires" content="0">
 <link href="css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
 <link href="css/bootstrap-toggle.css" rel="stylesheet">
+<link href="/admin/css/select2.min.css" rel="stylesheet" />
+<script src="js/jquery-3.3.1.min.js"></script>
+<script src="/admin/js/select2.min.js"></script>
 <link rel="stylesheet" href="style.css">
 </head>
 	
@@ -425,7 +428,7 @@ if($value['gender_id'] == '2' && !$is_kid){
                                      
                                      <div class="form-row">
                                      	  <?php // <input type="text" class="form-input1 country" placeholder_dummy="Country: eg. Danmark" value="$value['country_id'];" >  ?>
-                                         <div class="custom-select">
+                                         <div class="custom-select-dummy">
                                                   <!-- country -->
                                                   <select class="country_id">
                                                     <?php   
@@ -822,8 +825,8 @@ if($value['gender_id'] == '2' && !$is_kid){
                                           // echo "\n";
                                           for($i=0; $i < 4; $i++){
                                             $lang_html .= '<div class="form-row">
-                                              <div class="custom-select">
-                                                <select id="language_id_'. $i .'">
+                                              <div class="custom-select-dummy">
+                                                <select class="language-select" id="language_id_'. $i .'">
                                                   <option value="0">Sprog</option>';
                                                   foreach($language_list as $key => $lang){
                                                     $selected = '';
@@ -992,7 +995,7 @@ if($value['gender_id'] == '2' && !$is_kid){
  
 </div><!--close wrapper--> 
 
-<script src="js/jquery-3.3.1.min.js"></script>
+
 <script src="js/bootstrap.min.js"></script>
 <script src="js/scripts.js"></script>
 <script src="js/jquery.simplePopup.js" type="text/javascript"></script>
@@ -1000,10 +1003,14 @@ if($value['gender_id'] == '2' && !$is_kid){
 
 $(document).ready(function(){
 
-    $('.show1').click(function(){
-	$('#pop1').simplePopup();
-    });
+  $('.show1').click(function(){
+    $('#pop1').simplePopup();
+  });
     
+  $('.country_id').select2();
+  $('.language-select').select2();
+
+
 });
 
 </script>
@@ -1012,7 +1019,7 @@ $(document).ready(function(){
 <script>
 var x, i, j, selElmnt, a, b, c;
 /*look for any elements with the class "custom-select":*/
-x = document.getElementsByClassName("custom-select");
+x = document.getElementsByClassName("custom-select-DISABLED");
 for (i = 0; i < x.length; i++) {
   selElmnt = x[i].getElementsByTagName("select")[0];
   /*for each element, create a new DIV that will act as the selected item:*/

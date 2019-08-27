@@ -40,6 +40,9 @@
                     <span class="login_link" style="margin-right: 10px; margin-left: 10px;text-decoration:none">|</span>
                     <a href="javascript:;" class="login_link">{{ isDanish ? 'Glemt adgangskode' : 'Forgot password?' }}</a>
                 </div>
+                <div class="login_box">
+                  <div class="login-error-message"></div>
+                </div>
                 <div class="login_box2">
                   <input name="" type="submit" class="login_button1" value="Login">
                 </div>
@@ -54,19 +57,22 @@
               <form name="customer-login" ng-submit="angCtrl.customerLoginForm()" class="form-horizontal" method="POST" role="form">
                 <div class="login_box">
                   <label>{{ isDanish ? 'BRUGERNAVN' : 'USERNAME' }}</label>
-                  <input ng-model="angCtrl.inputData.customer_email" name="customer_email" type="email"  placeholder="Email" class="login_input" required autocomplete="off">
+                  <input id='customer_login_email' ng-model="angCtrl.inputData.customer_email" name="customer_email" type="email"  placeholder="Email" class="login_input" required autocomplete="off">
                 </div>
                 <div class="login_box">
-                  <label>{{ isDanish ? 'INDTAST KODE' : 'PASSWORD' }}</label>
+                  <label>{{ isDanish ? 'INDTASTET KODE' : 'PASSWORD' }}</label>
                   <input ng-model="angCtrl.inputData.customer_password" name="customer_password" type="password" placeholder="**********" class="login_input" required autocomplete="off">
                 </div>
                 <div class="login_box">
                   <a href="/#/customercreate/{{isDanish?'da':'en'}}" class="customer_login_link">{{ isDanish ? 'Opret ny profil' : 'Create new profile' }}</a>
-                  <!-- <span class="login_link" style="margin-right: 10px; margin-left: 10px;text-decoration:none">|</span> -->
-                  <!-- <a href="javascript:;" class="customer_login_link">{{ isDanish ? 'Glemt adgangskode' : 'Forgot password?' }}</a> -->
+                  <span class="login_link" style="margin-right: 10px; margin-left: 10px;text-decoration:none">|</span>
+                  <a href="javascript:;" class="customer_login_link">{{ isDanish ? 'Glemt adgangskode' : 'Forgot password?' }}</a>
+                </div>
+                <div class="login_box">
+                  <div class="customer-login-error-message"></div>
                 </div>
                 <div class="login_box2">
-                  <input name="" type="submit" class="login_button1" value="Login">
+                  <input name="" type="submit" class="customer_login_button1" value="Login">
                 </div>
               </form>
             </div>

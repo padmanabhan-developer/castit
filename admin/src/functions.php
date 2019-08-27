@@ -93,6 +93,7 @@ function form_images_html($value = array('pics'=>'') , $name, $profile_number, $
     </div>';
     $modal_content = '';
     $output .= $wrap_begin;
+    // ppe($value['pics']);
     if(isset($value['pics']) && count($value['pics']) > 0){
       foreach ($value['pics'] as $key=>$pic){
         if($pic["image"] == ""){
@@ -118,7 +119,7 @@ function form_images_html($value = array('pics'=>'') , $name, $profile_number, $
         }
         $status = $pic['published'];
         $checked_status = ($status) ? 'checked="checked"' : '';
-        if($img_src != ''){
+        if($img_src != '' && check_file($img_src)){
           $modal_content .= '<div class="mySlides">
           <span class="radio_container">
             <input type="radio" name="update_media_radio" value="on" id="update_media_on" '.$checked_status.' onclick="updatemedia_on('.$pic['id'].', this)" media_type="image">
@@ -198,7 +199,13 @@ function form_images_html($value = array('pics'=>'') , $name, $profile_number, $
         $video_thumbnail_path = $vid['thumbnail_photo_path'];
         $video_thumbnail_filename = $vid['thumbnail_photo_filename'];
         $vdo_thumb_url = "https://8ffd082a2b0d60afbe5b-ee660e5023b1ce57ba3003086dec40a5.ssl.cf3.rackcdn.com" . $video_thumbnail_path . '/' . $video_thumbnail_filename;
-        $output .= form_media_inner_html($vdo_thumb_url, $name, $profile_number, $status, $mediatype, $vid['id'], $key+1);
+
+
+        $file_headers = @get_headers($vdo_thumb_url);
+
+        if(!(strpos($file_headers[0], '404'))){
+          $output .= form_media_inner_html($vdo_thumb_url, $name, $profile_number, $status, $mediatype, $vid['id'], $key+1);
+        } 
       }
       // $vdo_thumb_url = "http://assets3.castit.dk/videos/profiles/2016-03-29/f71e9bde-9521-4a00-a81b-c4329b6a6e70_Maja_v_full.jpg";
   
@@ -233,3 +240,26 @@ function unique_code($limit)
 {
   return substr(base_convert(sha1(uniqid(mt_rand())), 16, 36), 0, $limit);
 }
+
+function ppe($q){pp($q);exit;}
+
+function check_file($path){
+  if(startsWith($path, "http")){
+    $file_headers = @get_headers($path);
+    if(!(strpos($file_headers[0], '404'))){
+      return true;
+    }
+  }
+  elseif(file_exists($path)){
+      return true;
+    }
+  else{
+    return false;
+  }
+}
+
+function startsWith ($string, $startString) 
+{ 
+    $len = strlen($startString); 
+    return (substr($string, 0, $len) === $startString); 
+} 

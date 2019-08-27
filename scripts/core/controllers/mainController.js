@@ -1662,7 +1662,9 @@ main.controller('ResetPasswordController', ['$scope', '$filter', '$http', '$wind
 					email: query_param.email,
 					resethash: query_param.resethash
 				};
-			
+				if(query_param.type == 'customer'){
+					user_data.type = 'customer';
+				}
 				$.post('api/v1/newresetpassword.php', user_data).done(
 					function(data){
 						if (data == 'success') {
@@ -2237,13 +2239,14 @@ main.controller('AngularLoginController', ['$scope', '$filter', '$http', '$windo
 
 	$(".login_link").click(function(){
 		if($("#login_email").hasClass('ng-valid') && $("#login_email").val()!=""){
-			$("#login_email").addClass("blue-login");
+			$("#login_email").removeClass("blue-login");
 
 			$("input[type=submit].login_button1").addClass("blue-login");
 			$("input[type=submit].login_button1").val("Send Email");
 			$("input[type=submit].login_button1").attr("type","button");
 
 			$("input[type=button].blue-login").click(function(){
+				$(".login-error-message").html('<img alt="loading" src="assets/loader/3.gif" width="15%" height="15%">');
 				let user_email = $("#login_email").val();
 				if(user_email != "" && user_email != undefined){
 					$http({
@@ -2278,6 +2281,7 @@ main.controller('AngularLoginController', ['$scope', '$filter', '$http', '$windo
 			$("input[type=submit].login_button1").attr("type","button");
 
 			$("input[type=button].blue-login").click(function(){
+				$(".login-error-message").html('<img alt="loading" src="assets/loader/3.gif" width="15%" height="15%">');
 				let user_email = $("#login_email").val();
 				if(user_email != "" && user_email != undefined){
 					$http({
@@ -2295,6 +2299,73 @@ main.controller('AngularLoginController', ['$scope', '$filter', '$http', '$windo
 				}
 				else{
 					$(".login-error-message").html("Email skal udfyldes.");
+				}
+			});
+		}
+	});
+
+	$(".customer_login_link").click(function(){
+		if($("#customer_login_email").hasClass('ng-valid') && $("#customer_login_email").val()!=""){
+			$("#customer_login_email").removeClass("blue-login");
+
+			$("input[type=submit].customer_login_button1").addClass("blue-login");
+			$("input[type=submit].customer_login_button1").val("Send Email");
+			$("input[type=submit].customer_login_button1").attr("type","button");
+
+			$("input[type=button].blue-login").click(function(){
+				$(".customer-login-error-message").html('<img alt="loading" src="assets/loader/3.gif" width="15%" height="15%">');
+				let user_email = $("#customer_login_email").val();
+				if(user_email != "" && user_email != undefined){
+					$http({
+						method: 'POST',
+						url: 'api/v1/resetpassword',
+						data: {email: user_email, type: 'customer'},
+						headers: {'Content-Type': 'application/x-www-form-urlencoded'}
+					})
+					.success(function(data) {
+						if($rootScope.isDanish){
+							$(".customer-login-error-message").html(data.message);
+						}
+						else{
+							$(".customer-login-error-message").html(data.message_en);
+						}
+						setTimeout(function(){
+							location.reload();
+						}, 10000);     
+					});
+				}
+				else{
+					$(".customer-login-error-message").html("Email skal udfyldes.");
+				}
+				
+			});
+		}
+		else{
+			$("#customer_login_email").addClass("blue-login");
+
+			$("input[type=submit].customer_login_button1").addClass("blue-login");
+			$("input[type=submit].customer_login_button1").val("Send Email");
+			$("input[type=submit].customer_login_button1").attr("type","button");
+
+			$("input[type=button].blue-login").click(function(){
+				$(".customer-login-error-message").html('<img alt="loading" src="assets/loader/3.gif" width="15%" height="15%">');
+				let user_email = $("#customer_login_email").val();
+				if(user_email != "" && user_email != undefined){
+					$http({
+						method: 'POST',
+						url: 'api/v1/resetpassword',
+						data: {email: user_email, type: 'customer'},
+						headers: {'Content-Type': 'application/x-www-form-urlencoded'}
+					})
+					.success(function(data) {
+						$(".customer-login-error-message").html(data.message);
+						setTimeout(function(){
+							location.reload();
+						}, 10000);
+					});
+				}
+				else{
+					$(".customer-login-error-message").html("Email skal udfyldes.");
 				}
 			});
 		}

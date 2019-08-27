@@ -73,6 +73,39 @@ var frontend = angular.module('theme.demos.dashboard', [
 		return collection;
 	}
 
+	$scope.checkNew = function(currentProfile){
+		// alert('aa');
+		console.log(currentProfile);
+		if(currentProfile.marked_as_new == 1 && currentProfile.marked_as_new_from != '' && currentProfile.marked_as_new_till != '' ){
+			const start = currentProfile.marked_as_new_from.split('-');
+			let startYear = start[0];
+			let startMonth = start[1];
+			let startDay = start[2];
+			const startDate = new Date(startYear, startMonth-1, startDay);
+
+			const end = currentProfile.marked_as_new_till.split('-');
+			let endYear = end[0];
+			let endMonth = end[1];
+			let endDay = end[2];
+			const endDate = new Date(endYear, endMonth-1, endDay, 23, 59, 59);
+
+			const today = new Date();
+console.log(startDate, today, endDate);
+			if((today >= startDate) && (today <= endDate )){
+				return true;
+			}
+			else{
+				return false;
+			}
+		}
+		else{
+			if(currentProfile.marked_as_new == 1 && !currentProfile.marked_as_new_from && !currentProfile.marked_as_new_till){
+				return true;
+			}
+			return false;
+		}
+	}
+
   $scope.enableNotesBoxFN = function(){
 	$scope.enableNotesBox = !$scope.enableNotesBox;
   }
@@ -270,6 +303,11 @@ var frontend = angular.module('theme.demos.dashboard', [
 		});
 	}
 
+	$scope.backToLightbox = function(){
+		// alert('aa');
+		$(".poup-close3").click();
+		$(".side-top").click();
+	}
 	// var $currentElement = $(".wrapPM0").first();
 	// var scroll_index = 0;
 
@@ -333,11 +371,16 @@ var frontend = angular.module('theme.demos.dashboard', [
 	$(".side-top").click(function(){
 		$("#sidebar1").show("slow").css("display","inline-flex");
 	  });
-
 	
 	$("#tabnewblack").click(function(){
 		$("#sidebar1").show("slow"); 
 	});
+
+	$(".side-top-arrow").click(function(){
+		// $scope.profile_from_lightbox = false;
+		// $("#sidebar1").show("slow").css("display","inline-flex");
+		alert('asjhk');
+	  });
 	  
 	$(".poup-close2").click(function(){
 		$rootScope.interface = 'home';
@@ -428,6 +471,9 @@ var frontend = angular.module('theme.demos.dashboard', [
 	});
 		 
 	$("#tab_group1").click(function(){
+		if($cookies.customer_open == undefined){
+			window.location.href = '#/customerlogin' + ($rootScope.isDanish ? '/da' : '/en' );
+		}
 	    $(".title1_1").addClass("active");
 		$('.tab1').removeClass('tabactive');
 		$('#tab_group').addClass('tabactive');

@@ -40,14 +40,17 @@
       $sort_param = 'first_name';    
     }
 
-    if($sort_param == 'first_name' && $search_text != ''){
-      $order  = " ORDER BY CASE 
+    if($sort_param == 'first_name'){
+    // if($sort_param == 'first_name' && $search_text != ''){
+      /*$order  = " ORDER BY CASE 
       WHEN p.first_name like '".$search_text."' THEN 1
       WHEN p.first_name like '".$search_text."%' THEN 2
       WHEN p.first_name like '%".$search_text."%' THEN 3
       
       END
-      ";
+      ";*/
+
+      $order = " ORDER BY p.first_name ASC , p.last_name ASC ";
     }
     elseif($sort_param == 'created_at' || $sort_param == 'updated_at'){
       $order  = " ORDER BY p.".$sort_param." DESC ";

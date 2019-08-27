@@ -260,8 +260,11 @@ else{
 								'email' 		=> $row['email'],
 								'job' 			=> $row['job'],
 								'marked_as_new'	=> $row['marked_as_new'],
+								'marked_as_new_from'	=> $row['marked_as_new_from'],
+								'marked_as_new_till'	=> $row['marked_as_new_till']
 
 							);
+							// ppe($row);
     }
     $group_token = (isset($grouping_rows[0]['token_id'])) ? $grouping_rows[0]['token_id'] : array();
     $response = array('success' => true, 'profiles' => $profiles, 'group_token' => $group_token);
@@ -411,7 +414,8 @@ $app->get('/getfilterprofiles',function () use ($app) {
 								'email' 		=> $row['email'],
 								'job' 			=> $row['job'],
 								'marked_as_new'	=> $row['marked_as_new'],
-
+								'marked_as_new_from'	=> $row['marked_as_new_from'],
+								'marked_as_new_till'	=> $row['marked_as_new_till']
 							);
 		}
 		$response = array('success' => true, 'profiles' => $profiles );
@@ -1073,10 +1077,25 @@ $app->get('/getgroupingprofiles', function () use ($app) {
 	$rowcount = 0;
 	$grouping_profile = array();
 	$grouptoken =  $app->request->get('grouptoken');
-  $sql = "SELECT *, date_format(added_on , '%d.%m.%Y') as addedon  FROM grouping where token_id= '".$grouptoken."' AND status = '1' order by group_name asc";
+
+	if(isset($_COOKIE['customer_id'])) {
+		$customer_id = $_COOKIE['customer_id'];
+		$sql = "SELECT *, date_format(added_on , '%d.%m.%Y') as addedon  FROM grouping where user_id= '".$customer_id."' AND status = '1' order by group_name asc";
+	} else {
+		$sql = "SELECT *, date_format(added_on , '%d.%m.%Y') as addedon  FROM grouping where token_id= '".$grouptoken."' AND status = '1' order by group_name asc";
+	}
+  	
+  
   if(isset($_GET['grouptoken_groupid'])){
     $gpid = (is_numeric($_GET['grouptoken_groupid'])) ? " AND group_id = ".$_GET['grouptoken_groupid'] : '';
-    $sql = "SELECT *, date_format(added_on , '%d.%m.%Y') as addedon  FROM grouping where token_id= '".$grouptoken."' AND status = '1' ". $gpid ." order by group_name asc";
+	
+	if(isset($_COOKIE['customer_id'])) {
+		$customer_id = $_COOKIE['customer_id'];
+		$sql = "SELECT *, date_format(added_on , '%d.%m.%Y') as addedon  FROM grouping where user_id= '".$customer_id."' AND status = '1' ". $gpid ." order by group_name asc";
+	} else {
+		$sql = "SELECT *, date_format(added_on , '%d.%m.%Y') as addedon  FROM grouping where token_id= '".$grouptoken."' AND status = '1' ". $gpid ." order by group_name asc";
+
+	}
   }
   $query_check_gb = $db->prepare($sql); 
 	$query_check_gb->execute();
@@ -1182,7 +1201,13 @@ $app->get('/removegroupfromgrouping', function () use ($app) {
 	$grouptoken =  $app->request->get('grouptoken');
 
 	if($groupid){
-		$query_check_gb = $db->prepare("SELECT * FROM grouping where group_id = '".$groupid."' AND token_id = '".$grouptoken."'"); 
+		if(isset($_COOKIE['customer_id'])) {
+			$customer_id = $_COOKIE['customer_id'];
+			$sql = "SELECT * FROM grouping where group_id = '".$groupid."' AND user_id = '".$customer_id."'";
+		} else {
+			$sql = "SELECT * FROM grouping where group_id = '".$groupid."' AND token_id = '".$grouptoken."'";
+		}
+		$query_check_gb = $db->prepare($sql); 
 		$query_check_gb->execute();
 		$rows_gb = $query_check_gb->fetchAll(PDO::FETCH_ASSOC);
 		if(count($rows_gb)>0) {
@@ -1202,8 +1227,13 @@ $app->get('/removegroupfromgrouping', function () use ($app) {
 	$reponse = array();
 	$rowcount = 0;
 	$grouping_profile = array();
-
-	$query_check_gb = $db->prepare("SELECT *, date_format(added_on , '%d.%m.%Y') as addedon  FROM grouping where status = '1' AND token_id = '".$grouptoken."' order by group_name asc"); 
+	if(isset($_COOKIE['customer_id'])) {
+		$customer_id = $_COOKIE['customer_id'];
+		$sql = "SELECT *, date_format(added_on , '%d.%m.%Y') as addedon  FROM grouping where status = '1' AND user_id = '".$customer_id."' order by group_name asc";
+	} else {
+		$sql = "SELECT *, date_format(added_on , '%d.%m.%Y') as addedon  FROM grouping where status = '1' AND token_id = '".$grouptoken."' order by group_name asc";
+	}
+	$query_check_gb = $db->prepare($sql); 
 	$query_check_gb->execute();
 	$rows_gb = $query_check_gb->fetchAll(PDO::FETCH_ASSOC);
 	if(count($rows_gb)>0) {
@@ -3361,7 +3391,14 @@ $app->get('/getgroupinglist', function () use ($app) {
 	$reponse =  array();
 	$grouptoken =  $app->request->get('grouptoken');
 
-	$query_grouping = $db->prepare("SELECT * FROM grouping WHERE token_id='".$grouptoken."' AND status ='1' order by group_name"); 
+	if(isset($_COOKIE['customer_id'])) {
+		$customer_id = $_COOKIE['customer_id'];
+		$sql = "SELECT * FROM grouping WHERE user_id='".$customer_id."' AND status ='1' order by group_name";
+	} else {
+		$sql = "SELECT * FROM grouping WHERE token_id='".$grouptoken."' AND status ='1' order by group_name";
+	}
+
+	$query_grouping = $db->prepare($sql); 
 	$query_grouping->execute();
 	$rows_grouping = $query_grouping->fetchAll(PDO::FETCH_ASSOC);
 	$rowcount = count($rows_grouping);
@@ -3385,21 +3422,40 @@ $app->get('/addnewgrouping', function () use ($app) {
 	$grouping = array();
 	$reponse = array();
 	$rowcount = 0;
-
 	$grouping_token = $app->request->get('grouptoken');
-	
-	$query_check_gp = $db->prepare("SELECT * FROM `grouping` where `group_name` LIKE '%".$groupname."%' AND token_id ='".$grouping_token."'"); 
+
+	if(isset($_COOKIE['customer_id'])) {
+		$customer_id = $_COOKIE['customer_id'];
+		$sql = "SELECT * FROM `grouping` where `group_name` LIKE '%".$groupname."%' AND user_id ='".$customer_id."'";
+	} else {
+		$sql = "SELECT * FROM `grouping` where `group_name` LIKE '%".$groupname."%' AND token_id ='".$grouping_token."'";
+	}
+
+	$query_check_gp = $db->prepare($sql); 
 	$query_check_gp->execute();
 	$rows_gp = $query_check_gp->fetchAll(PDO::FETCH_ASSOC);
+
+	if(isset($_COOKIE['customer_id'])) {
+		$customer_id = $_COOKIE['customer_id'];
+		$sql = "INSERT INTO `grouping` ( `token_id`, `group_name`, `status`, `user_id`) VALUES ('".$grouping_token."', '".$groupname."','1','".$customer_id."')";
+	} else {
+		$sql = "INSERT INTO `grouping` ( `token_id`, `group_name`, `status`) VALUES ('".$grouping_token."', '".$groupname."','1')";
+	}
+
 	if(count($rows_gp)>0) {
 		$gpid = $rows_gp[0]['group_id'];
 	}else{
-			$q_gruping = "INSERT INTO `grouping` ( `token_id`, `group_name`, `status`) VALUES ('".$grouping_token."', '".$groupname."','1')"; 
-			//echo $q; 
+			$q_gruping = $sql; 
 			$gpid = $db->exec($q_gruping);
 	}
 	
-	$query_grouping = $db->prepare("SELECT * FROM grouping WHERE status ='1' AND token_id ='".$grouping_token."' order by group_name"); 
+	if(isset($_COOKIE['customer_id'])) {
+		$customer_id = $_COOKIE['customer_id'];
+		$sql = "SELECT * FROM grouping WHERE status ='1' AND user_id ='".$customer_id."' order by group_name";
+	} else {
+		$sql = "SELECT * FROM grouping WHERE status ='1' AND token_id ='".$grouping_token."' order by group_name";
+	}
+	$query_grouping = $db->prepare($sql); 
 	$query_grouping->execute();
 	$rows_grouping = $query_grouping->fetchAll(PDO::FETCH_ASSOC);
 	$rowcount = count($rows_grouping);
@@ -3685,12 +3741,16 @@ $app->post('/resetpassword',function () use ($app) {
     global $db;
 	$data = json_decode($app->request->getBody(), true);
 	$email = $data['email'];
-	$query = $db->prepare("SELECT * FROM profiles WHERE email='".$email."' ORDER by id desc limit 1"); 
+	if($data['type'] == 'customer'){
+		$query = $db->prepare("SELECT * FROM customer_user WHERE email='".$email."' ORDER by id desc limit 1"); 
+	}else{
+		$query = $db->prepare("SELECT * FROM profiles WHERE email='".$email."' ORDER by id desc limit 1"); 
+	}
 	$query->execute();
     $rows = $query->fetchAll(PDO::FETCH_ASSOC);
 	//print_r($rows);die;
 	if((isset($rows)) && count($rows)> 0){
-		if($rows[0]['profile_status_id'] ==1){
+		if($data['type'] == 'customer' || $rows[0]['profile_status_id'] ==1){
 
 			$alphabet = 'abdefghklmnpqrstuvwxyzABDEFGHKLMNPQRSTUVWXYZ23456789';
 			$pass = array(); //remember to declare $pass as an array
@@ -3701,7 +3761,13 @@ $app->post('/resetpassword',function () use ($app) {
 			}
 			$newpass = implode($pass);
 			$randompass = md5($newpass);
-			$q_pwd = "UPDATE `profiles` SET `password`='".$randompass."' WHERE `email`='".$email."'";
+			if($data['type'] == 'customer'){
+				$q_pwd = "UPDATE `customer_user` SET `password`='".$randompass."' WHERE `email`='".$email."'";
+			}
+			else{
+				$q_pwd = "UPDATE `profiles` SET `password`='".$randompass."' WHERE `email`='".$email."'";
+			}
+			
 			$query = $db->prepare($q_pwd);
 			$query->execute();
 				$content = '';
@@ -3719,8 +3785,17 @@ $app->post('/resetpassword',function () use ($app) {
 								padding:8px 0 4px;"><img src="https://castit.dk/images/logo.png" 
 								width="90px"/> </div>
 								<div style="padding:0 30px;">';
-					$content_sal_dk = '<h5 style="color: #646e78;font-size: 16px;padding:0;margin: 0; text-align:left;">Kære '.ucfirst($rows[0]['first_name']).' '.ucfirst($rows[0]['last_name']).',</h5>';
-					$content_sal_en = '<h5 style="color: #646e78;font-size: 16px;padding:0;margin: 0; text-align:left;">Dear '.ucfirst($rows[0]['first_name']).' '.ucfirst($rows[0]['last_name']).',</h5>';
+					if($data['type'] == 'customer'){
+						$content_sal_dk = '<h5 style="color: #646e78;font-size: 16px;padding:0;margin: 0; text-align:left;">Kære Kunde,</h5>';
+						$content_sal_en = '<h5 style="color: #646e78;font-size: 16px;padding:0;margin: 0; text-align:left;">Dear Customer,</h5>';
+					}else{
+						$content_sal_dk = '<h5 style="color: #646e78;font-size: 16px;padding:0;margin: 0; text-align:left;">Kære '.ucfirst($rows[0]['first_name']).' '.ucfirst($rows[0]['last_name']).',</h5>';
+						$content_sal_en = '<h5 style="color: #646e78;font-size: 16px;padding:0;margin: 0; text-align:left;">Dear '.ucfirst($rows[0]['first_name']).' '.ucfirst($rows[0]['last_name']).',</h5>';
+					}
+					// append &type=customer for customer-users
+					if($data['type'] == 'customer'){
+						$randompass .= '&type=customer';
+					}
 					$reset_link_dk = '<a href="https://castit.dk/#/reset-password?email='.$email.'&resethash='.$randompass.'">Nulstil kodeord</a>';
 					$reset_link_en = '<a href="https://castit.dk/#/reset-password?email='.$email.'&resethash='.$randompass.'">Reset Password</a>';
 					// $content .= '<p style="color: #646e78;font-size: 16px;text-align:left;">Din nye adgangskode er,</p>';
@@ -3851,6 +3926,127 @@ $app->post('/mediafiledelete', function () use ($app) {
 	else{
 		echo json_encode(['status_message'=>'insufficient data']);
 	}
+});
+
+$app->post('/customer-create', function () use ($app) {
+	global $db;
+	$data = json_decode($app->request->getBody(), true);
+	// ppe($data);
+	$email 			= $data['email'];
+	$corporation 	= $data['corporation'];
+	$telephone 		= $data['telephone'];
+	$password 		= $data['password'];
+	$query = $db->prepare("SELECT * FROM customer_user WHERE email='".$email."' ORDER by id desc limit 1"); 
+	$query->execute();
+	$customer = $query->fetchAll(PDO::FETCH_ASSOC);
+	if(count($customer) > 0){
+		echo json_encode(['status' => 'fail', 'message' => 'email already exists in our database']);
+	}
+	else{
+		$insert = $db->prepare("INSERT into customer_user (`email`,`corporation`,`telephone`,`password`) VALUES ('".$email."','".$corporation."','".$telephone."','".$password."')");
+		$insert->execute();
+
+	
+
+		echo json_encode(['status' => 'success', 'message' => 'profile created', 'email'=>$email]);
+	}
+	
+});
+
+$app->post('/welcome-email-customer', function () use ($app){
+	$data 	= json_decode($app->request->getBody(), true);
+	$email	= $data['email'];
+
+$html_body = <<< EOM
+<p>Kære Kunde,</p>
+<p>
+Tak for din oprettelse. Du kan nu benytte Lightbox på <a href="https://castit.dk">Castit.dk</a>
+</p>
+<p>
+Kontakt os endelig hvis du har spørgsmål eller brug for hjælp.
+</p>
+<p>
+Mange hilsner
+</p>
+<p>Cathrine Hovmand</p>
+<p># 0045 2128 5825</p>
+<p>E: cat@castit.dk</p>
+<br/>
+<img style="max-width: 150px;" src="https://castit.dk/images/new_logo_black.png" alt="" />
+<p>Rosenvængets Allè 11, 1. Sal</p>
+<p>2100 København Ø</p>
+<a href="https://castit.dk">Castit.dk</a>
+<br/>
+------------------------------------------------------------------
+<br/>
+
+<p>Dear Customer,</p>
+<p>
+Thank you for signing up. You can now use the Lightbox on <a href="https://castit.dk">Castit.dk</a>
+</p>
+<p>
+Don't hesitate to contact us if you have any questions
+</p>
+<p>
+Very best
+</p>
+<p>Cathrine Hovmand</p>
+<p># 0045 2128 5825</p>
+<p>E: cat@castit.dk</p>
+<br/>
+<img style="max-width: 150px;" src="https://castit.dk/images/new_logo_black.png" alt="" />
+<p>Rosenvængets Allè 11, 1st floor</p>
+<p>2100 Copenhagen Ø</p>
+<a href="https://castit.dk">Castit.dk</a>
+
+EOM;
+		global $mgClient;
+		global $domain;
+		$subject  = "Tak for din oprettelse!  /  Thank you for signing up!";
+		$result = $mgClient->sendMessage($domain, array(
+			'from'    => 'CASTIT <info@castit.dk>',
+			'to'      => $email,
+			// 'to'      => 'padmanabhan.code@gmail.com',
+			'subject' => $subject,
+			'html'    => $html_body,
+			'bcc'	=> 'padmanabhann@mailinator.com',
+		));
+} );
+
+$app->post('/customer-login', function () use ($app) {
+	global $db;
+	$data = json_decode($app->request->getBody(), true);
+	// ppe($data);
+	$email = $data['customer_email'];
+	$password = $data['customer_password'];
+	$query = $db->prepare("select * from customer_user where email = '".$email."' and password = '".$password."' ");
+	$query->execute();
+	$customer = $query->fetchAll(PDO::FETCH_ASSOC);
+	if(count($customer) < 1){
+		echo json_encode(['status' => 'fail', 'message' => 'Invalid Credentials.']);
+	}
+	else{
+		session_destroy();
+		session_start();
+		$_SESSION['customer_email'] = $customer[0]['email'];
+		$_SESSION['customer_corporation'] = $customer[0]['corporation'];
+		$_SESSION['customer_telephone'] = $customer[0]['telephone'];
+
+		$cookie_name = "customer_user";
+		$cookie_value = $customer[0]['email'];
+		setcookie($cookie_name, $cookie_value, time() + (86400 * 30), "/"); // 86400 = 1 day
+		
+		$cookie_name = "customer_id";
+		$cookie_value = $customer[0]['id'];
+		setcookie($cookie_name, $cookie_value, time() + (86400 * 30), "/"); // 86400 = 1 day
+		
+		$cookie_name = "customer_open";
+		$cookie_value = 'false';
+		setcookie($cookie_name, $cookie_value, time() + (86400 * 30), "/"); // 86400 = 1 day
+
+		echo json_encode(['status' => 'success', 'message' => 'Login success']);
+	}
+
 });
 
 $app->post('/fileuploadparser', function () use ($app) {
