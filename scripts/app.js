@@ -70,7 +70,7 @@ angular
             var restrictedPage = $.inArray(currentPath, ['/my-profile_1','/my-profile_2','/my-profile_3','/my-profile_4','/my-profile_5','/my-profile_6','/mediaupload','/customercreate','/customerlogin','/customerupdate','/landing','/profiles', '/index', '/about-us', '/contact', '/ansog-trin1', '/ansog-trin2', '/ansog-trin3', '/ansog-trin4', '/ansog-trin5', '/login', '/ansog-trin6', '/ansog-trin7', '/reset-password']) === -1;
             var loggedIn = $rootScope.globals.currentUser;
             if (restrictedPage && !loggedIn) {
-                $location.path('/index/da');
+                $location.path('/landing');
             }
         });
   }]);

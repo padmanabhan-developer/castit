@@ -369,7 +369,11 @@ console.log(startDate, today, endDate);
 		 });
 		 
 	$(".side-top").click(function(){
-		$("#sidebar1").show("slow").css("display","inline-flex");
+		if($cookies.customer_open == undefined){
+			window.location.href = '#/customerlogin' + ($rootScope.isDanish ? '/da' : '/en' );
+		}{
+			$("#sidebar1").show("slow").css("display","inline-flex");
+		}
 	  });
 	
 	$("#tabnewblack").click(function(){
