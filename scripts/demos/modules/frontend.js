@@ -75,7 +75,7 @@ var frontend = angular.module('theme.demos.dashboard', [
 
 	$scope.checkNew = function(currentProfile){
 		// alert('aa');
-		console.log(currentProfile);
+		// console.log(currentProfile);
 		if(currentProfile.marked_as_new == 1 && currentProfile.marked_as_new_from != '' && currentProfile.marked_as_new_till != '' ){
 			const start = currentProfile.marked_as_new_from.split('-');
 			let startYear = start[0];
@@ -90,7 +90,7 @@ var frontend = angular.module('theme.demos.dashboard', [
 			const endDate = new Date(endYear, endMonth-1, endDay, 23, 59, 59);
 
 			const today = new Date();
-console.log(startDate, today, endDate);
+// console.log(startDate, today, endDate);
 			if((today >= startDate) && (today <= endDate )){
 				return true;
 			}

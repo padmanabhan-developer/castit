@@ -716,6 +716,7 @@ padding: 0px;
     }
   .plus-icon{float:right; position:absolute; top:0; right:13px; background:url(images/plus-icon.png) no-repeat center center; height:30px; width:16px;}   
   .close-icon{float:right; position:absolute; top:0; right:13px; background:url(images/close-icon.png) no-repeat center center; height:30px; width:16px;} 
+  .close-icon-lightbox{float:right; position:absolute; top:0; right:13px; background:url(images/close3.png) no-repeat center center; height:30px; width:10px;} 
   
   .black-cal4{float:left; width:33.333%; padding:0 10px;}
   

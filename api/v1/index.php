@@ -3870,6 +3870,43 @@ $app->get('/getgrouptoken',function () use ($app) {
 	$response = array( 'success' => true, 'grouptoken' => $group_token);
 	echoResponse(200, $response);
 });
+$app->get('/get-customer',function () use ($app) { 
+  	global $db;
+  	$profile_id = isset($_REQUEST['id']) ? $_REQUEST['id'] : '';
+	if($profile_id != ''){
+		$profile_sql = "select * from customer_user where id = ".$profile_id;
+		$profile_query = $db->prepare($profile_sql);
+		$profile_query->execute();
+		$profile_data = $profile_query->fetchAll(PDO::FETCH_ASSOC);
+		// pp($profile_data);
+
+		$group_sql = "select * from grouping where user_id = ".$profile_id;
+		$group_query = $db->prepare($group_sql);
+		$group_query->execute();
+		$group_data = $group_query->fetchAll(PDO::FETCH_ASSOC);
+		// ppe($group_data);
+		$response = array('profile'=>$profile_data, 'groups'=>$group_data);
+		echoResponse(200, $response);
+	}
+});
+
+$app->post('/update-customer',function () use ($app) { 
+	global $db;
+	$data = json_decode($app->request->getBody(), true);
+
+	$id = isset($data['id']) ? $data['id'] : '';
+	$email = isset($data['email']) ? $data['email'] : '';
+	$corporation = isset($data['corporation']) ? $data['corporation'] : '';
+	$telephone = isset($data['telephone']) ? $data['telephone'] : '';
+
+  	if($id != '' && $email != ''){
+		$query_string = "UPDATE customer_user set email = '".$email."', corporation = '".$corporation."', telephone = '".$telephone."' WHERE id = '".$id."'";
+		$profile_query = $db->prepare($query_string);
+		$profile_query->execute();
+		$response = array('success'=>'success');
+		echoResponse(200, $response);
+  	}
+});
 
 $app->get('/getmediadata', function () use ($app) {
 	global $db;

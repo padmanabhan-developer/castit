@@ -1,6 +1,6 @@
 main = angular.module('theme.core.main_controller', ['theme.core.services'])
-main.controller('MainController', ['$scope', '$theme', '$timeout', 'progressLoader', '$rootScope', '$location', 'AuthenticationServiceUser',
-    function($scope, $theme, $timeout, progressLoader, $rootScope, $location, AuthenticationServiceUser) {
+main.controller('MainController', ['$scope', '$theme', '$cookies' , '$timeout', 'progressLoader', '$rootScope', '$location', 'AuthenticationServiceUser',
+    function($scope, $theme, $cookies, $timeout, progressLoader, $rootScope, $location, AuthenticationServiceUser) {
     'use strict';
 		// $scope.layoutIsSmallScreen = false;
     $rootScope.isDanish = true;
@@ -55,6 +55,22 @@ main.controller('MainController', ['$scope', '$theme', '$timeout', 'progressLoad
 				$("#sidebar1").show("slow").css("display","inline-flex");
 			  });
 		});
+
+	$scope.customerLoggedIn = function(){
+		// console.log($cookies.customer_id);
+		if($cookies.customer_id != undefined && $cookies.customer_id != ''){
+			$scope.customer_set = true;
+			if($rootScope.interface != 'login' && $rootScope.interface != 'ansog'){
+				return true;
+			}
+			else{
+				return false;
+			}
+		}
+		else{
+			return false;
+		}
+	}
 
     $scope.layoutLoading = true;
     $scope.getLayoutOption = function(key) {
@@ -2824,6 +2840,68 @@ main.controller('createCustomerController',['$scope', '$rootScope','$http', func
 	}
 }]);
 
+
+main.controller('CustomerProfileController',['$scope', '$rootScope','$http','$cookies', function($scope, $rootScope, $http, $cookies){
+	let customer_id = $cookies.customer_id;
+	$http.get('api/v1/get-customer?id='+customer_id).success(function(data) {
+		console.log(data);
+		$scope.customerData = data;
+	});
+	$scope.updateCustomerProfile = function(){
+		let email = $("#customer_email").val();
+		let corporation = $("#customer_corporation").val();
+		let telephone = $("#customer_telephone").val();
+		$http.post('api/v1/update-customer',{'email': email, 'corporation': corporation, 'telephone': telephone, 'id': customer_id}).success(function(response){
+			alert('Profile Updated');
+		});
+	}
+	$scope.profileLogout = function(){
+		$cookies.customer_id = '';
+		$cookies.customer_user = '';
+		$cookies.PHPSESSID = '';
+		$scope.customer_set = false;
+		window.location.href = '#/index' + ($rootScope.isDanish ? '/da' : '/en' );
+	}
+
+	$scope.deleteLightbox = function(groupId){
+		let confirmDelete = confirm("Are you sure to delete this Lightbox?");
+		if(confirmDelete){
+			let groupToken = localStorage.getItem('grouptoken');
+			let formData = {groupid: groupId, grouptoken : groupToken}
+			$http.get('api/v1/removegroupfromgrouping', {params:formData}).success(function(groupingdata) {
+				$scope.gpprofilecount =groupingdata.count;
+				if(groupingdata.count){
+					$scope.gpprofiles = groupingdata.gpprofiles;
+				}else{
+					$scope.gpprofiles ='';
+				}
+				location.reload();
+				// $scope.ifGroupFormRemove = false;
+			});	
+		}
+	}
+	
+	$scope.showPrompt = function(){
+		let displayMessage = ($rootScope.isDanish ? 'Indtast Lightbox navn' : 'Enter Lightbox name' )
+		let newLightbox = prompt(displayMessage);
+		if(newLightbox != ''){
+			let groupToken = localStorage.getItem('grouptoken');
+			var formData = {groupname: newLightbox, grouptoken : groupToken};
+	
+			$http.get('api/v1/addnewgrouping', {params:formData}).success(function(groupingdata) {
+				$scope.groupingcount =groupingdata.count;
+				if(groupingdata.count){
+					$scope.groupings = groupingdata.grouping;
+					$scope.new_group_name='';
+					
+				}else{
+					$scope.groupings ='';
+				}
+				location.reload();
+			});	
+		}
+	}
+}]);
 
 main.controller('MyProfileController5',['$scope', '$rootScope','$http', function($scope, $rootScope, $http, $cookies){
 	$scope.profileinfo = JSON.parse(sessionStorage.getItem('profileinfo'));
