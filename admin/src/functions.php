@@ -244,18 +244,19 @@ function unique_code($limit)
 function ppe($q){pp($q);exit;}
 
 function check_file($path){
-  if(startsWith($path, "http")){
-    $file_headers = @get_headers($path);
-    if(!(strpos($file_headers[0], '404'))){
-      return true;
-    }
-  }
-  elseif(file_exists($path)){
-      return true;
-    }
-  else{
-    return false;
-  }
+  // if(startsWith($path, "http")){
+  //   $file_headers = @get_headers($path);
+  //   if(!(strpos($file_headers[0], '404'))){
+  //     return true;
+  //   }
+  // }
+  // elseif(file_exists($path)){
+  //     return true;
+  //   }
+  // else{
+  //   return false;
+  // }
+  return true; //  temp solution
 }
 
 function startsWith ($string, $startString) 
