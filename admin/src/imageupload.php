@@ -24,7 +24,7 @@ echo $response;
 */
 
 $fileName     = isset($_FILES["file"]["name"]) ? $_FILES["file"]["name"] : "";
-$filename     = $fileName;
+$filename     = time().$fileName;
 $fileTmpLoc   = isset($_FILES["file"]["tmp_name"]) ? $_FILES["file"]["tmp_name"] : "";
 $fileType     = isset($_FILES["file"]["type"]) ? $_FILES["file"]["type"] : "";
 $fileSize     = isset($_FILES["file"]["size"]) ? $_FILES["file"]["size"] : "";
@@ -36,10 +36,11 @@ if (!$fileTmpLoc) { // if file not chosen
     echo "ERROR: Please select a file before clicking the upload button.";
     exit();
 }
-if(move_uploaded_file($fileTmpLoc, $location.$fileName)){
+if(move_uploaded_file($fileTmpLoc, $location.$filename)){
+  correctImageOrientation($location.$filename);
   $query = "INSERT INTO `photos` (`path`,`original_path`,`profile_id`,`filename`,`published`,`position`,`phototype_id`,`image`,`created_at`,`updated_at`,`image_tmp`,`image_processing`,`image_token`) VALUES ('".$location."','".$location."','".$profile_id."','".$filename."','1','1','1','".$filename."',now(),now(),'".$filename."','1','".$filename."')";
 						$db->exec($query);
-  echo json_encode(['status_message'=>'file upload success', 'filename'=>$fileName, 'imgpath'=>'/images/uploads/'.$fileName]);
+  echo json_encode(['status_message'=>'file upload success', 'filename'=>$filename, 'imgpath'=>'/images/uploads/'.$filename]);
 } 
 else {
   echo "move_uploaded_file function failed";

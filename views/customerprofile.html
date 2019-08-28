@@ -23,17 +23,17 @@
                     <form name="customer-login" ng-submit="customerLoginForm()" class="form-horizontal" method="POST" role="form">
                       <div class="login_box">
                         <label style="margin-left: 10px; color: #cccccc">{{ isDanish ? 'BRUGERNAVN' : 'USERNAME' }}</label>
-                        <input id="customer_email" ng-model="customerData.profile[0].email" name="customer_email" type="email"  placeholder="Email" class="login_input" required autocomplete="off">
+                        <input id="customer_email" ng-model="customerData.profile[0].email" name="customer_email" type="email"  placeholder_dummy="Emailpppp" class="login_input" required autocomplete="off">
                       </div>
                       <div class="login_box">
                         <label style="margin-left: 10px; color: #cccccc" class="customer-label">{{ isDanish ? 'VIRKSOMHED' : 'CORPORATION' }}*</label>
                         <input id="customer_corporation" ng-model="customerData.profile[0].corporation" name="corporation" id="corporation"
                             required pattern=".{2,}" type="text" class="login_input"
-                            placeholder="{{ isDanish ? 'Virksomhed' : 'corporation' }}">
+                            placeholder_dummy="{{ isDanish ? 'Virksomhed' : 'corporation' }}">
                       </div>
                       <div class="login_box">
                         <label style="margin-left: 10px; color: #cccccc" class="customer-label">{{ isDanish ? 'TELEFON' : 'TELEPHONE' }}*</label>
-                        <input id="customer_telephone" ng-model="customerData.profile[0].telephone" name="telephone" id="telephone" required pattern=".{2,}" type="text" class="login_input" placeholder="{{ isDanish ? '+45 87654321' : '+45 87654321' }}">
+                        <input id="customer_telephone" ng-model="customerData.profile[0].telephone" name="telephone" id="telephone" required pattern=".{2,}" type="text" class="login_input" placeholder_dummy="{{ isDanish ? '+45 87654321' : '+45 87654321' }}">
                       </div>
                       
                       <div class="login_box" style="margin-top: 20px">

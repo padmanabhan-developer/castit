@@ -35,35 +35,35 @@
                                                          <label class="customer-label">{{ isDanish ? 'Brugernavn' : 'Username' }}*</label>
                                                           <input ng-model="username" name="username" id="first_name"
                                                                required pattern=".{2,}" type="email" class="input2"
-                                                               placeholder="{{ isDanish ? 'Email' : 'Email' }}">
+                                                                autocomplete="off" placeholder_dummy="{{ isDanish ? 'Email' : 'Email' }}">
    
                                                      </div>
                                                      <div class="form_box">
                                                         <label class="customer-label">{{ isDanish ? 'Virksomhed' : 'Corporation' }}*</label>
                                                          <input ng-model="corporation" name="corporation" id="corporation"
                                                               required pattern=".{2,}" type="text" class="input2"
-                                                              placeholder="{{ isDanish ? 'Virksomhed' : 'corporation' }}">
+                                                               autocomplete="off" placeholder_dummy="{{ isDanish ? 'Virksomhed' : 'corporation' }}">
   
                                                     </div>  
                                                     <div class="form_box">
                                                         <label class="customer-label">{{ isDanish ? 'Telefon' : 'Telephone' }}*</label>
                                                          <input ng-model="telephone" name="telephone" id="telephone"
                                                               required pattern=".{2,}" type="text" class="input2"
-                                                              placeholder="{{ isDanish ? '+45 87654321' : '+45 87654321' }}">
+                                                               autocomplete="off" placeholder_dummy="{{ isDanish ? '+45 87654321' : '+45 87654321' }}">
   
                                                     </div>
                                                     <div class="form_box">
                                                         <label class="customer-label">{{ isDanish ? 'Adgangskode' : 'Password' }}*</label>
                                                          <input ng-model="password" name="password" id="password"
                                                               required pattern=".{2,}" type="password" class="input2"
-                                                              placeholder="{{ isDanish ? '****' : '****' }}">
+                                                               autocomplete="off" placeholder_dummy="{{ isDanish ? '****' : '****' }}">
   
                                                     </div>
                                                     <div class="form_box">
                                                         <label class="customer-label">{{ isDanish ? 'Bekræft Adgangskode' : 'Confirm Password' }}*</label>
                                                          <input ng-model="cpassword" name="cpassword" id="cpassword"
                                                               required pattern=".{2,}" type="password" class="input2"
-                                                              placeholder="{{ isDanish ? '****' : '****' }}">
+                                                               autocomplete="off" placeholder_dummy="{{ isDanish ? '****' : '****' }}">
   
                                                     </div>
                                                     <div class="form_box">
