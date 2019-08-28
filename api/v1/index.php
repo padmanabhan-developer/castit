@@ -1078,7 +1078,7 @@ $app->get('/getgroupingprofiles', function () use ($app) {
 	$grouping_profile = array();
 	$grouptoken =  $app->request->get('grouptoken');
 
-	if(isset($_COOKIE['customer_id'])) {
+	if(isset($_COOKIE['customer_id']) && $_COOKIE['customer_id'] != '') {
 		$customer_id = $_COOKIE['customer_id'];
 		$sql = "SELECT *, date_format(added_on , '%d.%m.%Y') as addedon  FROM grouping where user_id= '".$customer_id."' AND status = '1' order by group_name asc";
 	} else {
@@ -1088,15 +1088,8 @@ $app->get('/getgroupingprofiles', function () use ($app) {
   
   if(isset($_GET['grouptoken_groupid'])){
     $gpid = (is_numeric($_GET['grouptoken_groupid'])) ? " AND group_id = ".$_GET['grouptoken_groupid'] : '';
-	
-	if(isset($_COOKIE['customer_id'])) {
-		$customer_id = $_COOKIE['customer_id'];
-		$sql = "SELECT *, date_format(added_on , '%d.%m.%Y') as addedon  FROM grouping where user_id= '".$customer_id."' AND status = '1' ". $gpid ." order by group_name asc";
-	} else {
 		$sql = "SELECT *, date_format(added_on , '%d.%m.%Y') as addedon  FROM grouping where token_id= '".$grouptoken."' AND status = '1' ". $gpid ." order by group_name asc";
-
 	}
-  }
   $query_check_gb = $db->prepare($sql); 
 	$query_check_gb->execute();
 	$rows_gb = $query_check_gb->fetchAll(PDO::FETCH_ASSOC);
@@ -1201,7 +1194,7 @@ $app->get('/removegroupfromgrouping', function () use ($app) {
 	$grouptoken =  $app->request->get('grouptoken');
 
 	if($groupid){
-		if(isset($_COOKIE['customer_id'])) {
+		if(isset($_COOKIE['customer_id']) && $_COOKIE['customer_id'] != '') {
 			$customer_id = $_COOKIE['customer_id'];
 			$sql = "SELECT * FROM grouping where group_id = '".$groupid."' AND user_id = '".$customer_id."'";
 		} else {
@@ -1227,7 +1220,7 @@ $app->get('/removegroupfromgrouping', function () use ($app) {
 	$reponse = array();
 	$rowcount = 0;
 	$grouping_profile = array();
-	if(isset($_COOKIE['customer_id'])) {
+	if(isset($_COOKIE['customer_id']) && $_COOKIE['customer_id'] != '') {
 		$customer_id = $_COOKIE['customer_id'];
 		$sql = "SELECT *, date_format(added_on , '%d.%m.%Y') as addedon  FROM grouping where status = '1' AND user_id = '".$customer_id."' order by group_name asc";
 	} else {
@@ -3391,7 +3384,7 @@ $app->get('/getgroupinglist', function () use ($app) {
 	$reponse =  array();
 	$grouptoken =  $app->request->get('grouptoken');
 
-	if(isset($_COOKIE['customer_id'])) {
+	if(isset($_COOKIE['customer_id']) && $_COOKIE['customer_id'] != '') {
 		$customer_id = $_COOKIE['customer_id'];
 		$sql = "SELECT * FROM grouping WHERE user_id='".$customer_id."' AND status ='1' order by group_name";
 	} else {
@@ -3424,7 +3417,7 @@ $app->get('/addnewgrouping', function () use ($app) {
 	$rowcount = 0;
 	$grouping_token = $app->request->get('grouptoken');
 
-	if(isset($_COOKIE['customer_id'])) {
+	if(isset($_COOKIE['customer_id']) && $_COOKIE['customer_id'] != '') {
 		$customer_id = $_COOKIE['customer_id'];
 		$sql = "SELECT * FROM `grouping` where `group_name` LIKE '%".$groupname."%' AND user_id ='".$customer_id."'";
 	} else {
@@ -3435,7 +3428,7 @@ $app->get('/addnewgrouping', function () use ($app) {
 	$query_check_gp->execute();
 	$rows_gp = $query_check_gp->fetchAll(PDO::FETCH_ASSOC);
 
-	if(isset($_COOKIE['customer_id'])) {
+	if(isset($_COOKIE['customer_id']) && $_COOKIE['customer_id'] != '') {
 		$customer_id = $_COOKIE['customer_id'];
 		$sql = "INSERT INTO `grouping` ( `token_id`, `group_name`, `status`, `user_id`) VALUES ('".$grouping_token."', '".$groupname."','1','".$customer_id."')";
 	} else {
@@ -3449,7 +3442,7 @@ $app->get('/addnewgrouping', function () use ($app) {
 			$gpid = $db->exec($q_gruping);
 	}
 	
-	if(isset($_COOKIE['customer_id'])) {
+	if(isset($_COOKIE['customer_id']) && $_COOKIE['customer_id'] != '') {
 		$customer_id = $_COOKIE['customer_id'];
 		$sql = "SELECT * FROM grouping WHERE status ='1' AND user_id ='".$customer_id."' order by group_name";
 	} else {
@@ -4077,9 +4070,9 @@ $app->post('/customer-login', function () use ($app) {
 		$cookie_value = $customer[0]['id'];
 		setcookie($cookie_name, $cookie_value, time() + (86400 * 30), "/"); // 86400 = 1 day
 		
-		$cookie_name = "customer_open";
-		$cookie_value = 'false';
-		setcookie($cookie_name, $cookie_value, time() + (86400 * 30), "/"); // 86400 = 1 day
+		// $cookie_name = "customer_open";
+		// $cookie_value = 'false';
+		// setcookie($cookie_name, $cookie_value, time() + (86400 * 30), "/"); // 86400 = 1 day
 
 		echo json_encode(['status' => 'success', 'message' => 'Login success']);
 	}

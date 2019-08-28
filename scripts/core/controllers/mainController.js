@@ -2205,11 +2205,13 @@ main.controller('AngularLoginController', ['$scope', '$filter', '$http', '$windo
 			$('.res_menu').removeClass('active');
 			$(".res_menu ul li").fadeOut("slow");
 		});
+
+		/*
 		$("input[name='proceedNormal']").click(function(){
 			$cookies.customer_open = 'true';
 			window.location.href = '#/index' + ($rootScope.isDanish ? '/da' : '/en' );
-
 		});
+		*/
 	});
 
 	this.loginForm = function() {

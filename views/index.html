@@ -365,7 +365,7 @@
                                       <!-- <span class="bank"><a javascript:void(0);></a></span> -->
                                       <h5> {{gp_profile.group_name}}</h5>
                                       <span class="edit3"><a href="javascript:void(0);" ng-click="enableNotesBoxFN()"></a></span>
-                                      <textarea name="" id="" class="notes-textarea" ng-model="gp_profile.lb_note" ng-disabled="!enableNotesBox" ng-blur="updateNotesFN($event)" profile_id="{{gp_profile.id}}" group_id="{{gpprofile.group_id}}"></textarea>
+                                      <textarea name="" id="" placeholder="{{ isDanish ? 'Tilføj note':'Add Notes' }}" class="notes-textarea" ng-model="gp_profile.lb_note" ng-blur="updateNotesFN($event)" profile_id="{{gp_profile.id}}" group_id="{{gpprofile.group_id}}"></textarea>
                                       
                                       <!-- <p>{{gp_profile.lb_note}}</p> -->
                                  </div>

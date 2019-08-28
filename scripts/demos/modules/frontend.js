@@ -141,8 +141,13 @@ var frontend = angular.module('theme.demos.dashboard', [
 			if('group_token' in homedata && 'group' in $location.search()){
 			localStorage.setItem('grouptoken', homedata.group_token);
 			localStorage.setItem('grouptoken_groupid', argument_data.params.group_id);
+			$cookies.customer_id = '';
+			$cookies.customer_user = '';
 			// $scope.groupToken = homedata.group_token;
 			$(".leftbar").html($scope.group_share_text);
+			}
+			else{
+				localStorage.removeItem('grouptoken_groupid');
 			}
 		}else{
 			$scope.profiles ='';
@@ -361,7 +366,17 @@ var frontend = angular.module('theme.demos.dashboard', [
 	// 		scrollTop: $('.wrapPM').offset().top - 20 //#DIV_ID is an example. Use the id of your destination on the page
 	// 	}, 'slow');
 	// });
-
+	function getUrlParams(){
+		var vars = [], hash;
+		var hashes = window.location.href.slice(window.location.href.indexOf('?') + 1).split('&');
+		for(var i = 0; i < hashes.length; i++){
+			hash = hashes[i].split('=');
+			vars.push(hash[0]);
+			vars[hash[0]] = hash[1];
+		}
+		return vars;
+	}
+	$scope.queryParams = getUrlParams();
 
 	
 	$(".sidebar1-close").click(function(){
@@ -369,10 +384,15 @@ var frontend = angular.module('theme.demos.dashboard', [
 		 });
 		 
 	$(".side-top").click(function(){
-		if($cookies.customer_open == undefined){
-			window.location.href = '#/customerlogin' + ($rootScope.isDanish ? '/da' : '/en' );
-		}{
+		let queryParams = $scope.queryParams;
+		if((queryParams.group && queryParams.username && queryParams.groupname)){
 			$("#sidebar1").show("slow").css("display","inline-flex");
+		}else{
+			if($cookies.customer_id == undefined || $cookies.customer_id == ''){
+				window.location.href = '#/customerlogin' + ($rootScope.isDanish ? '/da' : '/en' );
+			}{
+				$("#sidebar1").show("slow").css("display","inline-flex");
+			}
 		}
 	  });
 	
@@ -475,18 +495,26 @@ var frontend = angular.module('theme.demos.dashboard', [
 	});
 		 
 	$("#tab_group1").click(function(){
-		if($cookies.customer_open == undefined){
-			window.location.href = '#/customerlogin' + ($rootScope.isDanish ? '/da' : '/en' );
+		let queryParams = $scope.queryParams;
+		if((queryParams.group && queryParams.username && queryParams.groupname)){
+			$("#sidebar1").show("slow").css("display","inline-flex");
+		}else{
+			if($cookies.customer_id == undefined || $cookies.customer_id == ''){
+				window.location.href = '#/customerlogin' + ($rootScope.isDanish ? '/da' : '/en' );
+			}
+			else{
+				$(".title1_1").addClass("active");
+				$('.tab1').removeClass('tabactive');
+				$('#tab_group').addClass('tabactive');
+				$(".add-grupper").show();
+				$("tab2").addClass(".side-tabs ul li.active");
+				$(".title1").removeClass("active");
+				$(".grupper").fadeIn(); 
+				$(".lightbox").fadeOut();
+				$("#sidebar1").show("slow").css("display","inline-flex"); 
+			}
 		}
-	    $(".title1_1").addClass("active");
-		$('.tab1').removeClass('tabactive');
-		$('#tab_group').addClass('tabactive');
-		$(".add-grupper").show();
-        $("tab2").addClass(".side-tabs ul li.active");
-		$(".title1").removeClass("active");
-		$(".grupper").fadeIn(); 
-		$(".lightbox").fadeOut();
-		$("#sidebar1").show("slow").css("display","inline-flex"); 
+	    
 	});
 	$(".add-grupper").click(function(){
 			$(".addbox").show();
@@ -732,7 +760,7 @@ var frontend = angular.module('theme.demos.dashboard', [
 	$scope.pbox_singleimage='';	
 	$scope.getProfileBox = function (profileid){
 
-		if($cookies.customer_open == undefined){
+		if($cookies.customer_id == undefined || $cookies.customer_id == ''){
 			window.location.href = '#/customerlogin' + ($rootScope.isDanish ? '/da' : '/en' );
 		}
 
@@ -781,6 +809,7 @@ var frontend = angular.module('theme.demos.dashboard', [
 	function togglegrouping_top($event){
 		let this_element = $event.currentTarget;
 		$(this_element).parent().parent().parent().siblings('.group-full').slideToggle();
+		console.log(this_element);
 		switch ($scope.view_profiles_text_default) {
 			case $scope.view_profiles_text_close:
 					$scope.view_profiles_text_default = $scope.view_profiles_text_open;
