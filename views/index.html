@@ -342,7 +342,7 @@
                                         <a href="javascript:void(0);" ng-click="showSendGroupPopup(gpprofile.group_id);">Send</a>
                                    </li>
                                    <li>
-                                        <a href="javascript:void(0);" class="group-view-toggle" style="background: none !important" ng-click="togglegrouping_top($event)">{{ view_profiles_text_default }}</a>
+                                        <a href="javascript:void(0);" class="group-view-toggle" style="background: none !important" ng-click="togglegrouping_top($event)">{{ isDanish ? 'Vis profiler' : 'View profiles' }}</a>
                                    </li>
                               </ul>
                          </div>
@@ -387,7 +387,7 @@
                                              <a href="javascript:void(0);" ng-click="showSendGroupPopup(gpprofile.group_id);">Send</a>
                                         </li>
                                         <li>
-                                             <a href="javascript:void(0);" class="group-view-toggle" style="background: none !important" ng-click="togglegrouping_top($event)">{{ view_profiles_text_default }}</a>
+                                             <a href="javascript:void(0);" class="group-view-toggle" style="background: none !important" ng-click="togglegrouping_top($event, 'true')">{{ isDanish ? 'Luk profiler' : 'Close profiles' }}</a>
                                         </li>
                                    </ul>
                         </div>

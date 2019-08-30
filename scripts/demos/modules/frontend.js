@@ -74,35 +74,34 @@ var frontend = angular.module('theme.demos.dashboard', [
 	}
 
 	$scope.checkNew = function(currentProfile){
-		// alert('aa');
-		// console.log(currentProfile);
-		if(currentProfile.marked_as_new == 1 && currentProfile.marked_as_new_from != '' && currentProfile.marked_as_new_till != '' ){
-			const start = currentProfile.marked_as_new_from.split('-');
-			let startYear = start[0];
-			let startMonth = start[1];
-			let startDay = start[2];
-			const startDate = new Date(startYear, startMonth-1, startDay);
+		if(currentProfile && currentProfile.marked_as_new != null && currentProfile.marked_as_new != undefined){
+			if(currentProfile.marked_as_new == 1 && currentProfile.marked_as_new_from.length > 0 && currentProfile.marked_as_new_till.length > 0 ){
+				const start = currentProfile.marked_as_new_from.split('-');
+				let startYear = start[0];
+				let startMonth = start[1];
+				let startDay = start[2];
+				const startDate = new Date(startYear, startMonth-1, startDay);
 
-			const end = currentProfile.marked_as_new_till.split('-');
-			let endYear = end[0];
-			let endMonth = end[1];
-			let endDay = end[2];
-			const endDate = new Date(endYear, endMonth-1, endDay, 23, 59, 59);
+				const end = currentProfile.marked_as_new_till.split('-');
+				let endYear = end[0];
+				let endMonth = end[1];
+				let endDay = end[2];
+				const endDate = new Date(endYear, endMonth-1, endDay, 23, 59, 59);
 
-			const today = new Date();
-// console.log(startDate, today, endDate);
-			if((today >= startDate) && (today <= endDate )){
-				return true;
+				const today = new Date();
+				if((today >= startDate) && (today <= endDate )){
+					return true;
+				}
+				else{
+					return false;
+				}
 			}
 			else{
+				if(currentProfile.marked_as_new == 1 && !currentProfile.marked_as_new_from && !currentProfile.marked_as_new_till){
+					return true;
+				}
 				return false;
 			}
-		}
-		else{
-			if(currentProfile.marked_as_new == 1 && !currentProfile.marked_as_new_from && !currentProfile.marked_as_new_till){
-				return true;
-			}
-			return false;
 		}
 	}
 
@@ -806,28 +805,34 @@ var frontend = angular.module('theme.demos.dashboard', [
 		$(this_element).parent().siblings('.group-full').slideToggle();
 		$(this_element).parent().parent().find(".group-view-toggle").toggleClass('rotated-arrow');
 	}
-	function togglegrouping_top($event){
+	function togglegrouping_top($event, bottom = 'false'){
 		let this_element = $event.currentTarget;
+		$(this_element).parent().parent().parent().siblings('.group-list').toggle();
 		$(this_element).parent().parent().parent().siblings('.group-full').slideToggle();
-		console.log(this_element);
-		switch ($scope.view_profiles_text_default) {
+		
+			toggleTextViewProfile(this_element, bottom);
+		
+		$(this_element).parent().parent().parent().parent().find(".group-view-toggle").toggleClass('rotated-arrow');
+	}
+	
+	function toggleTextViewProfile(this_element, bottom){
+		switch (this_element.innerText) {
 			case $scope.view_profiles_text_close:
-					$scope.view_profiles_text_default = $scope.view_profiles_text_open;
+				if(bottom == 'true'){
+					this_element.parentElement.parentElement.parentElement.parentElement.children[0].children[1].children[2].children[0].innerText = $scope.view_profiles_text_open;
+				}
+				this_element.innerText = $scope.view_profiles_text_open;
 					$(this_element).parent().parent().parent().parent().find(".sidebar1_box2_bottom").hide();
 				break;
 		
 			case $scope.view_profiles_text_open:
-					$scope.view_profiles_text_default = $scope.view_profiles_text_close;
+					this_element.innerText = $scope.view_profiles_text_close;
 					$(this_element).parent().parent().parent().parent().find(".sidebar1_box2_bottom").show();					
 				break;
 			default:
 				break;
 		}
-
-		$(this_element).parent().parent().parent().parent().find(".group-view-toggle").toggleClass('rotated-arrow');
 	}
-	
-
 
 	$scope.selectedgroupings = '';
 	$scope.checkuncheckgrouping = checkuncheckgrouping;
