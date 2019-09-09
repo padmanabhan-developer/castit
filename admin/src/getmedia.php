@@ -36,8 +36,8 @@ if(is_numeric($id)){
   $name_query->execute();
   $name = $name_query->fetch(0)['name'];
   
-  $recently_updated = $db->prepare("UPDATE profiles set recently_updated = 'reviewed' where id = $id");
-  $recently_updated->execute();
+  // $recently_updated = $db->prepare("UPDATE profiles set recently_updated = 'reviewed' where id = $id");
+  // $recently_updated->execute();
 
   $profile_number_query = $db->prepare("SELECT profile_number, profile_id from memberships where profile_id = $id");
   $profile_number_query->execute();

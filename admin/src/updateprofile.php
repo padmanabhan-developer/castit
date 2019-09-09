@@ -40,7 +40,7 @@ if($extract_post_variables > 0){
       */
     }
   }
-  pp($_POST['payments']);
+  // pp($_POST['payments']);
   if(isset($_POST['languages']) && count($_POST['languages']) > 0){
     $clear_existance_query = $db->prepare("delete from language_proficiencies where profile_id = ".$_POST['id']);
     $clear_existance_query->execute();
@@ -115,6 +115,10 @@ if($extract_post_variables > 0){
   $sql_query = "UPDATE `profiles` SET marked_as_new = ".$_POST['marked_as_new']." WHERE id = ".$_POST['id'];
   $prepared_query = $db->prepare($sql_query);
   $prepared_query->execute();
+
+  $recently_updated_query = "UPDATE profiles set recently_updated = 'reviewed' where id = ".$_POST['id'];
+  $recently_updated = $db->prepare($recently_updated_query);
+  $recently_updated->execute();
 }
 
 /*

@@ -76,7 +76,7 @@
                       </div>
                       
                       <div class="radio radio-info">
-                           <input type="radio" name="sort" id="Radios4" value="show_as_new_until">
+                           <input type="radio" name="sort" id="Radios4" value="updated_at">
                            <label>Opdateret</label>
                       </div>
                       
