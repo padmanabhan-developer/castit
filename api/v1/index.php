@@ -2877,12 +2877,12 @@ $app->post('/sendemail', function () use ($app) {
   $response = array();
   $to_email = $data['to_email'];
   $from_email = $data['from_email'];
-  $mail_body ='';$to_cc ='';
+  $mail_body =''; $to_cc = $from_email;
   if(isset($data['mail_body'])){
     $mail_body = $data['mail_body'];
   }
-  if(isset($data['to_cc'])){
-    $to_cc = $data['to_cc'];
+  if(isset($data['from_email'])){
+    $to_cc = $data['from_email'];
   }
 
   $html = '<table style="text-align:left" cellspacing="0" cellpadding="0" width="556" border="0">
@@ -4102,7 +4102,7 @@ $app->post('/fileuploadparser', function () use ($app) {
 	      exit();
 	  }
 	  if(move_uploaded_file($fileTmpLoc, $location.$fileName)){			
-
+		correctImageOrientation($location.$fileName);
 			$query = "INSERT INTO `photos` (`path`,`original_path`,`profile_id`,`filename`,`published`,`position`,`phototype_id`,`image`,`created_at`,`updated_at`,`image_tmp`,`image_processing`,`image_token`) VALUES ('".$location."','".$location."','".$profile_id."','".$fileName."','0','".$position."','1','".$fileName."',now(),now(),'".$fileName."','1','".$fileName."')";
 			$db->exec($query);
 			echo json_encode(['status_message'=>'file upload success', 'filename'=>$fileName, 'imgpath'=>'/images/uploads/'.$fileName, 'position'=>$position, 'type'=>'image']);
@@ -4298,6 +4298,35 @@ function unique_code($limit)
 {
   return substr(base_convert(sha1(uniqid(mt_rand())), 16, 36), 0, $limit);
 }
+
+function correctImageOrientation($filename) {
+	if (function_exists('exif_read_data')) {
+	  $exif = exif_read_data($filename);
+	  if($exif && isset($exif['Orientation'])) {
+		$orientation = $exif['Orientation'];
+		if($orientation != 1){
+		  $img = imagecreatefromjpeg($filename);
+		  $deg = 0;
+		  switch ($orientation) {
+			case 3:
+			  $deg = 180;
+			  break;
+			case 6:
+			  $deg = 270;
+			  break;
+			case 8:
+			  $deg = 90;
+			  break;
+		  }
+		  if ($deg) {
+			$img = imagerotate($img, $deg, 0);        
+		  }
+		  // then rewrite the rotated image back to the disk as $filename 
+		  imagejpeg($img, $filename, 95);
+		} // if there is some rotation necessary
+	  } // if have the exif orientation info
+	} // if function exists      
+  }
 
 function array_sort($array, $on, $order=SORT_ASC)
 {
