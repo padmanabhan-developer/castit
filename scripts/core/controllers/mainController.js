@@ -2270,7 +2270,7 @@ main.controller('AngularLoginController', ['$scope', '$filter', '$http', '$windo
 					$http({
 						method: 'POST',
 						url: 'api/v1/resetpassword',
-						data: {email: user_email},
+						data: {email: user_email, type: 'profile'},
 						headers: {'Content-Type': 'application/x-www-form-urlencoded'}
 					})
 					.success(function(data) {
@@ -2305,7 +2305,7 @@ main.controller('AngularLoginController', ['$scope', '$filter', '$http', '$windo
 					$http({
 						method: 'POST',
 						url: 'api/v1/resetpassword',
-						data: {email: user_email},
+						data: {email: user_email, type: 'profile'},
 						headers: {'Content-Type': 'application/x-www-form-urlencoded'}
 					})
 					.success(function(data) {
