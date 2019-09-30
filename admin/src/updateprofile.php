@@ -13,6 +13,7 @@ if($extract_post_variables > 0){
     if(!is_array($value)){
       if($db->check_column($key, 'profiles')){
         if($key == 'approved'){ $value = 1 ;}
+        $value = $db->escapeString($value);
         $sql_query = "UPDATE `profiles` SET ".$key."='".$value."' WHERE id = ".$_POST['id'];
         $prepared_query = $db->prepare($sql_query);
         $prepared_query->execute();

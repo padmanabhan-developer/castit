@@ -2858,6 +2858,7 @@ main.controller('CustomerProfileController',['$scope', '$rootScope','$http','$co
 		});
 	}
 	$scope.profileLogout = function(){
+		$http.post('api/v1/customer-logout').success(alert('logged out'));
 		$cookies.customer_id = '';
 		$cookies.customer_user = '';
 		$cookies.PHPSESSID = '';

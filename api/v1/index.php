@@ -97,7 +97,7 @@ AND m.current ='1' AND p.id IN ( SELECT profile_id from photos WHERE published =
 
 
 if($_SERVER['HTTP_HOST'] == 'castit.local'){
-	$sql = $sql . " ORDER BY m.profile_number ASC";
+	$sql = $sql . " ORDER BY m.profile_number ASC limit 2";
 }
 else{
 	// $sql = $sql . " ORDER BY RAND() ";
@@ -1465,7 +1465,12 @@ Parameter : nil
 Type : POST
 ******************************************/
 $app->post('/step1Create',function () use ($app) { 
-    global $db;
+	global $db;
+	if (version_compare(PHP_VERSION, '5.4.0', '<')) {
+        if(session_id() == '') {session_start();}
+    } else  {
+       if (session_status() == PHP_SESSION_NONE) {session_start();}
+    }
 	$data =  json_decode($app->request->getBody(), true);
   // echo '<pre>';print_r($_SESSION["step1"]);exit;
 	$response = array();
@@ -2303,7 +2308,7 @@ $app->post('/step7Create', function() use ($app){
 		$dealekter3=$_SESSION["step5"]["dealekter3"];
 	$agreed_to_these_terms=1;
 
-
+	$notes = $db->escapeString($notes);
 	if($operation == 'insert'){
 		$q_chip = "INSERT INTO `profiles` ( 
 			`first_name`, 
@@ -3842,7 +3847,7 @@ $app->post('/resetpassword',function () use ($app) {
 			$response = array( 'success' => true, 'message' => 'Din nye adgangskode er blevet sendt til din email.', 'message_en' => 'Your new password has been send to you email.');
 		}
 		else{
-			$response = array( 'success' => false, 'message' => 'Din konto er i inaktiv status. Kontakt venligst administrator');
+			$response = array( 'success' => false, 'message' => 'Din profil er inaktiv. Kontakt venligst Castit', 'message_en' => 'Your profile is inactive. Please contact Castit');
 		}
 	}
 	else{
@@ -4043,6 +4048,10 @@ EOM;
 		));
 } );
 
+$app->post('/customer-logout', function () use ($app){
+session_destroy();
+});
+
 $app->post('/customer-login', function () use ($app) {
 	global $db;
 	$data = json_decode($app->request->getBody(), true);
@@ -4056,8 +4065,28 @@ $app->post('/customer-login', function () use ($app) {
 		echo json_encode(['status' => 'fail', 'message' => 'Invalid Credentials.']);
 	}
 	else{
-		session_destroy();
-		session_start();
+		
+		if(isset($_SESSION['id_client']) &&  isset($_POST['ok'])){
+			// $cookie_name = "PHPSESSID";
+			// $cookie_value = '';
+			// setcookie($cookie_name, $cookie_value, time() + (86400 * 30), "/"); // 86400 = 1 day
+	
+			$_SESSION=array();
+			session_regenerate_id(); 
+			session_destroy();
+			session_start();
+			// echo 1;
+		}
+
+		
+		// $_SESSION=array();
+			// session_regenerate_id(); 
+			// session_destroy();
+			// session_regenerate_id(); 
+			// session_start();
+		// session_destroy();
+		// $_SESSION = array();
+		// session_start();
 		$_SESSION['customer_email'] = $customer[0]['email'];
 		$_SESSION['customer_corporation'] = $customer[0]['corporation'];
 		$_SESSION['customer_telephone'] = $customer[0]['telephone'];

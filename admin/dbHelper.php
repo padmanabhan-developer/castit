@@ -18,6 +18,10 @@ class dbHelper {
     function query($sql){
         return $this->db->query($sql);
     }
+    function escapeString($str){
+        $link = mysqli_connect(DB_HOST, DB_USERNAME, DB_PASSWORD, DB_NAME);
+        return mysqli_real_escape_string($link, $str);
+    }
     function check_column($column, $table){
         $q = $this->prepare("DESCRIBE ".$table);
         $q->execute();

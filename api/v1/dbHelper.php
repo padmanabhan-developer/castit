@@ -15,7 +15,10 @@ class dbHelper {
             exit;
         }
     }
-    
+    function escapeString($str){
+        $link = mysqli_connect(DB_HOST, DB_USERNAME, DB_PASSWORD, DB_NAME);
+        return mysqli_real_escape_string($link, $str);
+    }
     function select($table, $columns, $where, $order){
         try{
             $a = array();
