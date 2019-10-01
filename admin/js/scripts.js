@@ -575,19 +575,20 @@ $(document).ready(function(){
   $('input[type=radio][name=profile-number-selection]').change(function(){
     let new_profile_number = $(this).val();
     let profileid = $(this).attr('profile_id');
+    // let profileid = $(this).attr('profile_id');
+    let data = {new_profile_number: new_profile_number, profileid: profileid};
+    $.post("/admin/src/updateprofilenumber", data,
+      function (data, textStatus, jqXHR) { 
+        window.location.reload();
+      }
+    );
+    
     if(new_profile_number != undefined){
       if(new_profile_number.charAt(0) == "B"){
         $("input[name='profile-status-value'][value='2']").click();
         let data = {profile_id: profileid, update_value: '5'}
         $.post("/admin/src/updateprofilestatus", data,function (data, textStatus, jqXHR) {});
       }
-      // let profileid = $(this).attr('profile_id');
-      let data = {new_profile_number: new_profile_number, profileid: profileid};
-      $.post("/admin/src/updateprofilenumber", data,
-        function (data, textStatus, jqXHR) { 
-          window.location.reload();
-        }
-      );
     }
   });
   
