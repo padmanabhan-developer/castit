@@ -41,6 +41,17 @@ main.controller('MainController', ['$scope', '$theme', '$cookies' , '$timeout', 
 		];
 		
 		$(document).ready(function(){
+			$('.logo').click(function(){
+				// window.location.hash('#/index/da');
+				if(history.pushState) {
+					history.pushState(null, null, '#/index/da');
+					location.reload();
+				}
+				else {
+					location.hash = '#/index/da';
+					location.reload();
+				}
+			});
 			$('.main-menu-trigger').click(function(){
 				$('.landing-wrapper').toggleClass('menu-active');
 			});
@@ -225,7 +236,7 @@ main.controller('MainController', ['$scope', '$theme', '$cookies' , '$timeout', 
 		$rootScope.interface = 'aboutus';
 		$(".main_content").fadeOut(); 
 		$(".course_section").fadeOut();
-		
+		$(".right-sidebar").hide();
 		// close menu-section
 		closeMenuSection();
 
@@ -236,7 +247,7 @@ main.controller('MainController', ['$scope', '$theme', '$cookies' , '$timeout', 
 		$rootScope.interface = 'course';
 		$(".main_content").fadeOut(); 
 		$(".contact_section").fadeOut();
-		
+		$(".right-sidebar").hide();
 		closeMenuSection();
 		
 		$(".course_section").fadeIn("slow"); 

@@ -1202,7 +1202,9 @@ padding: 0px;
       border: 1px solid #ccc;
       border-radius: 35px;
       overflow: hidden;
-      background: #fafafa url("images/select.png") no-repeat 95% 50%;
+      /* background: #fafafa url("images/select.png") no-repeat 95% 50%; */
+      background: #fafafa url("/images/svgs/selectArrow.svg") no-repeat 95% 50%;
+      background-size: 12px;
   }
   
   .select-style select {

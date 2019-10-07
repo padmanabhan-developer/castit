@@ -399,19 +399,21 @@ var frontend = angular.module('theme.demos.dashboard', [
 		$("#sidebar1").show("slow"); 
 	});
 
-	$(".side-top-arrow").click(function(){
+	// $(".side-top-arrow").click(function(){
 		// $scope.profile_from_lightbox = false;
 		// $("#sidebar1").show("slow").css("display","inline-flex");
-		alert('asjhk');
-	  });
+		// alert('asjhk');
+	//   });
 	  
 	$(".poup-close2").click(function(){
 		$rootScope.interface = 'home';
 		$rootScope.isMaincontent = true;
 		$rootScope.$apply();
 		$(".contact_section").fadeOut(); 
-		$(".course_section").fadeOut(); 
-		$(".main_content").fadeIn("slow"); 
+		$(".course_section").fadeOut();
+		$(".right-sidebar").fadeIn("slow");
+		$(".main_content").fadeIn("slow");
+		
 	});
 	 
 	$("#event1").click(function(){
@@ -615,6 +617,7 @@ var frontend = angular.module('theme.demos.dashboard', [
 
 	$(".information-inside .poup-close2").click(function(){
 		$(".res_menu ul li").fadeOut("slow");
+		$(".right-sidebar").fadeIn("slow");
 		
 		// remove active class from menu-context if exist.
 		$("#main-menu-context").removeClass('active');
@@ -1123,7 +1126,9 @@ var frontend = angular.module('theme.demos.dashboard', [
 			}
 		});
 		$("#sidebar1").hide("slow");
-		$scope.profile_from_lightbox = true;
+		if($cookies.customer_id != undefined && $cookies.customer_id != ''){
+			$scope.profile_from_lightbox = true;
+		}
 		$("#profile_popup").fadeIn("slow"); 
 	}
 	
@@ -1148,7 +1153,10 @@ var frontend = angular.module('theme.demos.dashboard', [
 			features: ['playpause','progress', 'fullscreen']
 		});
 		video.load();
-		// video.play();
+		setTimeout(()=>{
+			video.play();
+		}, 100);
+		
 		// video.pause();
 	};
 	$scope.selectedThumb=0;
