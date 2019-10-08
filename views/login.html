@@ -8,23 +8,17 @@
        </div>
 
       <div class="section-top hide-xs">
-        <div class="login-call6" style="padding: 0;">
-          <h2>{{ isDanish ? 'Profil login' : 'Profile login' }}
-            <p>{{ isDanish ? 'For at kunne rette i din eksisterende profil skal du logge ind.' : 'In order to edit your existing profile, please log in.' }}</p>
-          </h2>
-        </div>
-        <div class="login-call6">
-          <h2>{{ isDanish ? 'Kunde login' : 'Customer login' }}
-            <p>{{ isDanish ? 'For at kunne oprette og gemme dine Lightbox skal du lave en kundeprofil.' : 'In order to create and save your Lightbox, you need to create a customer profile.' }}</p>
-          </h2>
-        </div>
+
       </div>
 
       <div class="section-login">
         <div class="login-row">
           <div>
-          <div class="login-call6">
+          <div class="col-md-6 col-lg-6">
             <div class="login_inner">
+                <h2>{{ isDanish ? 'Profil login' : 'Profile login' }}
+                    <p>{{ isDanish ? 'For at kunne rette i din eksisterende profil skal du logge ind.' : 'In order to edit your existing profile, please log in.' }}</p>
+                  </h2>
               <div ng-show="error" class="alert alert-danger">{{error}}</div>
               <form name="login" ng-submit="angCtrl.loginForm()" class="form-horizontal" method="POST" role="form">
                 <div class="login_box">
@@ -43,7 +37,7 @@
                 <div class="login_box">
                   <div class="login-error-message"></div>
                 </div>
-                <div class="login_box2">
+                <div class="login_box">
                   <input name="" type="submit" class="login_button1" value="Login">
                 </div>
               </form>
@@ -51,9 +45,11 @@
           </div><!--close login-call6-->
         </div>
           <div>
-          <div class="login-call6" style="">
+          <div class="col-md-6 col-lg-6">
             <div class="login_inner">
-               
+               <h2>{{ isDanish ? 'Kunde login' : 'Customer login' }}
+            <p>{{ isDanish ? 'For at kunne oprette og gemme dine Lightbox skal du lave en kundeprofil.' : 'In order to create and save your Lightbox, you need to create a customer profile.' }}</p>
+          </h2>
               <form name="customer-login" ng-submit="angCtrl.customerLoginForm()" class="form-horizontal" method="POST" role="form">
                 <div class="login_box">
                   <label>{{ isDanish ? 'BRUGERNAVN' : 'USERNAME' }}</label>
@@ -71,7 +67,7 @@
                 <div class="login_box">
                   <div class="customer-login-error-message"></div>
                 </div>
-                <div class="login_box2">
+                <div class="login_box">
                   <input name="" type="submit" class="customer_login_button1" value="Login">
                 </div>
               </form>
