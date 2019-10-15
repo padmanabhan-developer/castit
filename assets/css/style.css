@@ -76,7 +76,7 @@ progress{
   .menu ul{margin:0; padding:0;}
   .menu ul li{float:left; color:#2d2e32; font-size:13px; font-family:Arial, Helvetica, sans-serif;}
   .menu ul li+li{margin:0 0 0 45px;}
-  .english .menu li+li{margin: 0 0 0 40px !important;}
+  /* .english .menu li+li{margin: 0 0 0 40px !important;} */
   .menu ul li a{color:#2d2e32; font-weight:bold; text-decoration:none; line-height:1;}
   .menu ul li.active a {
       color: #dcdde0;

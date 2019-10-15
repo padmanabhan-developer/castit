@@ -15,6 +15,17 @@
 	<!-- prochtml:remove:dist -->
 	<!--<link href="assets/less/styles.less" rel="stylesheet/less" media="all"> -->
 	<!-- /prochtml -->
+<!-- Hotjar Tracking Code for castit.dk -->
+<script>
+    (function(h,o,t,j,a,r){
+        h.hj=h.hj||function(){(h.hj.q=h.hj.q||[]).push(arguments)};
+        h._hjSettings={hjid:1526121,hjsv:6};
+        a=o.getElementsByTagName('head')[0];
+        r=o.createElement('script');r.async=1;
+        r.src=t+h._hjSettings.hjid+j+h._hjSettings.hjsv;
+        a.appendChild(r);
+    })(window,document,'https://static.hotjar.com/c/hotjar-','.js?sv=');
+</script>
 
 	<link href="https://fonts.googleapis.com/css?family=Pacifico|Roboto+Condensed" rel="stylesheet">     
     <link href="assets/css/bootstrap.min.css" rel="stylesheet" />
