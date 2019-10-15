@@ -300,8 +300,8 @@
 	
 	<script src="bower_components/tableExport/tableExport.js"></script>-->
 	<!--<script src="bower_components/tableExport/jquery.base64.js"></script>
-	
 	<script src="bower_components/tableExport/jspdf/libs/sprintf.js"></script>
+	
 	<script src="bower_components/tableExport/jspdf/jspdf.js"></script>
 	<script src="bower_components/tableExport/jspdf/libs/base64.js"></script>
 	<script src="bower_components/tableExport/jspdf/libs/addhtml.js"></script>
@@ -313,6 +313,7 @@
 	<!--<script src="http://html2canvas.hertzen.com/build/html2canvas.js"></script>-->
 	<!--<script src="bower_components/tableExport/jspdf/jspdf.debug.js"></script>-->
 	<script src="scripts/demos/modules/frontend.js"></script>
+	<!-- <script src="scripts/demos/modules/frontendAdmin.js"></script> -->
     <script src="scripts/demos/modules/mediaelement-and-player.min.js"></script>
 	<script src="scripts/demos/demos.js"></script>
 	<script src="scripts/app.js"></script>
