@@ -245,6 +245,7 @@ var frontend = angular.module('theme.demos.dashboard', [
         if(($(this).scrollTop() >= (this.scrollHeight - $(this).height() - 1)) && ($scope.profiles.length > 18) && !('group' in $location.search())){
         getprofiles_offset = getprofiles_offset + 1;
         if($(".rightbar-row").hasClass("filteractive")) {
+			/*
           $http.get('api/v1/getfilterprofiles', {params:{search_text: $scope.search_text,age_from: $scope.age_from,age_to: $scope.age_to,genderval: $scope.genderval,purchase_name: $scope.purchase_name,submittype: $scope.submittype, offset: getprofiles_offset}}).success(function(homedata) {
             $(".rightbar-row").addClass("filteractive");
             $(".loading_ajax").hide();
@@ -260,7 +261,7 @@ var frontend = angular.module('theme.demos.dashboard', [
 					$scope.loading = 'Ingen data fundet';
 				}
             }
-          });	
+          });	*/
         }
         else{
           $http.get('api/v1/getprofiles', {params: {view: 'home', offset: getprofiles_offset}}).success(function(homedata) {

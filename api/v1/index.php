@@ -327,9 +327,9 @@ $app->get('/getfilterprofiles',function () use ($app) {
 
   $offset = (isset($_GET['offset'])) ? $_GET['offset'] : 1;
   
-	$offset = $offset * 100;
-	$limit  = " LIMIT 100 OFFSET ". $offset;
-	$qry = $qry . $limit;
+	// $offset = $offset * 100;
+	// $limit  = " LIMIT 100 OFFSET ". $offset;
+	// $qry = $qry . $limit;
 
 	$sql_check_qry = "SELECT p.*, m.profile_group_id, m.profile_number, m.profile_number_first_name_last_name, m.version, m.current, g.name as gender_name FROM profiles p INNER JOIN memberships m ON m.profile_id = p.id INNER JOIN genders g ON g.id = p.gender_id  WHERE (p.profile_status_id = '1' ) AND m.current ='1' AND p.id IN (SELECT profile_id from photos WHERE published ='1' and media_slet_status != '1' GROUP by profile_id) AND m.profile_number = '" . $search_text . "'";
 	$sql_check = $db->prepare($sql_check_qry);
@@ -345,7 +345,26 @@ $app->get('/getfilterprofiles',function () use ($app) {
     $rows = $query->fetchAll(PDO::FETCH_ASSOC);
     //echo 'sdsds';die;
 //	print_r($rows[0]);exit;
-    $profiles = array();
+	$profiles = array();
+	// pp($rows);
+	if(count($rows)>0) {
+		foreach($rows as $item){
+			$current_prefix = substr($item['profile_number'], 0, 1);
+			if($current_prefix == "C"){
+				$c_profiles[]=$item;
+			}
+			if($current_prefix == "Y"){
+				$y_profiles[]=$item;
+			}
+		}
+		shuffle($c_profiles);
+		shuffle($y_profiles);
+		$rows = array_merge($c_profiles, $y_profiles);
+		// $_SESSION['c_profiles'] = $c_profiles;
+		// $_SESSION['y_profiles'] = $y_profiles;
+	}
+	// pp('after---');
+	// pp($rows);
 	if(count($rows)>0) {
 		foreach($rows as $row){
 			$birthdate = new DateTime($row['birthday']);
