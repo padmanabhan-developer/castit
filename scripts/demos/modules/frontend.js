@@ -397,7 +397,12 @@ var frontend = angular.module('theme.demos.dashboard', [
 	  });
 	
 	$("#tabnewblack").click(function(){
-		$("#sidebar1").show("slow"); 
+		if($cookies.customer_id == undefined || $cookies.customer_id == ''){
+			window.location.href = '#/customerlogin' + ($rootScope.isDanish ? '/da' : '/en' );
+		}
+		else{
+			$("#sidebar1").show("slow"); 
+		}
 	});
 
 	// $(".side-top-arrow").click(function(){
