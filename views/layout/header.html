@@ -45,7 +45,7 @@ text-decoration: underline;"> info@Castit.dk</a></li>
                          ng-click="changeLanguage(false);" ng-class="{ 'active': !isDanish}">EN</span></span></div>
 
          
-          <a ng-if="customerLoggedIn()" style="cursor: pointer; position:absolute; right:0; color: #2d2e32;font-weight: bold;text-decoration: none;line-height: 1;" ng-click="goto('customerprofile' + (isDanish ? '/da' : '/en'))">{{ isDanish ? 'Min Profil' : 'My Profile'}}</a>
+          <a class="hidden-xs hidden-sm" ng-if="customerLoggedIn()" style="cursor: pointer; position:absolute; right:0; color: #2d2e32;font-weight: bold;text-decoration: none;line-height: 1;" ng-click="goto('customerprofile' + (isDanish ? '/da' : '/en'))">{{ isDanish ? 'Min Profil' : 'My Profile'}}</a>
           <a ng-if="(interface == 'login')" style="color:#FEFEFE !important; top:10px; padding-right: 0; line-height: 20px; display: inline-flex; " href="/#/index{{ isDanish ? '/da' : '/en'}}" class="poup-close2 popup-close-btn">{{ isDanish ? 'LUK' : 'CLOSE' }} <img style=" width: 20px; height: 15px; " src="images/svgs/lukw1.svg" alt=""></a>
 
           <div class="res-menu" ng-click="toggleMenu()">
@@ -108,6 +108,10 @@ text-decoration: underline;"> info@Castit.dk</a></li>
 text-decoration: underline;"> info@Castit.dk</a></li>
                     </ul>
                </li>
+               <li>
+                    <a class="visible-xs-* visible-sm-*" style="cursor: pointer;" ng-click="goto('customerprofile' + (isDanish ? '/da' : '/en'))">{{ isDanish ? 'Min Profil' : 'My Profile'}}</a>
+               </li>            
+
                <li ng-click="hideMenu()">
                     <span class="span1"><span ng-click="changeLanguage(true);">DA</span> / <em
                               ng-click="changeLanguage(false);">EN</em></span>

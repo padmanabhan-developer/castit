@@ -939,7 +939,7 @@ padding: 0px;
   .login-call6{float:left; width:50%; padding:0 12px;}
   .login-call6 .login_inner{width:60%}
   .login-page .section-top h2:before{display:none !important;}
-  .login_inner{float:left; width:100%; position:relative; height:280px; margin-bottom: 30vh}
+  .login_inner{float:left; width:100%; position:relative; height:280px; margin-bottom: 15vh}
   .login_box{float:left; width:100%; margin:0 0 20px 0;}
   .login_box label{float:left; width:100%;font-size: 13px;  font-family:Arial, Helvetica, sans-serif; color:#fff; margin:0 0 8px 0; }
   
@@ -1063,7 +1063,7 @@ padding: 0px;
       position: absolute;
       left: 47%;
       bottom: -28px;
-      content: ' ';
+      /* content: ' '; */
       text-align: center; }
   .video_text h4{color:#fff; font-size:11px; text-transform:uppercase; padding:0 0 10px 0;}
   .video_text h5{color:#a9a9a9; font-size:18px; text-transform:uppercase; font-weight:bold; padding:5px 0 3px 0; clear:both;}

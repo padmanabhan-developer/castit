@@ -348,6 +348,8 @@ $app->get('/getfilterprofiles',function () use ($app) {
 	$profiles = array();
 	// pp($rows);
 	if(count($rows)>0) {
+		$valid_y = false;
+		$valid_c = false;
 		foreach($rows as $item){
 			$current_prefix = substr($item['profile_number'], 0, 1);
 			if($current_prefix == "C"){
@@ -357,9 +359,29 @@ $app->get('/getfilterprofiles',function () use ($app) {
 				$y_profiles[]=$item;
 			}
 		}
-		shuffle($c_profiles);
-		shuffle($y_profiles);
-		$rows = array_merge($c_profiles, $y_profiles);
+		if(isset($c_profiles) && is_array($c_profiles) && count($c_profiles)>0){
+			shuffle($c_profiles);
+			$valid_c = true;
+		}
+		if(isset($y_profiles) && is_array($y_profiles) && count($y_profiles)>0){
+			shuffle($y_profiles);
+			$valid_y = true;
+		}
+		
+		if($valid_c && $valid_y){
+			$rows = array_merge($c_profiles, $y_profiles);
+		}
+		elseif($valid_c && !$valid_y){
+			$rows = $c_profiles;
+		}
+		elseif(!$valid_c && $valid_y){
+			$rows = $y_profiles;
+		}
+		else{
+			$rows = $rows;
+		}
+
+		
 		// $_SESSION['c_profiles'] = $c_profiles;
 		// $_SESSION['y_profiles'] = $y_profiles;
 	}

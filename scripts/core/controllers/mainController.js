@@ -2342,7 +2342,7 @@ main.controller('AngularLoginController', ['$scope', '$filter', '$http', '$windo
 			$("input[type=submit].customer_login_button1").attr("type","button");
 
 			$("input[type=button].blue-login").click(function(){
-				$(".customer-login-error-message").html('<img alt="loading" src="assets/loader/3.gif" width="15%" height="15%">');
+				$(".customer-login-error-message").html('<img alt="loading" src="assets/loader/3.gif" width="35px" height="35px">');
 				let user_email = $("#customer_login_email").val();
 				if(user_email != "" && user_email != undefined){
 					$http({

@@ -13,10 +13,9 @@
               </div>              
             </div>
       
-            <div class="section-login" style="padding-bottom: 100px !important">
+            <div class="section-login">
               <div class="login-row">
-                <div>
-                <div class="login-call6" style="">
+                <div class="col-md-6 col-lg-6" >
                   <div class="login_inner">
                       <h2>{{ isDanish ? 'Min Profil' : 'My Profile' }}</h2>
 
@@ -43,11 +42,10 @@
                     </form>
                   </div>
                 </div><!--close login-call6-->
-              </div>
-              <div class="login-call6" style="">
+              <div class="col-md-6 col-lg-6">
                   <div class="login_inner">
                       <h2>{{ isDanish ? 'Mine Lightbox' : 'My Lightbox' }}</h2>
-                      <div class="login_box" style="width: 25vw">
+                      <div class="login_box" style="width: auto">
                         <span class="button1 ng-binding ng-scope" id="groupingbut13" style="cursor:pointer;" ng-repeat="grouping in customerData.groups" ng-click="checkuncheckgrouping(grouping.id)">{{grouping.group_name}}
                           <span class="close-icon-lightbox" ng-click="deleteLightbox(grouping.group_id)"></span>
                         </span>

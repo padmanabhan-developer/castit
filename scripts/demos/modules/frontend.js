@@ -34,7 +34,7 @@ var frontend = angular.module('theme.demos.dashboard', [
 	$scope.view_profiles_text_close = $rootScope.isDanish ? 'Luk profiler' : 'Close profiles';
 	$scope.view_profiles_text_default = $scope.view_profiles_text_open;
 	$scope.profile_from_lightbox = false;
-
+	$scope.openedFromLighbox = false;
 	if($( window ).width() <= 860){
 		$scope.scroll_counter_number = 9;
 	}
@@ -410,9 +410,10 @@ var frontend = angular.module('theme.demos.dashboard', [
 		$rootScope.interface = 'home';
 		$rootScope.isMaincontent = true;
 		$rootScope.$apply();
+		$scope.openedFromLighbox = false;
 		$(".contact_section").fadeOut(); 
 		$(".course_section").fadeOut();
-		$(".right-sidebar").fadeIn("slow");
+		// $(".right-sidebar").fadeIn("slow");
 		$(".main_content").fadeIn("slow");
 		
 	});
@@ -1085,7 +1086,10 @@ var frontend = angular.module('theme.demos.dashboard', [
 	$scope.IsProfileVideo = false;
 	$scope.isGetSingleLoading=false;
 	
-	$scope.getSingleProfile = function (profileid, arg){
+	$scope.getSingleProfile = function (profileid, arg, openedFromLighbox = false){
+		if(openedFromLighbox){
+			$scope.openedFromLighbox = true;
+		}
 		$scope.IsProfileImage = true;
 		$scope.IsProfileVideo = false;
 		$scope.responsiveProfileDetail = false;
@@ -1127,7 +1131,7 @@ var frontend = angular.module('theme.demos.dashboard', [
 			}
 		});
 		$("#sidebar1").hide("slow");
-		if($cookies.customer_id != undefined && $cookies.customer_id != ''){
+		if($cookies.customer_id != undefined && $cookies.customer_id != '' && $scope.openedFromLighbox){
 			$scope.profile_from_lightbox = true;
 		}
 		$("#profile_popup").fadeIn("slow"); 
