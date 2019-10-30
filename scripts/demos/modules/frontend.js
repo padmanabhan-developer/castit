@@ -624,7 +624,7 @@ var frontend = angular.module('theme.demos.dashboard', [
 
 	$(".information-inside .poup-close2").click(function(){
 		$(".res_menu ul li").fadeOut("slow");
-		$(".right-sidebar").fadeIn("slow");
+		// $(".right-sidebar").fadeIn("slow");
 		
 		// remove active class from menu-context if exist.
 		$("#main-menu-context").removeClass('active');

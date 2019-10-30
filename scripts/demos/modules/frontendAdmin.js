@@ -71,7 +71,7 @@ var frontendAdmin = angular.module('theme.demos.dashboard')
 
 	$scope.checkNew = function(currentProfile){
 		if(currentProfile && currentProfile.marked_as_new != null && currentProfile.marked_as_new != undefined){
-			if(currentProfile.marked_as_new == 1 && currentProfile.marked_as_new_from.length > 0 && currentProfile.marked_as_new_till.length > 0 ){
+			if(currentProfile.marked_as_new && currentProfile.marked_as_new == 1 && currentProfile.marked_as_new_from.length > 0 && currentProfile.marked_as_new_till.length > 0 ){
 				const start = currentProfile.marked_as_new_from.split('-');
 				let startYear = start[0];
 				let startMonth = start[1];
@@ -93,7 +93,7 @@ var frontendAdmin = angular.module('theme.demos.dashboard')
 				}
 			}
 			else{
-				if(currentProfile.marked_as_new == 1 && !currentProfile.marked_as_new_from && !currentProfile.marked_as_new_till){
+				if(currentProfile.marked_as_new && currentProfile.marked_as_new == 1 && !currentProfile.marked_as_new_from && !currentProfile.marked_as_new_till){
 					return true;
 				}
 				return false;
