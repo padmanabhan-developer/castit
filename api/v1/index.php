@@ -4171,8 +4171,28 @@ $app->post('/fileuploadparser', function () use ($app) {
 	      echo "ERROR: Please browse for a file before clicking the upload button.";
 	      exit();
 	  }
-	  if(move_uploaded_file($fileTmpLoc, $location.$fileName)){			
-		correctImageOrientation($location.$fileName);
+	  if(move_uploaded_file($fileTmpLoc, $location.$fileName)){
+		  switch($fileType){
+			case 'image/jpeg':
+			case 'image/jpg':
+			case 'image/JPG':
+			case 'image/JPEG':
+				correctImageOrientationJPEG($location.$fileName);
+				break;
+			
+			case 'image/png':
+			case 'image/PNG':
+				// correctImageOrientationPNG($location.$fileName);
+				break;
+			case 'image/gif':
+			case 'image/GIF':
+				// correctImageOrientationGIF($location.$fileName);
+				break;
+			default:
+				break;
+
+		  }			
+		
 			$query = "INSERT INTO `photos` (`path`,`original_path`,`profile_id`,`filename`,`published`,`position`,`phototype_id`,`image`,`created_at`,`updated_at`,`image_tmp`,`image_processing`,`image_token`) VALUES ('".$location."','".$location."','".$profile_id."','".$fileName."','0','".$position."','1','".$fileName."',now(),now(),'".$fileName."','1','".$fileName."')";
 			$db->exec($query);
 			echo json_encode(['status_message'=>'file upload success', 'filename'=>$fileName, 'imgpath'=>'/images/uploads/'.$fileName, 'position'=>$position, 'type'=>'image']);
@@ -4369,7 +4389,8 @@ function unique_code($limit)
   return substr(base_convert(sha1(uniqid(mt_rand())), 16, 36), 0, $limit);
 }
 
-function correctImageOrientation($filename) {
+// https://www.php.net/manual/en/function.exif-read-data.php#121742
+function correctImageOrientationJPEG($filename) {
 	if (function_exists('exif_read_data')) {
 	  $exif = exif_read_data($filename);
 	  if($exif && isset($exif['Orientation'])) {
@@ -4393,6 +4414,63 @@ function correctImageOrientation($filename) {
 		  }
 		  // then rewrite the rotated image back to the disk as $filename 
 		  imagejpeg($img, $filename, 95);
+		} // if there is some rotation necessary
+	  } // if have the exif orientation info
+	} // if function exists      
+  }
+
+  function correctImageOrientationPNG($filename) {
+	if (function_exists('exif_read_data')) {
+	  $exif = exif_read_data($filename);
+	  if($exif && isset($exif['Orientation'])) {
+		$orientation = $exif['Orientation'];
+		if($orientation != 1){
+		  $img = imagecreatefrompng($filename);
+		  $deg = 0;
+		  switch ($orientation) {
+			case 3:
+			  $deg = 180;
+			  break;
+			case 6:
+			  $deg = 270;
+			  break;
+			case 8:
+			  $deg = 90;
+			  break;
+		  }
+		  if ($deg) {
+			$img = imagerotate($img, $deg, 0);        
+		  }
+		  // then rewrite the rotated image back to the disk as $filename 
+		  imagepng($img, $filename, 95);
+		} // if there is some rotation necessary
+	  } // if have the exif orientation info
+	} // if function exists      
+  }
+  function correctImageOrientationGIF($filename) {
+	if (function_exists('exif_read_data')) {
+	  $exif = exif_read_data($filename);
+	  if($exif && isset($exif['Orientation'])) {
+		$orientation = $exif['Orientation'];
+		if($orientation != 1){
+		  $img = imagecreatefromgif($filename);
+		  $deg = 0;
+		  switch ($orientation) {
+			case 3:
+			  $deg = 180;
+			  break;
+			case 6:
+			  $deg = 270;
+			  break;
+			case 8:
+			  $deg = 90;
+			  break;
+		  }
+		  if ($deg) {
+			$img = imagerotate($img, $deg, 0);        
+		  }
+		  // then rewrite the rotated image back to the disk as $filename 
+		  imagegif($img, $filename, 95);
 		} // if there is some rotation necessary
 	  } // if have the exif orientation info
 	} // if function exists      

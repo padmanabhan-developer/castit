@@ -960,6 +960,7 @@ var frontend = angular.module('theme.demos.dashboard', [
 		$scope.removeprofileid = profileid;
 		$scope.removeProfileFromGroupId = groupid;
 		$("#lightbox_remove_popup").fadeIn('slow');
+		
 	}
 	
 	
@@ -997,6 +998,10 @@ var frontend = angular.module('theme.demos.dashboard', [
 			var formData = {profileid: $scope.removeprofileid, grouptoken : $scope.groupToken, groupid : $scope.removeProfileFromGroupId}
 			// console.log(formData);
 			$scope.ifLightboxFormRemove = false;
+			setTimeout(()=>{
+				$scope.ifLightboxFormRemove = true;
+				$('#lightbox_remove_popup').fadeOut();
+			 }, 1500)
 			$http.get('api/v1/removeProfileFromGroup', {params:formData}).success(function() {
 				$http.get('api/v1/getgroupingprofiles', {params: {view: 'home', grouptoken : $scope.groupToken}}).success(function(groupingdata) {
 					// console.log(groupingdata);
@@ -1044,6 +1049,11 @@ var frontend = angular.module('theme.demos.dashboard', [
 					$scope.gpprofiles ='';
 				}
 				$scope.ifGroupFormRemove = false;
+				setTimeout(() => {
+					$scope.removegroupid = ''; 
+					$scope.ifGroupFormRemove = true;
+					$("#group_remove_popup").fadeOut();
+				}, 1500);
 			});	
 		}
 	}
@@ -1408,7 +1418,7 @@ function sendGroupForm(groupid) {
 					$("#send_group_popup").fadeOut();
 					$scope.ifLightboxFormSuccess = false;
 					$scope.ifLightboxForm = true;
-				}, 3000);
+				}, 1500);
 			}
 		});	
 	}

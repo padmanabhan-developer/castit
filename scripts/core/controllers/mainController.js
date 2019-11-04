@@ -432,28 +432,24 @@ main.controller('RegisterStep2Controller', ['$scope', '$filter', '$http', '$wind
 // Regsiter Step 3
 main.controller('RegisterStep3Controller', ['$scope', '$filter', '$http', '$window', '$rootScope', '$routeParams', 'FlashService', function($scope, $filter, $http, $window, $rootScope, $routeParams, FlashService) {  
 	$rootScope.bodylayout = 'black';
-	$rootScope.interface = 'ansog';	
+	$rootScope.interface = 'ansog';
 	var limit='';
-	$(".button3").click(function(){
-		if(!$scope.show_child_sizes){
-			$scope.show_child_sizes = true;
-			console.log($scope.show_child_sizes);
-		}
-		else{
-			$scope.show_child_sizes = false;
-			console.log($scope.show_child_sizes);
+	$scope.showKidSizes = false;
+	function clearValues(){
+		$scope.shirt_size_from	= '-';	$scope.shirt_size_to= '-'; 	$scope.pants_size_from	= '-'; 	$scope.pants_size_to='-';
+		$scope.shoe_size_from 	= '-';	$scope.shoe_size_to	= '-';	$scope.suite_size_from 	= '-';	$scope.suite_size_to= '-';
+		$scope.children_sizes 	= '-';	$scope.eye_color_id = '-';	$scope.hair_color_id 	= '-';	$scope.bra_size 	= '';
+		$scope.height 			= '';	$scope.weight 		= '';
+	}
+	$("#showKidSizes").change(function(event){
+		clearValues();
+		if(event.target.checked){
+			$scope.showKidSizes = true;
+		}else{
+			$scope.showKidSizes = false;
 		}
 	});
-	function showChildSizes(){
-		if(!$scope.show_child_sizes){
-			$scope.show_child_sizes = true;
-			console.log($scope.show_child_sizes);
-		}
-		else{
-			$scope.show_child_sizes = false;
-			console.log($scope.show_child_sizes);
-		}
-	}
+
 	$http.get('api/v1/checkstep2', {params: {limit: limit}}).success(function(reponse) {
 		if(reponse.step1status){
 			if(reponse.step2status){
@@ -1093,7 +1089,9 @@ main.controller('mediaUploadController',['$scope', '$http', '$rootScope', functi
 			}
 	
 			var file = $(this)[0].files[0];
-			let isImage = (file) => file['type'].includes('image');
+			let isImage = (file) => {
+				return (file['type'].includes('image/j') || file['type'].includes('image/J') || file['type'].includes('image/p') || file['type'].includes('image/P'));
+			}
 			let isVideo = (file) => file['type'].includes('video');
 			let api_url = '';
 	
@@ -1107,7 +1105,14 @@ main.controller('mediaUploadController',['$scope', '$http', '$rootScope', functi
 				api_url = 'api/v1/fileuploadparser?uploaded_file_type=video&profile_id='+profile_id+'&position='+position ;
 				$(".videofiles input#uploadinput"+position).val($(this).val());
 			}
-	
+			if(!isImage(file) && !isVideo(file)){
+				if($rootScope.isDanish){
+					alert('Du har uploaded et forkert filformat. Upload venligst JPG, JPEG eller PNG');
+				}
+				else{
+					alert('You’ve uploaded a wrong file format. Please upload a JPG, JPEG or PNG');
+				}
+			}
 			var formdata = new FormData();
 			(isImage(file)) ? formdata.append("Image_file", file) : '';
 			(isVideo(file)) ? formdata.append("Video_file", file) : '';
@@ -2261,7 +2266,12 @@ main.controller('AngularLoginController', ['$scope', '$filter', '$http', '$windo
 				// alert(response.message);
 				window.location.href = '#/index' + ($rootScope.isDanish ? '/da' : '/en' );
 			}else{
-				alert(response.message);
+				if($rootScope.isDanish){
+					alert(response.message_dk);
+				}
+				else{
+					alert(response.message_en);
+				}
 			}
 		});
 	}
@@ -2539,6 +2549,22 @@ main.controller('MyProfileController3',['$scope', '$rootScope','$http', function
   var birthday = +new Date($scope.profileinfo.birthday);
   $scope.age = ~~((Date.now() - birthday) / (31557600000));   
   var limit = '';
+//   $scope.showKidSizes = false;
+  function clearValues(){
+	  $scope.shirt_size_from	= '-';	$scope.shirt_size_to= '-'; 	$scope.pants_size_from	= '-'; 	$scope.pants_size_to='-';
+	  $scope.shoe_size_from 	= '-';	$scope.shoe_size_to	= '-';	$scope.suite_size_from 	= '-';	$scope.suite_size_to= '-';
+	  $scope.children_sizes 	= '-';	$scope.eye_color_id = '-';	$scope.hair_color_id 	= '-';	$scope.bra_size 	= '';
+	  $scope.height 			= '';	$scope.weight 		= '';
+  }
+  $("#showKidSizes").change(function(event){
+	  clearValues();
+	  if(event.target.checked){
+		  $scope.showKidSizes = true;
+	  }else{
+		  $scope.showKidSizes = false;
+	  }
+  });
+
   $http.get('api/v1/getstep3data', {params: {limit: limit}}).success(function(response) {
     $scope.gender=response.genders;
     $scope.eye_colors=response.eye_colors;
@@ -2839,14 +2865,23 @@ main.controller('createCustomerController',['$scope', '$rootScope','$http', func
 				password: $scope.password
 			}
 			$http.post('api/v1/customer-create', formData).success(function(response) {
-				console.log(response);
+				// console.log(response);
 				if(response.status == 'success'){
-					alert(response.message);
+					if($rootScope.isDanish){
+						alert(response.message_dk);
+					}else{
+						alert(response.message_en);
+					}
+					
 					let emailData = { email : $scope.username }
 					emailCustomer(emailData)
 					window.location.href = '#/index' + ($rootScope.isDanish ? '/da' : '/en' );
 				}else{
-					alert(response.message);
+					if($rootScope.isDanish){
+						alert(response.message_dk);
+					}else{
+						alert(response.message_en);
+					}
 				}
 			});
 		}
@@ -3011,10 +3046,10 @@ main.controller('MyProfileController5',['$scope', '$rootScope','$http', function
           dealekter3: $scope.profileinfo.dealekter3,
           user_profile_id: $scope.profileinfo.id,
           operation: 'update',
-          lng_pro_id1: ($scope.profileinfo.languages[0] != undefined) ? $scope.profileinfo.languages[0].lng_pro_id : "",
-          lng_pro_id2: ($scope.profileinfo.languages[1] != undefined) ? $scope.profileinfo.languages[1].lng_pro_id : "",
-          lng_pro_id3: ($scope.profileinfo.languages[2] != undefined) ? $scope.profileinfo.languages[2].lng_pro_id : "",
-          lng_pro_id4: ($scope.profileinfo.languages[3] != undefined) ? $scope.profileinfo.languages[3].lng_pro_id : "",
+          lng_pro_id1: ($scope.profileinfo.languages && $scope.profileinfo.languages[0] != undefined) ? $scope.profileinfo.languages[0].lng_pro_id : "",
+          lng_pro_id2: ($scope.profileinfo.languages && $scope.profileinfo.languages[1] != undefined) ? $scope.profileinfo.languages[1].lng_pro_id : "",
+          lng_pro_id3: ($scope.profileinfo.languages && $scope.profileinfo.languages[2] != undefined) ? $scope.profileinfo.languages[2].lng_pro_id : "",
+          lng_pro_id4: ($scope.profileinfo.languages && $scope.profileinfo.languages[3] != undefined) ? $scope.profileinfo.languages[3].lng_pro_id : "",
         }
     $http.post('api/v1/step5Create', formData).success(function(response) {
       if(response.success){
