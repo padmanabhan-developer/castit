@@ -4016,7 +4016,7 @@ $app->post('/customer-create', function () use ($app) {
 	$query->execute();
 	$customer = $query->fetchAll(PDO::FETCH_ASSOC);
 	if(count($customer) > 0){
-		echo json_encode(['status' => 'fail', 'message' => 'email already exists in our database']);
+		echo json_encode(['status' => 'fail', 'message_en' => 'Email already exists in our database', 'message_dk' => 'Email eksisterer allerede I vores database']);
 	}
 	else{
 		$insert = $db->prepare("INSERT into customer_user (`email`,`corporation`,`telephone`,`password`) VALUES ('".$email."','".$corporation."','".$telephone."','".$password."')");
@@ -4024,7 +4024,7 @@ $app->post('/customer-create', function () use ($app) {
 
 	
 
-		echo json_encode(['status' => 'success', 'message' => 'profile created', 'email'=>$email]);
+		echo json_encode(['status' => 'success', 'message_en' => 'profile created', 'message_dk' => 'profil oprettet', 'email'=>$email]);
 	}
 	
 });
@@ -4103,7 +4103,16 @@ $app->post('/customer-login', function () use ($app) {
 	$query->execute();
 	$customer = $query->fetchAll(PDO::FETCH_ASSOC);
 	if(count($customer) < 1){
-		echo json_encode(['status' => 'fail', 'message' => 'Invalid Credentials.']);
+		$query = $db->prepare("select * from customer_user where email = '".$email."'");
+		$query->execute();
+		$customer = $query->fetchAll(PDO::FETCH_ASSOC);
+		if(count($customer) < 1){
+			echo json_encode(['status' => 'fail', 'message_en' => 'Invalid Username', 'message_dk' => 'Forkert Brugernavn']);
+		}
+		else {
+			echo json_encode(['status' => 'fail', 'message_en' => 'Invalid Password', 'message_dk' => 'Forkert Password']);
+		}
+		
 	}
 	else{
 		
