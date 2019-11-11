@@ -507,12 +507,14 @@ $app->get('/getsingleprofiles',function () use ($app) {
 		$today   = new DateTime('today');
 		$age = $birthdate->diff($today)->y;
 
-		$hair_eye_color_query = $db->prepare("SELECT hc.name as hair_color_name, ec.name as eye_color_name from profiles p INNER JOIN hair_colors hc ON hc.id = p.hair_color_id INNER JOIN eye_colors ec ON ec.id = p.eye_color_id where p.id = '".$profileid."' ");
+		$hair_eye_color_query = $db->prepare("SELECT hc.name as hair_color_name, hc.name_en as hair_color_name_en, ec.name as eye_color_name, ec.name_en as eye_color_name_en from profiles p INNER JOIN hair_colors hc ON hc.id = p.hair_color_id INNER JOIN eye_colors ec ON ec.id = p.eye_color_id where p.id = '".$profileid."' ");
 		$hair_eye_color_query->execute();
 		$hair_eye_colors = $hair_eye_color_query->fetchAll(PDO::FETCH_ASSOC);
 
 		$row['eye_color_name'] = isset($hair_eye_colors[0]['eye_color_name']) ? $hair_eye_colors[0]['eye_color_name'] : " - ";
+		$row['eye_color_name_en'] = isset($hair_eye_colors[0]['eye_color_name_en']) ? $hair_eye_colors[0]['eye_color_name_en'] : " - ";
 		$row['hair_color_name'] = isset($hair_eye_colors[0]['hair_color_name']) ? $hair_eye_colors[0]['hair_color_name'] : " - ";
+		$row['hair_color_name_en'] = isset($hair_eye_colors[0]['hair_color_name_en']) ? $hair_eye_colors[0]['hair_color_name_en'] : " - ";
 
 		// Profile Image
 		$profile_images = array();
@@ -671,7 +673,9 @@ $app->get('/getsingleprofiles',function () use ($app) {
 								'height' 		=> $row['height'],
 								'weight' 		=> $row['weight'],
 								'hair_color_name' 	=> isset($row['hair_color_name']) ? $row['hair_color_name'] : " - ",
+								'hair_color_name_en' 	=> isset($row['hair_color_name_en']) ? $row['hair_color_name_en'] : " - ",
 								'eye_color_name' 	=> isset($row['eye_color_name']) ? $row['eye_color_name'] : " - ",
+								'eye_color_name_en' 	=> isset($row['eye_color_name_en']) ? $row['eye_color_name_en'] : " - ",
 								'shoes' 		=> ($shoes != '') ? $shoes : ' - ' ,
 								'shirt' 		=> ($shirt != '') ? $shirt : ' - ',
 								'pants' 		=> ($pants != '') ? $pants : ' - ',

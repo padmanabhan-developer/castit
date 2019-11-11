@@ -504,8 +504,8 @@
                                     <li><span class="list_span1">{{ isDanish ? 'Alder' : 'Age' }}</span><span class="list_span2">{{singleprofile.age}}<span class="list_san3"> {{ isDanish ? 'År' : 'Years' }}</span></span></li>
                                     <li><span class="list_span1">{{ isDanish ? 'Højde' : 'Height' }}</span><span class="list_span2">{{singleprofile.height}}<span class="list_san3"> cm</span></span></li>
                                     <li><span class="list_span1">{{ isDanish ? 'Vægt' : 'Weight' }}</span><span class="list_span2">{{singleprofile.weight}}<span class="list_san3"> kg</span></span></li>
-                                    <li><span class="list_span1">{{ isDanish ? 'Øjenfarve' : 'Eye color' }}</span><span class="list_span2">{{singleprofile.eye_color_name}}</span></li>
-                                    <li><span class="list_span1">{{ isDanish ? 'Hårfarve' : 'Hair color' }}</span><span class="list_span2">{{singleprofile.hair_color_name}}</span></li>
+                                    <li><span class="list_span1">{{ isDanish ? 'Øjenfarve' : 'Eye color' }}</span><span class="list_span2">{{ isDanish ? singleprofile.eye_color_name : singleprofile.eye_color_name_en }}</span></li>
+                                    <li><span class="list_span1">{{ isDanish ? 'Hårfarve' : 'Hair color' }}</span><span class="list_span2">{{ isDanish ? singleprofile.hair_color_name : singleprofile.hair_color_name_en }}</span></li>
                                     <li><span class="list_span1">{{ isDanish ? 'Bluse' : 'Shirt' }}</span><span class="list_span2">{{singleprofile.shirt}}</span></li>
                                     <li><span class="list_span1">{{ isDanish ? 'Bukser' : 'Pants' }}</span><span class="list_span2">{{singleprofile.pants}}</span></li>
                                     <li><span class="list_span1">{{ isDanish ? 'Sko' : 'Shoes' }}</span><span class="list_span2">{{singleprofile.shoes}}</span></li>
