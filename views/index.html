@@ -599,8 +599,8 @@
                  <p>{{lbprofilecount}}</p>
            </span> -->
            <span class="side-span">
-                 
-                 <div>{{ isDanish ? 'Vis' : 'View' }}</div>
+                 <div ng-click="backToLightbox()" ng-if="profile_from_lightbox" style="cursor:pointer" >{{ isDanish ? 'Vis' : 'View' }}</div>
+                 <div ng-click="backToLightbox()" ng-if="!profile_from_lightbox" class="side-icon3" id="tab_group1" style="cursor:pointer;background: none !important;width: 30px"><img src="images/svgs/lightbox_iconw1.svg" style="width: 100%" alt=""></div>
            </span>
       </div>
  </div>

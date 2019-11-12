@@ -97,7 +97,7 @@ text-decoration: underline;"> info@Castit.dk</a></li>
                     ng-class="{ 'active': interface=='course'}">
                     <a href ng-click='show_course()'>{{ isDanish ? 'Castit Workshop' : 'Castit Workshop' }}</a></li>
                <li>
-                         <a class="visible-xs-* visible-sm-*" style="cursor: pointer;" ng-click="goto('customerprofile' + (isDanish ? '/da' : '/en'))">{{ isDanish ? 'Min Profil' : 'My Profile'}}</a>
+                         <a class="visible-xs-* visible-sm-*" ng-if="customerLoggedIn()" style="cursor: pointer;" ng-click="goto('customerprofile' + (isDanish ? '/da' : '/en'))">{{ isDanish ? 'Min Profil' : 'My Profile'}}</a>
                </li>
                <li class="kontakt"><a href="javascript:;"
                          ng-click=''>{{ isDanish ? 'Kontakt' : 'Contact' }}</a>

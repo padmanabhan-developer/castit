@@ -2534,3 +2534,6 @@ input[id="update_media_pending"] {
   .select2-selection__arrow{
       display: none !important;
   }
+  .td1{
+      width: 330px;
+  }

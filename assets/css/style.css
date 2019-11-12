@@ -468,9 +468,17 @@ padding: 0px;
     width: 100%;
     position: relative;
     margin-top: 20px;
-    margin-bottom: 100px;
+    /* margin-bottom: 100px; */
     padding: 0 0 5% 18%;
 }
+@media screen and (max-width: 765px){
+    .information-inside{
+            margin-bottom: 100px;
+    }
+    .information-inside.castit-workshop{
+        margin-bottom: 0;
+    }
+  }
   .information-inside h2{color:#17181b; font-size:25px; font-family:Arial, Helvetica, sans-serif; font-weight:bold; position:relative; line-height:30px; padding:0 0 20px 0;  margin:0 0 50px 0;}
   .information-inside h2:before{position:absolute; left:0; bottom:0; content:' '; width:24px; height:4px; background:#dcdde0;}
   .poup-close2{float:right; position:absolute; right:0; top:0; background:url(images/close2.png) no-repeat right center; line-height:17px; padding:0 30px 0 0; text-decoration:none; color:#000 !important; font-size:13px; text-transform:uppercase;}

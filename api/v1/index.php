@@ -625,10 +625,10 @@ $app->get('/getsingleprofiles',function () use ($app) {
 		$lang= array();
 		//echo $row['id'];
 		
-		$query_lang = $db->prepare("SELECT lp.*, lpl.name FROM language_proficiencies lp, language_proficiency_languages lpl WHERE lpl.id = lp.language_proficiency_language_id AND lp.profile_id = '".$row['id']."' ORDER BY lp.id"); 
+		$query_lang = $db->prepare("SELECT lp.*, lpl.name FROM language_proficiencies lp, language_proficiency_languages lpl WHERE lpl.id = lp.language_proficiency_language_id AND lp.profile_id = '".$row['id']."' ORDER BY lp.language_proficiency_rating_id DESC, lp.id ASC"); 
 		
 		if($current_language == 'en'){
-			$query_lang = $db->prepare("SELECT lp.*, lpl.name_en as name FROM language_proficiencies lp, language_proficiency_languages lpl WHERE lpl.id = lp.language_proficiency_language_id AND lp.profile_id = '".$row['id']."' ORDER BY lp.id"); 
+			$query_lang = $db->prepare("SELECT lp.*, lpl.name_en as name FROM language_proficiencies lp, language_proficiency_languages lpl WHERE lpl.id = lp.language_proficiency_language_id AND lp.profile_id = '".$row['id']."' ORDER BY lp.language_proficiency_rating_id DESC, lp.id ASC"); 
 		}
 		
 		$query_lang->execute();
